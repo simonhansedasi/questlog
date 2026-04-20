@@ -414,6 +414,7 @@ def brief(slug):
     quests = db.get_quests(slug, include_hidden=is_dm) if not is_dm else []
     active_quests = [q for q in quests if q.get("status") == "active"] if not is_dm else []
     intel = db.get_dm_intelligence(slug, current_session) if is_dm else None
+    saved_futures = db.get_futures(slug) if is_dm else None
     return render_template("brief.html", meta=meta, slug=slug,
                            is_dm=is_dm,
                            current_session=current_session,
@@ -423,7 +424,8 @@ def brief(slug):
                            cold=db.get_neglected_entities(slug, current_session) if is_dm else [],
                            shifts=db.get_relationship_shifts(slug, current_session,
                                                              include_hidden=is_dm),
-                           active_quests=active_quests)
+                           active_quests=active_quests,
+                           saved_futures=saved_futures)
 
 
 @app.route("/<slug>/dm")
@@ -439,6 +441,8 @@ def dm(slug):
     intel = db.get_dm_intelligence(slug, current_session)
     delta_session = int(request.args.get("delta", current_session - 1)) if current_session > 1 else None
     session_delta = db.get_session_delta(slug, delta_session) if delta_session else []
+    saved_futures   = db.get_futures(slug)
+    saved_proposals = db.get_proposals(slug)
     return render_template("dm/index.html", meta=meta, slug=slug,
                            session_plan=raw_plan, plan_html=plan_html,
                            session_notes=db.get_session_notes(slug),
@@ -451,7 +455,9 @@ def dm(slug):
                            all_users=all_users,
                            intel=intel,
                            session_delta=session_delta,
-                           delta_session=delta_session)
+                           delta_session=delta_session,
+                           saved_futures=saved_futures,
+                           saved_proposals=saved_proposals)
 
 
 @app.route("/<slug>/dm/log/quick", methods=["POST"])
@@ -534,6 +540,7 @@ def dm_propose_entries(slug):
     factions = db.get_factions(slug, include_hidden=True)
     try:
         proposals = ai.propose_log_entries(notes, meta.get("name", ""), current_session, npcs, factions)
+        db.save_proposals(slug, proposals, current_session)
         return jsonify({"proposals": proposals, "session": current_session})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -546,6 +553,7 @@ def dm_commit_proposals(slug):
     if not data or "entries" not in data:
         return jsonify({"error": "No entries"}), 400
     current_session = db.get_current_session(slug)
+    db.clear_proposals(slug)
     committed = 0
     for entry in data["entries"]:
         entity_id = entry.get("entity_id")
@@ -959,6 +967,13 @@ def dm_undo_ripple(slug, event_id):
     return redirect(next_url)
 
 
+@app.route("/<slug>/dm/session/discard_proposals", methods=["POST"])
+@dm_required
+def dm_discard_proposals(slug):
+    db.clear_proposals(slug)
+    return ("", 204)
+
+
 @app.route("/<slug>/dm/world/futures", methods=["POST"])
 @dm_required
 def dm_propose_futures(slug):
@@ -967,6 +982,7 @@ def dm_propose_futures(slug):
     world_summary = db.get_world_state_summary(slug, current_session)
     try:
         futures = ai.propose_futures(meta.get("name", ""), current_session, world_summary)
+        db.save_futures(slug, futures, current_session)
         return jsonify({"futures": futures, "session": current_session})
     except Exception as e:
         return jsonify({"error": str(e)}), 500

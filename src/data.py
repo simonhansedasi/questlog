@@ -798,6 +798,43 @@ def append_session_plan(slug, text):
     _save(slug, data, "dm/session.json")
 
 
+def save_futures(slug, futures, session_n):
+    data = _load(slug, "dm/session.json")
+    data["futures"] = futures
+    data["futures_session"] = session_n
+    _save(slug, data, "dm/session.json")
+
+
+def get_futures(slug):
+    data = _load(slug, "dm/session.json")
+    return {
+        "futures": data.get("futures", []),
+        "session": data.get("futures_session"),
+    }
+
+
+def save_proposals(slug, proposals, session_n):
+    data = _load(slug, "dm/session.json")
+    data["proposals"] = proposals
+    data["proposals_session"] = session_n
+    _save(slug, data, "dm/session.json")
+
+
+def get_proposals(slug):
+    data = _load(slug, "dm/session.json")
+    return {
+        "proposals": data.get("proposals", []),
+        "session": data.get("proposals_session"),
+    }
+
+
+def clear_proposals(slug):
+    data = _load(slug, "dm/session.json")
+    data.pop("proposals", None)
+    data.pop("proposals_session", None)
+    _save(slug, data, "dm/session.json")
+
+
 def get_world_state_summary(slug, current_session):
     """Build a structured world context for AI futures inference."""
     npcs = _load(slug, "world/npcs.json").get("npcs", [])

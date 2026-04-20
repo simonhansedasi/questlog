@@ -80,9 +80,36 @@
 {{ dm_intel_row(intel.gaps, 'var(--purple)', '🧩 Narrative Gaps') }}
 
 </div>
-<p style="text-align:right; margin:-12px 0 20px 0;">
+<div style="display:flex; justify-content:space-between; align-items:center; margin:-12px 0 20px 0;">
+  <button id="futures-btn" onclick="loadFutures()"
+          style="background:none; border:1px solid var(--purple); color:var(--purple);
+                 border-radius:4px; padding:3px 12px; font-size:0.75rem; cursor:pointer;">
+    {% if saved_futures and saved_futures.futures %}Refresh ✦{% else %}What happens next? ✦{% endif %}
+  </button>
   <a href="/{{ slug }}/brief" style="color:var(--muted); font-size:0.75rem; text-decoration:none;">Full briefing →</a>
-</p>
+</div>
+
+<div id="futures-section" style="display:{% if saved_futures and saved_futures.futures %}block{% else %}none{% endif %}; margin-bottom:20px;">
+  <div id="futures-loading" style="display:none; color:var(--muted); font-size:0.8rem; padding:8px 0;">Generating hypotheses…</div>
+  <div id="futures-cards" style="display:flex; flex-direction:column; gap:8px;">
+  {% if saved_futures and saved_futures.futures %}
+    {% set confColor = {'high': '#e05c5c', 'medium': '#d97706', 'low': 'var(--muted)'} %}
+    {% for f in saved_futures.futures %}
+    <div style="background:var(--surface2); border:1px solid var(--border);
+                border-left:3px solid {{ confColor.get(f.confidence, 'var(--purple)') }};
+                border-radius:5px; padding:10px 14px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+        <span style="font-weight:700; font-size:0.83rem; color:var(--text);">{{ f.entity_name }}</span>
+        <span style="font-size:0.68rem; color:{{ confColor.get(f.confidence, 'var(--purple)') }}; text-transform:uppercase; letter-spacing:0.05em;">{{ f.confidence }}</span>
+      </div>
+      <p style="margin:0 0 4px 0; font-size:0.82rem; color:var(--text);">{{ f.hypothesis }}</p>
+      <p style="margin:0; font-size:0.72rem; color:var(--muted);">{{ f.reasoning }}</p>
+    </div>
+    {% endfor %}
+    <p style="font-size:0.68rem; color:var(--muted); margin:4px 0 0 0;">Generated S{{ saved_futures.session }} — click Refresh ✦ to update</p>
+  {% endif %}
+  </div>
+</div>
 {% endif %}
 
 <h2 class="section-title" id="session">Session Tools</h2>
@@ -202,7 +229,7 @@
 </div>
 
 {# ── Proposed Events (AI parse output) ─────────────────── #}
-<div id="proposals-section" style="display:none;" class="mb-4">
+<div id="proposals-section" style="display:{% if saved_proposals and saved_proposals.proposals %}block{% else %}none{% endif %};" class="mb-4">
   <h2 class="section-title">Proposed Events</h2>
   <div class="card">
     <p style="color:var(--muted); font-size:0.78rem; margin-bottom:14px;">Review AI-parsed events. Uncheck any you don't want to log, edit notes inline, then commit.</p>
@@ -213,7 +240,7 @@
                      padding:6px 18px; font-size:0.85rem; font-weight:700; cursor:pointer;">
         Commit Selected
       </button>
-      <button onclick="document.getElementById('proposals-section').style.display='none'"
+      <button onclick="discardProposals('{{ slug }}')"
               style="background:none; border:1px solid var(--border); color:var(--muted); border-radius:4px;
                      padding:6px 14px; font-size:0.85rem; cursor:pointer;">
         Discard All
@@ -224,7 +251,10 @@
 </div>
 
 <script>
-var _proposalData = [];
+var _proposalData = {{ (saved_proposals.proposals if saved_proposals and saved_proposals.proposals else []) | tojson }};
+if (_proposalData.length) {
+  renderProposals(_proposalData, {{ saved_proposals.session if saved_proposals and saved_proposals.session else 'null' }});
+}
 
 function generateRecap(slug) {
   const btn = document.getElementById('recap-btn');
@@ -326,6 +356,53 @@ function commitProposals(slug) {
       setTimeout(() => { document.getElementById('proposals-section').style.display = 'none'; location.reload(); }, 1200);
     })
     .catch(() => { document.getElementById('commit-status').textContent = 'Something went wrong.'; });
+}
+
+function discardProposals(slug) {
+  fetch('/' + slug + '/dm/session/discard_proposals', { method: 'POST' })
+    .then(() => { document.getElementById('proposals-section').style.display = 'none'; _proposalData = []; });
+}
+
+function loadFutures() {
+  const btn = document.getElementById('futures-btn');
+  const section = document.getElementById('futures-section');
+  const loading = document.getElementById('futures-loading');
+  const cards = document.getElementById('futures-cards');
+  btn.disabled = true;
+  btn.textContent = 'Thinking…';
+  section.style.display = 'block';
+  loading.style.display = 'block';
+  cards.innerHTML = '';
+  fetch('/{{ slug }}/dm/world/futures', { method: 'POST' })
+    .then(r => r.json())
+    .then(data => {
+      loading.style.display = 'none';
+      btn.textContent = 'Refresh ✦';
+      btn.disabled = false;
+      if (data.error) {
+        cards.innerHTML = `<p style="color:#e05c5c; font-size:0.8rem;">${data.error}</p>`;
+        return;
+      }
+      const confColor = { high: '#e05c5c', medium: '#d97706', low: 'var(--muted)' };
+      cards.innerHTML = data.futures.map(f => `
+        <div style="background:var(--surface2); border:1px solid var(--border);
+                    border-left:3px solid ${confColor[f.confidence] || 'var(--purple)'};
+                    border-radius:5px; padding:10px 14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+            <span style="font-weight:700; font-size:0.83rem; color:var(--text);">${f.entity_name}</span>
+            <span style="font-size:0.68rem; color:${confColor[f.confidence] || 'var(--purple)'}; text-transform:uppercase; letter-spacing:0.05em;">${f.confidence}</span>
+          </div>
+          <p style="margin:0 0 4px 0; font-size:0.82rem; color:var(--text);">${f.hypothesis}</p>
+          <p style="margin:0; font-size:0.72rem; color:var(--muted);">${f.reasoning}</p>
+        </div>
+      `).join('');
+    })
+    .catch(() => {
+      loading.style.display = 'none';
+      btn.textContent = 'What happens next? ✦';
+      btn.disabled = false;
+      cards.innerHTML = '<p style="color:#e05c5c; font-size:0.8rem;">Request failed.</p>';
+    });
 }
 </script>
 
