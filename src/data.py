@@ -592,12 +592,12 @@ def _last_entry(log):
     return max(log, key=lambda e: e.get("session", 0)) if log else None
 
 
-def get_recent_entities(slug, current_session, window=2):
+def get_recent_entities(slug, current_session, window=2, include_hidden=True):
     """Return NPCs and factions with log entries in the last `window` sessions."""
     threshold = max(1, current_session - window)
     recent = []
     for npc in _load(slug, "world/npcs.json").get("npcs", []):
-        if npc.get("hidden"):
+        if npc.get("hidden") and not include_hidden:
             continue
         recent_log = [e for e in npc.get("log", []) if e.get("session", 0) >= threshold]
         if recent_log:
@@ -611,7 +611,7 @@ def get_recent_entities(slug, current_session, window=2):
                 "last_entry": _last_entry(recent_log),
             })
     for faction in _load(slug, "world/factions.json").get("factions", []):
-        if faction.get("hidden"):
+        if faction.get("hidden") and not include_hidden:
             continue
         recent_log = [e for e in faction.get("log", []) if e.get("session", 0) >= threshold]
         if recent_log:
@@ -664,10 +664,12 @@ def get_neglected_entities(slug, current_session, cold_after=3, min_events=3):
     return neglected
 
 
-def get_relationship_shifts(slug, current_session):
+def get_relationship_shifts(slug, current_session, include_hidden=True):
     """NPCs whose computed relationship badge changed in the last session."""
     shifts = []
     for npc in _load(slug, "world/npcs.json").get("npcs", []):
+        if npc.get("hidden") and not include_hidden:
+            continue
         typed = [e for e in npc.get("log", []) if e.get("polarity") in ("positive", "negative", "neutral")]
         if not typed:
             continue

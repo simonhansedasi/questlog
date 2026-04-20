@@ -16,6 +16,7 @@
     <a href="/{{ slug }}/world" {% if request.path.startswith('/' ~ slug ~ '/world') %}class="active"{% endif %}>World</a>
     <a href="/{{ slug }}/story" {% if request.path.startswith('/' ~ slug ~ '/story') %}class="active"{% endif %}>Story</a>
     <a href="/{{ slug }}/journal" {% if request.path.startswith('/' ~ slug ~ '/journal') %}class="active"{% endif %}>Journal</a>
+    <a href="/{{ slug }}/brief" {% if request.path.startswith('/' ~ slug ~ '/brief') %}class="active"{% endif %} style="color:var(--purple);">Brief</a>
     <a href="/{{ slug }}/references" {% if request.path.startswith('/' ~ slug ~ '/references') %}class="active"{% endif %}>Ref</a>
     <div class="dm-sep">
       {% if session.get('dm_' ~ slug) %}

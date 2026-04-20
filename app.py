@@ -357,16 +357,24 @@ def campaign_revision(slug):
     return jsonify({"rev": rev})
 
 
-@app.route("/<slug>/dm/brief")
-@dm_required
-def dm_brief(slug):
+@app.route("/<slug>/brief")
+def brief(slug):
+    r = campaign_access(slug)
+    if r: return r
     meta = load(slug, "campaign.json")
+    is_dm = bool(session.get(f"dm_{slug}"))
     current_session = db.get_current_session(slug)
-    return render_template("dm/brief.html", meta=meta, slug=slug,
+    quests = db.get_quests(slug, include_hidden=is_dm) if not is_dm else []
+    active_quests = [q for q in quests if q.get("status") == "active"] if not is_dm else []
+    return render_template("brief.html", meta=meta, slug=slug,
+                           is_dm=is_dm,
                            current_session=current_session,
-                           hot=db.get_recent_entities(slug, current_session),
-                           cold=db.get_neglected_entities(slug, current_session),
-                           shifts=db.get_relationship_shifts(slug, current_session))
+                           hot=db.get_recent_entities(slug, current_session,
+                                                      include_hidden=is_dm),
+                           cold=db.get_neglected_entities(slug, current_session) if is_dm else [],
+                           shifts=db.get_relationship_shifts(slug, current_session,
+                                                             include_hidden=is_dm),
+                           active_quests=active_quests)
 
 
 @app.route("/<slug>/dm")
