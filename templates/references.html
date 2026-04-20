@@ -11,8 +11,17 @@
 {% for ref in references %}
 <div class="card mb-4">
   <div style="display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
-    <h2 style="margin:0; font-size:1.1rem;">{{ ref.title }}</h2>
-    {% if ref.source %}<span class="text-muted text-sm">{{ ref.source }}</span>{% endif %}
+    <div style="display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;">
+      <h2 style="margin:0; font-size:1.1rem;">{{ ref.title }}</h2>
+      {% if ref.source %}<span class="text-muted text-sm">{{ ref.source }}</span>{% endif %}
+    </div>
+    {% if session.get('dm_' ~ slug) %}
+    <form method="POST" action="/{{ slug }}/dm/references/{{ ref.id }}/delete">
+      <button type="submit" style="background:none; border:1px solid #e05c5c; color:#e05c5c; border-radius:4px; padding:2px 10px; font-size:0.75rem; cursor:pointer;">
+        Delete
+      </button>
+    </form>
+    {% endif %}
   </div>
 
   {% if ref.notes %}

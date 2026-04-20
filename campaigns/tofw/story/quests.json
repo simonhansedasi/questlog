@@ -1,0 +1,66 @@
+{
+  "quests": [
+    {
+      "id": "escape_the_mortuary",
+      "title": "Escape the Mortuary",
+      "status": "active",
+      "description": "The party woke up in Sigil's Mortuary with no memories and no explanation. The Dustmen aren't pleased. Getting out is the first problem. Understanding why they're here is the second.",
+      "hidden": true,
+      "objectives": [
+        { "text": "Get out of the Mortuary", "done": false },
+        { "text": "Find someone in Sigil who knows what happened", "done": false }
+      ],
+      "log": []
+    },
+    {
+      "id": "the_multiversal_glitch",
+      "title": "The Multiversal Glitch",
+      "status": "active",
+      "description": "Something is wrong with reality — specifically with the party. Duplicates appear. Memories belong to other lives. The cause is a glitch in the fabric of the multiverse, and the party is caught in the middle of it.",
+      "hidden": true,
+      "objectives": [
+        { "text": "Discover why the party has memory gaps", "done": false },
+        { "text": "Understand the nature of the multiversal glitch", "done": false },
+        { "text": "Find a way to stabilize or resolve it", "done": false }
+      ],
+      "log": []
+    },
+    {
+      "id": "find_rondixiant",
+      "title": "Find the Missing Modron",
+      "status": "active",
+      "description": "A modron named Rondixiant vanished while carrying critical information about the glitch. Modrons don't just go missing — something took it, or it fled. Either way, finding it is essential.",
+      "hidden": true,
+      "objectives": [
+        { "text": "Learn who or what Rondixiant is", "done": false },
+        { "text": "Track Rondixiant across the planes", "done": false },
+        { "text": "Recover the information it carries", "done": false }
+      ],
+      "log": []
+    },
+    {
+      "id": "shemeshkas_game",
+      "title": "Shemeshka's Game",
+      "status": "active",
+      "description": "Shemeshka the Marauder knows more about the party's situation than she admits. She's willing to help — for a price, and on her terms. Trusting her is dangerous. Not dealing with her may be worse.",
+      "hidden": true,
+      "objectives": [
+        { "text": "Determine what Shemeshka wants", "done": false },
+        { "text": "Decide how far to trust her", "done": false }
+      ],
+      "log": []
+    },
+    {
+      "id": "schemes_in_sigil",
+      "title": "Schemes in Sigil",
+      "status": "active",
+      "description": "Sigil is a city of factions, each with their own agenda. Navigating the politics, making allies, and avoiding enemies will determine how much freedom the party has to pursue their real goals.",
+      "hidden": true,
+      "objectives": [
+        { "text": "Establish relationships with at least one faction", "done": false },
+        { "text": "Avoid drawing the Harmonium's attention", "done": false }
+      ],
+      "log": []
+    }
+  ]
+}

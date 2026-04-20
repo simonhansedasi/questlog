@@ -1,4 +1,4 @@
-from flask import Flask, render_template, abort, redirect, url_for, request, session, Response
+from flask import Flask, render_template, abort, redirect, url_for, request, session, Response, jsonify
 from markupsafe import Markup
 from werkzeug.security import check_password_hash
 from functools import wraps
@@ -13,6 +13,10 @@ import markdown
 
 sys.path.insert(0, str(Path(__file__).parent))
 from src import data as db
+from src import ai
+
+from dotenv import load_dotenv
+load_dotenv()
 
 
 class PrefixMiddleware:
@@ -163,7 +167,17 @@ def campaign(slug):
     party = db.get_party(slug, include_hidden=is_dm)
     quests = db.get_quests(slug, include_hidden=is_dm)
     active = [q for q in quests if q["status"] == "active"]
-    return render_template("campaign.html", meta=meta, party=party, active=active, slug=slug)
+    journal_entries = db.get_journal(slug)
+    latest_journal = None
+    if journal_entries:
+        e = journal_entries[-1]
+        latest_journal = {**e, "recap_html": Markup(markdown.markdown(e.get("recap", ""), extensions=["nl2br"]))}
+    npcs = db.get_npcs(slug, include_hidden=is_dm)
+    factions = db.get_factions(slug, include_hidden=is_dm)
+    return render_template("campaign.html", meta=meta, party=party, active=active, slug=slug,
+                           latest_journal=latest_journal,
+                           current_session=db.get_current_session(slug),
+                           npc_count=len(npcs), faction_count=len(factions))
 
 
 @app.route("/<slug>/party")
@@ -231,6 +245,38 @@ def story(slug):
     return render_template("story.html", meta=meta, quests=quests, slug=slug)
 
 
+@app.route("/<slug>/journal")
+def journal(slug):
+    r = campaign_access(slug)
+    if r: return r
+    meta = load(slug, "campaign.json")
+    is_dm = bool(session.get(f"dm_{slug}"))
+    entries = db.get_journal(slug)
+    entries_rendered = [
+        {**e, "idx": i, "recap_html": Markup(markdown.markdown(e.get("recap", ""), extensions=["nl2br"]))}
+        for i, e in reversed(list(enumerate(entries)))
+    ]
+    return render_template("journal.html", meta=meta, slug=slug, is_dm=is_dm, entries=entries_rendered)
+
+
+@app.route("/<slug>/dm/journal/post", methods=["POST"])
+@dm_required
+def dm_post_journal(slug):
+    session_n = int(request.form.get("session") or 0)
+    date = request.form.get("date", "").strip() or datetime.date.today().isoformat()
+    recap = request.form.get("recap", "").strip()
+    if recap:
+        db.post_journal(slug, session_n, date, recap)
+    return redirect(url_for("journal", slug=slug))
+
+
+@app.route("/<slug>/dm/journal/<int:idx>/delete", methods=["POST"])
+@dm_required
+def dm_delete_journal(slug, idx):
+    db.delete_journal_entry(slug, idx)
+    return redirect(url_for("journal", slug=slug))
+
+
 @app.route("/<slug>/references")
 def references(slug):
     r = campaign_access(slug)
@@ -284,6 +330,19 @@ def dm_logout(slug):
 
 # ── DM routes ─────────────────────────────────────────────────────────────────
 
+@app.route("/<slug>/api/revision")
+def campaign_revision(slug):
+    r = campaign_access(slug)
+    if r: return jsonify({"error": "unauthorized"}), 403
+    files = [
+        CAMPAIGNS / slug / "world" / "npcs.json",
+        CAMPAIGNS / slug / "world" / "factions.json",
+        CAMPAIGNS / slug / "story" / "quests.json",
+    ]
+    rev = max((f.stat().st_mtime for f in files if f.exists()), default=0)
+    return jsonify({"rev": rev})
+
+
 @app.route("/<slug>/dm")
 @dm_required
 def dm(slug):
@@ -294,7 +353,34 @@ def dm(slug):
     plan_html = Markup(markdown.markdown(raw_plan, extensions=["nl2br"])) if raw_plan else None
     return render_template("dm/index.html", meta=meta, slug=slug,
                            session_plan=raw_plan, plan_html=plan_html,
-                           session_notes=db.get_session_notes(slug))
+                           session_notes=db.get_session_notes(slug),
+                           npcs=db.get_npcs(slug),
+                           factions=db.get_factions(slug),
+                           party=db.get_party(slug),
+                           current_session=db.get_current_session(slug),
+                           assets=db.get_assets(slug))
+
+
+@app.route("/<slug>/dm/log/quick", methods=["POST"])
+@dm_required
+def dm_quick_log(slug):
+    entity = request.form.get("entity", "")
+    note = request.form.get("note", "").strip()
+    relationship = request.form.get("relationship", "").strip()
+    session_n = int(request.form.get("session") or 0)
+    if ":" in entity:
+        entity_type, entity_id = entity.split(":", 1)
+        if entity_type == "npc":
+            if note:
+                db.log_npc(slug, entity_id, session_n, note)
+            if relationship:
+                db.update_npc(slug, entity_id, relationship=relationship)
+        elif entity_type == "faction":
+            if note:
+                db.log_faction(slug, entity_id, session_n, note)
+            if relationship:
+                db.update_faction(slug, entity_id, relationship=relationship)
+    return redirect(url_for("dm", slug=slug))
 
 
 @app.route("/<slug>/dm/session/plan", methods=["POST"])
@@ -309,6 +395,22 @@ def dm_set_session_plan(slug):
 def dm_set_session_notes(slug):
     db.set_session_notes(slug, request.form.get("notes", ""))
     return redirect(url_for("dm", slug=slug))
+
+
+@app.route("/<slug>/dm/session/recap", methods=["POST"])
+@dm_required
+def dm_generate_recap(slug):
+    meta = load(slug, "campaign.json")
+    notes = db.get_session_notes(slug)
+    if not notes or not notes.strip():
+        return jsonify({"error": "No session notes to summarize."}), 400
+    quests = db.get_quests(slug, include_hidden=True)
+    npcs = db.get_npcs(slug, include_hidden=False)
+    try:
+        recap = ai.generate_recap(notes, meta.get("name", ""), quests, npcs)
+        return jsonify({"recap": recap})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route("/<slug>/dm/session/notes/export")
@@ -442,30 +544,32 @@ def dm_add_character(slug):
     return render_template("dm/add_character.html", meta=meta, slug=slug)
 
 
-@app.route("/<slug>/dm/assets/currency", methods=["POST"])
-@dm_required
-def dm_set_currency(slug):
-    key = request.form.get("key", "gold").strip()
-    amount = request.form.get("amount", 0)
-    db.set_currency(slug, key, amount)
+@app.route("/<slug>/assets/currency", methods=["POST"])
+def set_currency(slug):
+    r = campaign_access(slug)
+    if r: return r
+    db.set_currency(slug, request.form.get("key", "gold").strip(), request.form.get("amount", 0))
     return redirect(url_for("assets", slug=slug))
 
 
-@app.route("/<slug>/dm/assets/item", methods=["POST"])
-@dm_required
-def dm_add_item(slug):
+@app.route("/<slug>/assets/item", methods=["POST"])
+def add_item(slug):
+    r = campaign_access(slug)
+    if r: return r
     name = request.form.get("name", "").strip()
-    notes = request.form.get("notes", "").strip()
     if name:
-        db.add_item(slug, name, notes)
+        db.add_item(slug, name, request.form.get("notes", "").strip())
     return redirect(url_for("assets", slug=slug))
 
 
-@app.route("/<slug>/dm/assets/item/<int:idx>/remove", methods=["POST"])
-@dm_required
-def dm_remove_item(slug, idx):
+@app.route("/<slug>/assets/item/<int:idx>/remove", methods=["POST"])
+def remove_item(slug, idx):
+    r = campaign_access(slug)
+    if r: return r
     db.remove_item(slug, idx)
     return redirect(url_for("assets", slug=slug))
+
+
 
 
 @app.route("/<slug>/dm/assets/ship", methods=["POST"])
@@ -529,6 +633,13 @@ def dm_remove_stronghold_upgrade(slug, idx):
     return redirect(url_for("assets", slug=slug))
 
 
+@app.route("/<slug>/dm/assets/stronghold/delete", methods=["POST"])
+@dm_required
+def dm_delete_stronghold(slug):
+    db.delete_stronghold(slug)
+    return redirect(url_for("assets", slug=slug))
+
+
 @app.route("/<slug>/dm/assets/ship/<int:ship_idx>/edit", methods=["POST"])
 @dm_required
 def dm_edit_ship(slug, ship_idx):
@@ -572,6 +683,13 @@ def dm_remove_cargo(slug, ship_idx, cargo_idx):
     return redirect(url_for("assets", slug=slug))
 
 
+@app.route("/<slug>/dm/assets/ship/<int:ship_idx>/delete", methods=["POST"])
+@dm_required
+def dm_delete_ship(slug, ship_idx):
+    db.delete_ship(slug, ship_idx)
+    return redirect(url_for("assets", slug=slug))
+
+
 @app.route("/<slug>/dm/assets/ship/<int:ship_idx>/weapon", methods=["POST"])
 @dm_required
 def dm_add_weapon(slug, ship_idx):
@@ -594,6 +712,97 @@ def set_weapon_hp(slug, ship_idx, weapon_idx):
 
 # ── DM inline edit routes ─────────────────────────────────────────────────────
 
+@app.route("/<slug>/dm/npc/<npc_id>/delete", methods=["POST"])
+@dm_required
+def dm_delete_npc(slug, npc_id):
+    db.delete_npc(slug, npc_id)
+    return redirect(url_for("world", slug=slug))
+
+
+@app.route("/<slug>/dm/faction/<faction_id>/delete", methods=["POST"])
+@dm_required
+def dm_delete_faction(slug, faction_id):
+    db.delete_faction(slug, faction_id)
+    return redirect(url_for("world", slug=slug))
+
+
+@app.route("/<slug>/dm/quest/<quest_id>/delete", methods=["POST"])
+@dm_required
+def dm_delete_quest(slug, quest_id):
+    db.delete_quest(slug, quest_id)
+    return redirect(url_for("story", slug=slug))
+
+
+@app.route("/<slug>/dm/character/<char_name>/delete", methods=["POST"])
+@dm_required
+def dm_delete_character(slug, char_name):
+    db.delete_character(slug, char_name)
+    return redirect(url_for("party", slug=slug))
+
+
+@app.route("/<slug>/dm/references/<ref_id>/delete", methods=["POST"])
+@dm_required
+def dm_delete_reference(slug, ref_id):
+    db.delete_reference(slug, ref_id)
+    return redirect(url_for("references", slug=slug))
+
+
+@app.route("/<slug>/dm/assets/ship/<int:ship_idx>/weapon/<int:weapon_idx>/delete", methods=["POST"])
+@dm_required
+def dm_delete_weapon(slug, ship_idx, weapon_idx):
+    db.delete_weapon(slug, ship_idx, weapon_idx)
+    return redirect(url_for("assets", slug=slug))
+
+
+@app.route("/<slug>/dm/npc/<npc_id>/log/<int:idx>/delete", methods=["POST"])
+@dm_required
+def dm_delete_npc_log(slug, npc_id, idx):
+    db.delete_npc_log_entry(slug, npc_id, idx)
+    return redirect(url_for("npc", slug=slug, npc_id=npc_id))
+
+
+@app.route("/<slug>/dm/faction/<faction_id>/log/<int:idx>/delete", methods=["POST"])
+@dm_required
+def dm_delete_faction_log(slug, faction_id, idx):
+    db.delete_faction_log_entry(slug, faction_id, idx)
+    return redirect(url_for("faction", slug=slug, faction_id=faction_id))
+
+
+@app.route("/<slug>/dm/quest/<quest_id>/log/<int:idx>/delete", methods=["POST"])
+@dm_required
+def dm_delete_quest_log(slug, quest_id, idx):
+    db.delete_quest_log_entry(slug, quest_id, idx)
+    return redirect(url_for("story", slug=slug))
+
+
+@app.route("/<slug>/dm/character/<char_name>/toggle_hidden", methods=["POST"])
+@dm_required
+def dm_toggle_character_hidden(slug, char_name):
+    chars = db.get_party(slug)
+    char = next((c for c in chars if c["name"] == char_name), None)
+    if char:
+        db.set_character_hidden(slug, char_name, not char.get("hidden", False))
+    if request.form.get("next") == "dm":
+        return redirect(url_for("dm", slug=slug))
+    return redirect(url_for("party", slug=slug))
+
+
+@app.route("/<slug>/dm/assets/property", methods=["POST"])
+@dm_required
+def dm_add_property(slug):
+    name = request.form.get("name", "").strip()
+    if name:
+        db.add_property(slug, name, request.form.get("notes", "").strip())
+    return redirect(url_for("assets", slug=slug))
+
+
+@app.route("/<slug>/dm/assets/property/<int:idx>/remove", methods=["POST"])
+@dm_required
+def dm_remove_property(slug, idx):
+    db.remove_property(slug, idx)
+    return redirect(url_for("assets", slug=slug))
+
+
 @app.route("/<slug>/dm/npc/<npc_id>/toggle_hidden", methods=["POST"])
 @dm_required
 def dm_toggle_npc_hidden(slug, npc_id):
@@ -601,6 +810,8 @@ def dm_toggle_npc_hidden(slug, npc_id):
     npc = next((n for n in npcs if n["id"] == npc_id), None)
     if npc:
         db.set_npc_hidden(slug, npc_id, not npc.get("hidden", False))
+    if request.form.get("next") == "dm":
+        return redirect(url_for("dm", slug=slug))
     return redirect(url_for("npc", slug=slug, npc_id=npc_id))
 
 
@@ -632,6 +843,8 @@ def dm_toggle_faction_hidden(slug, faction_id):
     faction = next((f for f in factions if f["id"] == faction_id), None)
     if faction:
         db.set_faction_hidden(slug, faction_id, not faction.get("hidden", False))
+    if request.form.get("next") == "dm":
+        return redirect(url_for("dm", slug=slug))
     return redirect(url_for("faction", slug=slug, faction_id=faction_id))
 
 

@@ -73,7 +73,14 @@
   {% if quest.log %}
   <ul class="log-list" style="margin-bottom:10px;">
     {% for entry in quest.log | reverse %}
-    <li><span class="log-session">Session {{ entry.session }}</span>{{ entry.note }}</li>
+    <li style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+      <span><span class="log-session">Session {{ entry.session }}</span>{{ entry.note }}</span>
+      {% if session.get('dm_' ~ slug) %}
+      <form method="POST" action="/{{ slug }}/dm/quest/{{ quest.id }}/log/{{ (quest.log | length) - 1 - loop.index0 }}/delete" style="flex-shrink:0;">
+        <button type="submit" style="background:none; border:none; color:var(--muted); font-size:0.8rem; cursor:pointer; padding:0 4px;">×</button>
+      </form>
+      {% endif %}
+    </li>
     {% endfor %}
   </ul>
   {% endif %}
@@ -126,6 +133,12 @@
         </button>
       </form>
 
+      <form method="POST" action="/{{ slug }}/dm/quest/{{ quest.id }}/delete">
+        <button type="submit" style="background:none; border:1px solid #e05c5c; color:#e05c5c; border-radius:4px; padding:4px 12px; font-size:0.78rem; cursor:pointer;">
+          Delete Quest
+        </button>
+      </form>
+
     </div>
   </details>
   {% endif %}
@@ -135,7 +148,13 @@
 {% endfor %}
 
 {% if not quests %}
-<p class="text-muted">No quests yet. <a href="/{{ slug }}/dm/quests/add">Add one.</a></p>
+<div class="card" style="padding:40px 24px; text-align:center;">
+  {% if session.get('dm_' ~ slug) %}
+  <p class="text-muted">No quests yet. <a href="/{{ slug }}/dm/quests/add">Add one.</a></p>
+  {% else %}
+  <p class="text-muted">No quests have been revealed yet.</p>
+  {% endif %}
+</div>
 {% endif %}
 
 {% endblock %}

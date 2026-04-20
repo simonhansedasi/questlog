@@ -13,7 +13,10 @@ def _load(slug, *parts):
     p = _path(slug, *parts)
     if not p.exists():
         return {}
-    return json.loads(p.read_text())
+    text = p.read_text().strip()
+    if not text:
+        return {}
+    return json.loads(text)
 
 
 def _save(slug, data, *parts):
@@ -60,11 +63,27 @@ def update_npc(slug, npc_id, relationship=None, description=None):
     _save(slug, data, "world/npcs.json")
 
 
+def delete_npc(slug, npc_id):
+    data = _load(slug, "world/npcs.json")
+    data["npcs"] = [n for n in data.get("npcs", []) if n["id"] != npc_id]
+    _save(slug, data, "world/npcs.json")
+
+
 def set_npc_hidden(slug, npc_id, hidden):
     data = _load(slug, "world/npcs.json")
     for npc in data.get("npcs", []):
         if npc["id"] == npc_id:
             npc["hidden"] = hidden
+    _save(slug, data, "world/npcs.json")
+
+
+def delete_npc_log_entry(slug, npc_id, entry_idx):
+    data = _load(slug, "world/npcs.json")
+    for npc in data.get("npcs", []):
+        if npc["id"] == npc_id:
+            log = npc.get("log", [])
+            if 0 <= entry_idx < len(log):
+                log.pop(entry_idx)
     _save(slug, data, "world/npcs.json")
 
 
@@ -109,11 +128,27 @@ def update_faction(slug, faction_id, relationship=None, description=None):
     _save(slug, data, "world/factions.json")
 
 
+def delete_faction(slug, faction_id):
+    data = _load(slug, "world/factions.json")
+    data["factions"] = [f for f in data.get("factions", []) if f["id"] != faction_id]
+    _save(slug, data, "world/factions.json")
+
+
 def set_faction_hidden(slug, faction_id, hidden):
     data = _load(slug, "world/factions.json")
     for f in data.get("factions", []):
         if f["id"] == faction_id:
             f["hidden"] = hidden
+    _save(slug, data, "world/factions.json")
+
+
+def delete_faction_log_entry(slug, faction_id, entry_idx):
+    data = _load(slug, "world/factions.json")
+    for f in data.get("factions", []):
+        if f["id"] == faction_id:
+            log = f.get("log", [])
+            if 0 <= entry_idx < len(log):
+                log.pop(entry_idx)
     _save(slug, data, "world/factions.json")
 
 
@@ -202,11 +237,27 @@ def set_quest_status(slug, quest_id, status):
     _save(slug, data, "story/quests.json")
 
 
+def delete_quest(slug, quest_id):
+    data = _load(slug, "story/quests.json")
+    data["quests"] = [q for q in data.get("quests", []) if q["id"] != quest_id]
+    _save(slug, data, "story/quests.json")
+
+
 def set_quest_hidden(slug, quest_id, hidden):
     data = _load(slug, "story/quests.json")
     for q in data.get("quests", []):
         if q["id"] == quest_id:
             q["hidden"] = hidden
+    _save(slug, data, "story/quests.json")
+
+
+def delete_quest_log_entry(slug, quest_id, entry_idx):
+    data = _load(slug, "story/quests.json")
+    for q in data.get("quests", []):
+        if q["id"] == quest_id:
+            log = q.get("log", [])
+            if 0 <= entry_idx < len(log):
+                log.pop(entry_idx)
     _save(slug, data, "story/quests.json")
 
 
@@ -241,6 +292,20 @@ def add_character(slug, name, race, char_class, level, notes="", hidden=False):
     _save(slug, data, "party.json")
 
 
+def set_character_hidden(slug, char_name, hidden):
+    data = _load(slug, "party.json")
+    for c in data.get("characters", []):
+        if c["name"] == char_name:
+            c["hidden"] = hidden
+    _save(slug, data, "party.json")
+
+
+def delete_character(slug, char_name):
+    data = _load(slug, "party.json")
+    data["characters"] = [c for c in data.get("characters", []) if c["name"] != char_name]
+    _save(slug, data, "party.json")
+
+
 def update_character(slug, char_name, level=None, status=None, notes=None):
     data = _load(slug, "party.json")
     for char in data.get("characters", []):
@@ -255,6 +320,20 @@ def update_character(slug, char_name, level=None, status=None, notes=None):
 
 
 # ── Assets ────────────────────────────────────────────────────────────────────
+
+def add_property(slug, name, notes=""):
+    data = _load(slug, "assets.json")
+    data.setdefault("property", []).append({"name": name, "notes": notes})
+    _save(slug, data, "assets.json")
+
+
+def remove_property(slug, idx):
+    data = _load(slug, "assets.json")
+    props = data.get("property", [])
+    if 0 <= idx < len(props):
+        props.pop(idx)
+    _save(slug, data, "assets.json")
+
 
 def get_assets(slug):
     return _load(slug, "assets.json")
@@ -342,6 +421,24 @@ def remove_cargo(slug, ship_idx, cargo_idx):
     _save(slug, data, "assets.json")
 
 
+def delete_ship(slug, ship_idx):
+    data = _load(slug, "assets.json")
+    ships = data.get("ships", [])
+    if 0 <= ship_idx < len(ships):
+        ships.pop(ship_idx)
+    _save(slug, data, "assets.json")
+
+
+def delete_weapon(slug, ship_idx, weapon_idx):
+    data = _load(slug, "assets.json")
+    ships = data.get("ships", [])
+    if 0 <= ship_idx < len(ships):
+        weapons = ships[ship_idx].get("weapons", [])
+        if 0 <= weapon_idx < len(weapons):
+            weapons.pop(weapon_idx)
+    _save(slug, data, "assets.json")
+
+
 def add_weapon(slug, ship_idx, name, max_hp):
     data = _load(slug, "assets.json")
     ships = data.get("ships", [])
@@ -415,6 +512,12 @@ def remove_stronghold_upgrade(slug, idx):
     _save(slug, data, "assets.json")
 
 
+def delete_stronghold(slug):
+    data = _load(slug, "assets.json")
+    data.pop("stronghold", None)
+    _save(slug, data, "assets.json")
+
+
 # ── Session Plan ─────────────────────────────────────────────────────────────
 
 def get_session_plan(slug):
@@ -452,10 +555,61 @@ def get_all_log_entries(slug):
     return entries
 
 
+# ── Journal ───────────────────────────────────────────────────────────────────
+
+def get_journal(slug):
+    return _load(slug, "journal.json").get("entries", [])
+
+
+def post_journal(slug, session_n, date, recap):
+    data = _load(slug, "journal.json")
+    data.setdefault("entries", []).append({
+        "session": session_n,
+        "date": date,
+        "recap": recap,
+    })
+    data["entries"].sort(key=lambda e: e.get("session", 0))
+    _save(slug, data, "journal.json")
+
+
+def delete_journal_entry(slug, idx):
+    data = _load(slug, "journal.json")
+    entries = data.get("entries", [])
+    if 0 <= idx < len(entries):
+        entries.pop(idx)
+    _save(slug, data, "journal.json")
+
+
+# ── Session helpers ──────────────────────────────────────────────────────────
+
+def get_current_session(slug):
+    max_log = 0
+    for npc in _load(slug, "world/npcs.json").get("npcs", []):
+        for entry in npc.get("log", []):
+            max_log = max(max_log, entry.get("session", 0))
+    for f in _load(slug, "world/factions.json").get("factions", []):
+        for entry in f.get("log", []):
+            max_log = max(max_log, entry.get("session", 0))
+    for q in _load(slug, "story/quests.json").get("quests", []):
+        for entry in q.get("log", []):
+            max_log = max(max_log, entry.get("session", 0))
+    max_journal = max(
+        (e.get("session", 0) for e in _load(slug, "journal.json").get("entries", [])),
+        default=0
+    )
+    return max(max_log, max_journal + 1)
+
+
 # ── References ────────────────────────────────────────────────────────────────
 
 def get_references(slug):
     return _load(slug, "references.json").get("references", [])
+
+
+def delete_reference(slug, ref_id):
+    data = _load(slug, "references.json")
+    data["references"] = [r for r in data.get("references", []) if r["id"] != ref_id]
+    _save(slug, data, "references.json")
 
 
 def add_reference(slug, title, source, notes, columns, rows):

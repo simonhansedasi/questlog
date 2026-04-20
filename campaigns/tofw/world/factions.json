@@ -1,0 +1,68 @@
+{
+  "factions": [
+    {
+      "id": "dustmen",
+      "name": "The Dustmen",
+      "relationship": "neutral",
+      "description": "Believe all life is a prelude to True Death. Control the Mortuary in Sigil — where unclaimed dead are processed. The party woke up here. Suspicious of anyone too alive.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "harmonium",
+      "name": "The Harmonium",
+      "relationship": "neutral",
+      "description": "Sigil's de facto law enforcement. Believe universal peace is achievable through compliance. Rigid, aggressive, and not above brutality. Cross them and they will remember.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "fraternity_of_order",
+      "name": "The Fraternity of Order",
+      "relationship": "neutral",
+      "description": "Known as the Guvners. Study and exploit the laws of the multiverse — legal and metaphysical. Useful for navigating Sigil's bureaucracy. Everything has a rule; they know it.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "mercykillers",
+      "name": "The Mercykillers",
+      "relationship": "neutral",
+      "description": "Justice through punishment, without mercy. Run Sigil's prison. If the party commits crimes and gets caught, these are the ones who come for them.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "bleak_cabal",
+      "name": "The Bleak Cabal",
+      "relationship": "neutral",
+      "description": "The Bleakers. Believe nothing in the multiverse has inherent meaning. Operate the asylum. Surprisingly compassionate in practice — they help because they choose to, not because it matters.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "sensates",
+      "name": "The Society of Sensation",
+      "relationship": "neutral",
+      "description": "Believe truth is found through experience. Collect and catalog every sensation across the planes. Hedonistic and well-connected. Can be useful allies if the party is interesting enough.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "sign_of_one",
+      "name": "The Sign of One",
+      "relationship": "neutral",
+      "description": "The Signers. Believe each individual is the center of their own reality and may shape existence through will. Relevant to the multiversal glitch in ways that will become clear.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "athar",
+      "name": "The Athar",
+      "relationship": "neutral",
+      "description": "Deny the divinity of gods — view them as powerful beings, not true deities. Have hidden knowledge about the nature of the planes that may be relevant to the party's situation.",
+      "hidden": true,
+      "log": []
+    }
+  ]
+}

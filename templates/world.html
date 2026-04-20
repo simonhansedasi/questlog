@@ -42,4 +42,14 @@
 </div>
 {% endif %}
 
+{% if not npcs and not factions %}
+<div class="card" style="padding:40px 24px; text-align:center;">
+  {% if session.get('dm_' ~ slug) %}
+  <p class="text-muted">Nothing here yet. Add an <a href="/{{ slug }}/dm/npcs/add">NPC</a> or <a href="/{{ slug }}/dm/factions/add">faction</a> from the DM dashboard.</p>
+  {% else %}
+  <p class="text-muted">The world is uncharted. Check back as the story unfolds.</p>
+  {% endif %}
+</div>
+{% endif %}
+
 {% endblock %}

@@ -2,32 +2,89 @@
 {% block title %}{{ meta.name }}{% endblock %}
 {% block content %}
 
-<h1 class="page-title">{{ meta.name }}</h1>
-<p class="subtitle">{{ meta.system }}{% if meta.description %} — {{ meta.description }}{% endif %}</p>
-
-{% if party %}
-<h2 class="section-title mt-8">Party</h2>
-<div class="card-grid mb-4">
-  {% for char in party %}
-  <div class="card">
-    <h3>{{ char.name }}</h3>
-    <div class="role">{{ char.race }} {{ char['class'] }} · Lv{{ char.level }}</div>
-    {% if char.notes %}<p class="text-muted text-sm">{{ char.notes }}</p>{% endif %}
+<!-- Hero -->
+<div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:8px;">
+  <div>
+    <h1 class="page-title" style="margin-bottom:4px;">{{ meta.name }}</h1>
+    <p class="subtitle" style="margin-bottom:0;">{{ meta.system }}{% if meta.description %} — {{ meta.description }}{% endif %}</p>
   </div>
-  {% endfor %}
+  <span style="background:var(--surface2); border:1px solid var(--border); border-radius:20px;
+               padding:4px 14px; font-size:0.8rem; color:var(--gold); font-weight:700;
+               white-space:nowrap; align-self:flex-start; margin-top:4px;">
+    Session {{ current_session }}
+  </span>
+</div>
+
+<div style="display:flex; gap:16px; margin-bottom:28px; flex-wrap:wrap;">
+  {% if party %}
+  <span class="text-muted text-sm">{{ party | length }} adventurer{{ 's' if party | length != 1 }}</span>
+  {% endif %}
+  {% if active %}
+  <span class="text-muted text-sm">{{ active | length }} active quest{{ 's' if active | length != 1 }}</span>
+  {% endif %}
+  {% if npc_count %}
+  <span class="text-muted text-sm">{{ npc_count }} NPC{{ 's' if npc_count != 1 }} known</span>
+  {% endif %}
+  {% if faction_count %}
+  <span class="text-muted text-sm">{{ faction_count }} faction{{ 's' if faction_count != 1 }}</span>
+  {% endif %}
+</div>
+
+<!-- Previously on... -->
+{% if latest_journal %}
+<div class="card mb-4" style="border-color:var(--gold-dim);">
+  <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px; flex-wrap:wrap; gap:6px;">
+    <span style="color:var(--gold); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em;">
+      Previously — Session {{ latest_journal.session }}
+    </span>
+    {% if latest_journal.date %}
+    <span class="text-muted text-sm">{{ latest_journal.date }}</span>
+    {% endif %}
+  </div>
+  <div class="md-render" style="font-size:0.92rem; line-height:1.7;
+       overflow:hidden; display:-webkit-box; -webkit-line-clamp:5; -webkit-box-orient:vertical;">
+    {{ latest_journal.recap_html }}
+  </div>
+  <a href="/{{ slug }}/journal" style="display:inline-block; margin-top:12px; font-size:0.82rem;">
+    Full Chronicle →
+  </a>
 </div>
 {% endif %}
 
+<!-- Party -->
+{% if party %}
+<h2 class="section-title mt-8">Party</h2>
+<div class="card mb-4">
+  <div style="display:flex; flex-direction:column; gap:10px;">
+    {% for char in party %}
+    <div>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-weight:600; color:var(--text);">{{ char.name }}</span>
+        <span class="badge badge-{{ char.status }}">{{ char.status }}</span>
+      </div>
+      <div style="margin-top:2px;">
+        <span class="text-muted text-sm">{{ char.race }} {{ char['class'] }} · Lv{{ char.level }}</span>
+        {% if char.notes %}<span class="text-muted text-sm"> — {{ char.notes }}</span>{% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- Active Quests -->
 {% if active %}
 <h2 class="section-title mt-8">Active Quests</h2>
 {% for quest in active %}
 <div class="card mb-4">
-  <h3>{{ quest.title }} <span class="badge badge-active" style="margin-left:8px;">Active</span></h3>
-  <p>{{ quest.description }}</p>
+  <h3 style="margin-bottom:6px;">{{ quest.title }}</h3>
+  <p style="margin-bottom:10px; font-size:0.9rem; color:var(--muted);">{{ quest.description }}</p>
   {% if quest.objectives %}
-  <ul style="margin-top:10px; padding-left:18px;">
+  <ul style="padding-left:18px; margin:0;">
     {% for obj in quest.objectives %}
-    <li style="color:{{ 'var(--muted)' if obj.done else 'var(--text)' }}; text-decoration:{{ 'line-through' if obj.done else 'none' }}; font-size:0.9rem;">
+    <li style="color:{{ 'var(--muted)' if obj.done else 'var(--text)' }};
+               text-decoration:{{ 'line-through' if obj.done else 'none' }};
+               font-size:0.88rem; margin-bottom:3px;">
       {{ obj.text }}
     </li>
     {% endfor %}
@@ -35,6 +92,16 @@
   {% endif %}
 </div>
 {% endfor %}
+{% endif %}
+
+{% if not party and not active and not latest_journal %}
+<div class="card" style="padding:40px 24px; text-align:center;">
+  {% if session.get('dm_' ~ slug) %}
+  <p class="text-muted">Nothing here yet. Head to the <a href="/{{ slug }}/dm">DM Dashboard</a> to set up your campaign.</p>
+  {% else %}
+  <p class="text-muted">The adventure hasn't started yet.</p>
+  {% endif %}
+</div>
 {% endif %}
 
 {% endblock %}

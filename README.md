@@ -80,10 +80,11 @@ When authenticated as DM:
 - **Edit objectives** — toggle done, edit text, delete individual objectives
 - **Edit quest description** inline from the story page
 - **Edit ship details** — name, type, HP, notes, crew, cargo (add/remove)
-- **Edit stronghold** — name, type, location, condition, notes, features, upgrades
+- **Edit stronghold** — name, type, location, condition, notes, features, upgrades; delete stronghold
+- **Delete ship** — remove a ship entirely from DM Controls
 - **Session Plan** — write in markdown, rendered on the DM dashboard
-- **Session Notes** — freeform textarea, exportable as `.md` for use as next session plan
-- **Session Log** — post-session form to log NPC/faction interactions and quest updates
+- **Session Notes** — freeform textarea; use Export .md to save as next session plan
+- **✦ Generate Recap** — AI-generated player-facing session recap from notes (Claude Haiku)
 - **Campaign Settings** — rename campaign, update system and description
 - **Delete Campaign** — permanent, requires typing campaign name to confirm (owner only)
 
@@ -242,12 +243,26 @@ Notes export as `.md` for direct use as next session's plan.
 
 ---
 
+## AI Session Recap
+
+The DM dashboard includes a **✦ Generate Recap** button. After writing session notes, click it to generate a player-facing chronicle-style recap using Claude Haiku (Anthropic API).
+
+Requires `ANTHROPIC_API_KEY` in a `.env` file at the repo root:
+
+```
+ANTHROPIC_API_KEY=sk-ant-...
+```
+
+The `.env` is gitignored. If the key is missing the button will return a 500 error.
+
+---
+
 ## Setup
 
 ```bash
 cd questbook
 python3 -m venv venv
-venv/bin/pip install flask markdown werkzeug
+venv/bin/pip install flask markdown werkzeug anthropic python-dotenv
 venv/bin/python app.py
 ```
 

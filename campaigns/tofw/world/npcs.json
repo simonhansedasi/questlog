@@ -1,0 +1,67 @@
+{
+  "npcs": [
+    {
+      "id": "shemeshka",
+      "name": "Shemeshka the Marauder",
+      "role": "Arcanaloth crime boss — King of the Cross-Trade",
+      "relationship": "neutral",
+      "description": "The most powerful information broker in Sigil. An arcanaloth who trades in secrets and pulls strings across the city. Has her own agenda regarding the multiversal glitch — and the party is useful to her, for now.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "akin",
+      "name": "A'kin",
+      "role": "Shopkeeper — the Friendly Fiend",
+      "relationship": "friendly",
+      "description": "An unusually pleasant arcanaloth who runs a curiosity shop in Sigil. One of the few genuinely helpful faces in the city. Knows more than he lets on.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "parisa_taralmak",
+      "name": "Parisa Taralmak",
+      "role": "Leader of the Dustmen",
+      "relationship": "neutral",
+      "description": "Head of the Dustmen faction. Believes all existence is a prelude to True Death. Controls the Mortuary — where the party woke up.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "zadara",
+      "name": "Zadara",
+      "role": "Titan — potential ally",
+      "relationship": "unknown",
+      "description": "A titan with her own interests in the Outlands. Powerful enough to be a genuine asset — or a threat. Her motivations are not immediately clear.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "rondixiant",
+      "name": "Rondixiant",
+      "role": "Missing modron — key to the mystery",
+      "relationship": "unknown",
+      "description": "A modron carrying dangerous information about the multiversal glitch. Went missing somewhere in the planes. Finding it is central to understanding what happened to the party.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "vrischika",
+      "name": "Vrischika",
+      "role": "Proprietor — Curiosity Shoppe",
+      "relationship": "neutral",
+      "description": "Runs a high-end shop of rare and strange items in Sigil. Business-minded, not unkind. A useful contact if the party has coin.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "magga_bearhar",
+      "name": "Magga Bearhar",
+      "role": "Dustman — Mortuary attendant",
+      "relationship": "neutral",
+      "description": "A halfling Dustman working at the Mortuary. One of the first faces the party sees after waking. May be more sympathetic to the party than her faction would prefer.",
+      "hidden": true,
+      "log": []
+    }
+  ]
+}

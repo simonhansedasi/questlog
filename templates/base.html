@@ -10,12 +10,13 @@
   <nav>
     <a class="brand" href="/">QuestLog</a>
     {% if slug is defined and slug %}
-    <a href="/{{ slug }}/">Home</a>
-    <a href="/{{ slug }}/party">Party</a>
-    <a href="/{{ slug }}/assets">Assets</a>
-    <a href="/{{ slug }}/world">World</a>
-    <a href="/{{ slug }}/story">Story</a>
-    <a href="/{{ slug }}/references">Ref</a>
+    <a href="/{{ slug }}/" {% if request.path == '/' ~ slug ~ '/' %}class="active"{% endif %}>Home</a>
+    <a href="/{{ slug }}/party" {% if request.path.startswith('/' ~ slug ~ '/party') %}class="active"{% endif %}>Party</a>
+    <a href="/{{ slug }}/assets" {% if request.path.startswith('/' ~ slug ~ '/assets') %}class="active"{% endif %}>Assets</a>
+    <a href="/{{ slug }}/world" {% if request.path.startswith('/' ~ slug ~ '/world') %}class="active"{% endif %}>World</a>
+    <a href="/{{ slug }}/story" {% if request.path.startswith('/' ~ slug ~ '/story') %}class="active"{% endif %}>Story</a>
+    <a href="/{{ slug }}/journal" {% if request.path.startswith('/' ~ slug ~ '/journal') %}class="active"{% endif %}>Journal</a>
+    <a href="/{{ slug }}/references" {% if request.path.startswith('/' ~ slug ~ '/references') %}class="active"{% endif %}>Ref</a>
     <div class="dm-sep">
       {% if session.get('dm_' ~ slug) %}
       <a href="/{{ slug }}/dm" style="color:var(--purple); font-size:0.8rem; font-weight:700; padding:0 8px; letter-spacing:0.05em; text-decoration:none;">DM</a>
@@ -47,5 +48,24 @@
   <div class="container">
     {% block content %}{% endblock %}
   </div>
+{% if slug is defined and slug and not session.get('dm_' ~ slug) %}
+<script>
+(function() {
+  var rev = null;
+  function poll() {
+    fetch('/{{ slug }}/api/revision')
+      .then(function(r) { return r.ok ? r.json() : null; })
+      .then(function(data) {
+        if (!data) return;
+        if (rev === null) { rev = data.rev; return; }
+        if (data.rev !== rev) { location.reload(); }
+      })
+      .catch(function() {});
+  }
+  setInterval(poll, 8000);
+  poll();
+})();
+</script>
+{% endif %}
 </body>
 </html>

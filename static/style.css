@@ -65,6 +65,7 @@ nav a:hover, nav a.active {
   color: var(--text);
   border-bottom-color: var(--gold);
   text-decoration: none;
+  font-weight: 700;
 }
 
 /* ── Layout ──────────────────────────────────────────── */
@@ -192,8 +193,57 @@ nav a:hover, nav a.active {
 .md-render blockquote { border-left: 3px solid var(--purple); padding-left: 10px; color: var(--muted); font-style: italic; margin: 8px 0; }
 .md-render code { background: var(--surface2); border-radius: 3px; padding: 1px 5px; font-size: 0.8rem; }
 
-@media (max-width: 640px) {
+/* ── Mobile ──────────────────────────────────────────── */
+@media (max-width: 768px) {
+  /* Nav: horizontal scroll, no wrap */
+  nav {
+    padding: 0 8px;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 0;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  nav .brand {
+    padding: 12px 14px 12px 4px;
+    font-size: 1rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  nav a {
+    padding: 12px 10px;
+    font-size: 0.82rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  nav .dm-sep { flex-shrink: 0; }
+  nav div[style*="margin-left:auto"] { flex-shrink: 0; margin-left: 8px !important; }
+
+  /* Layout */
+  .container { padding: 16px 12px; }
+  .card { padding: 14px; }
   .card-grid { grid-template-columns: 1fr; }
-  nav { flex-wrap: wrap; }
-  .container { padding: 20px 16px; }
+
+  /* DM session plan/notes: stack on mobile */
+  .session-grid { grid-template-columns: 1fr !important; }
+  .session-grid > div > .card { max-height: none !important; }
+
+  /* Prevent iOS auto-zoom on input focus */
+  input, select, textarea { font-size: 16px !important; }
+
+  /* Adequate tap targets */
+  button { min-height: 40px; padding-top: 6px; padding-bottom: 6px; }
+  input[type="number"], input[type="text"], input[type="date"] { min-height: 40px; }
+
+  /* Let fixed-width inputs flex on narrow screens */
+  input[style*="width:100px"],
+  input[style*="width:80px"],
+  input[style*="width:70px"],
+  input[style*="width:54px"],
+  input[style*="width:56px"] { width: 100% !important; min-width: 0 !important; }
+
+  .page-title { font-size: 1.3rem; }
+  .section-title { margin-top: 20px; }
+  .mt-8 { margin-top: 20px; }
 }

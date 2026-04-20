@@ -17,19 +17,10 @@
 </div>
 
 <h2 class="section-title">Session Tools</h2>
-<div class="card-grid mb-4">
-  <a href="/{{ slug }}/dm/log" style="text-decoration:none;">
-    <div class="card" style="border-color:var(--gold-dim); transition:border-color 0.15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--gold-dim)'">
-      <h3>Session Log</h3>
-      <p class="text-muted text-sm">Log NPC and faction interactions, update quest status, check off objectives. Do this after each session.</p>
-    </div>
-  </a>
-</div>
-
-<div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:start;" class="mb-4">
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;" class="session-grid mb-4">
 
   <!-- Plan (left) -->
-  <div class="card" style="max-height:560px; overflow-y:auto;">
+  <div><div class="card" style="max-height:560px; overflow-y:auto;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
       <h3 style="margin:0;">Session Plan</h3>
       <button onclick="var e=document.getElementById('plan-edit'); e.style.display = e.style.display==='none'?'block':'none';"
@@ -53,10 +44,10 @@
     {% else %}
     <p class="text-muted text-sm">No plan yet. Click Edit to add one.</p>
     {% endif %}
-  </div>
+  </div></div>
 
   <!-- Notes (right) -->
-  <div class="card" style="max-height:560px; display:flex; flex-direction:column;">
+  <div><div class="card" style="max-height:560px; display:flex; flex-direction:column;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
       <h3 style="margin:0;">Session Notes</h3>
       <a href="/{{ slug }}/dm/session/notes/export"
@@ -70,14 +61,314 @@
                 style="flex:1; width:100%; box-sizing:border-box; background:var(--surface2); border:1px solid var(--border);
                        color:var(--text); border-radius:4px; padding:10px; font-size:0.85rem;
                        font-family:monospace; resize:none; margin-bottom:8px;">{{ session_notes }}</textarea>
-      <button type="submit"
-              style="background:var(--gold); color:#080a18; border:none; border-radius:4px;
-                     padding:5px 14px; font-size:0.82rem; font-weight:700; cursor:pointer; align-self:flex-start;">
-        Save Notes
-      </button>
+      <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+        <button type="submit"
+                style="background:var(--gold); color:#080a18; border:none; border-radius:4px;
+                       padding:5px 14px; font-size:0.82rem; font-weight:700; cursor:pointer;">
+          Save Notes
+        </button>
+        <button type="button" id="recap-btn"
+                onclick="generateRecap('{{ slug }}')"
+                style="background:var(--purple); color:#fff; border:none; border-radius:4px;
+                       padding:5px 14px; font-size:0.82rem; font-weight:700; cursor:pointer;">
+          ✦ Generate Recap
+        </button>
+      </div>
+    </form>
+  </div></div>
+
+</div>
+
+<div id="recap-section" style="display:none;" class="mb-4">
+  <h2 class="section-title">Player Recap</h2>
+  <div class="card">
+    <div id="recap-output" class="md-render" style="font-size:0.9rem; line-height:1.7;"></div>
+    <button onclick="navigator.clipboard.writeText(document.getElementById('recap-raw').value)"
+            style="margin-top:12px; background:var(--surface2); border:1px solid var(--border); color:var(--muted);
+                   border-radius:4px; padding:4px 12px; font-size:0.78rem; cursor:pointer;">
+      Copy to Clipboard
+    </button>
+    <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border);">
+      <p style="color:var(--muted); font-size:0.78rem; margin-bottom:12px; text-transform:uppercase; letter-spacing:0.05em; font-weight:700;">Post to Journal</p>
+      <form method="POST" action="/{{ slug }}/dm/journal/post" style="display:flex; flex-direction:column; gap:10px;">
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <div style="display:flex; flex-direction:column; gap:4px;">
+            <label style="color:var(--muted); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Session</label>
+            <input type="number" name="session" id="journal-session" value="{{ current_session }}" min="0"
+                   style="background:var(--surface2); border:1px solid var(--border); color:var(--text);
+                          border-radius:4px; padding:6px 10px; font-size:0.85rem; width:80px;">
+          </div>
+          <div style="display:flex; flex-direction:column; gap:4px;">
+            <label style="color:var(--muted); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Date</label>
+            <input type="date" name="date" id="journal-date"
+                   style="background:var(--surface2); border:1px solid var(--border); color:var(--text);
+                          border-radius:4px; padding:6px 10px; font-size:0.85rem;">
+          </div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:4px;">
+          <label style="color:var(--muted); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Recap</label>
+          <textarea name="recap" id="journal-recap" rows="8" required
+                    style="background:var(--surface2); border:1px solid var(--border); color:var(--text);
+                           border-radius:4px; padding:8px 10px; font-size:0.85rem; font-family:inherit;
+                           resize:vertical; width:100%; box-sizing:border-box;"></textarea>
+        </div>
+        <div>
+          <button type="submit"
+                  style="background:var(--purple); color:#fff; border:none; border-radius:4px;
+                         padding:6px 18px; font-size:0.85rem; font-weight:700; cursor:pointer;">
+            Post to Journal
+          </button>
+        </div>
+      </form>
+    </div>
+    <textarea id="recap-raw" style="display:none;"></textarea>
+  </div>
+</div>
+
+<script>
+function generateRecap(slug) {
+  const btn = document.getElementById('recap-btn');
+  btn.textContent = 'Generating…';
+  btn.disabled = true;
+  fetch('/' + slug + '/dm/session/recap', { method: 'POST' })
+    .then(r => r.json())
+    .then(data => {
+      btn.textContent = '✦ Generate Recap';
+      btn.disabled = false;
+      if (data.error) { alert(data.error); return; }
+      document.getElementById('recap-raw').value = data.recap;
+      document.getElementById('recap-output').textContent = data.recap;
+      document.getElementById('journal-recap').value = data.recap;
+      document.getElementById('journal-date').value = new Date().toISOString().split('T')[0];
+      document.getElementById('recap-section').style.display = 'block';
+      document.getElementById('recap-section').scrollIntoView({ behavior: 'smooth' });
+    })
+    .catch(() => { btn.textContent = '✦ Generate Recap'; btn.disabled = false; alert('Something went wrong.'); });
+}
+</script>
+
+<h2 class="section-title mt-8">Quick Log</h2>
+<div class="card mb-4">
+  {% if npcs or factions %}
+  <form method="POST" action="/{{ slug }}/dm/log/quick"
+        style="display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap;">
+    <div style="display:flex; flex-direction:column; gap:4px;">
+      <label style="color:var(--muted); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Entity</label>
+      <select name="entity" required
+              style="background:var(--surface2); border:1px solid var(--border); color:var(--text);
+                     border-radius:4px; padding:6px 10px; font-size:0.85rem; min-width:180px;">
+        {% if npcs %}
+        <optgroup label="NPCs">
+          {% for npc in npcs %}<option value="npc:{{ npc.id }}">{{ npc.name }}</option>{% endfor %}
+        </optgroup>
+        {% endif %}
+        {% if factions %}
+        <optgroup label="Factions">
+          {% for f in factions %}<option value="faction:{{ f.id }}">{{ f.name }}</option>{% endfor %}
+        </optgroup>
+        {% endif %}
+      </select>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:4px;">
+      <label style="color:var(--muted); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Session</label>
+      <input type="number" name="session" value="{{ current_session }}" min="0"
+             style="background:var(--surface2); border:1px solid var(--border); color:var(--text);
+                    border-radius:4px; padding:6px 10px; font-size:0.85rem; width:72px;">
+    </div>
+    <div style="display:flex; flex-direction:column; gap:4px;">
+      <label style="color:var(--muted); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Status</label>
+      <select name="relationship"
+              style="background:var(--surface2); border:1px solid var(--border); color:var(--text);
+                     border-radius:4px; padding:6px 10px; font-size:0.85rem;">
+        <option value="">— unchanged —</option>
+        {% for rel in ['neutral','friendly','allied','hostile','unknown'] %}
+        <option value="{{ rel }}">{{ rel }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:4px; flex:1; min-width:200px;">
+      <label style="color:var(--muted); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Note</label>
+      <input type="text" name="note" placeholder="One-line interaction note…"
+             style="background:var(--surface2); border:1px solid var(--border); color:var(--text);
+                    border-radius:4px; padding:6px 10px; font-size:0.85rem; width:100%; box-sizing:border-box;">
+    </div>
+    <button type="submit"
+            style="background:var(--gold); color:#080a18; border:none; border-radius:4px;
+                   padding:7px 16px; font-size:0.85rem; font-weight:700; cursor:pointer; white-space:nowrap;">
+      Log
+    </button>
+  </form>
+  {% else %}
+  <p class="text-muted text-sm">No NPCs or factions yet. Add some first.</p>
+  {% endif %}
+</div>
+
+<h2 class="section-title mt-8">World</h2>
+<div class="card mb-4">
+  {% if npcs or factions or party %}
+  {% if party %}
+  <p style="color:var(--muted); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;">Party</p>
+  <div style="display:flex; flex-direction:column; gap:6px; margin-bottom:16px;">
+    {% for char in party %}
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span style="font-size:0.88rem;">{{ char.name }}</span>
+        {% if char.hidden %}<span class="badge" style="background:var(--surface2); color:var(--muted); font-size:0.68rem;">Hidden</span>{% endif %}
+      </div>
+      <form method="POST" action="/{{ slug }}/dm/character/{{ char.name }}/toggle_hidden">
+        <input type="hidden" name="next" value="dm">
+        <button type="submit" style="background:{% if char.hidden %}var(--gold){% else %}var(--surface2){% endif %}; color:{% if char.hidden %}#080a18{% else %}var(--muted){% endif %}; border:1px solid {% if char.hidden %}var(--gold){% else %}var(--border){% endif %}; border-radius:4px; padding:3px 10px; font-size:0.75rem; font-weight:600; cursor:pointer; white-space:nowrap;">
+          {% if char.hidden %}Reveal{% else %}Hide{% endif %}
+        </button>
+      </form>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% if npcs %}
+  <p style="color:var(--muted); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;">NPCs</p>
+  <div style="display:flex; flex-direction:column; gap:6px; margin-bottom:16px;">
+    {% for npc in npcs %}
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span style="font-size:0.88rem;">{{ npc.name }}</span>
+        <span class="badge badge-{{ npc.relationship }}" style="font-size:0.68rem;">{{ npc.relationship }}</span>
+        {% if npc.hidden %}<span class="badge" style="background:var(--surface2); color:var(--muted); font-size:0.68rem;">Hidden</span>{% endif %}
+      </div>
+      <form method="POST" action="/{{ slug }}/dm/npc/{{ npc.id }}/toggle_hidden">
+        <input type="hidden" name="next" value="dm">
+        <button type="submit" style="background:{% if npc.hidden %}var(--gold){% else %}var(--surface2){% endif %}; color:{% if npc.hidden %}#080a18{% else %}var(--muted){% endif %}; border:1px solid {% if npc.hidden %}var(--gold){% else %}var(--border){% endif %}; border-radius:4px; padding:3px 10px; font-size:0.75rem; font-weight:600; cursor:pointer; white-space:nowrap;">
+          {% if npc.hidden %}Reveal{% else %}Hide{% endif %}
+        </button>
+      </form>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% if factions %}
+  <p style="color:var(--muted); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;">Factions</p>
+  <div style="display:flex; flex-direction:column; gap:6px;">
+    {% for f in factions %}
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span style="font-size:0.88rem;">{{ f.name }}</span>
+        <span class="badge badge-{{ f.relationship }}" style="font-size:0.68rem;">{{ f.relationship }}</span>
+        {% if f.hidden %}<span class="badge" style="background:var(--surface2); color:var(--muted); font-size:0.68rem;">Hidden</span>{% endif %}
+      </div>
+      <form method="POST" action="/{{ slug }}/dm/faction/{{ f.id }}/toggle_hidden">
+        <input type="hidden" name="next" value="dm">
+        <button type="submit" style="background:{% if f.hidden %}var(--gold){% else %}var(--surface2){% endif %}; color:{% if f.hidden %}#080a18{% else %}var(--muted){% endif %}; border:1px solid {% if f.hidden %}var(--gold){% else %}var(--border){% endif %}; border-radius:4px; padding:3px 10px; font-size:0.75rem; font-weight:600; cursor:pointer; white-space:nowrap;">
+          {% if f.hidden %}Reveal{% else %}Hide{% endif %}
+        </button>
+      </form>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% else %}
+  <p class="text-muted text-sm">No party, NPCs, or factions yet.</p>
+  {% endif %}
+</div>
+
+<h2 class="section-title mt-8">Ships</h2>
+{% set input_s = "background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:5px 9px; font-size:0.82rem;" %}
+{% set btn_s = "background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:5px 14px; font-size:0.82rem; font-weight:700; cursor:pointer;" %}
+{% set btn_del_s = "background:none; border:1px solid #e05c5c; color:#e05c5c; border-radius:4px; padding:3px 10px; font-size:0.78rem; cursor:pointer;" %}
+{% set btn_muted_s = "background:var(--surface2); color:var(--muted); border:1px solid var(--border); border-radius:4px; padding:3px 10px; font-size:0.78rem; cursor:pointer;" %}
+
+{% if assets.get('ships') %}
+{% for ship in assets.ships %}
+{% set ship_idx = loop.index0 %}
+<div class="card mb-4">
+  <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; flex-wrap:wrap; margin-bottom:10px;">
+    <div>
+      <strong>{{ ship.name }}</strong>
+      <span class="text-muted text-sm" style="margin-left:8px;">{{ ship.type }}</span>
+    </div>
+    <form method="POST" action="/{{ slug }}/dm/assets/ship/{{ ship_idx }}/delete">
+      <button type="submit" style="{{ btn_del_s }}">Delete Ship</button>
     </form>
   </div>
 
+  <!-- Edit ship name/type/HP/notes -->
+  <form method="POST" action="/{{ slug }}/dm/assets/ship/{{ ship_idx }}/edit"
+        style="display:flex; gap:6px; align-items:flex-end; flex-wrap:wrap; margin-bottom:12px;">
+    <div style="display:flex; flex-direction:column; gap:3px;">
+      <label style="color:var(--muted); font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em;">Name</label>
+      <input type="text" name="name" value="{{ ship.name }}" required style="{{ input_s }} min-width:120px;">
+    </div>
+    <div style="display:flex; flex-direction:column; gap:3px;">
+      <label style="color:var(--muted); font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em;">Type</label>
+      <input type="text" name="type" value="{{ ship.type }}" style="{{ input_s }} width:110px;">
+    </div>
+    <div style="display:flex; flex-direction:column; gap:3px;">
+      <label style="color:var(--muted); font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em;">HP</label>
+      <input type="text" name="hp" value="{{ ship.hp }}" placeholder="e.g. 250/250" style="{{ input_s }} width:100px;">
+    </div>
+    <div style="display:flex; flex-direction:column; gap:3px; flex:1; min-width:120px;">
+      <label style="color:var(--muted); font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em;">Notes</label>
+      <input type="text" name="notes" value="{{ ship.notes }}" style="{{ input_s }} width:100%;">
+    </div>
+    <button type="submit" style="{{ btn_s }}">Save</button>
+  </form>
+
+  <!-- Weapons -->
+  {% if ship.weapons %}
+  <div style="margin-bottom:10px;">
+    <span style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted);">Weapons</span>
+    <div style="margin-top:6px; display:flex; flex-direction:column; gap:6px;">
+      {% for w in ship.weapons %}
+      {% if w is mapping %}
+      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+        <span class="text-sm" style="min-width:110px;">{{ w.name }}</span>
+        <form method="POST" action="/{{ slug }}/assets/ship/{{ ship_idx }}/weapon/{{ loop.index0 }}/hp"
+              style="display:flex; align-items:center; gap:4px;">
+          <input type="number" name="hp" value="{{ w.hp }}" min="0" max="{{ w.max_hp }}"
+                 style="{{ input_s }} width:56px; text-align:center;">
+          <span class="text-muted text-sm">/ {{ w.max_hp }}</span>
+          <button type="submit" style="{{ btn_muted_s }}">set</button>
+        </form>
+        <form method="POST" action="/{{ slug }}/dm/assets/ship/{{ ship_idx }}/weapon/{{ loop.index0 }}/delete">
+          <button type="submit" style="{{ btn_del_s }}">×</button>
+        </form>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Add weapon -->
+  <details style="margin-top:4px;">
+    <summary style="list-style:none; cursor:pointer; color:var(--gold-dim); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">+ Add Weapon</summary>
+    <form method="POST" action="/{{ slug }}/dm/assets/ship/{{ ship_idx }}/weapon"
+          style="margin-top:8px; display:flex; gap:6px; align-items:flex-end; flex-wrap:wrap;">
+      <input type="text" name="name" placeholder="Weapon name" required style="{{ input_s }} flex:1; min-width:120px;">
+      <input type="number" name="max_hp" placeholder="Max HP" value="50" style="{{ input_s }} width:80px;">
+      <button type="submit" style="{{ btn_s }}">Add</button>
+    </form>
+  </details>
+</div>
+{% endfor %}
+{% else %}
+<div class="card mb-4">
+  <p class="text-muted text-sm">No ships.</p>
+</div>
+{% endif %}
+
+<!-- Add ship -->
+<div class="card mb-4">
+  <details>
+    <summary style="list-style:none; cursor:pointer; color:var(--gold-dim); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">+ Add Ship</summary>
+    <form method="POST" action="/{{ slug }}/dm/assets/ship"
+          style="margin-top:10px; display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap;">
+      <input type="text" name="name" placeholder="Ship name" required style="{{ input_s }} flex:1; min-width:120px;">
+      <input type="text" name="type" placeholder="Type (e.g. Sloop)" style="{{ input_s }} width:140px;">
+      <input type="text" name="hp" placeholder="HP (e.g. 250/250)" style="{{ input_s }} width:120px;">
+      <input type="text" name="notes" placeholder="Notes" style="{{ input_s }} flex:1; min-width:120px;">
+      <button type="submit" style="{{ btn_s }}">Add Ship</button>
+    </form>
+  </details>
 </div>
 
 <h2 class="section-title mt-8">Add New</h2>

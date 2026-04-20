@@ -21,9 +21,13 @@
 <div class="card">
   <ul class="log-list">
     {% for entry in faction.log | reverse %}
-    <li>
-      <span class="log-session">Session {{ entry.session }}</span>
-      {{ entry.note }}
+    <li style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+      <span><span class="log-session">Session {{ entry.session }}</span>{{ entry.note }}</span>
+      {% if session.get('dm_' ~ slug) %}
+      <form method="POST" action="/{{ slug }}/dm/faction/{{ faction.id }}/log/{{ (faction.log | length) - 1 - loop.index0 }}/delete" style="flex-shrink:0;">
+        <button type="submit" style="background:none; border:none; color:var(--muted); font-size:0.8rem; cursor:pointer; padding:0 4px;">×</button>
+      </form>
+      {% endif %}
     </li>
     {% endfor %}
   </ul>
@@ -78,6 +82,14 @@
                 style="{{ input_style }} resize:vertical; font-family:inherit;">{{ faction.description }}</textarea>
     </div>
     <div><button type="submit" style="{{ btn_style }}">Save Changes</button></div>
+  </form>
+
+  <hr class="divider">
+
+  <form method="POST" action="/{{ slug }}/dm/faction/{{ faction.id }}/delete">
+    <button type="submit" style="background:none; border:1px solid #e05c5c; color:#e05c5c; border-radius:4px; padding:4px 12px; font-size:0.78rem; cursor:pointer;">
+      Delete Faction
+    </button>
   </form>
 </details>
 {% endif %}

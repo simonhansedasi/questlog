@@ -20,17 +20,12 @@
     </div>
     {% endfor %}
   </div>
-  {% if session.get('dm_' ~ slug) %}
-  <details style="margin-top:12px;">
-    <summary style="list-style:none; cursor:pointer; color:var(--gold-dim); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">Update Currency</summary>
-    <form method="POST" action="/{{ slug }}/dm/assets/currency"
-          style="margin-top:10px; display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap;">
-      <input type="text" name="key" placeholder="Currency name" value="gold" style="{{ input_style }} width:120px;">
-      <input type="number" name="amount" placeholder="Amount" style="{{ input_style }} width:100px;">
-      <button type="submit" style="{{ btn_style }}">Set</button>
-    </form>
-  </details>
-  {% endif %}
+  <form method="POST" action="/{{ slug }}/assets/currency"
+        style="margin-top:12px; display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap;">
+    <input type="text" name="key" placeholder="Currency name" value="gold" style="{{ input_style }} width:120px;">
+    <input type="number" name="amount" placeholder="Amount" style="{{ input_style }} width:100px;">
+    <button type="submit" style="{{ btn_style }}">Set</button>
+  </form>
 </div>
 
 <!-- Items -->
@@ -41,28 +36,24 @@
     {% for item in assets['items'] %}
     <li style="display:flex; justify-content:space-between; align-items:center; gap:1rem;">
       <span>{{ item.name }}{% if item.notes %} <span class="text-muted">— {{ item.notes }}</span>{% endif %}</span>
-      {% if session.get('dm_' ~ slug) %}
-      <form method="POST" action="/{{ slug }}/dm/assets/item/{{ loop.index0 }}/remove" style="display:inline;">
+      <form method="POST" action="/{{ slug }}/assets/item/{{ loop.index0 }}/remove" style="display:inline;">
         <button type="submit" style="{{ btn_del }}">remove</button>
       </form>
-      {% endif %}
     </li>
     {% endfor %}
   </ul>
   {% else %}
   <p class="text-muted text-sm" style="margin-bottom:12px;">No items.</p>
   {% endif %}
-  {% if session.get('dm_' ~ slug) %}
   <details>
     <summary style="list-style:none; cursor:pointer; color:var(--gold-dim); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">Add Item</summary>
-    <form method="POST" action="/{{ slug }}/dm/assets/item"
+    <form method="POST" action="/{{ slug }}/assets/item"
           style="margin-top:10px; display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap;">
       <input type="text" name="name" placeholder="Item name" required style="{{ input_style }} flex:1; min-width:140px;">
       <input type="text" name="notes" placeholder="Notes (optional)" style="{{ input_style }} flex:1; min-width:140px;">
       <button type="submit" style="{{ btn_style }}">Add</button>
     </form>
   </details>
-  {% endif %}
 </div>
 
 <!-- Ships -->
@@ -94,6 +85,11 @@
               <span class="text-muted text-sm">/ {{ w.max_hp }}</span>
               <button type="submit" style="background:none; border:1px solid var(--border); color:var(--muted); border-radius:4px; padding:2px 8px; font-size:0.75rem; cursor:pointer;">set</button>
             </form>
+            {% if session.get('dm_' ~ slug) %}
+            <form method="POST" action="/{{ slug }}/dm/assets/ship/{{ ship_idx }}/weapon/{{ loop.index0 }}/delete" style="display:inline;">
+              <button type="submit" style="{{ btn_del }}">×</button>
+            </form>
+            {% endif %}
             {% else %}
             <span class="text-sm text-muted">{{ w }}</span>
             {% endif %}
@@ -175,6 +171,12 @@
             <button type="submit" style="{{ btn_style }}">+ Cargo</button>
           </form>
         </div>
+
+        <form method="POST" action="/{{ slug }}/dm/assets/ship/{{ ship_idx }}/delete">
+          <button type="submit" style="background:none; border:1px solid #e05c5c; color:#e05c5c; border-radius:4px; padding:4px 12px; font-size:0.78rem; cursor:pointer;">
+            Delete Ship
+          </button>
+        </form>
 
       </div>
     </details>
@@ -292,19 +294,45 @@
       </form>
     </div>
   </details>
+  <form method="POST" action="/{{ slug }}/dm/assets/stronghold/delete" style="margin-top:12px;">
+    <button type="submit" style="background:none; border:1px solid #e05c5c; color:#e05c5c; border-radius:4px; padding:4px 12px; font-size:0.78rem; cursor:pointer;">
+      Delete Stronghold
+    </button>
+  </form>
   {% endif %}
   {% endif %}
 </div>
 
 <!-- Property -->
-{% if assets.get('property') %}
 <h2 class="section-title mt-8">Property</h2>
-{% for prop in assets.property %}
 <div class="card mb-4">
-  <h3>{{ prop.name }}</h3>
-  {% if prop.notes %}<p class="text-muted text-sm">{{ prop.notes }}</p>{% endif %}
+  {% if assets.get('property') %}
+  <ul class="log-list" style="margin-bottom:12px;">
+    {% for prop in assets.property %}
+    <li style="display:flex; justify-content:space-between; align-items:center; gap:1rem;">
+      <span>{{ prop.name }}{% if prop.notes %} <span class="text-muted">— {{ prop.notes }}</span>{% endif %}</span>
+      {% if session.get('dm_' ~ slug) %}
+      <form method="POST" action="/{{ slug }}/dm/assets/property/{{ loop.index0 }}/remove" style="display:inline;">
+        <button type="submit" style="{{ btn_del }}">remove</button>
+      </form>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="text-muted text-sm" style="margin-bottom:12px;">No property.</p>
+  {% endif %}
+  {% if session.get('dm_' ~ slug) %}
+  <details>
+    <summary style="list-style:none; cursor:pointer; color:var(--gold-dim); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">Add Property</summary>
+    <form method="POST" action="/{{ slug }}/dm/assets/property"
+          style="margin-top:10px; display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap;">
+      <input type="text" name="name" placeholder="Property name" required style="{{ input_style }} flex:1; min-width:140px;">
+      <input type="text" name="notes" placeholder="Notes (optional)" style="{{ input_style }} flex:1; min-width:140px;">
+      <button type="submit" style="{{ btn_style }}">Add</button>
+    </form>
+  </details>
+  {% endif %}
 </div>
-{% endfor %}
-{% endif %}
 
 {% endblock %}
