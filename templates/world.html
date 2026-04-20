@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}World — {{ meta.name }}{% endblock %}
+{% block content %}
+
+<h1 class="page-title">World</h1>
+<p class="subtitle">{{ meta.name }}</p>
+
+{% if npcs %}
+<h2 class="section-title">NPCs</h2>
+<div class="card-grid mb-4">
+  {% for npc in npcs %}
+  <a href="/{{ slug }}/world/npc/{{ npc.id }}" style="text-decoration:none;">
+    <div class="card" style="transition:border-color 0.15s; {% if session.get('dm_' ~ slug) and npc.hidden %}opacity:0.6;{% endif %}" onmouseover="this.style.borderColor='var(--gold-dim)'" onmouseout="this.style.borderColor='var(--border)'">
+      <h3>{{ npc.name }}</h3>
+      <div class="role">{{ npc.role }}</div>
+      <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center; margin-top:4px;">
+        <span class="badge badge-{{ npc.relationship }}">{{ npc.relationship }}</span>
+        {% if session.get('dm_' ~ slug) and npc.hidden %}<span class="badge" style="background:var(--surface2); color:var(--muted); font-size:0.7rem;">Hidden</span>{% endif %}
+      </div>
+      {% if npc.log %}<p class="text-muted text-sm mt-4">{{ npc.log | length }} interaction{{ 's' if npc.log | length != 1 }}</p>{% endif %}
+    </div>
+  </a>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% if factions %}
+<h2 class="section-title mt-8">Factions</h2>
+<div class="card-grid">
+  {% for faction in factions %}
+  <a href="/{{ slug }}/world/faction/{{ faction.id }}" style="text-decoration:none;">
+    <div class="card" style="transition:border-color 0.15s; {% if session.get('dm_' ~ slug) and faction.hidden %}opacity:0.6;{% endif %}" onmouseover="this.style.borderColor='var(--gold-dim)'" onmouseout="this.style.borderColor='var(--border)'">
+      <h3>{{ faction.name }}</h3>
+      <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center; margin-top:4px;">
+        <span class="badge badge-{{ faction.relationship }}">{{ faction.relationship }}</span>
+        {% if session.get('dm_' ~ slug) and faction.hidden %}<span class="badge" style="background:var(--surface2); color:var(--muted); font-size:0.7rem;">Hidden</span>{% endif %}
+      </div>
+      {% if faction.log %}<p class="text-muted text-sm mt-4">{{ faction.log | length }} interaction{{ 's' if faction.log | length != 1 }}</p>{% endif %}
+    </div>
+  </a>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% endblock %}

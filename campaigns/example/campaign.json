@@ -1,0 +1,9 @@
+{
+  "name": "Blank Campaign",
+  "system": "Any",
+  "slug": "example",
+  "description": "A clean starting point. Clone this to begin your own campaign from scratch.",
+  "created": "2026-04-19",
+  "demo": true,
+  "dm_pin": "1234"
+}

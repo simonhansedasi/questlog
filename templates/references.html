@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}References — {{ meta.name }}{% endblock %}
+{% block content %}
+
+<h1 class="page-title">References</h1>
+<p class="subtitle">{{ meta.name }}</p>
+
+{% set input_style = "background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:5px 9px; font-size:0.82rem;" %}
+{% set btn_style = "background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:5px 14px; font-size:0.82rem; font-weight:700; cursor:pointer;" %}
+
+{% for ref in references %}
+<div class="card mb-4">
+  <div style="display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
+    <h2 style="margin:0; font-size:1.1rem;">{{ ref.title }}</h2>
+    {% if ref.source %}<span class="text-muted text-sm">{{ ref.source }}</span>{% endif %}
+  </div>
+
+  {% if ref.notes %}
+  <p class="text-muted text-sm" style="margin-bottom:12px;">{{ ref.notes }}</p>
+  {% endif %}
+
+  {% if ref.columns and ref.rows %}
+  <div style="overflow-x:auto;">
+    <table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
+      <thead>
+        <tr>
+          {% for col in ref.columns %}
+          <th style="text-align:left; padding:6px 10px; border-bottom:1px solid var(--border); color:var(--muted); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; white-space:nowrap;">{{ col }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in ref.rows %}
+        <tr style="border-bottom:1px solid var(--surface2);">
+          {% for cell in row %}
+          <td style="padding:7px 10px; color:var(--text); white-space:nowrap;">{{ cell }}</td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+</div>
+{% else %}
+<div class="card mb-4">
+  <p class="text-muted text-sm">No references yet.</p>
+</div>
+{% endfor %}
+
+{% if session.get('dm_' ~ slug) %}
+<h2 class="section-title mt-8">Add Reference</h2>
+<div class="card mb-4">
+  <form method="POST" action="/{{ slug }}/dm/references/add" style="display:flex; flex-direction:column; gap:10px;">
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <input type="text" name="title" placeholder="Title" required style="{{ input_style }} flex:1; min-width:160px;">
+      <input type="text" name="source" placeholder="Source (e.g. DMG p. 255)" style="{{ input_style }} flex:1; min-width:160px;">
+    </div>
+    <textarea name="notes" placeholder="Notes / description (optional)" rows="2"
+              style="{{ input_style }} width:100%; box-sizing:border-box; resize:vertical;"></textarea>
+    <div>
+      <p class="text-muted text-sm" style="margin-bottom:6px;">Table columns (comma-separated)</p>
+      <input type="text" name="columns" placeholder="e.g. Weapon, Cost, Damage" style="{{ input_style }} width:100%; box-sizing:border-box;">
+    </div>
+    <div>
+      <p class="text-muted text-sm" style="margin-bottom:6px;">Rows — one row per line, values comma-separated</p>
+      <textarea name="rows" placeholder="Ballista, 500 gp, 3d10 piercing&#10;Mangonel, 100 gp, 5d10 bludgeoning" rows="5"
+                style="{{ input_style }} width:100%; box-sizing:border-box; resize:vertical; font-family:monospace;"></textarea>
+    </div>
+    <div>
+      <button type="submit" style="{{ btn_style }}">Add Reference</button>
+    </div>
+  </form>
+</div>
+{% endif %}
+
+{% endblock %}

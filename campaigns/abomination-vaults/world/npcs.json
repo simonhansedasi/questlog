@@ -1,0 +1,67 @@
+{
+  "npcs": [
+    {
+      "id": "wrin_sivinxi",
+      "name": "Wrin Sivinxi",
+      "role": "Primary quest-giver — Wrin's Wonders",
+      "relationship": "allied",
+      "description": "An elf who runs Wrin's Wonders, an oddities and curiosities shop in Otari. Has prophetic visions. The Gauntlight awakening disturbs her deeply — she's the one who sends the party to investigate. Has connections to the Cosmic Caravan faith. Trusts the stars more than people.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "belcorra_haruvex",
+      "name": "Belcorra Haruvex",
+      "role": "Ancient sorcerer — primary villain",
+      "relationship": "hostile",
+      "description": "An ancient and powerful sorcerer who died centuries ago and now seeks to return. Her soul is anchored to the Abomination Vaults dungeon beneath the Gauntlight lighthouse. Has been slowly building an army of undead and aberrations. Her resurrection is the central threat of the adventure path.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "voz_lirayne",
+      "name": "Voz Lirayne",
+      "role": "Necromancer — early antagonist",
+      "relationship": "hostile",
+      "description": "A necromancer operating in the upper levels of the Abomination Vaults. Has her own agenda separate from Belcorra but makes an early dangerous encounter. May have information about what's deeper in the dungeon.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "barzillai_trench",
+      "name": "Barzillai Trench",
+      "role": "Town fisherman — rumor source",
+      "relationship": "friendly",
+      "description": "A local fisherman in Otari who has noticed strange activity around the Gauntlight. Good source of local rumors and water-access knowledge.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "tamily_tanderveil",
+      "name": "Tamily Tanderveil",
+      "role": "Innkeeper — Otari",
+      "relationship": "friendly",
+      "description": "Runs the local inn in Otari. The party's likely base of operations. Knows the town's history and the legends of the Gauntlight.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "vandy_banderdash",
+      "name": "Vandy Banderdash",
+      "role": "Town leader — Otari",
+      "relationship": "neutral",
+      "description": "One of the prominent figures in Otari. Concerned about the Gauntlight but cautious about committing town resources. Will support the party if they prove themselves.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "quara_orshendiel",
+      "name": "Quara Orshendiel",
+      "role": "Drow leader — deeper in the Vaults",
+      "relationship": "hostile",
+      "description": "Leader of a drow faction called Yldaris operating in the lower levels of the Abomination Vaults. Has an uneasy relationship with Belcorra's remnants. May be an enemy, an obstacle, or a complicated ally depending on the party's approach.",
+      "hidden": true,
+      "log": []
+    }
+  ]
+}

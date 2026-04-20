@@ -1,0 +1,15 @@
+{
+  "npcs": [
+    {
+      "id": "innkeeper_mara",
+      "name": "Mara",
+      "role": "Innkeeper",
+      "relationship": "friendly",
+      "description": "Runs the Broken Axle inn. Knows everyone in town.",
+      "hidden": false,
+      "log": [
+        { "session": 1, "note": "First contact. Gave the party a tip about the missing merchant." }
+      ]
+    }
+  ]
+}

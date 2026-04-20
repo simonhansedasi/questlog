@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% block title %}Story — {{ meta.name }}{% endblock %}
+{% block content %}
+
+<h1 class="page-title">Story</h1>
+<p class="subtitle">{{ meta.name }}{% if session.get('dm_' ~ slug) %} &mdash; <a href="/{{ slug }}/dm/quests/add">+ Add Quest</a>{% endif %}</p>
+
+{% set input_style = "background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:5px 9px; font-size:0.82rem;" %}
+{% set btn_style = "background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:5px 14px; font-size:0.82rem; font-weight:700; cursor:pointer;" %}
+{% set btn_muted = "background:var(--surface2); color:var(--muted); border:1px solid var(--border); border-radius:4px; padding:5px 14px; font-size:0.82rem; cursor:pointer;" %}
+
+{% set active = quests | selectattr('status', 'eq', 'active') | list %}
+{% set complete = quests | selectattr('status', 'eq', 'complete') | list %}
+{% set failed = quests | selectattr('status', 'eq', 'failed') | list %}
+
+{% for group, label in [(active, 'Active'), (complete, 'Complete'), (failed, 'Failed')] %}
+{% if group %}
+<h2 class="section-title {% if not loop.first %}mt-8{% endif %}">{{ label }}</h2>
+{% for quest in group %}
+<div class="card mb-4">
+
+  <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; flex-wrap:wrap; margin-bottom:8px;">
+    <h3>{{ quest.title }}</h3>
+    <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+      {% if session.get('dm_' ~ slug) and quest.hidden %}
+      <span class="badge" style="background:var(--surface2); color:var(--muted);">Hidden</span>
+      {% endif %}
+      <span class="badge badge-{{ quest.status }}">{{ quest.status }}</span>
+    </div>
+  </div>
+
+  <p style="margin-bottom:10px;">{{ quest.description }}</p>
+
+  {% if quest.objectives %}
+  <div style="margin-bottom:10px;">
+    {% for obj in quest.objectives %}
+    <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px; flex-wrap:wrap;">
+      {% if session.get('dm_' ~ slug) %}
+      <form method="POST" action="/{{ slug }}/dm/quest/{{ quest.id }}/obj/{{ loop.index0 }}/toggle" style="display:inline; flex-shrink:0;">
+        <button type="submit" style="background:none; border:none; cursor:pointer; padding:0; display:flex; align-items:center;">
+          <span style="width:16px; height:16px; border-radius:3px; border:2px solid {{ 'var(--gold)' if obj.done else 'var(--border)' }};
+                       background:{{ 'var(--gold)' if obj.done else 'transparent' }}; display:flex; align-items:center; justify-content:center;">
+            {% if obj.done %}<span style="color:#080a18; font-size:10px; font-weight:900;">✓</span>{% endif %}
+          </span>
+        </button>
+      </form>
+      <span style="font-size:0.9rem; color:{{ 'var(--muted)' if obj.done else 'var(--text)' }};
+                   text-decoration:{{ 'line-through' if obj.done else 'none' }}; flex:1;">{{ obj.text }}</span>
+      <details style="display:inline;">
+        <summary style="list-style:none; cursor:pointer; color:var(--muted); font-size:0.72rem; border:1px solid var(--border); border-radius:3px; padding:1px 6px;">edit</summary>
+        <form method="POST" action="/{{ slug }}/dm/quest/{{ quest.id }}/obj/{{ loop.index0 }}/edit"
+              style="display:flex; gap:4px; margin-top:4px;">
+          <input type="text" name="text" value="{{ obj.text }}" style="{{ input_style }} flex:1; min-width:160px;">
+          <button type="submit" style="{{ btn_style }}">Save</button>
+        </form>
+      </details>
+      <form method="POST" action="/{{ slug }}/dm/quest/{{ quest.id }}/obj/{{ loop.index0 }}/delete" style="display:inline;">
+        <button type="submit" style="background:none; border:1px solid var(--border); color:var(--muted); border-radius:3px; padding:1px 6px; font-size:0.72rem; cursor:pointer;">×</button>
+      </form>
+      {% else %}
+      <span style="width:16px; height:16px; border-radius:3px; border:2px solid {{ 'var(--gold)' if obj.done else 'var(--border)' }};
+                   background:{{ 'var(--gold)' if obj.done else 'transparent' }}; flex-shrink:0; display:flex; align-items:center; justify-content:center;">
+        {% if obj.done %}<span style="color:#080a18; font-size:10px; font-weight:900;">✓</span>{% endif %}
+      </span>
+      <span style="font-size:0.9rem; color:{{ 'var(--muted)' if obj.done else 'var(--text)' }};
+                   text-decoration:{{ 'line-through' if obj.done else 'none' }};">{{ obj.text }}</span>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if quest.log %}
+  <ul class="log-list" style="margin-bottom:10px;">
+    {% for entry in quest.log | reverse %}
+    <li><span class="log-session">Session {{ entry.session }}</span>{{ entry.note }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+
+  {% if session.get('dm_' ~ slug) %}
+  <details style="margin-top:8px;">
+    <summary style="list-style:none; cursor:pointer; color:var(--gold-dim); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">
+      DM Controls
+    </summary>
+    <div style="margin-top:12px; display:flex; flex-direction:column; gap:12px;">
+
+      <form method="POST" action="/{{ slug }}/dm/quest/{{ quest.id }}/update"
+            style="display:flex; gap:8px; flex-wrap:wrap; align-items:flex-end;">
+        <div style="display:flex; flex-direction:column; gap:4px;">
+          <label style="color:var(--muted); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">Session #</label>
+          <input type="number" name="session" min="1" style="{{ input_style }} width:80px;">
+        </div>
+        <div style="display:flex; flex-direction:column; gap:4px; flex:1; min-width:160px;">
+          <label style="color:var(--muted); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">Log Note</label>
+          <input type="text" name="note" placeholder="What happened?" style="{{ input_style }} width:100%;">
+        </div>
+        <div style="display:flex; flex-direction:column; gap:4px;">
+          <label style="color:var(--muted); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">Status</label>
+          <select name="status" style="{{ input_style }}">
+            {% for s in ['active','complete','failed'] %}
+            <option value="{{ s }}" {% if s == quest.status %}selected{% endif %}>{{ s }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <button type="submit" style="{{ btn_style }}">Save</button>
+      </form>
+
+      <form method="POST" action="/{{ slug }}/dm/quest/{{ quest.id }}/description"
+            style="display:flex; flex-direction:column; gap:6px;">
+        <label style="color:var(--muted); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">Description</label>
+        <textarea name="description" rows="3"
+                  style="{{ input_style }} width:100%; box-sizing:border-box; resize:vertical; font-family:inherit;">{{ quest.description }}</textarea>
+        <div><button type="submit" style="{{ btn_muted }}">Save Description</button></div>
+      </form>
+
+      <form method="POST" action="/{{ slug }}/dm/quests/{{ quest.id }}/objective"
+            style="display:flex; gap:8px; align-items:flex-end;">
+        <input type="text" name="text" placeholder="New objective..." style="{{ input_style }} flex:1;">
+        <button type="submit" style="{{ btn_muted }}">+ Objective</button>
+      </form>
+
+      <form method="POST" action="/{{ slug }}/dm/quest/{{ quest.id }}/toggle_hidden">
+        <button type="submit" style="background:{% if quest.hidden %}var(--gold){% else %}var(--surface2){% endif %}; color:{% if quest.hidden %}#080a18{% else %}var(--muted){% endif %}; border:1px solid {% if quest.hidden %}var(--gold){% else %}var(--border){% endif %}; border-radius:4px; padding:5px 14px; font-size:0.82rem; font-weight:700; cursor:pointer;">
+          {% if quest.hidden %}Reveal to Players{% else %}Hide from Players{% endif %}
+        </button>
+      </form>
+
+    </div>
+  </details>
+  {% endif %}
+</div>
+{% endfor %}
+{% endif %}
+{% endfor %}
+
+{% if not quests %}
+<p class="text-muted">No quests yet. <a href="/{{ slug }}/dm/quests/add">Add one.</a></p>
+{% endif %}
+
+{% endblock %}

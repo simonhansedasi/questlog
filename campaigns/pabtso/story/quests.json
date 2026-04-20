@@ -1,0 +1,70 @@
+{
+  "quests": [
+    {
+      "id": "deliver_the_wagon",
+      "title": "Deliver Gundren's Wagon",
+      "status": "active",
+      "description": "The party was hired to escort a wagon of supplies to Barthen's Provisions in Phandalin. Simple job. Except Gundren and Sildar have disappeared.",
+      "hidden": true,
+      "objectives": [
+        { "text": "Deliver the wagon to Barthen's Provisions in Phandalin", "done": false },
+        { "text": "Find out what happened to Gundren and Sildar", "done": false }
+      ],
+      "log": []
+    },
+    {
+      "id": "rescue_gundren",
+      "title": "Rescue Gundren Rockseeker",
+      "status": "active",
+      "description": "Gundren has been captured by the Cragmaw goblins and taken to Cragmaw Castle on the Black Spider's orders. He has a map to Wave Echo Cave — the lost mine of the Phandelver's Pact.",
+      "hidden": true,
+      "objectives": [
+        { "text": "Locate Cragmaw Castle", "done": false },
+        { "text": "Rescue Gundren", "done": false },
+        { "text": "Recover the map to Wave Echo Cave", "done": false }
+      ],
+      "log": []
+    },
+    {
+      "id": "redbrand_problem",
+      "title": "Drive Out the Redbrands",
+      "status": "active",
+      "description": "The Redbrand Ruffians have been terrorizing Phandalin. They operate from Tresendar Manor under the command of a mysterious figure called Glasstaff. The town is too afraid to act.",
+      "hidden": true,
+      "objectives": [
+        { "text": "Infiltrate Tresendar Manor", "done": false },
+        { "text": "Defeat or drive out Glasstaff", "done": false },
+        { "text": "Free any prisoners held in the manor", "done": false }
+      ],
+      "log": []
+    },
+    {
+      "id": "wave_echo_cave",
+      "title": "Wave Echo Cave",
+      "status": "active",
+      "description": "The lost mine of the Phandelver's Pact, containing the Forge of Spells — a location of immense magical power. The Black Spider wants it. Gundren's brothers Nundro and Tharden are somewhere inside.",
+      "hidden": true,
+      "objectives": [
+        { "text": "Find Wave Echo Cave", "done": false },
+        { "text": "Deal with the Black Spider", "done": false },
+        { "text": "Secure the Forge of Spells", "done": false },
+        { "text": "Find Nundro and Tharden Rockseeker", "done": false }
+      ],
+      "log": []
+    },
+    {
+      "id": "shattered_obelisk",
+      "title": "The Shattered Obelisk",
+      "status": "active",
+      "description": "Strange goblin activity around Zorzula's Rest points to a deeper threat — mind flayers using a transformed goblin called Ruxithid to gather obelisk fragments. If they succeed, they open a rift to the Far Realm.",
+      "hidden": true,
+      "objectives": [
+        { "text": "Investigate the kidnappings around Phandalin", "done": false },
+        { "text": "Find Zorzula's Rest", "done": false },
+        { "text": "Defeat Ruxithid the Chosen", "done": false },
+        { "text": "Stop the mind flayers from reassembling the obelisk", "done": false }
+      ],
+      "log": []
+    }
+  ]
+}

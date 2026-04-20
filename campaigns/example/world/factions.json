@@ -1,0 +1,14 @@
+{
+  "factions": [
+    {
+      "id": "merchants_guild",
+      "name": "Merchants Guild",
+      "relationship": "neutral",
+      "description": "Controls trade in the region. Transactional — they help those who help them.",
+      "hidden": false,
+      "log": [
+        { "session": 1, "note": "Party learned of the guild's interest in the missing shipment." }
+      ]
+    }
+  ]
+}

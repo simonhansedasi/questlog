@@ -1,0 +1,49 @@
+{
+  "factions": [
+    {
+      "id": "otari_townsfolk",
+      "name": "Otari Townsfolk",
+      "relationship": "allied",
+      "description": "The residents of the fishing town of Otari. Generally welcoming to adventurers if treated with respect. The Gauntlight's awakening has unnerved everyone. The party's reputation in town matters — how they treat locals affects what help they receive.",
+      "status": "Nervous. The Gauntlight burns again.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "belcorras_remnants",
+      "name": "Belcorra's Remnants",
+      "relationship": "hostile",
+      "description": "The undead and aberrant creatures that serve Belcorra Haruvex's half-woken will. Occupy the Abomination Vaults in layers — each level deeper brings more powerful and corrupted servants. Not mindlessly hostile — some serve out of ancient oaths, others out of transformed loyalty.",
+      "status": "Active throughout the Vaults. Growing stronger as Belcorra wakens.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "yldaris",
+      "name": "Yldaris",
+      "relationship": "hostile",
+      "description": "A drow faction led by Quara Orshendiel operating in the lower Vaults. They came seeking Belcorra's secrets and got more than they bargained for. Now trapped between the party coming down and Belcorra's forces below. Hostile by default but may negotiate.",
+      "status": "Entrenched in mid-to-lower Vaults. Quara commanding.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "cosmic_caravan",
+      "name": "The Cosmic Caravan",
+      "relationship": "allied",
+      "description": "Wrin Sivinxi's faith — a belief system centered on the stars as guides and omens. Small but sincere. Wrin's prophetic visions come through this lens. Not a political faction but a source of information and spiritual support.",
+      "status": "Wrin is the local practitioner.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "roseguard_legacy",
+      "name": "The Roseguard",
+      "relationship": "neutral",
+      "description": "The historical founders of Otari — Otari Ilvashti, Aesephna Menhemes, Zarmavdian, and Vol Rajani. Long dead, but their legacy shapes the town's identity and some of the dungeon's history. Certain discoveries in the Vaults will connect back to what they did and what they left behind.",
+      "status": "Historical. Their choices echo through the dungeon.",
+      "hidden": true,
+      "log": []
+    }
+  ]
+}

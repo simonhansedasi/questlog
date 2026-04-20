@@ -1,0 +1,13 @@
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.env
+
+# User accounts — never commit passwords
+users.json
+
+# Campaign data — personal, not for public repo
+campaigns/spelljammer/
+campaigns/dotmm/
+campaigns/*/dm/

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}QuestLog{% endblock %}</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <nav>
+    <a class="brand" href="/">QuestLog</a>
+    {% if slug is defined and slug %}
+    <a href="/{{ slug }}/">Home</a>
+    <a href="/{{ slug }}/party">Party</a>
+    <a href="/{{ slug }}/assets">Assets</a>
+    <a href="/{{ slug }}/world">World</a>
+    <a href="/{{ slug }}/story">Story</a>
+    <a href="/{{ slug }}/references">Ref</a>
+    <div class="dm-sep">
+      {% if session.get('dm_' ~ slug) %}
+      <a href="/{{ slug }}/dm" style="color:var(--purple); font-size:0.8rem; font-weight:700; padding:0 8px; letter-spacing:0.05em; text-decoration:none;">DM</a>
+      <form method="POST" action="/{{ slug }}/dm/logout" style="display:inline;">
+        <button type="submit"
+                style="background:none; border:1px solid var(--border); color:var(--muted);
+                       border-radius:4px; padding:4px 10px; font-size:0.8rem; cursor:pointer; margin-left:4px;">
+          Exit DM
+        </button>
+      </form>
+      {% else %}
+      <a href="/{{ slug }}/dm" style="color:var(--purple); font-size:0.85rem;">DM</a>
+      {% endif %}
+    </div>
+    {% endif %}
+    {% if session.get('user') %}
+    <div style="margin-left:auto; display:flex; align-items:center; gap:10px;">
+      <span style="color:var(--muted); font-size:0.8rem;">{{ session.get('display_name', session.get('user')) }}</span>
+      <form method="POST" action="/logout" style="display:inline;">
+        <button type="submit"
+                style="background:none; border:1px solid var(--border); color:var(--muted);
+                       border-radius:4px; padding:3px 10px; font-size:0.78rem; cursor:pointer;">
+          Log out
+        </button>
+      </form>
+    </div>
+    {% endif %}
+  </nav>
+  <div class="container">
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>

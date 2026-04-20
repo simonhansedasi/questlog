@@ -1,0 +1,199 @@
+:root {
+  --bg: #080a18;
+  --surface: #10132a;
+  --surface2: #181c38;
+  --border: #252944;
+  --text: #cdd0e8;
+  --muted: #6b7099;
+  --gold: #c9a84c;
+  --gold-dim: #8a6f2e;
+  --blue: #6b84d4;
+  --red: #c45c5c;
+  --green: #5ca86e;
+  --orange: #c47c3c;
+  --purple: #9b6bd4;
+  --font: 'Segoe UI', system-ui, sans-serif;
+  --mono: 'Courier New', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+a { color: var(--gold); text-decoration: none; }
+a:hover { color: #e8c870; text-decoration: underline; }
+
+/* ── Nav ─────────────────────────────────────────────── */
+nav {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+nav .brand {
+  color: var(--gold);
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 14px 24px 14px 0;
+  border-right: 1px solid var(--border);
+  margin-right: 8px;
+  letter-spacing: 0.04em;
+}
+
+nav a {
+  color: var(--muted);
+  padding: 14px 14px;
+  font-size: 0.9rem;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+nav a:hover, nav a.active {
+  color: var(--text);
+  border-bottom-color: var(--gold);
+  text-decoration: none;
+}
+
+/* ── Layout ──────────────────────────────────────────── */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+.page-title {
+  font-size: 1.6rem;
+  color: var(--gold);
+  margin-bottom: 8px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.subtitle {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-bottom: 24px;
+}
+
+.section-title {
+  color: var(--gold);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 4px;
+}
+
+/* ── Cards ───────────────────────────────────────────── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.card + .card { margin-top: 12px; }
+.card-grid .card + .card { margin-top: 0; }
+
+.card h3 { color: var(--gold); font-size: 1.05rem; margin-bottom: 6px; }
+.card p { color: var(--text); font-size: 0.9rem; line-height: 1.5; }
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+/* ── Badges ──────────────────────────────────────────── */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badge-hostile  { background: #3a1515; color: var(--red);    border: 1px solid #5a2020; }
+.badge-neutral  { background: #1a1f30; color: var(--blue);   border: 1px solid #2a3050; }
+.badge-friendly { background: #153020; color: var(--green);  border: 1px solid #204530; }
+.badge-allied   { background: #153020; color: var(--green);  border: 1px solid #204530; }
+.badge-unknown  { background: #1f1a30; color: var(--purple); border: 1px solid #352a50; }
+
+/* ── Quest status ────────────────────────────────────── */
+.badge-active   { background: #1a2030; color: var(--blue);   border: 1px solid #2a3050; }
+.badge-complete { background: #153020; color: var(--green);  border: 1px solid #204530; }
+.badge-failed   { background: #3a1515; color: var(--red);    border: 1px solid #5a2020; }
+
+/* ── Interaction log ─────────────────────────────────── */
+.log-list { list-style: none; }
+.log-list li {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.88rem;
+  color: var(--text);
+}
+.log-list li:last-child { border-bottom: none; }
+.log-session {
+  color: var(--gold);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-right: 8px;
+}
+
+/* ── Campaign index ──────────────────────────────────── */
+.campaign-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px;
+  transition: border-color 0.15s;
+}
+.campaign-card:hover { border-color: var(--gold-dim); }
+.campaign-card h2 { color: var(--gold); margin-bottom: 4px; }
+.campaign-card .system { color: var(--muted); font-size: 0.85rem; margin-bottom: 8px; }
+
+/* ── Utility ─────────────────────────────────────────── */
+.mt-4  { margin-top: 16px; }
+.mt-8  { margin-top: 32px; }
+.mb-4  { margin-bottom: 16px; }
+.text-muted { color: var(--muted); }
+.text-gold  { color: var(--gold); }
+.text-sm    { font-size: 0.85rem; }
+.divider    { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+.role       { color: var(--muted); font-size: 0.85rem; margin-bottom: 10px; }
+
+/* ── Markdown render ─────────────────────────────────── */
+.md-render h1, .md-render h2, .md-render h3 { color: var(--gold); margin: 14px 0 6px; font-size: 0.95rem; }
+.md-render h1 { font-size: 1.05rem; }
+.md-render p  { margin: 4px 0; font-size: 0.85rem; color: var(--text); }
+.md-render ul { padding-left: 18px; margin: 4px 0; }
+.md-render li { font-size: 0.85rem; color: var(--text); margin-bottom: 2px; }
+.md-render strong { color: var(--gold-dim); }
+.md-render hr { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
+.md-render blockquote { border-left: 3px solid var(--purple); padding-left: 10px; color: var(--muted); font-style: italic; margin: 8px 0; }
+.md-render code { background: var(--surface2); border-radius: 3px; padding: 1px 5px; font-size: 0.8rem; }
+
+@media (max-width: 640px) {
+  .card-grid { grid-template-columns: 1fr; }
+  nav { flex-wrap: wrap; }
+  .container { padding: 20px 16px; }
+}

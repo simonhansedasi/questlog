@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}{{ npc.name }} — {{ meta.name }}{% endblock %}
+{% block content %}
+
+<p class="text-muted text-sm"><a href="/{{ slug }}/world">← World</a></p>
+
+<h1 class="page-title" style="margin-top:12px;">{{ npc.name }}</h1>
+<div class="role">{{ npc.role }}</div>
+<span class="badge badge-{{ npc.relationship }}">{{ npc.relationship }}</span>
+{% if session.get('dm_' ~ slug) and npc.hidden %}
+<span class="badge" style="background:var(--surface2); color:var(--muted); margin-left:8px;">Hidden from players</span>
+{% endif %}
+
+{% if npc.description %}
+<div class="card mt-8">
+  <p>{{ npc.description }}</p>
+</div>
+{% endif %}
+
+{% if npc.log %}
+<h2 class="section-title mt-8">Interaction Log</h2>
+<div class="card">
+  <ul class="log-list">
+    {% for entry in npc.log | reverse %}
+    <li>
+      <span class="log-session">Session {{ entry.session }}</span>
+      {{ entry.note }}
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+{% if session.get('dm_' ~ slug) %}
+{% set input_style = "background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:6px 10px; font-size:0.85rem; width:100%;" %}
+{% set label_style = "color:var(--gold); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;" %}
+{% set btn_style = "background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:6px 16px; font-size:0.85rem; font-weight:700; cursor:pointer;" %}
+
+<details class="card mt-8" style="border-color:var(--gold-dim);">
+  <summary style="list-style:none; cursor:pointer; color:var(--gold); font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em;">
+    DM Controls
+  </summary>
+
+  <hr class="divider">
+
+  <form method="POST" action="/{{ slug }}/dm/npc/{{ npc.id }}/toggle_hidden" style="margin-bottom:4px;">
+    <button type="submit" style="background:{% if npc.hidden %}var(--gold){% else %}var(--surface2){% endif %}; color:{% if npc.hidden %}#080a18{% else %}var(--muted){% endif %}; border:1px solid {% if npc.hidden %}var(--gold){% else %}var(--border){% endif %}; border-radius:4px; padding:5px 14px; font-size:0.82rem; font-weight:700; cursor:pointer;">
+      {% if npc.hidden %}Reveal to Players{% else %}Hide from Players{% endif %}
+    </button>
+  </form>
+
+  <hr class="divider">
+
+  <h3 style="color:var(--muted); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:12px;">Log Interaction</h3>
+  <form method="POST" action="/{{ slug }}/dm/npc/{{ npc.id }}/log" style="display:flex; flex-direction:column; gap:8px;">
+    <div style="display:flex; gap:8px;">
+      <input type="number" name="session" placeholder="Session #" min="1"
+             style="{{ input_style }} width:100px; flex-shrink:0;">
+      <input type="text" name="note" placeholder="What happened?" required style="{{ input_style }}">
+    </div>
+    <div><button type="submit" style="{{ btn_style }}">Add Log Entry</button></div>
+  </form>
+
+  <hr class="divider">
+
+  <h3 style="color:var(--muted); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:12px;">Edit NPC</h3>
+  <form method="POST" action="/{{ slug }}/dm/npc/{{ npc.id }}/edit" style="display:flex; flex-direction:column; gap:12px;">
+    <div style="display:flex; flex-direction:column; gap:4px;">
+      <label style="{{ label_style }}">Relationship</label>
+      <select name="relationship" style="{{ input_style }}">
+        {% for rel in ['friendly','neutral','hostile','allied','unknown'] %}
+        <option value="{{ rel }}" {% if rel == npc.relationship %}selected{% endif %}>{{ rel }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:4px;">
+      <label style="{{ label_style }}">Description</label>
+      <textarea name="description" rows="3"
+                style="{{ input_style }} resize:vertical; font-family:inherit;">{{ npc.description }}</textarea>
+    </div>
+    <div><button type="submit" style="{{ btn_style }}">Save Changes</button></div>
+  </form>
+</details>
+{% endif %}
+
+{% endblock %}

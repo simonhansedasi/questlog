@@ -1,0 +1,85 @@
+{
+  "factions": [
+    {
+      "id": "lampblacks",
+      "name": "Lampblacks",
+      "relationship": "neutral",
+      "description": "Tier II street gang led by Baszo Baz. Control parts of Crow's Foot through muscle and intimidation. Rivals with the Red Sashes — the feud is old and bloody. Will offer the crew work against the Sashes. Taking their side locks out the Sashes as a future ally.",
+      "status": "Active in Crow's Foot. At war with the Red Sashes.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "red_sashes",
+      "name": "Red Sashes",
+      "relationship": "neutral",
+      "description": "Tier II gang led by Mylera Klev. Iruvian-influenced — deal in dueling contracts, debt collection, and Iruvian imports including drugs. More sophisticated than the Lampblacks. The feud with Baszo is personal and territorial. Choosing them over the Lampblacks is a calculated long-term play.",
+      "status": "Active in Crow's Foot. At war with the Lampblacks.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "bluecoats",
+      "name": "Bluecoats",
+      "relationship": "hostile",
+      "description": "Tier III city watch. Corrupt from top to bottom. Take protection money from established gangs. New crews get squeezed until they pay or get arrested. Inspector Jeren is the crew's primary antagonist within the Bluecoats. Can be bribed, intimidated, or worked around — never fully trusted.",
+      "status": "Always present. Inspector Jeren actively hostile.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "inspectors",
+      "name": "The Inspectors",
+      "relationship": "hostile",
+      "description": "Tier III detective branch of city law enforcement. More competent and less corruptible than the Bluecoats. Investigate serious crimes — murder, large-scale theft, supernatural incidents. A crew that keeps scores clean and bodies off the street stays off their radar.",
+      "status": "Watching. Don't give them a reason to look closer.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "spirit_wardens",
+      "name": "Spirit Wardens",
+      "relationship": "neutral",
+      "description": "Tier IV mysterious organization that hunts and captures wayward ghosts. Doskvol's electroplasmic barriers are maintained partly through their work. Operate with near-total authority when it comes to spectral threats. Crossing them means crossing the city's supernatural infrastructure.",
+      "status": "Neutral unless the crew creates ghost problems.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "the_unseen",
+      "name": "The Unseen",
+      "relationship": "hostile",
+      "description": "Tier IV shadow faction — the most powerful criminal organization in Doskvol, operating entirely in secret. Their membership is unknown. Their reach is everywhere. New crews don't interact with them directly; they interact with the Unseen's interests without knowing it.",
+      "status": "Unknown. Everywhere.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "the_hive",
+      "name": "The Hive",
+      "relationship": "hostile",
+      "description": "Tier IV criminal organization that dominates the drug trade and controls multiple legitimate businesses as fronts. Efficient and businesslike. Less personal than the street gangs — they don't feud, they acquire. A crew that steps on their supply chains will hear from them.",
+      "status": "Active throughout the city. Dominant in drug trade.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "circle_of_flame",
+      "name": "Circle of Flame",
+      "relationship": "neutral",
+      "description": "Tier III faction controlling a significant portion of the drug trade and occult services. Mix of academics, criminals, and true believers. Have access to rare substances and forbidden knowledge. Can be worked with — for a price, and with caution.",
+      "status": "Active. Occult and drug operations.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "deathlands_scavengers",
+      "name": "Deathlands Scavengers",
+      "relationship": "neutral",
+      "description": "Desperate crews who venture beyond Doskvol's electroplasmic barriers into the ghost-haunted Deathlands. Recover leviathan scraps, lost relics, and other valuables. Operate outside city law but also outside city protection. Useful contacts for off-the-books materials.",
+      "status": "Operating beyond the barrier walls.",
+      "hidden": true,
+      "log": []
+    }
+  ]
+}

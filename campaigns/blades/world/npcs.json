@@ -1,0 +1,67 @@
+{
+  "npcs": [
+    {
+      "id": "mylera_klev",
+      "name": "Mylera Klev",
+      "role": "Red Sashes leader — Iruvian duelist",
+      "relationship": "neutral",
+      "description": "Leader of the Red Sashes, an Iruvian-influenced gang that deals in dueling, debt collection, and Iruvian imports. Elegant, patient, and dangerous. Currently in open conflict with the Lampblacks. May be an ally or an enemy depending on the crew's early choices.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "baszo_baz",
+      "name": "Baszo Baz",
+      "role": "Lampblacks leader — street enforcer",
+      "relationship": "neutral",
+      "description": "Leader of the Lampblacks, a rough street gang that controls parts of Crow's Foot. Brutal and direct. Feuding with Mylera Klev and the Red Sashes. Will offer the crew work against the Red Sashes — but taking his side poisons relations with them.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "lyssa_mir",
+      "name": "Lyssa Mir",
+      "role": "Whisper broker — Spirit Wardens adjacent",
+      "relationship": "neutral",
+      "description": "A ghost-broker who trades in spectral information and leviathan blood contacts. Operates at the edges of legal and illegal supernatural commerce. Knows things the crew shouldn't.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "inspector_jeren",
+      "name": "Inspector Jeren",
+      "role": "Bluecoats inspector — antagonist",
+      "relationship": "hostile",
+      "description": "A corrupt Bluecoat inspector who runs a protection racket in the crew's territory. Takes bribes from established gangs and squeezes newcomers. Will make the crew's life difficult until paid off or neutralized.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "nyryx",
+      "name": "Nyryx",
+      "role": "Possessed courtesan — ghost in residence",
+      "relationship": "neutral",
+      "description": "A spirit who has taken up residence in a willing host. Operates as an information broker and occasional fence. Has allegiances that shift with the spirit world's politics. Useful but unsettling.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "salia",
+      "name": "Salia",
+      "role": "Gondolier — underworld guide",
+      "relationship": "friendly",
+      "description": "A gondolier who knows every canal in Doskvol, including the ones that don't appear on city maps. Moves people and packages without asking questions. Loyal to whoever pays consistently.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "setarra",
+      "name": "Setarra",
+      "role": "Demon — bound in the Deathlands",
+      "relationship": "hostile",
+      "description": "A demon of considerable power bound beyond the city walls. Some factions seek to use her; others want her destroyed. If the crew gets involved in either project, they're in deep water.",
+      "hidden": true,
+      "log": []
+    }
+  ]
+}

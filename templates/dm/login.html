@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}DM Login — {{ meta.name }}{% endblock %}
+{% block content %}
+
+<div style="max-width:400px; margin:80px auto;">
+  <h1 class="page-title" style="text-align:center;">{{ meta.name }}</h1>
+  <p class="subtitle" style="text-align:center;">How would you like to view this campaign?</p>
+
+  <a href="/{{ slug }}/" style="text-decoration:none;">
+    <div class="card" style="margin-top:32px; text-align:center; cursor:pointer; transition:border-color 0.15s;"
+         onmouseover="this.style.borderColor='var(--blue)'" onmouseout="this.style.borderColor='var(--border)'">
+      <h3 style="color:var(--blue); margin-bottom:4px;">View as Player</h3>
+      <p class="text-muted text-sm">See what your players see. No PIN required.</p>
+    </div>
+  </a>
+
+  <div class="card" style="margin-top:12px;">
+    <h3 style="color:var(--purple); margin-bottom:12px;">Login as DM</h3>
+    <form method="POST" style="display:flex; flex-direction:column; gap:12px;">
+      <input type="password" name="pin" placeholder="PIN" autofocus autocomplete="off"
+             style="background:var(--surface2); border:1px solid var(--border); color:var(--text);
+                    border-radius:4px; padding:10px 14px; font-size:1.1rem; letter-spacing:0.2em;
+                    text-align:center;">
+      {% if error %}
+      <p style="color:var(--red); font-size:0.85rem; text-align:center; margin:0;">{{ error }}</p>
+      {% endif %}
+      <button type="submit"
+              style="background:var(--purple); color:#fff; border:none; border-radius:6px;
+                     padding:10px; font-size:1rem; font-weight:700; cursor:pointer;">
+        Enter as DM
+      </button>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

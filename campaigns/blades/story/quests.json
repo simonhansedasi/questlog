@@ -1,0 +1,53 @@
+{
+  "quests": [
+    {
+      "id": "establish_the_crew",
+      "title": "Establish Your Crew",
+      "status": "active",
+      "description": "A new criminal crew in Doskvol starts with nothing — no territory, no reputation, no allies. The first scores will define who you are and what kind of operation you run. The Lampblacks and Red Sashes are both watching.",
+      "hidden": true,
+      "objectives": [
+        { "text": "Complete your first score", "done": false },
+        { "text": "Choose a side in the Lampblack/Red Sashes conflict — or stay neutral", "done": false },
+        { "text": "Establish a crew lair", "done": false }
+      ],
+      "log": []
+    },
+    {
+      "id": "lampblack_red_sash_war",
+      "title": "The Gang War",
+      "status": "active",
+      "description": "The Lampblacks and Red Sashes have been feuding for years. Both want the crew's help. Taking a side grants a powerful ally and makes a permanent enemy. Staying neutral is possible — but harder than it sounds.",
+      "hidden": true,
+      "objectives": [
+        { "text": "Determine the cause of the feud", "done": false },
+        { "text": "Choose an alliance or broker a peace", "done": false }
+      ],
+      "log": []
+    },
+    {
+      "id": "bluecoat_problem",
+      "title": "Inspector Jeren",
+      "status": "active",
+      "description": "Inspector Jeren of the Bluecoats has identified the crew as a new operation and wants his cut. Pay him and resent it. Don't pay him and face harassment. Find something on him and flip the power dynamic. All three are valid approaches.",
+      "hidden": true,
+      "objectives": [
+        { "text": "Resolve the situation with Inspector Jeren", "done": false }
+      ],
+      "log": []
+    },
+    {
+      "id": "the_unseen_hand",
+      "title": "The Unseen",
+      "status": "active",
+      "description": "Someone has been interfering with the crew's scores — subtly, without credit. It might be the Unseen. It might be something else. Following the thread is dangerous. Not following it might be worse.",
+      "hidden": true,
+      "objectives": [
+        { "text": "Identify who is interfering with crew operations", "done": false },
+        { "text": "Determine if the Unseen are involved", "done": false },
+        { "text": "Decide how to respond", "done": false }
+      ],
+      "log": []
+    }
+  ]
+}

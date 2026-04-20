@@ -1,0 +1,310 @@
+{% extends "base.html" %}
+{% block title %}Assets — {{ meta.name }}{% endblock %}
+{% block content %}
+
+<h1 class="page-title">Assets</h1>
+<p class="subtitle">{{ meta.name }}</p>
+
+{% set input_style = "background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:5px 9px; font-size:0.82rem;" %}
+{% set btn_style = "background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:5px 14px; font-size:0.82rem; font-weight:700; cursor:pointer;" %}
+{% set btn_del = "background:none; border:1px solid var(--border); color:var(--muted); border-radius:4px; padding:3px 10px; font-size:0.78rem; cursor:pointer;" %}
+
+<!-- Currency -->
+<h2 class="section-title">Currency</h2>
+<div class="card mb-4">
+  <div style="display:flex; align-items:center; gap:24px; flex-wrap:wrap;">
+    {% for currency, amount in assets.get('currency', {}).items() %}
+    <div>
+      <span style="font-size:1.8rem; font-weight:700; color:var(--gold);">{{ amount }}</span>
+      <span class="text-muted" style="margin-left:6px;">{{ currency }}</span>
+    </div>
+    {% endfor %}
+  </div>
+  {% if session.get('dm_' ~ slug) %}
+  <details style="margin-top:12px;">
+    <summary style="list-style:none; cursor:pointer; color:var(--gold-dim); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">Update Currency</summary>
+    <form method="POST" action="/{{ slug }}/dm/assets/currency"
+          style="margin-top:10px; display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap;">
+      <input type="text" name="key" placeholder="Currency name" value="gold" style="{{ input_style }} width:120px;">
+      <input type="number" name="amount" placeholder="Amount" style="{{ input_style }} width:100px;">
+      <button type="submit" style="{{ btn_style }}">Set</button>
+    </form>
+  </details>
+  {% endif %}
+</div>
+
+<!-- Items -->
+<h2 class="section-title mt-8">Items</h2>
+<div class="card mb-4">
+  {% if assets.get('items') %}
+  <ul class="log-list" style="margin-bottom:12px;">
+    {% for item in assets['items'] %}
+    <li style="display:flex; justify-content:space-between; align-items:center; gap:1rem;">
+      <span>{{ item.name }}{% if item.notes %} <span class="text-muted">— {{ item.notes }}</span>{% endif %}</span>
+      {% if session.get('dm_' ~ slug) %}
+      <form method="POST" action="/{{ slug }}/dm/assets/item/{{ loop.index0 }}/remove" style="display:inline;">
+        <button type="submit" style="{{ btn_del }}">remove</button>
+      </form>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="text-muted text-sm" style="margin-bottom:12px;">No items.</p>
+  {% endif %}
+  {% if session.get('dm_' ~ slug) %}
+  <details>
+    <summary style="list-style:none; cursor:pointer; color:var(--gold-dim); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">Add Item</summary>
+    <form method="POST" action="/{{ slug }}/dm/assets/item"
+          style="margin-top:10px; display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap;">
+      <input type="text" name="name" placeholder="Item name" required style="{{ input_style }} flex:1; min-width:140px;">
+      <input type="text" name="notes" placeholder="Notes (optional)" style="{{ input_style }} flex:1; min-width:140px;">
+      <button type="submit" style="{{ btn_style }}">Add</button>
+    </form>
+  </details>
+  {% endif %}
+</div>
+
+<!-- Ships -->
+<h2 class="section-title mt-8">Ships</h2>
+<div class="card mb-4">
+  {% if assets.get('ships') %}
+  {% for ship in assets.ships %}
+  {% set ship_idx = loop.index0 %}
+  <div style="padding:12px 0; border-bottom:1px solid var(--border);">
+    <div style="display:flex; align-items:baseline; gap:8px; flex-wrap:wrap;">
+      <strong style="color:var(--text);">{{ ship.name }}</strong>
+      <span class="text-muted text-sm">{{ ship.type }}</span>
+      {% if ship.hp %}<span style="color:var(--gold); font-size:0.8rem; font-weight:700;">{{ ship.hp }} HP</span>{% endif %}
+    </div>
+    {% if ship.notes %}<p class="text-muted text-sm" style="margin:4px 0 6px;">{{ ship.notes }}</p>{% endif %}
+    <div style="display:flex; gap:24px; flex-wrap:wrap; margin-top:6px;">
+      {% if ship.weapons %}
+      <div>
+        <span style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted);">Weapons</span>
+        <ul style="margin:3px 0 0; padding-left:0; list-style:none;">
+          {% for w in ship.weapons %}
+          <li style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+            {% if w is mapping %}
+            <span class="text-sm" style="min-width:110px;">{{ w.name }}</span>
+            <form method="POST" action="/{{ slug }}/assets/ship/{{ ship_idx }}/weapon/{{ loop.index0 }}/hp"
+                  style="display:flex; align-items:center; gap:4px;">
+              <input type="number" name="hp" value="{{ w.hp }}" min="0" max="{{ w.max_hp }}"
+                     style="{{ input_style }} width:54px; text-align:center;">
+              <span class="text-muted text-sm">/ {{ w.max_hp }}</span>
+              <button type="submit" style="background:none; border:1px solid var(--border); color:var(--muted); border-radius:4px; padding:2px 8px; font-size:0.75rem; cursor:pointer;">set</button>
+            </form>
+            {% else %}
+            <span class="text-sm text-muted">{{ w }}</span>
+            {% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+        {% if session.get('dm_' ~ slug) %}
+        <details style="margin-top:6px;">
+          <summary style="list-style:none; cursor:pointer; color:var(--gold-dim); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">Add Weapon</summary>
+          <form method="POST" action="/{{ slug }}/dm/assets/ship/{{ ship_idx }}/weapon"
+                style="margin-top:6px; display:flex; gap:6px; align-items:flex-end; flex-wrap:wrap;">
+            <input type="text" name="name" placeholder="Weapon name" required style="{{ input_style }} flex:1; min-width:120px;">
+            <input type="number" name="max_hp" placeholder="Max HP" value="50" style="{{ input_style }} width:80px;">
+            <button type="submit" style="{{ btn_style }}">Add</button>
+          </form>
+        </details>
+        {% endif %}
+      </div>
+      {% endif %}
+      {% if ship.crew %}
+      <div>
+        <span style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted);">Crew</span>
+        <ul style="margin:3px 0 0; padding-left:0; list-style:none;">
+          {% for c in ship.crew %}
+          <li style="display:flex; align-items:center; gap:6px; margin-bottom:2px;">
+            <span class="text-sm text-muted">{{ c }}</span>
+            {% if session.get('dm_' ~ slug) %}
+            <form method="POST" action="/{{ slug }}/dm/assets/ship/{{ ship_idx }}/crew/{{ loop.index0 }}/remove" style="display:inline;">
+              <button type="submit" style="{{ btn_del }}">×</button>
+            </form>
+            {% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+      {% if ship.cargo %}
+      <div>
+        <span style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted);">Cargo</span>
+        <ul style="margin:3px 0 0; padding-left:0; list-style:none;">
+          {% for item in ship.cargo %}
+          <li style="display:flex; align-items:center; gap:6px; margin-bottom:2px;">
+            <span class="text-sm text-muted">{{ item }}</span>
+            {% if session.get('dm_' ~ slug) %}
+            <form method="POST" action="/{{ slug }}/dm/assets/ship/{{ ship_idx }}/cargo/{{ loop.index0 }}/remove" style="display:inline;">
+              <button type="submit" style="{{ btn_del }}">×</button>
+            </form>
+            {% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+    </div>
+
+    {% if session.get('dm_' ~ slug) %}
+    <details style="margin-top:10px;">
+      <summary style="list-style:none; cursor:pointer; color:var(--gold-dim); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">DM Controls</summary>
+      <div style="margin-top:10px; display:flex; flex-direction:column; gap:10px;">
+
+        <form method="POST" action="/{{ slug }}/dm/assets/ship/{{ ship_idx }}/edit"
+              style="display:flex; gap:6px; align-items:flex-end; flex-wrap:wrap;">
+          <input type="text" name="name" value="{{ ship.name }}" placeholder="Name" required style="{{ input_style }} flex:1; min-width:120px;">
+          <input type="text" name="type" value="{{ ship.type }}" placeholder="Type" style="{{ input_style }} width:130px;">
+          <input type="text" name="hp" value="{{ ship.hp }}" placeholder="HP" style="{{ input_style }} width:100px;">
+          <input type="text" name="notes" value="{{ ship.notes }}" placeholder="Notes" style="{{ input_style }} flex:1; min-width:160px;">
+          <button type="submit" style="{{ btn_style }}">Save</button>
+        </form>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <form method="POST" action="/{{ slug }}/dm/assets/ship/{{ ship_idx }}/crew"
+                style="display:flex; gap:6px; align-items:flex-end;">
+            <input type="text" name="member" placeholder="Add crew member" required style="{{ input_style }} min-width:150px;">
+            <button type="submit" style="{{ btn_style }}">+ Crew</button>
+          </form>
+          <form method="POST" action="/{{ slug }}/dm/assets/ship/{{ ship_idx }}/cargo"
+                style="display:flex; gap:6px; align-items:flex-end;">
+            <input type="text" name="item" placeholder="Add cargo item" required style="{{ input_style }} min-width:150px;">
+            <button type="submit" style="{{ btn_style }}">+ Cargo</button>
+          </form>
+        </div>
+
+      </div>
+    </details>
+    {% endif %}
+  </div>
+  {% endfor %}
+  <div style="margin-top:12px;"></div>
+  {% else %}
+  <p class="text-muted text-sm" style="margin-bottom:12px;">No ships.</p>
+  {% endif %}
+  {% if session.get('dm_' ~ slug) %}
+  <details>
+    <summary style="list-style:none; cursor:pointer; color:var(--gold-dim); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">Add Ship</summary>
+    <form method="POST" action="/{{ slug }}/dm/assets/ship"
+          style="margin-top:10px; display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap;">
+      <input type="text" name="name" placeholder="Ship name" required style="{{ input_style }} flex:1; min-width:120px;">
+      <input type="text" name="type" placeholder="Type (e.g. Sloop)" style="{{ input_style }} width:140px;">
+      <input type="text" name="hp" placeholder="HP (e.g. 250/250)" style="{{ input_style }} width:120px;">
+      <input type="text" name="weapons" placeholder="Weapons (comma-separated)" style="{{ input_style }} flex:1; min-width:180px;">
+      <input type="text" name="crew" placeholder="Crew (comma-separated)" style="{{ input_style }} flex:1; min-width:180px;">
+      <input type="text" name="cargo" placeholder="Cargo (comma-separated)" style="{{ input_style }} flex:1; min-width:180px;">
+      <input type="text" name="notes" placeholder="Notes" style="{{ input_style }} flex:1; min-width:120px;">
+      <button type="submit" style="{{ btn_style }}">Add</button>
+    </form>
+  </details>
+  {% endif %}
+</div>
+
+<!-- Stronghold -->
+<h2 class="section-title mt-8">Stronghold</h2>
+<div class="card mb-4">
+  {% if stronghold and stronghold.name %}
+  <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem; margin-bottom:10px;">
+    <div>
+      <h3 style="margin-bottom:4px;">{{ stronghold.name }}</h3>
+      <div style="display:flex; gap:16px; flex-wrap:wrap;">
+        {% if stronghold.type %}<span class="text-muted text-sm">{{ stronghold.type }}</span>{% endif %}
+        {% if stronghold.location %}<span class="text-muted text-sm">{{ stronghold.location }}</span>{% endif %}
+        {% if stronghold.condition %}<span class="badge badge-neutral" style="font-size:0.72rem;">{{ stronghold.condition }}</span>{% endif %}
+      </div>
+    </div>
+  </div>
+  {% if stronghold.notes %}<p class="text-muted text-sm" style="margin-bottom:10px;">{{ stronghold.notes }}</p>{% endif %}
+
+  <div style="display:flex; gap:32px; flex-wrap:wrap;">
+    {% if stronghold.features %}
+    <div>
+      <span style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted);">Features</span>
+      <ul style="margin:6px 0 0; padding-left:0; list-style:none;">
+        {% for feat in stronghold.features %}
+        <li style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+          <span class="text-sm">{{ feat }}</span>
+          {% if session.get('dm_' ~ slug) %}
+          <form method="POST" action="/{{ slug }}/dm/assets/stronghold/feature/{{ loop.index0 }}/remove" style="display:inline;">
+            <button type="submit" style="{{ btn_del }}">×</button>
+          </form>
+          {% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+    {% if stronghold.upgrades %}
+    <div>
+      <span style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted);">Upgrades</span>
+      <ul style="margin:6px 0 0; padding-left:0; list-style:none;">
+        {% for upg in stronghold.upgrades %}
+        <li style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+          <span class="text-sm">{{ upg }}</span>
+          {% if session.get('dm_' ~ slug) %}
+          <form method="POST" action="/{{ slug }}/dm/assets/stronghold/upgrade/{{ loop.index0 }}/remove" style="display:inline;">
+            <button type="submit" style="{{ btn_del }}">×</button>
+          </form>
+          {% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+  </div>
+
+  {% else %}
+  <p class="text-muted text-sm" style="margin-bottom:12px;">No stronghold established.</p>
+  {% endif %}
+
+  {% if session.get('dm_' ~ slug) %}
+  <details style="margin-top:12px;">
+    <summary style="list-style:none; cursor:pointer; color:var(--gold-dim); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">
+      {% if stronghold and stronghold.name %}Edit Stronghold{% else %}Set Stronghold{% endif %}
+    </summary>
+    <form method="POST" action="/{{ slug }}/dm/assets/stronghold"
+          style="margin-top:10px; display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap;">
+      <input type="text" name="name" placeholder="Name" value="{{ stronghold.name if stronghold else '' }}" required style="{{ input_style }} flex:1; min-width:140px;">
+      <input type="text" name="type" placeholder="Type (e.g. Keep, Lair, Tavern)" value="{{ stronghold.type if stronghold else '' }}" style="{{ input_style }} flex:1; min-width:160px;">
+      <input type="text" name="location" placeholder="Location" value="{{ stronghold.location if stronghold else '' }}" style="{{ input_style }} flex:1; min-width:140px;">
+      <input type="text" name="condition" placeholder="Condition (e.g. Ruined, Functional)" value="{{ stronghold.condition if stronghold else '' }}" style="{{ input_style }} flex:1; min-width:160px;">
+      <input type="text" name="notes" placeholder="Notes" value="{{ stronghold.notes if stronghold else '' }}" style="{{ input_style }} flex:1; min-width:180px;">
+      <button type="submit" style="{{ btn_style }}">Save</button>
+    </form>
+  </details>
+
+  {% if stronghold and stronghold.name %}
+  <details style="margin-top:8px;">
+    <summary style="list-style:none; cursor:pointer; color:var(--gold-dim); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">Add Feature / Upgrade</summary>
+    <div style="margin-top:10px; display:flex; gap:12px; flex-wrap:wrap;">
+      <form method="POST" action="/{{ slug }}/dm/assets/stronghold/feature"
+            style="display:flex; gap:6px; align-items:flex-end;">
+        <input type="text" name="text" placeholder="Feature (e.g. Guard tower)" required style="{{ input_style }} min-width:180px;">
+        <button type="submit" style="{{ btn_style }}">+ Feature</button>
+      </form>
+      <form method="POST" action="/{{ slug }}/dm/assets/stronghold/upgrade"
+            style="display:flex; gap:6px; align-items:flex-end;">
+        <input type="text" name="text" placeholder="Upgrade (e.g. Arcane library)" required style="{{ input_style }} min-width:180px;">
+        <button type="submit" style="{{ btn_style }}">+ Upgrade</button>
+      </form>
+    </div>
+  </details>
+  {% endif %}
+  {% endif %}
+</div>
+
+<!-- Property -->
+{% if assets.get('property') %}
+<h2 class="section-title mt-8">Property</h2>
+{% for prop in assets.property %}
+<div class="card mb-4">
+  <h3>{{ prop.name }}</h3>
+  {% if prop.notes %}<p class="text-muted text-sm">{{ prop.notes }}</p>{% endif %}
+</div>
+{% endfor %}
+{% endif %}
+
+{% endblock %}

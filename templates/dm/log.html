@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block title %}Session Log — {{ meta.name }}{% endblock %}
+{% block content %}
+
+<p class="text-muted text-sm"><a href="/{{ slug }}/dm">← DM Dashboard</a></p>
+<h1 class="page-title" style="margin-top:12px;">Session Log</h1>
+<p class="subtitle">Fill in only what happened this session. Blank fields are ignored.</p>
+
+<form method="POST">
+
+  <div class="card mb-4" style="display:flex; align-items:center; gap:16px;">
+    <label style="color:var(--gold); font-weight:700; font-size:0.9rem; white-space:nowrap;">Session #</label>
+    <input type="number" name="session" min="1" required
+           style="background:var(--surface2); border:1px solid var(--border); color:var(--text);
+                  border-radius:4px; padding:6px 12px; font-size:1rem; width:100px;">
+  </div>
+
+  {% if npcs %}
+  <h2 class="section-title mt-8">NPCs</h2>
+  {% for npc in npcs %}
+  <div class="card mb-4">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; flex-wrap:wrap;">
+      <div>
+        <h3 style="margin-bottom:2px;">{{ npc.name }}</h3>
+        <span class="role">{{ npc.role }}</span>
+        <span class="badge badge-{{ npc.relationship }}">{{ npc.relationship }}</span>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:8px; min-width:200px; flex:1;">
+        <select name="npc_{{ npc.id }}_rel"
+                style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:6px 10px; font-size:0.85rem;">
+          {% for rel in ['friendly','neutral','hostile','allied','unknown'] %}
+          <option value="{{ rel }}" {% if rel == npc.relationship %}selected{% endif %}>{{ rel }}</option>
+          {% endfor %}
+        </select>
+        <input type="text" name="npc_{{ npc.id }}_note" placeholder="Log note (leave blank to skip)"
+               style="background:var(--surface2); border:1px solid var(--border); color:var(--text);
+                      border-radius:4px; padding:6px 10px; font-size:0.85rem; width:100%;">
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+  {% endif %}
+
+  {% if factions %}
+  <h2 class="section-title mt-8">Factions</h2>
+  {% for f in factions %}
+  <div class="card mb-4">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; flex-wrap:wrap;">
+      <div>
+        <h3 style="margin-bottom:2px;">{{ f.name }}</h3>
+        <span class="badge badge-{{ f.relationship }}">{{ f.relationship }}</span>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:8px; min-width:200px; flex:1;">
+        <select name="faction_{{ f.id }}_rel"
+                style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:6px 10px; font-size:0.85rem;">
+          {% for rel in ['friendly','neutral','hostile','allied','unknown'] %}
+          <option value="{{ rel }}" {% if rel == f.relationship %}selected{% endif %}>{{ rel }}</option>
+          {% endfor %}
+        </select>
+        <input type="text" name="faction_{{ f.id }}_note" placeholder="Log note (leave blank to skip)"
+               style="background:var(--surface2); border:1px solid var(--border); color:var(--text);
+                      border-radius:4px; padding:6px 10px; font-size:0.85rem; width:100%;">
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+  {% endif %}
+
+  {% if quests %}
+  <h2 class="section-title mt-8">Quests</h2>
+  {% for q in quests %}
+  <div class="card mb-4">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; flex-wrap:wrap; margin-bottom:10px;">
+      <h3>{{ q.title }}</h3>
+      <select name="quest_{{ q.id }}_status"
+              style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:6px 10px; font-size:0.85rem;">
+        {% for s in ['active','complete','failed'] %}
+        <option value="{{ s }}" {% if s == q.status %}selected{% endif %}>{{ s }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    {% if q.objectives %}
+    <div style="margin-bottom:10px;">
+      {% for obj in q.objectives %}
+      <label style="display:flex; align-items:center; gap:8px; margin-bottom:6px; font-size:0.9rem;
+                    color:{{ 'var(--muted)' if obj.done else 'var(--text)' }}; cursor:pointer;">
+        <input type="checkbox" name="quest_{{ q.id }}_obj_{{ loop.index0 }}"
+               {% if obj.done %}checked{% endif %}
+               style="accent-color:var(--gold);">
+        {{ obj.text }}
+      </label>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <input type="text" name="quest_{{ q.id }}_note" placeholder="Log note (leave blank to skip)"
+           style="background:var(--surface2); border:1px solid var(--border); color:var(--text);
+                  border-radius:4px; padding:6px 10px; font-size:0.85rem; width:100%;">
+  </div>
+  {% endfor %}
+  {% endif %}
+
+  <div style="margin-top:24px;">
+    <button type="submit"
+            style="background:var(--gold); color:#080a18; border:none; border-radius:6px;
+                   padding:10px 28px; font-size:1rem; font-weight:700; cursor:pointer;">
+      Save Session Log
+    </button>
+    <a href="/{{ slug }}/dm" style="margin-left:16px; color:var(--muted); font-size:0.9rem;">Cancel</a>
+  </div>
+
+</form>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}{{ meta.name }}{% endblock %}
+{% block content %}
+
+<h1 class="page-title">{{ meta.name }}</h1>
+<p class="subtitle">{{ meta.system }}{% if meta.description %} — {{ meta.description }}{% endif %}</p>
+
+{% if party %}
+<h2 class="section-title mt-8">Party</h2>
+<div class="card-grid mb-4">
+  {% for char in party %}
+  <div class="card">
+    <h3>{{ char.name }}</h3>
+    <div class="role">{{ char.race }} {{ char['class'] }} · Lv{{ char.level }}</div>
+    {% if char.notes %}<p class="text-muted text-sm">{{ char.notes }}</p>{% endif %}
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% if active %}
+<h2 class="section-title mt-8">Active Quests</h2>
+{% for quest in active %}
+<div class="card mb-4">
+  <h3>{{ quest.title }} <span class="badge badge-active" style="margin-left:8px;">Active</span></h3>
+  <p>{{ quest.description }}</p>
+  {% if quest.objectives %}
+  <ul style="margin-top:10px; padding-left:18px;">
+    {% for obj in quest.objectives %}
+    <li style="color:{{ 'var(--muted)' if obj.done else 'var(--text)' }}; text-decoration:{{ 'line-through' if obj.done else 'none' }}; font-size:0.9rem;">
+      {{ obj.text }}
+    </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+</div>
+{% endfor %}
+{% endif %}
+
+{% endblock %}

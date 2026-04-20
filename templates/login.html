@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Login — QuestLog{% endblock %}
+{% block content %}
+
+<div style="max-width:360px; margin:80px auto 0;">
+  <h1 class="page-title" style="text-align:center; margin-bottom:8px;">QuestLog</h1>
+  <p class="text-muted text-sm" style="text-align:center; margin-bottom:32px;">Campaign Relationship Manager for tabletop RPGs</p>
+
+  <div class="card">
+    {% if error %}
+    <p style="color:#e05c5c; font-size:0.85rem; margin-bottom:16px;">{{ error }}</p>
+    {% endif %}
+    <form method="POST" action="/login" style="display:flex; flex-direction:column; gap:14px;">
+      <div style="display:flex; flex-direction:column; gap:4px;">
+        <label style="color:var(--muted); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Username</label>
+        <input type="text" name="username" required autofocus
+               style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:8px 12px; font-size:0.95rem; width:100%; box-sizing:border-box;">
+      </div>
+      <div style="display:flex; flex-direction:column; gap:4px;">
+        <label style="color:var(--muted); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Password</label>
+        <input type="password" name="password" required
+               style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:8px 12px; font-size:0.95rem; width:100%; box-sizing:border-box;">
+      </div>
+      <button type="submit"
+              style="background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:9px 0; font-size:0.95rem; font-weight:700; cursor:pointer; margin-top:4px;">
+        Log In
+      </button>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

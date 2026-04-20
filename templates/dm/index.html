@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+{% block title %}DM — {{ meta.name }}{% endblock %}
+{% block content %}
+
+<div style="display:flex; justify-content:space-between; align-items:flex-start;">
+  <div>
+    <h1 class="page-title">DM Dashboard</h1>
+    <p class="subtitle">{{ meta.name }}</p>
+  </div>
+  <form method="POST" action="/{{ slug }}/dm/logout" style="margin-top:8px;">
+    <button type="submit"
+            style="background:none; border:1px solid var(--border); color:var(--muted);
+                   border-radius:4px; padding:5px 12px; font-size:0.8rem; cursor:pointer;">
+      Log out
+    </button>
+  </form>
+</div>
+
+<h2 class="section-title">Session Tools</h2>
+<div class="card-grid mb-4">
+  <a href="/{{ slug }}/dm/log" style="text-decoration:none;">
+    <div class="card" style="border-color:var(--gold-dim); transition:border-color 0.15s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--gold-dim)'">
+      <h3>Session Log</h3>
+      <p class="text-muted text-sm">Log NPC and faction interactions, update quest status, check off objectives. Do this after each session.</p>
+    </div>
+  </a>
+</div>
+
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:start;" class="mb-4">
+
+  <!-- Plan (left) -->
+  <div class="card" style="max-height:560px; overflow-y:auto;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <h3 style="margin:0;">Session Plan</h3>
+      <button onclick="var e=document.getElementById('plan-edit'); e.style.display = e.style.display==='none'?'block':'none';"
+              style="background:none; border:1px solid var(--border); color:var(--muted); border-radius:4px; padding:3px 10px; font-size:0.75rem; cursor:pointer;">
+        Edit
+      </button>
+    </div>
+    <div id="plan-edit" style="display:none; margin-bottom:12px;">
+      <form method="POST" action="/{{ slug }}/dm/session/plan">
+        <textarea name="plan" rows="14"
+                  style="width:100%; box-sizing:border-box; background:var(--surface2); border:1px solid var(--border);
+                         color:var(--text); border-radius:4px; padding:10px; font-size:0.82rem;
+                         font-family:monospace; resize:vertical; margin-bottom:8px;">{{ session_plan }}</textarea>
+        <button type="submit"
+                style="background:var(--gold); color:#080a18; border:none; border-radius:4px;
+                       padding:5px 14px; font-size:0.82rem; font-weight:700; cursor:pointer;">Save</button>
+      </form>
+    </div>
+    {% if plan_html %}
+    <div class="md-render">{{ plan_html }}</div>
+    {% else %}
+    <p class="text-muted text-sm">No plan yet. Click Edit to add one.</p>
+    {% endif %}
+  </div>
+
+  <!-- Notes (right) -->
+  <div class="card" style="max-height:560px; display:flex; flex-direction:column;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <h3 style="margin:0;">Session Notes</h3>
+      <a href="/{{ slug }}/dm/session/notes/export"
+         style="background:none; border:1px solid var(--border); color:var(--muted); border-radius:4px;
+                padding:3px 10px; font-size:0.75rem; cursor:pointer; text-decoration:none;">
+        Export .md
+      </a>
+    </div>
+    <form method="POST" action="/{{ slug }}/dm/session/notes" style="display:flex; flex-direction:column; flex:1;">
+      <textarea name="notes" rows="18"
+                style="flex:1; width:100%; box-sizing:border-box; background:var(--surface2); border:1px solid var(--border);
+                       color:var(--text); border-radius:4px; padding:10px; font-size:0.85rem;
+                       font-family:monospace; resize:none; margin-bottom:8px;">{{ session_notes }}</textarea>
+      <button type="submit"
+              style="background:var(--gold); color:#080a18; border:none; border-radius:4px;
+                     padding:5px 14px; font-size:0.82rem; font-weight:700; cursor:pointer; align-self:flex-start;">
+        Save Notes
+      </button>
+    </form>
+  </div>
+
+</div>
+
+<h2 class="section-title mt-8">Add New</h2>
+<div class="card-grid">
+  <a href="/{{ slug }}/dm/npcs/add" style="text-decoration:none;">
+    <div class="card" style="transition:border-color 0.15s;" onmouseover="this.style.borderColor='var(--gold-dim)'" onmouseout="this.style.borderColor='var(--border)'">
+      <h3>Add NPC</h3>
+      <p class="text-muted text-sm">Add a new character to the world.</p>
+    </div>
+  </a>
+  <a href="/{{ slug }}/dm/factions/add" style="text-decoration:none;">
+    <div class="card" style="transition:border-color 0.15s;" onmouseover="this.style.borderColor='var(--gold-dim)'" onmouseout="this.style.borderColor='var(--border)'">
+      <h3>Add Faction</h3>
+      <p class="text-muted text-sm">Add a new faction or organization.</p>
+    </div>
+  </a>
+  <a href="/{{ slug }}/dm/quests/add" style="text-decoration:none;">
+    <div class="card" style="transition:border-color 0.15s;" onmouseover="this.style.borderColor='var(--gold-dim)'" onmouseout="this.style.borderColor='var(--border)'">
+      <h3>Add Quest</h3>
+      <p class="text-muted text-sm">Add a new quest to the story.</p>
+    </div>
+  </a>
+  <a href="/{{ slug }}/dm/party/add" style="text-decoration:none;">
+    <div class="card" style="transition:border-color 0.15s;" onmouseover="this.style.borderColor='var(--gold-dim)'" onmouseout="this.style.borderColor='var(--border)'">
+      <h3>Add Character</h3>
+      <p class="text-muted text-sm">Add a new party member.</p>
+    </div>
+  </a>
+</div>
+
+{% if meta.get('owner') == session.get('user') %}
+<h2 class="section-title mt-8">Player Share Link</h2>
+<div class="card mb-4">
+  {% if meta.get('share_token') %}
+  <p class="text-muted text-sm" style="margin-bottom:10px;">Send this link to your players. It gives read-only access — no login required.</p>
+  <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+    <code style="background:var(--surface2); border:1px solid var(--border); border-radius:4px; padding:6px 10px; font-size:0.82rem; color:var(--gold); flex:1; min-width:0; overflow-x:auto; white-space:nowrap;">
+      {{ request.host_url }}share/{{ meta.share_token }}
+    </code>
+    <button onclick="navigator.clipboard.writeText('{{ request.host_url }}share/{{ meta.share_token }}')"
+            style="background:var(--surface2); border:1px solid var(--border); color:var(--muted); border-radius:4px; padding:5px 12px; font-size:0.82rem; cursor:pointer; white-space:nowrap;">
+      Copy
+    </button>
+  </div>
+  <form method="POST" action="/{{ slug }}/dm/share/generate" style="margin-top:10px;">
+    <button type="submit" style="background:none; border:1px solid var(--border); color:var(--muted); border-radius:4px; padding:4px 12px; font-size:0.78rem; cursor:pointer;">
+      Regenerate link
+    </button>
+  </form>
+  {% else %}
+  <p class="text-muted text-sm" style="margin-bottom:12px;">No share link yet. Generate one to give your players read-only access.</p>
+  <form method="POST" action="/{{ slug }}/dm/share/generate">
+    <button type="submit" style="background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:6px 16px; font-size:0.85rem; font-weight:700; cursor:pointer;">
+      Generate Share Link
+    </button>
+  </form>
+  {% endif %}
+</div>
+
+<h2 class="section-title mt-8">Campaign Settings</h2>
+<div class="card mb-4">
+  <form method="POST" action="/{{ slug }}/dm/settings" style="display:flex; flex-direction:column; gap:12px;">
+    {% set input_style = "background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:6px 10px; font-size:0.85rem; width:100%; box-sizing:border-box;" %}
+    {% set label_style = "color:var(--muted); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;" %}
+    <div style="display:flex; flex-direction:column; gap:4px;">
+      <label style="{{ label_style }}">Campaign Name</label>
+      <input type="text" name="name" value="{{ meta.name }}" required style="{{ input_style }}">
+    </div>
+    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+      <div style="display:flex; flex-direction:column; gap:4px; flex:1; min-width:140px;">
+        <label style="{{ label_style }}">System</label>
+        <input type="text" name="system" value="{{ meta.system }}" style="{{ input_style }}">
+      </div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:4px;">
+      <label style="{{ label_style }}">Description</label>
+      <textarea name="description" rows="2" style="{{ input_style }} resize:vertical; font-family:inherit;">{{ meta.description }}</textarea>
+    </div>
+    <div>
+      <button type="submit" style="background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:6px 16px; font-size:0.85rem; font-weight:700; cursor:pointer;">
+        Save Settings
+      </button>
+    </div>
+  </form>
+</div>
+
+<h2 class="section-title mt-8" style="color:#e05c5c;">Danger Zone</h2>
+<div class="card" style="border-color:#e05c5c33;">
+  <p class="text-muted text-sm" style="margin-bottom:12px;">Permanently delete this campaign and all its data. This cannot be undone.</p>
+  <details>
+    <summary style="list-style:none; cursor:pointer; background:none; border:1px solid #e05c5c; color:#e05c5c; border-radius:4px; padding:5px 14px; font-size:0.82rem; font-weight:700; display:inline-block;">
+      Delete Campaign
+    </summary>
+    <div style="margin-top:14px;">
+      <p style="color:#e05c5c; font-size:0.85rem; margin-bottom:10px;">Type the campaign name to confirm:</p>
+      <form method="POST" action="/{{ slug }}/dm/delete"
+            style="display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap;"
+            onsubmit="return document.getElementById('confirm-name').value === '{{ meta.name }}';">
+        <input type="text" id="confirm-name" name="confirm_name" placeholder="{{ meta.name }}"
+               style="background:var(--surface2); border:1px solid #e05c5c; color:var(--text); border-radius:4px; padding:5px 9px; font-size:0.82rem; min-width:220px;">
+        <button type="submit"
+                style="background:#e05c5c; color:#fff; border:none; border-radius:4px; padding:5px 16px; font-size:0.82rem; font-weight:700; cursor:pointer;">
+          Delete Forever
+        </button>
+      </form>
+    </div>
+  </details>
+</div>
+{% endif %}
+
+{% endblock %}

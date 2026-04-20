@@ -1,0 +1,67 @@
+{
+  "factions": [
+    {
+      "id": "redbrand_ruffians",
+      "name": "Redbrand Ruffians",
+      "relationship": "hostile",
+      "description": "A gang of thugs terrorizing Phandalin, led by Glasstaff (Iarno Albrek) from their base in Tresendar Manor. Take their orders from the Black Spider. Identifiable by their red cloaks. The town is too afraid to confront them.",
+      "status": "Controlling Phandalin. Operating from Tresendar Manor.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "cragmaw_goblins",
+      "name": "Cragmaw Tribe",
+      "relationship": "hostile",
+      "description": "A goblin tribe in the service of the Black Spider. Hold Gundren Rockseeker at Cragmaw Castle. Control the Triboar Trail ambush point near Cragmaw Hideout. Led by King Grol at the castle.",
+      "status": "Active. Holding Gundren at Cragmaw Castle.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "lords_alliance",
+      "name": "Lords' Alliance",
+      "relationship": "allied",
+      "description": "A coalition of cities and towns that cooperate for mutual defense and prosperity. Sildar Hallwinter is their agent in the region. Interested in establishing order in Phandalin and finding their missing agent Iarno Albrek.",
+      "status": "Sildar is the local contact. Albrek has gone rogue.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "harpers",
+      "name": "The Harpers",
+      "relationship": "allied",
+      "description": "A secret network of spellcasters and spies who work against the rise of tyranny. Sister Garaele is their local agent. Gather information, oppose evil, preserve the balance of power.",
+      "status": "Sister Garaele operating quietly in Phandalin.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "order_of_the_gauntlet",
+      "name": "Order of the Gauntlet",
+      "relationship": "allied",
+      "description": "A devout and vigilant order that seeks to protect the innocent from evil. Daran Edermath is their retired contact in Phandalin. Concerned about undead activity at Old Owl Well.",
+      "status": "Daran Edermath in Phandalin. Old Owl Well needs investigation.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "emerald_enclave",
+      "name": "Emerald Enclave",
+      "relationship": "allied",
+      "description": "A widespread group of wilderness survivalists who protect the natural world. Qelline Alderleaf and Reidoth the Druid are their local contacts.",
+      "status": "Reidoth in Thundertree. Qelline in Phandalin.",
+      "hidden": true,
+      "log": []
+    },
+    {
+      "id": "illithid_cult",
+      "name": "The Shattered Obelisk Cult",
+      "relationship": "hostile",
+      "description": "Mind flayers operating from beyond Phandalin, using Ruxithid as their goblin proxy. Seek to reassemble the shattered obelisk fragments and use them to open a rift to the Far Realm. The true threat behind the adventure's later chapters.",
+      "status": "Hidden. Ruxithid active at Zorzula's Rest.",
+      "hidden": true,
+      "log": []
+    }
+  ]
+}

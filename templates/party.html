@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Party — {{ meta.name }}{% endblock %}
+{% block content %}
+
+<h1 class="page-title">Party</h1>
+<p class="subtitle">{{ meta.name }}{% if session.get('dm_' ~ slug) %} &mdash; <a href="/{{ slug }}/dm/party/add">+ Add Character</a>{% endif %}</p>
+
+{% set input_style = "background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:5px 9px; font-size:0.82rem;" %}
+{% set btn_style = "background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:5px 14px; font-size:0.82rem; font-weight:700; cursor:pointer;" %}
+
+{% if not characters %}
+<p class="text-muted">No characters yet. <a href="/{{ slug }}/dm/party/add">Add one.</a></p>
+{% else %}
+{% for char in characters %}
+<div class="card mb-4">
+  <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; flex-wrap:wrap;">
+    <div>
+      <h3>{{ char.name }}</h3>
+      <div class="role">{{ char.race }} {{ char['class'] }} · Lv{{ char.level }}</div>
+      <span class="badge badge-{{ char.status }}">{{ char.status }}</span>
+      {% if char.notes %}<p class="text-muted text-sm" style="margin-top:8px;">{{ char.notes }}</p>{% endif %}
+    </div>
+  </div>
+
+  {% if session.get('dm_' ~ slug) %}
+  <details style="margin-top:12px;">
+    <summary style="list-style:none; cursor:pointer; color:var(--gold-dim); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">
+      DM Controls
+    </summary>
+    <form method="POST" action="/{{ slug }}/dm/character/{{ char.name }}/update"
+          style="margin-top:12px; display:flex; flex-direction:column; gap:10px;">
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <div style="display:flex; flex-direction:column; gap:4px;">
+          <label style="color:var(--muted); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">Level</label>
+          <input type="number" name="level" value="{{ char.level }}" min="1" max="20"
+                 style="{{ input_style }} width:70px;">
+        </div>
+        <div style="display:flex; flex-direction:column; gap:4px;">
+          <label style="color:var(--muted); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">Status</label>
+          <select name="status" style="{{ input_style }}">
+            {% for s in ['active','dead','missing','retired'] %}
+            <option value="{{ s }}" {% if s == char.status %}selected{% endif %}>{{ s }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:4px;">
+        <label style="color:var(--muted); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">Notes</label>
+        <input type="text" name="notes" value="{{ char.notes }}" style="{{ input_style }} width:100%;">
+      </div>
+      <div><button type="submit" style="{{ btn_style }}">Save</button></div>
+    </form>
+  </details>
+  {% endif %}
+</div>
+{% endfor %}
+{% endif %}
+
+{% endblock %}
