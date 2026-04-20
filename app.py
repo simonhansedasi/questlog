@@ -959,6 +959,19 @@ def dm_undo_ripple(slug, event_id):
     return redirect(next_url)
 
 
+@app.route("/<slug>/dm/world/futures", methods=["POST"])
+@dm_required
+def dm_propose_futures(slug):
+    meta = load(slug, "campaign.json")
+    current_session = db.get_current_session(slug)
+    world_summary = db.get_world_state_summary(slug, current_session)
+    try:
+        futures = ai.propose_futures(meta.get("name", ""), current_session, world_summary)
+        return jsonify({"futures": futures, "session": current_session})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route("/<slug>/dm/quest/<quest_id>/log/<int:idx>/delete", methods=["POST"])
 @dm_required
 def dm_delete_quest_log(slug, quest_id, idx):

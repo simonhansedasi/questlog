@@ -790,6 +790,96 @@ def set_session_plan(slug, plan):
     _save(slug, data, "dm/session.json")
 
 
+def append_session_plan(slug, text):
+    """Append a line to the session plan, creating it if empty."""
+    data = _load(slug, "dm/session.json")
+    current = data.get("plan", "").rstrip()
+    data["plan"] = (current + "\n\n" + text).lstrip()
+    _save(slug, data, "dm/session.json")
+
+
+def get_world_state_summary(slug, current_session):
+    """Build a structured world context for AI futures inference."""
+    npcs = _load(slug, "world/npcs.json").get("npcs", [])
+    factions = _load(slug, "world/factions.json").get("factions", [])
+    quests = _load(slug, "story/quests.json").get("quests", [])
+
+    intel = get_dm_intelligence(slug, current_session)
+
+    def recent_events(log, n=4):
+        visible = [e for e in log if _entry_visibility(e) != "dm_only"]
+        return sorted(visible, key=lambda e: e.get("session", 0), reverse=True)[:n]
+
+    def fmt_events(log):
+        evts = recent_events(log)
+        if not evts:
+            return "no events logged"
+        return "; ".join(
+            f"S{e.get('session','?')} [{e.get('polarity','?')}x{e.get('intensity',1)}] {e.get('note','')}"
+            for e in evts
+        )
+
+    # Top pressured entities (active + at-risk)
+    hot_entities = []
+    seen = set()
+    for e in (intel.get("pressures", []) + intel.get("risks", []))[:6]:
+        if e["id"] in seen:
+            continue
+        seen.add(e["id"])
+        if e["kind"] == "npc":
+            obj = next((n for n in npcs if n["id"] == e["id"]), None)
+        else:
+            obj = next((f for f in factions if f["id"] == e["id"]), None)
+        if not obj:
+            continue
+        rel = compute_npc_relationship(obj, is_dm=True)
+        hot_entities.append({
+            "id": e["id"],
+            "kind": e["kind"],
+            "name": e["name"],
+            "role": e.get("role", ""),
+            "relationship": rel.get("relationship", "unknown"),
+            "trend": rel.get("trend"),
+            "score": rel.get("score"),
+            "reason": e.get("reason", ""),
+            "recent_events": fmt_events(obj.get("log", [])),
+            "relations": obj.get("relations", []),
+            "faction": obj.get("faction", "") if e["kind"] == "npc" else None,
+        })
+
+    # Stale threads
+    stale_summary = [
+        {"name": e["name"], "kind": e["kind"], "id": e["id"],
+         "last_session": e.get("last_session"), "reason": e.get("reason", "")}
+        for e in intel.get("stale", [])[:4]
+    ]
+
+    # Faction relation map (just hostile pairs)
+    hostile_pairs = []
+    for f in factions:
+        for rel in f.get("relations", []):
+            if rel.get("relation") == "rival" and rel.get("weight", 0) >= 0.5:
+                hostile_pairs.append(
+                    f"{f['name']} ↔ {rel['target']} (rival {rel['weight']}×)"
+                )
+
+    # Active quests
+    active_quests = [
+        {"title": q["title"], "description": q.get("description", ""),
+         "last_session": max((e.get("session", 0) for e in q.get("log", [])), default=None)}
+        for q in quests if q.get("status") == "active" and not q.get("hidden")
+    ]
+
+    return {
+        "current_session": current_session,
+        "hot_entities": hot_entities,
+        "stale_threads": stale_summary,
+        "hostile_pairs": hostile_pairs,
+        "active_quests": active_quests,
+        "session_plan": get_session_plan(slug),
+    }
+
+
 def get_session_notes(slug):
     return _load(slug, "dm/session.json").get("notes", "")
 

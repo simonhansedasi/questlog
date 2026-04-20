@@ -98,3 +98,78 @@ JSON array:"""
             raw = raw[4:]
         raw = raw.strip()
     return json.loads(raw)
+
+
+def propose_futures(campaign_name, session_n, world_summary):
+    """Given current world state, generate 2-3 plausible near-future narrative hypotheses."""
+    hot = world_summary.get("hot_entities", [])
+    stale = world_summary.get("stale_threads", [])
+    hostile = world_summary.get("hostile_pairs", [])
+    quests = world_summary.get("active_quests", [])
+    plan = world_summary.get("session_plan", "")
+
+    hot_lines = "\n".join(
+        f"  - {e['name']} ({e['kind']}, {e['relationship']}{', '+e['trend'] if e.get('trend') else ''}): {e['recent_events']}"
+        for e in hot
+    ) or "  (none)"
+    stale_lines = "\n".join(
+        f"  - {e['name']} ({e['kind']}) — last seen S{e['last_session']}: {e['reason']}"
+        for e in stale
+    ) or "  (none)"
+    hostile_lines = "\n".join(f"  - {p}" for p in hostile) or "  (none)"
+    quest_lines = "\n".join(
+        f"  - {q['title']}: {q['description']}"
+        for q in quests
+    ) or "  (none)"
+
+    prompt = f"""You are a narrative intelligence engine for a tabletop RPG campaign called "{campaign_name}".
+
+Based on the current world state below, generate 2 to 3 plausible narrative hypotheses — things that probably happen in the next 1-2 sessions if the party does nothing to intervene. These are NOT outcomes the DM has decided; they are probabilistic extrapolations from current tensions.
+
+Each hypothesis should:
+- Name the entity/entities driving it
+- Describe what concretely happens
+- Explain why (which pressure or tension causes it)
+- Give a confidence level: high / medium / low
+- Be 1-2 sentences, specific and gameable
+
+Current session: {session_n}
+
+Hot entities (under pressure or at risk):
+{hot_lines}
+
+Stale threads (unresolved, building):
+{stale_lines}
+
+Hostile faction pairs:
+{hostile_lines}
+
+Active quests:
+{quest_lines}
+
+Session plan hint:
+{plan or "(none)"}
+
+Return ONLY a JSON array. No prose before or after. Each element:
+{{
+  "entity_name": "<primary entity driving this future>",
+  "entity_kind": "npc" or "faction" or "quest",
+  "hypothesis": "<what probably happens — 1-2 sentences>",
+  "reasoning": "<which tension/event causes this — 1 sentence>",
+  "confidence": "high" | "medium" | "low"
+}}
+
+JSON array:"""
+
+    message = _client.messages.create(
+        model="claude-haiku-4-5-20251001",
+        max_tokens=1024,
+        messages=[{"role": "user", "content": prompt}]
+    )
+    raw = message.content[0].text.strip()
+    if raw.startswith("```"):
+        raw = raw.split("```")[1]
+        if raw.startswith("json"):
+            raw = raw[4:]
+        raw = raw.strip()
+    return json.loads(raw)
