@@ -9,65 +9,121 @@
     Session {{ current_session }}
   </span>
 </div>
-<p class="subtitle" style="margin-bottom:28px;">
+<p class="subtitle" style="margin-bottom:24px;">
   {{ meta.name }}
   {% if is_dm %} &mdash; <a href="/{{ slug }}/dm" style="color:var(--muted); font-size:0.85rem;">DM Dashboard →</a>{% endif %}
 </p>
 
-{% if not hot and not shifts and not cold and not active_quests %}
-<div class="card" style="padding:40px 24px; text-align:center;">
-  <p class="text-muted">Nothing to surface yet. Log some interactions and check back.</p>
+{% if is_dm and intel %}
+
+{# ── Intelligence Layer ─────────────────────────────────── #}
+
+{% macro entity_link(e) %}
+  {% if e.kind == 'quest' %}/{{ slug }}/story{% else %}/{{ slug }}/world/{{ e.kind }}/{{ e.id }}{% endif %}
+{% endmacro %}
+
+{% macro intel_card(e, color) %}
+<a href="{{ entity_link(e) }}" style="text-decoration:none;">
+  <div style="background:var(--surface); border:1px solid var(--border); border-left:3px solid {{ color }};
+              border-radius:6px; padding:10px 14px; display:flex; justify-content:space-between; align-items:flex-start; gap:12px;
+              transition:border-color 0.15s;"
+       onmouseover="this.style.borderColor='var(--gold-dim)'" onmouseout="this.style.borderColor='var(--border)'">
+    <div style="flex:1; min-width:0;">
+      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:3px;">
+        <span style="font-weight:700; color:var(--text); font-size:0.9rem;">{{ e.name }}</span>
+        {% if e.rel_data and e.rel_data.relationship %}
+        <span class="badge badge-{{ e.rel_data.relationship }}" style="font-size:0.68rem; padding:1px 6px;">{{ e.rel_data.relationship }}</span>
+        {% endif %}
+        {% if e.rel_data and e.rel_data.trend == 'down' %}<span style="color:#e05c5c; font-size:0.8rem;">↓</span>
+        {% elif e.rel_data and e.rel_data.trend == 'up' %}<span style="color:#7ec87e; font-size:0.8rem;">↑</span>{% endif %}
+        {% if e.role %}<span style="color:var(--muted); font-size:0.75rem;">{{ e.role }}</span>{% endif %}
+      </div>
+      <p style="margin:0; font-size:0.78rem; color:var(--muted);">{{ e.reason }}</p>
+    </div>
+    {% if e.last_session is defined %}
+    <span style="color:var(--muted); font-size:0.72rem; white-space:nowrap; padding-top:2px;">S{{ e.last_session }}</span>
+    {% endif %}
+  </div>
+</a>
+{% endmacro %}
+
+{% set has_intel = intel.pressures or intel.stale or intel.risks or intel.gaps %}
+
+{% if not has_intel %}
+<div class="card" style="padding:32px 24px; text-align:center;">
+  <p class="text-muted">Nothing to surface yet. Log some interactions to activate the intelligence layer.</p>
+</div>
+{% else %}
+
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;" class="session-grid">
+
+  {# 🔥 Active Pressure #}
+  {% if intel.pressures %}
+  <div>
+    <h2 style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;
+               color:#e05c5c; margin-bottom:10px;">🔥 Active Pressure</h2>
+    <div style="display:flex; flex-direction:column; gap:8px;">
+      {% for e in intel.pressures %}{{ intel_card(e, '#e05c5c') }}{% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {# ⚠️ Consequence Risk #}
+  {% if intel.risks %}
+  <div>
+    <h2 style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;
+               color:#d97706; margin-bottom:10px;">⚠️ Consequence Risk</h2>
+    <div style="display:flex; flex-direction:column; gap:8px;">
+      {% for e in intel.risks %}{{ intel_card(e, '#d97706') }}{% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {# ⏳ Stale Threads #}
+  {% if intel.stale %}
+  <div>
+    <h2 style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;
+               color:var(--muted); margin-bottom:10px;">⏳ Stale Threads</h2>
+    <div style="display:flex; flex-direction:column; gap:8px;">
+      {% for e in intel.stale %}{{ intel_card(e, 'var(--border)') }}{% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {# 🧩 Narrative Gaps #}
+  {% if intel.gaps %}
+  <div>
+    <h2 style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;
+               color:var(--purple); margin-bottom:10px;">🧩 Narrative Gaps</h2>
+    <div style="display:flex; flex-direction:column; gap:8px;">
+      {% for e in intel.gaps %}{{ intel_card(e, 'var(--purple)') }}{% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
 </div>
 {% endif %}
 
-{# ── Hot Right Now ─────────────────────────────────────── #}
-{% if hot %}
-<h2 class="section-title">{% if is_dm %}Hot Right Now{% else %}Recently Active{% endif %}</h2>
-<p class="text-muted text-sm" style="margin-bottom:12px;">Entities touched in the last 2 sessions.</p>
-<div style="display:flex; flex-direction:column; gap:10px; margin-bottom:28px;">
-  {% for e in hot %}
-  <a href="/{{ slug }}/world/{% if e.kind == 'npc' %}npc{% else %}faction{% endif %}/{{ e.id }}"
-     style="text-decoration:none;">
-    <div class="card" style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; transition:border-color 0.15s;"
-         onmouseover="this.style.borderColor='var(--gold-dim)'" onmouseout="this.style.borderColor='var(--border)'">
-      <div style="flex:1; min-width:0;">
-        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:4px;">
-          <span style="font-weight:700; color:var(--gold);">{{ e.name }}</span>
-          <span class="badge badge-{{ e.rel_data.relationship }}" style="font-size:0.7rem;">{{ e.rel_data.relationship }}</span>
-          {% if e.rel_data.trend == 'up' %}<span style="color:#7ec87e; font-size:0.8rem;" title="Improving">↑</span>
-          {% elif e.rel_data.trend == 'down' %}<span style="color:#e05c5c; font-size:0.8rem;" title="Worsening">↓</span>{% endif %}
-          {% if e.role %}<span class="text-muted text-sm">{{ e.role }}</span>{% endif %}
-        </div>
-        {% if e.last_entry %}
-        <p style="font-size:0.82rem; color:var(--muted); margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-          {% if e.last_entry.event_type %}<span style="color:var(--purple); font-size:0.7rem; font-weight:700; text-transform:uppercase; margin-right:5px;">{{ e.last_entry.event_type }}</span>{% endif %}
-          {{ e.last_entry.note }}
-        </p>
-        {% endif %}
-      </div>
-      <span style="color:var(--muted); font-size:0.75rem; white-space:nowrap; padding-top:2px;">S{{ e.last_session }}</span>
-    </div>
-  </a>
-  {% endfor %}
-</div>
+{# ── Divider into raw briefing ─────────────────────────── #}
+{% if shifts or hot or cold %}
+<hr style="border:none; border-top:1px solid var(--border); margin:32px 0 24px;">
+<p style="color:var(--muted); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:20px;">Detail</p>
 {% endif %}
 
 {# ── Relationship Shifts ───────────────────────────────── #}
 {% if shifts %}
 <h2 class="section-title">Relationship Shifts</h2>
 <p class="text-muted text-sm" style="margin-bottom:12px;">What changed this session.</p>
-<div style="display:flex; flex-direction:column; gap:10px; margin-bottom:28px;">
+<div style="display:flex; flex-direction:column; gap:8px; margin-bottom:24px;">
   {% for s in shifts %}
   <a href="/{{ slug }}/world/{% if s.kind == 'npc' %}npc{% else %}faction{% endif %}/{{ s.id }}"
      style="text-decoration:none;">
-    <div class="card" style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; transition:border-color 0.15s;
-                             border-color:{% if s.direction == 'improved' %}rgba(94,168,110,0.4){% else %}rgba(196,92,92,0.4){% endif %};"
-         onmouseover="this.style.borderColor='var(--gold-dim)'"
-         onmouseout="this.style.borderColor='{% if s.direction == 'improved' %}rgba(94,168,110,0.4){% else %}rgba(196,92,92,0.4){% endif %}'">
-      <span style="font-size:1.1rem; color:{% if s.direction == 'improved' %}#7ec87e{% else %}#e05c5c{% endif %};">
+    <div class="card" style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+                             border-color:{% if s.direction == 'improved' %}rgba(94,168,110,0.4){% else %}rgba(196,92,92,0.4){% endif %};">
+      <span style="font-size:1.0rem; color:{% if s.direction == 'improved' %}#7ec87e{% else %}#e05c5c{% endif %};">
         {% if s.direction == 'improved' %}↑{% else %}↓{% endif %}
       </span>
-      <span style="font-weight:700; color:var(--text);">{{ s.name }}</span>
+      <span style="font-weight:700;">{{ s.name }}</span>
       <span style="display:flex; align-items:center; gap:6px;">
         <span class="badge badge-{{ s.from_rel }}" style="font-size:0.7rem;">{{ s.from_rel }}</span>
         <span style="color:var(--muted); font-size:0.8rem;">→</span>
@@ -79,8 +135,100 @@
 </div>
 {% endif %}
 
-{# ── Active Quests (players only) ─────────────────────── #}
-{% if not is_dm and active_quests %}
+{# ── Hot Right Now ─────────────────────────────────────── #}
+{% if hot %}
+<h2 class="section-title">Recently Active</h2>
+<p class="text-muted text-sm" style="margin-bottom:12px;">Touched in the last 2 sessions.</p>
+<div style="display:flex; flex-direction:column; gap:8px; margin-bottom:24px;">
+  {% for e in hot %}
+  <a href="/{{ slug }}/world/{% if e.kind == 'npc' %}npc{% else %}faction{% endif %}/{{ e.id }}"
+     style="text-decoration:none;">
+    <div class="card" style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px;">
+      <div style="flex:1; min-width:0;">
+        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:3px;">
+          <span style="font-weight:700; color:var(--gold);">{{ e.name }}</span>
+          <span class="badge badge-{{ e.rel_data.relationship }}" style="font-size:0.7rem;">{{ e.rel_data.relationship }}</span>
+          {% if e.rel_data.trend == 'up' %}<span style="color:#7ec87e; font-size:0.8rem;">↑</span>
+          {% elif e.rel_data.trend == 'down' %}<span style="color:#e05c5c; font-size:0.8rem;">↓</span>{% endif %}
+          {% if e.role %}<span class="text-muted text-sm">{{ e.role }}</span>{% endif %}
+        </div>
+        {% if e.last_entry %}
+        <p style="font-size:0.8rem; color:var(--muted); margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+          {% if e.last_entry.event_type %}<span style="color:var(--purple); font-size:0.7rem; font-weight:700; text-transform:uppercase; margin-right:4px;">{{ e.last_entry.event_type }}</span>{% endif %}
+          {{ e.last_entry.note }}
+        </p>
+        {% endif %}
+      </div>
+      <span style="color:var(--muted); font-size:0.72rem; white-space:nowrap;">S{{ e.last_session }}</span>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% else %}{# not is_dm #}
+
+{# ── Player view ───────────────────────────────────────── #}
+{% if not hot and not shifts and not active_quests %}
+<div class="card" style="padding:40px 24px; text-align:center;">
+  <p class="text-muted">Nothing to surface yet.</p>
+</div>
+{% endif %}
+
+{% if hot %}
+<h2 class="section-title">Recently Active</h2>
+<p class="text-muted text-sm" style="margin-bottom:12px;">Entities touched in the last 2 sessions.</p>
+<div style="display:flex; flex-direction:column; gap:10px; margin-bottom:28px;">
+  {% for e in hot %}
+  <a href="/{{ slug }}/world/{% if e.kind == 'npc' %}npc{% else %}faction{% endif %}/{{ e.id }}"
+     style="text-decoration:none;">
+    <div class="card" style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px;">
+      <div style="flex:1; min-width:0;">
+        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:4px;">
+          <span style="font-weight:700; color:var(--gold);">{{ e.name }}</span>
+          <span class="badge badge-{{ e.rel_data.relationship }}" style="font-size:0.7rem;">{{ e.rel_data.relationship }}</span>
+          {% if e.rel_data.trend == 'up' %}<span style="color:#7ec87e; font-size:0.8rem;">↑</span>
+          {% elif e.rel_data.trend == 'down' %}<span style="color:#e05c5c; font-size:0.8rem;">↓</span>{% endif %}
+          {% if e.role %}<span class="text-muted text-sm">{{ e.role }}</span>{% endif %}
+        </div>
+        {% if e.last_entry %}
+        <p style="font-size:0.82rem; color:var(--muted); margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+          {{ e.last_entry.note }}
+        </p>
+        {% endif %}
+      </div>
+      <span style="color:var(--muted); font-size:0.75rem; white-space:nowrap;">S{{ e.last_session }}</span>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% if shifts %}
+<h2 class="section-title">Relationship Shifts</h2>
+<p class="text-muted text-sm" style="margin-bottom:12px;">What changed this session.</p>
+<div style="display:flex; flex-direction:column; gap:10px; margin-bottom:28px;">
+  {% for s in shifts %}
+  <a href="/{{ slug }}/world/{% if s.kind == 'npc' %}npc{% else %}faction{% endif %}/{{ s.id }}"
+     style="text-decoration:none;">
+    <div class="card" style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+                             border-color:{% if s.direction == 'improved' %}rgba(94,168,110,0.4){% else %}rgba(196,92,92,0.4){% endif %};">
+      <span style="font-size:1.1rem; color:{% if s.direction == 'improved' %}#7ec87e{% else %}#e05c5c{% endif %};">
+        {% if s.direction == 'improved' %}↑{% else %}↓{% endif %}
+      </span>
+      <span style="font-weight:700;">{{ s.name }}</span>
+      <span style="display:flex; align-items:center; gap:6px;">
+        <span class="badge badge-{{ s.from_rel }}" style="font-size:0.7rem;">{{ s.from_rel }}</span>
+        <span style="color:var(--muted); font-size:0.8rem;">→</span>
+        <span class="badge badge-{{ s.to_rel }}" style="font-size:0.7rem;">{{ s.to_rel }}</span>
+      </span>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% if active_quests %}
 <h2 class="section-title">Active Quests</h2>
 <p class="text-muted text-sm" style="margin-bottom:12px;">What the party is working on.</p>
 <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:28px;">
@@ -100,36 +248,6 @@
 </div>
 {% endif %}
 
-{# ── Gone Cold (DM only) ───────────────────────────────── #}
-{% if is_dm and cold %}
-<h2 class="section-title">Gone Cold</h2>
-<p class="text-muted text-sm" style="margin-bottom:12px;">Previously active — silent for 3+ sessions.</p>
-<div style="display:flex; flex-direction:column; gap:10px; margin-bottom:28px;">
-  {% for e in cold %}
-  <a href="/{{ slug }}/world/{% if e.kind == 'npc' %}npc{% else %}faction{% endif %}/{{ e.id }}"
-     style="text-decoration:none;">
-    <div class="card" style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; opacity:0.8; transition:border-color 0.15s;"
-         onmouseover="this.style.borderColor='var(--gold-dim)'" onmouseout="this.style.borderColor='var(--border)'">
-      <div style="flex:1; min-width:0;">
-        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:4px;">
-          <span style="font-weight:700; color:var(--text);">{{ e.name }}</span>
-          <span class="badge badge-{{ e.rel_data.relationship }}" style="font-size:0.7rem;">{{ e.rel_data.relationship }}</span>
-          {% if e.role %}<span class="text-muted text-sm">{{ e.role }}</span>{% endif %}
-        </div>
-        {% if e.last_entry %}
-        <p style="font-size:0.82rem; color:var(--muted); margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-          Last: {{ e.last_entry.note }}
-        </p>
-        {% endif %}
-      </div>
-      <div style="text-align:right; flex-shrink:0;">
-        <div style="color:var(--muted); font-size:0.75rem;">last S{{ e.last_session }}</div>
-        <div style="color:var(--muted); font-size:0.72rem;">{{ e.event_count }} events</div>
-      </div>
-    </div>
-  </a>
-  {% endfor %}
-</div>
-{% endif %}
+{% endif %}{# end is_dm / player split #}
 
 {% endblock %}

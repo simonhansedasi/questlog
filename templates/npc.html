@@ -8,6 +8,14 @@
 <div class="role">{{ npc.role }}</div>
 
 <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:6px;">
+  {% if npc.faction %}
+  {% set npc_faction = factions | selectattr('id', 'equalto', npc.faction) | first if factions else none %}
+  <a href="/{{ slug }}/world/faction/{{ npc.faction }}"
+     style="background:var(--surface2); border:1px solid var(--border); border-radius:4px; padding:2px 8px;
+            font-size:0.75rem; color:var(--muted); text-decoration:none;">
+    {{ npc_faction.name if npc_faction else npc.faction }}
+  </a>
+  {% endif %}
   <span class="badge badge-{{ rel_data.relationship }}">{{ rel_data.relationship }}</span>
   {% if rel_data.trend == 'up' %}
   <span style="color:#7ec87e; font-size:0.85rem; font-weight:700;" title="Relationship improving">↑</span>
@@ -190,14 +198,80 @@
   <h3 style="color:var(--muted); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:12px;">Log Interaction</h3>
   <form method="POST" action="/{{ slug }}/dm/npc/{{ npc.id }}/log">
     {{ log_form("/{{ slug }}/dm/npc/{{ npc.id }}/log") }}
-    <div style="margin-top:4px;">
+    <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap; margin-top:4px;">
       <select name="visibility" style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:4px 8px; font-size:0.8rem;">
         <option value="public">Public — all players</option>
         <option value="restricted">Restricted — reveal individually</option>
         <option value="dm_only">DM only — never shown</option>
       </select>
+      {% if npc.faction %}
+      {% set npc_faction = factions | selectattr('id', 'equalto', npc.faction) | first if factions else none %}
+      <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:0.8rem; color:var(--muted);">
+        <input type="checkbox" name="also_faction" style="accent-color:var(--gold);">
+        Also affect {{ npc_faction.name if npc_faction else npc.faction }}
+      </label>
+      {% endif %}
     </div>
   </form>
+
+  <hr class="divider">
+
+  <h3 style="color:var(--muted); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;">Relations</h3>
+  <p style="color:var(--muted); font-size:0.72rem; margin:0 0 10px 0;">Events ripple automatically — ally gets same polarity, rival gets opposite.</p>
+  {% if npc.relations %}
+  <div style="display:flex; flex-direction:column; gap:6px; margin-bottom:10px;">
+    {% for rel in npc.relations %}
+    {% set rname = (world_npcs | selectattr('id','equalto',rel.target) | map(attribute='name') | first) if rel.target_type == 'npc' else (factions | selectattr('id','equalto',rel.target) | map(attribute='name') | first) %}
+    <div style="display:flex; align-items:center; gap:8px; font-size:0.82rem; flex-wrap:wrap;">
+      <span style="color:{% if rel.relation == 'rival' %}#e05c5c{% else %}#7ec87e{% endif %}; font-weight:700; font-size:0.72rem; text-transform:uppercase;">{{ rel.relation }}</span>
+      <span>{{ rname or rel.target }}</span>
+      <span style="color:var(--muted); font-size:0.72rem;">({{ rel.weight }}×)</span>
+      <form method="POST" action="/{{ slug }}/dm/npc/{{ npc.id }}/relation/{{ loop.index0 }}/delete" style="margin-left:auto;">
+        <button type="submit" style="background:none; border:none; color:var(--muted); font-size:0.8rem; cursor:pointer; padding:0 4px;">×</button>
+      </form>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  <details>
+    <summary style="list-style:none; cursor:pointer; color:var(--muted); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">+ Add Relation</summary>
+    <form method="POST" action="/{{ slug }}/dm/npc/{{ npc.id }}/relation"
+          style="margin-top:8px; display:flex; gap:6px; align-items:flex-end; flex-wrap:wrap;">
+      <div style="display:flex; flex-direction:column; gap:3px;">
+        <label style="color:var(--muted); font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em;">Target</label>
+        <select name="target_id" required style="{{ input_style }} min-width:140px;" onchange="this.form.target_type.value=this.options[this.selectedIndex].dataset.type">
+          {% if world_npcs %}
+          <optgroup label="NPCs">
+            {% for n in world_npcs %}{% if n.id != npc.id %}<option value="{{ n.id }}" data-type="npc">{{ n.name }}</option>{% endif %}{% endfor %}
+          </optgroup>
+          {% endif %}
+          {% if factions %}
+          <optgroup label="Factions">
+            {% for f in factions %}<option value="{{ f.id }}" data-type="faction">{{ f.name }}</option>{% endfor %}
+          </optgroup>
+          {% endif %}
+        </select>
+        <input type="hidden" name="target_type" value="npc">
+      </div>
+      <div style="display:flex; flex-direction:column; gap:3px;">
+        <label style="color:var(--muted); font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em;">Type</label>
+        <select name="relation" style="{{ input_style }} width:100px;">
+          <option value="ally">ally</option>
+          <option value="rival">rival</option>
+        </select>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:3px;">
+        <label style="color:var(--muted); font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em;">Weight</label>
+        <select name="weight" style="{{ input_style }} width:110px;">
+          <option value="0.25">weak (0.25×)</option>
+          <option value="0.5" selected>moderate (0.5×)</option>
+          <option value="0.75">strong (0.75×)</option>
+          <option value="1.0">full (1.0×)</option>
+        </select>
+      </div>
+      <button type="submit" style="{{ btn_style }}">Add</button>
+    </form>
+  </details>
 
   <hr class="divider">
 
@@ -216,6 +290,15 @@
     {% else %}
     <input type="hidden" name="relationship" value="{{ npc.relationship }}">
     {% endif %}
+    <div style="display:flex; flex-direction:column; gap:4px;">
+      <label style="{{ label_style }}">Faction Affiliation</label>
+      <select name="faction" style="{{ input_style }}">
+        <option value="">— none —</option>
+        {% for f in factions %}
+        <option value="{{ f.id }}" {% if f.id == npc.faction %}selected{% endif %}>{{ f.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
     <div style="display:flex; flex-direction:column; gap:4px;">
       <label style="{{ label_style }}">Description</label>
       <textarea name="description" rows="3"

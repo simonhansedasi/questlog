@@ -38,6 +38,17 @@
     </select>
   </div>
 
+  <div style="display:flex; flex-direction:column; gap:4px;">
+    <label style="color:var(--gold); font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Faction Affiliation</label>
+    <select name="faction"
+            style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:8px 12px; font-size:0.9rem;">
+      <option value="">— none —</option>
+      {% for f in factions %}
+      <option value="{{ f.id }}">{{ f.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
   <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.9rem; color:var(--muted);">
     <input type="checkbox" name="hidden" checked style="accent-color:var(--gold);">
     Hidden from players

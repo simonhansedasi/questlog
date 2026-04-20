@@ -187,16 +187,16 @@ function generateRecap(slug) {
 <h2 class="section-title mt-8" id="quicklog">Quick Log</h2>
 <div class="card mb-4">
   {% if npcs or factions %}
-  <form method="POST" action="/{{ slug }}/dm/log/quick"
+  <form id="quick-log-form" method="POST" action="/{{ slug }}/dm/log/quick"
         style="display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap;">
     <div style="display:flex; flex-direction:column; gap:4px;">
       <label style="color:var(--muted); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Entity</label>
-      <select name="entity" required
+      <select name="entity" required id="quick-entity-select"
               style="background:var(--surface2); border:1px solid var(--border); color:var(--text);
                      border-radius:4px; padding:6px 10px; font-size:0.85rem; min-width:180px;">
         {% if npcs %}
         <optgroup label="NPCs">
-          {% for npc in npcs %}<option value="npc:{{ npc.id }}">{{ npc.name }}</option>{% endfor %}
+          {% for npc in npcs %}<option value="npc:{{ npc.id }}" data-faction="{{ npc.faction or '' }}">{{ npc.name }}</option>{% endfor %}
         </optgroup>
         {% endif %}
         {% if factions %}
@@ -251,6 +251,33 @@ function generateRecap(slug) {
       Log
     </button>
   </form>
+  <label id="also-faction-label" style="display:none; align-items:center; gap:6px; cursor:pointer; font-size:0.78rem; color:var(--muted); margin-top:6px;">
+    <input type="checkbox" name="also_faction" form="quick-log-form" style="accent-color:var(--gold);">
+    Also affect <span id="also-faction-name"></span>
+  </label>
+  <script>
+  (function() {
+    var factionNames = {
+      {% for f in factions %}"{{ f.id }}": "{{ f.name }}"{% if not loop.last %},{% endif %}{% endfor %}
+    };
+    var sel = document.getElementById('quick-entity-select');
+    var lbl = document.getElementById('also-faction-label');
+    var nm  = document.getElementById('also-faction-name');
+    if (!sel) return;
+    function update() {
+      var opt = sel.options[sel.selectedIndex];
+      var fid = opt ? opt.getAttribute('data-faction') : '';
+      if (fid && factionNames[fid]) {
+        nm.textContent = factionNames[fid];
+        lbl.style.display = 'flex';
+      } else {
+        lbl.style.display = 'none';
+      }
+    }
+    sel.addEventListener('change', update);
+    update();
+  })();
+  </script>
   {% else %}
   <p class="text-muted text-sm">No NPCs or factions yet. Add some first.</p>
   {% endif %}

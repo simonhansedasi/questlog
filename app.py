@@ -247,6 +247,8 @@ def npc(slug, npc_id):
             viewer_known_events = set(viewer_character.get("known_events", []))
 
     party = db.get_party(slug) if is_dm else []
+    factions = db.get_factions(slug) if is_dm else []
+    world_npcs = db.get_npcs(slug) if is_dm else []
 
     # DM preview: see the world through a character's eyes
     preview_char = None
@@ -268,7 +270,8 @@ def npc(slug, npc_id):
                            viewer_known_events=effective_known_events,
                            preview_char=preview_char,
                            current_session=db.get_current_session(slug),
-                           rel_data=rel_data, party=party)
+                           rel_data=rel_data, party=party,
+                           factions=factions, world_npcs=world_npcs)
 
 
 @app.route("/<slug>/world/faction/<faction_id>")
@@ -277,10 +280,18 @@ def faction(slug, faction_id):
     if r: return r
     meta = load(slug, "campaign.json")
     is_dm = bool(session.get(f"dm_{slug}"))
-    faction = next((f for f in db.get_factions(slug, include_hidden=is_dm) if f["id"] == faction_id), None)
-    if not faction:
+    faction_obj = next((f for f in db.get_factions(slug, include_hidden=is_dm) if f["id"] == faction_id), None)
+    if not faction_obj:
         abort(404)
-    return render_template("faction.html", meta=meta, faction=faction, slug=slug)
+    rel_data = db.compute_npc_relationship(faction_obj, is_dm=is_dm)
+    all_npcs = db.get_npcs(slug, include_hidden=is_dm)
+    affiliated_npcs = [n for n in all_npcs if n.get("faction") == faction_id]
+    all_factions = db.get_factions(slug, include_hidden=is_dm)
+    return render_template("faction.html", meta=meta, faction=faction_obj, slug=slug,
+                           is_dm=is_dm, rel_data=rel_data,
+                           current_session=db.get_current_session(slug),
+                           affiliated_npcs=affiliated_npcs,
+                           world_npcs=all_npcs, all_factions=all_factions)
 
 
 @app.route("/<slug>/story")
@@ -401,9 +412,11 @@ def brief(slug):
     current_session = db.get_current_session(slug)
     quests = db.get_quests(slug, include_hidden=is_dm) if not is_dm else []
     active_quests = [q for q in quests if q.get("status") == "active"] if not is_dm else []
+    intel = db.get_dm_intelligence(slug, current_session) if is_dm else None
     return render_template("brief.html", meta=meta, slug=slug,
                            is_dm=is_dm,
                            current_session=current_session,
+                           intel=intel,
                            hot=db.get_recent_entities(slug, current_session,
                                                       include_hidden=is_dm),
                            cold=db.get_neglected_entities(slug, current_session) if is_dm else [],
@@ -447,9 +460,20 @@ def dm_quick_log(slug):
         entity_type, entity_id = entity.split(":", 1)
         if entity_type == "npc" and note:
             db.log_npc(slug, entity_id, session_n, note, polarity=polarity, intensity=intensity, event_type=event_type)
+            if "also_faction" in request.form:
+                npcs = db.get_npcs(slug)
+                npc_obj = next((n for n in npcs if n["id"] == entity_id), None)
+                if npc_obj and npc_obj.get("faction"):
+                    db.log_faction(slug, npc_obj["faction"], session_n, note,
+                                   polarity=polarity, intensity=intensity, event_type=event_type)
+            if polarity:
+                db.apply_ripple(slug, entity_id, "npc", session_n, note, polarity, intensity, event_type)
             flash("Logged", "success")
         elif entity_type == "faction" and note:
-            db.log_faction(slug, entity_id, session_n, note)
+            db.log_faction(slug, entity_id, session_n, note, polarity=polarity,
+                           intensity=intensity, event_type=event_type)
+            if polarity:
+                db.apply_ripple(slug, entity_id, "faction", session_n, note, polarity, intensity, event_type)
             flash("Logged", "success")
     return redirect(url_for("dm", slug=slug))
 
@@ -555,9 +579,11 @@ def dm_add_npc(slug):
             relationship=request.form.get("relationship", "neutral"),
             description=request.form.get("description", "").strip(),
             hidden="hidden" in request.form,
+            faction=request.form.get("faction", "").strip(),
         )
         return redirect(url_for("dm", slug=slug))
-    return render_template("dm/add_npc.html", meta=meta, slug=slug)
+    return render_template("dm/add_npc.html", meta=meta, slug=slug,
+                           factions=db.get_factions(slug))
 
 
 @app.route("/<slug>/dm/factions/add", methods=["GET", "POST"])
@@ -896,6 +922,7 @@ def dm_edit_npc(slug, npc_id):
         slug, npc_id,
         relationship=request.form.get("relationship") or None,
         description=request.form.get("description") or None,
+        faction=request.form.get("faction", "").strip(),
     )
     flash("NPC updated", "success")
     return redirect(url_for("npc", slug=slug, npc_id=npc_id))
@@ -915,6 +942,18 @@ def dm_log_npc(slug, npc_id):
     if note:
         db.log_npc(slug, npc_id, session_n, note, polarity=polarity, intensity=intensity,
                    event_type=event_type, visibility=visibility)
+        # Ripple to affiliated faction if requested
+        # Explicit faction ripple
+        if "also_faction" in request.form:
+            npcs = db.get_npcs(slug)
+            npc_obj = next((n for n in npcs if n["id"] == npc_id), None)
+            if npc_obj and npc_obj.get("faction"):
+                db.log_faction(slug, npc_obj["faction"], session_n, note,
+                               polarity=polarity, intensity=intensity,
+                               event_type=event_type, visibility=visibility)
+        # Automatic relation ripple
+        if polarity:
+            db.apply_ripple(slug, npc_id, "npc", session_n, note, polarity, intensity, event_type)
         flash("Entry added", "success")
     return redirect(url_for("npc", slug=slug, npc_id=npc_id))
 
@@ -947,8 +986,18 @@ def dm_edit_faction(slug, faction_id):
 def dm_log_faction(slug, faction_id):
     note = request.form.get("note", "").strip()
     session_n = int(request.form.get("session") or 0)
+    polarity = request.form.get("polarity") or None
+    intensity = int(request.form.get("intensity") or 1)
+    event_type = request.form.get("event_type", "").strip() or None
+    visibility = request.form.get("visibility", "public")
+    if visibility not in ("public", "restricted", "dm_only"):
+        visibility = "public"
     if note:
-        db.log_faction(slug, faction_id, session_n, note)
+        db.log_faction(slug, faction_id, session_n, note, polarity=polarity,
+                       intensity=intensity, event_type=event_type, visibility=visibility)
+        if polarity:
+            db.apply_ripple(slug, faction_id, "faction", session_n, note, polarity, intensity, event_type)
+        flash("Entry added", "success")
     return redirect(url_for("faction", slug=slug, faction_id=faction_id))
 
 
@@ -1007,6 +1056,44 @@ def dm_toggle_objective(slug, quest_id, idx):
         current = quest.get("objectives", [])[idx].get("done", False)
         db.set_objective(slug, quest_id, idx, not current)
     return redirect(url_for("story", slug=slug))
+
+
+@app.route("/<slug>/dm/npc/<npc_id>/relation", methods=["POST"])
+@dm_required
+def dm_add_npc_relation(slug, npc_id):
+    db.add_npc_relation(slug, npc_id,
+                        target_id=request.form.get("target_id", "").strip(),
+                        target_type=request.form.get("target_type", "npc"),
+                        relation=request.form.get("relation", "ally"),
+                        weight=float(request.form.get("weight", 0.5)))
+    flash("Relation added", "success")
+    return redirect(url_for("npc", slug=slug, npc_id=npc_id))
+
+
+@app.route("/<slug>/dm/npc/<npc_id>/relation/<int:rel_idx>/delete", methods=["POST"])
+@dm_required
+def dm_remove_npc_relation(slug, npc_id, rel_idx):
+    db.remove_npc_relation(slug, npc_id, rel_idx)
+    return redirect(url_for("npc", slug=slug, npc_id=npc_id))
+
+
+@app.route("/<slug>/dm/faction/<faction_id>/relation", methods=["POST"])
+@dm_required
+def dm_add_faction_relation(slug, faction_id):
+    db.add_faction_relation(slug, faction_id,
+                            target_id=request.form.get("target_id", "").strip(),
+                            target_type=request.form.get("target_type", "faction"),
+                            relation=request.form.get("relation", "ally"),
+                            weight=float(request.form.get("weight", 0.5)))
+    flash("Relation added", "success")
+    return redirect(url_for("faction", slug=slug, faction_id=faction_id))
+
+
+@app.route("/<slug>/dm/faction/<faction_id>/relation/<int:rel_idx>/delete", methods=["POST"])
+@dm_required
+def dm_remove_faction_relation(slug, faction_id, rel_idx):
+    db.remove_faction_relation(slug, faction_id, rel_idx)
+    return redirect(url_for("faction", slug=slug, faction_id=faction_id))
 
 
 @app.route("/<slug>/dm/npc/<npc_id>/event/<event_id>/reveal", methods=["POST"])

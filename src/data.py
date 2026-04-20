@@ -39,7 +39,7 @@ def get_npcs(slug, include_hidden=True):
     return npcs
 
 
-def add_npc(slug, name, role, relationship, description, hidden=True):
+def add_npc(slug, name, role, relationship, description, hidden=True, faction=""):
     data = _load(slug, "world/npcs.json")
     data.setdefault("npcs", []).append({
         "id": slugify(name),
@@ -48,12 +48,13 @@ def add_npc(slug, name, role, relationship, description, hidden=True):
         "relationship": relationship,
         "description": description,
         "hidden": hidden,
+        "faction": faction,
         "log": [],
     })
     _save(slug, data, "world/npcs.json")
 
 
-def update_npc(slug, npc_id, relationship=None, description=None):
+def update_npc(slug, npc_id, relationship=None, description=None, faction=None):
     data = _load(slug, "world/npcs.json")
     for npc in data.get("npcs", []):
         if npc["id"] == npc_id:
@@ -61,6 +62,8 @@ def update_npc(slug, npc_id, relationship=None, description=None):
                 npc["relationship"] = relationship
             if description is not None:
                 npc["description"] = description
+            if faction is not None:
+                npc["faction"] = faction
     _save(slug, data, "world/npcs.json")
 
 
@@ -230,11 +233,22 @@ def delete_faction_log_entry(slug, faction_id, entry_idx):
     _save(slug, data, "world/factions.json")
 
 
-def log_faction(slug, faction_id, session, note):
+def log_faction(slug, faction_id, session, note, polarity=None, intensity=None, event_type=None, visibility="public"):
     data = _load(slug, "world/factions.json")
     for f in data.get("factions", []):
         if f["id"] == faction_id:
-            f.setdefault("log", []).append({"session": session, "note": note})
+            entry = {
+                "id": "evt_" + secrets.token_hex(3),
+                "session": session,
+                "note": note,
+                "visibility": visibility,
+            }
+            if polarity in ("positive", "neutral", "negative"):
+                entry["polarity"] = polarity
+                entry["intensity"] = int(intensity) if intensity in (1, 2, 3) else 1
+            if event_type:
+                entry["event_type"] = event_type.strip()
+            f.setdefault("log", []).append(entry)
     _save(slug, data, "world/factions.json")
 
 
@@ -396,6 +410,81 @@ def update_character(slug, char_name, level=None, status=None, notes=None):
             if notes is not None:
                 char["notes"] = notes
     _save(slug, data, "party.json")
+
+
+def add_npc_relation(slug, npc_id, target_id, target_type, relation, weight):
+    data = _load(slug, "world/npcs.json")
+    for npc in data.get("npcs", []):
+        if npc["id"] == npc_id:
+            npc.setdefault("relations", []).append({
+                "target": target_id, "target_type": target_type,
+                "relation": relation, "weight": float(weight),
+            })
+    _save(slug, data, "world/npcs.json")
+
+
+def remove_npc_relation(slug, npc_id, rel_idx):
+    data = _load(slug, "world/npcs.json")
+    for npc in data.get("npcs", []):
+        if npc["id"] == npc_id:
+            rels = npc.get("relations", [])
+            if 0 <= rel_idx < len(rels):
+                rels.pop(rel_idx)
+    _save(slug, data, "world/npcs.json")
+
+
+def add_faction_relation(slug, faction_id, target_id, target_type, relation, weight):
+    data = _load(slug, "world/factions.json")
+    for f in data.get("factions", []):
+        if f["id"] == faction_id:
+            f.setdefault("relations", []).append({
+                "target": target_id, "target_type": target_type,
+                "relation": relation, "weight": float(weight),
+            })
+    _save(slug, data, "world/factions.json")
+
+
+def remove_faction_relation(slug, faction_id, rel_idx):
+    data = _load(slug, "world/factions.json")
+    for f in data.get("factions", []):
+        if f["id"] == faction_id:
+            rels = f.get("relations", [])
+            if 0 <= rel_idx < len(rels):
+                rels.pop(rel_idx)
+    _save(slug, data, "world/factions.json")
+
+
+def apply_ripple(slug, source_id, source_type, session_n, note, polarity, intensity, event_type=None):
+    """Log derived events to entities related to the source. Ripples are dm_only."""
+    if not polarity:
+        return []
+    if source_type == "npc":
+        source = next((n for n in _load(slug, "world/npcs.json").get("npcs", [])
+                       if n["id"] == source_id), None)
+    else:
+        source = next((f for f in _load(slug, "world/factions.json").get("factions", [])
+                       if f["id"] == source_id), None)
+    if not source or not source.get("relations"):
+        return []
+    FLIP = {"positive": "negative", "negative": "positive", "neutral": "neutral"}
+    rippled = []
+    for rel in source["relations"]:
+        target_id = rel.get("target")
+        target_type = rel.get("target_type", "npc")
+        weight = float(rel.get("weight", 0.5))
+        rpolarity = FLIP.get(polarity, polarity) if rel["relation"] == "rival" else polarity
+        rintensity = max(1, round(intensity * weight))
+        rnote = f"[ripple from {source['name']}] {note}"
+        if target_type == "npc":
+            log_npc(slug, target_id, session_n, rnote,
+                    polarity=rpolarity, intensity=rintensity,
+                    event_type=event_type, visibility="dm_only")
+        else:
+            log_faction(slug, target_id, session_n, rnote,
+                        polarity=rpolarity, intensity=rintensity,
+                        event_type=event_type, visibility="dm_only")
+        rippled.append({"target": target_id, "target_type": target_type, "relation": rel["relation"]})
+    return rippled
 
 
 def reveal_event(slug, event_id, char_name):
@@ -752,6 +841,133 @@ def get_relationship_shifts(slug, current_session, include_hidden=True):
                 "rel_data": current,
             })
     return shifts
+
+
+def get_dm_intelligence(slug, current_session):
+    """Return 4 ranked attention lists for the DM intelligence layer.
+    Derived purely from event history — no manual curation."""
+    npcs = _load(slug, "world/npcs.json").get("npcs", [])
+    factions = _load(slug, "world/factions.json").get("factions", [])
+    quests = _load(slug, "story/quests.json").get("quests", [])
+
+    pressures = []  # 🔥 heating up
+    stale = []      # ⏳ forgotten
+    risks = []      # ⚠️ consequence
+    gaps = []       # 🧩 narrative gaps
+
+    for entity in list(npcs) + list(factions):
+        is_npc = "class" not in entity and "relationship" in entity
+        kind = "npc" if entity in npcs else "faction"
+        log = entity.get("log", [])
+        rel = compute_npc_relationship(entity, is_dm=True) if kind == "npc" else {
+            "relationship": entity.get("relationship", "unknown"),
+            "trend": None, "computed": False, "score": None,
+        }
+
+        # --- Active Pressure: recent + intensity + worsening ---
+        recent = [e for e in log if e.get("session", 0) >= current_session - 2]
+        if recent:
+            pressure = sum(
+                e.get("intensity", 1) * (0.85 ** max(0, current_session - e.get("session", current_session)))
+                for e in recent if e.get("polarity") in ("positive", "negative", "neutral")
+            )
+            if rel.get("trend") == "down":
+                pressure *= 1.5
+            if pressure >= 1.0:
+                parts = []
+                if rel.get("trend") == "down":
+                    parts.append("worsening")
+                parts.append(f"{len(recent)} event{'s' if len(recent) != 1 else ''} in last 2 sessions")
+                pressures.append({
+                    "kind": kind, "id": entity["id"], "name": entity["name"],
+                    "role": entity.get("role", ""), "rel_data": rel,
+                    "score": round(pressure, 2), "reason": ", ".join(parts),
+                    "last_session": max(e.get("session", 0) for e in recent),
+                })
+
+        # --- Stale Threads: significant history, gone quiet ---
+        typed = [e for e in log if e.get("polarity") in ("positive", "negative", "neutral")]
+        if len(typed) >= 3:
+            last = max(e.get("session", 0) for e in log)
+            silent = current_session - last
+            if silent >= 3:
+                importance = sum(e.get("intensity", 1) for e in typed)
+                stale.append({
+                    "kind": kind, "id": entity["id"], "name": entity["name"],
+                    "role": entity.get("role", ""), "rel_data": rel,
+                    "score": round(importance * (silent / 3), 2),
+                    "last_session": last, "sessions_silent": silent,
+                    "reason": f"{silent} sessions silent — {len(typed)} past interactions",
+                    "last_entry": _last_entry(log),
+                })
+
+        # --- Consequence Risk: hostile score + recent negative events ---
+        if kind == "npc" and rel.get("computed") and rel.get("score", 0) < -1:
+            recent_neg = [e for e in log
+                          if e.get("session", 0) >= current_session - 3
+                          and e.get("polarity") == "negative"]
+            if recent_neg or rel.get("trend") == "down":
+                multiplier = 1.4 if rel.get("trend") == "down" else 1.0
+                risks.append({
+                    "kind": kind, "id": entity["id"], "name": entity["name"],
+                    "role": entity.get("role", ""), "rel_data": rel,
+                    "score": round(abs(rel["score"]) * multiplier, 2),
+                    "reason": (
+                        f"Score {rel['score']:+.1f}, "
+                        + ("declining" if rel.get("trend") == "down" else "hostile")
+                        + (f" — {len(recent_neg)} recent negative event{'s' if len(recent_neg) != 1 else ''}" if recent_neg else "")
+                    ),
+                })
+
+        # --- Narrative Gaps: visible but no public events ---
+        public_log = get_visible_log(log, is_dm=False)
+        if not entity.get("hidden"):
+            if entity.get("description") and not public_log:
+                gaps.append({
+                    "kind": kind, "id": entity["id"], "name": entity["name"],
+                    "role": entity.get("role", ""), "rel_data": rel, "score": 2.0,
+                    "reason": "Revealed to players but no public interactions logged",
+                })
+            elif not log:
+                gaps.append({
+                    "kind": kind, "id": entity["id"], "name": entity["name"],
+                    "role": entity.get("role", ""), "rel_data": rel, "score": 1.0,
+                    "reason": "No interactions logged",
+                })
+
+    # --- Quest staleness and gaps ---
+    for quest in quests:
+        if quest.get("hidden") or quest.get("status") != "active":
+            continue
+        qlog = quest.get("log", [])
+        if not qlog:
+            gaps.append({
+                "kind": "quest", "id": quest["id"], "name": quest["title"],
+                "role": "Active Quest", "rel_data": None, "score": 1.5,
+                "reason": "Active quest — no progress logged yet",
+            })
+        else:
+            last_q = max(e.get("session", 0) for e in qlog)
+            silent_q = current_session - last_q
+            if silent_q >= 3:
+                stale.append({
+                    "kind": "quest", "id": quest["id"], "name": quest["title"],
+                    "role": "Active Quest", "rel_data": None,
+                    "score": round(silent_q * 0.8, 2),
+                    "last_session": last_q, "sessions_silent": silent_q,
+                    "reason": f"Active quest, {silent_q} sessions without progress",
+                    "last_entry": _last_entry(qlog),
+                })
+
+    for lst in [pressures, stale, risks, gaps]:
+        lst.sort(key=lambda x: x["score"], reverse=True)
+
+    return {
+        "pressures": pressures[:5],
+        "stale": stale[:5],
+        "risks": risks[:5],
+        "gaps": gaps[:5],
+    }
 
 
 def get_all_log_entries(slug):
