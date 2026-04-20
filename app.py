@@ -37,6 +37,10 @@ if _prefix:
 CAMPAIGNS = Path(__file__).parent / "campaigns"
 USERS_FILE = Path(__file__).parent / "users.json"
 
+@app.template_filter("compute_rel")
+def compute_rel_filter(npc):
+    return db.compute_npc_relationship(npc)
+
 
 def load_users():
     if not USERS_FILE.exists():
@@ -54,15 +58,16 @@ def login_required(f):
 
 
 def campaign_access(slug):
-    """Allow access if: logged-in owner, or valid view session (share link). Otherwise 403/redirect."""
+    """Allow access if: logged-in owner, logged-in user with share link, or share link viewer."""
     meta = load(slug, "campaign.json")
     owner = meta.get("owner")
-    # Logged-in user with ownership
     if session.get("user"):
         if owner and session.get("user") != owner:
-            abort(403)
+            # Non-owner accounts must have visited the share link
+            if not session.get(f"view_{slug}"):
+                abort(403)
         return
-    # Read-only via share token
+    # Read-only via share token (no account)
     if session.get(f"view_{slug}"):
         return
     # No access
@@ -186,8 +191,10 @@ def party(slug):
     if r: return r
     meta = load(slug, "campaign.json")
     is_dm = bool(session.get(f"dm_{slug}"))
+    is_player = bool(session.get("user")) and not is_dm
     characters = db.get_party(slug, include_hidden=is_dm)
-    return render_template("party.html", meta=meta, characters=characters, slug=slug)
+    return render_template("party.html", meta=meta, characters=characters, slug=slug,
+                           is_player=is_player)
 
 
 @app.route("/<slug>/assets")
@@ -217,10 +224,14 @@ def npc(slug, npc_id):
     if r: return r
     meta = load(slug, "campaign.json")
     is_dm = bool(session.get(f"dm_{slug}"))
+    is_player = bool(session.get("user")) and not is_dm
     npc = next((n for n in db.get_npcs(slug, include_hidden=is_dm) if n["id"] == npc_id), None)
     if not npc:
         abort(404)
-    return render_template("npc.html", meta=meta, npc=npc, slug=slug)
+    rel_data = db.compute_npc_relationship(npc)
+    return render_template("npc.html", meta=meta, npc=npc, slug=slug,
+                           is_player=is_player, current_session=db.get_current_session(slug),
+                           rel_data=rel_data)
 
 
 @app.route("/<slug>/world/faction/<faction_id>")
@@ -366,20 +377,15 @@ def dm(slug):
 def dm_quick_log(slug):
     entity = request.form.get("entity", "")
     note = request.form.get("note", "").strip()
-    relationship = request.form.get("relationship", "").strip()
+    polarity = request.form.get("polarity") or None
+    intensity = int(request.form.get("intensity") or 1)
     session_n = int(request.form.get("session") or 0)
     if ":" in entity:
         entity_type, entity_id = entity.split(":", 1)
-        if entity_type == "npc":
-            if note:
-                db.log_npc(slug, entity_id, session_n, note)
-            if relationship:
-                db.update_npc(slug, entity_id, relationship=relationship)
-        elif entity_type == "faction":
-            if note:
-                db.log_faction(slug, entity_id, session_n, note)
-            if relationship:
-                db.update_faction(slug, entity_id, relationship=relationship)
+        if entity_type == "npc" and note:
+            db.log_npc(slug, entity_id, session_n, note, polarity=polarity, intensity=intensity)
+        elif entity_type == "faction" and note:
+            db.log_faction(slug, entity_id, session_n, note)
     return redirect(url_for("dm", slug=slug))
 
 
@@ -437,11 +443,10 @@ def dm_log(slug):
 
         for npc in npcs:
             note = request.form.get(f"npc_{npc['id']}_note", "").strip()
-            rel = request.form.get(f"npc_{npc['id']}_rel", "").strip()
+            polarity = request.form.get(f"npc_{npc['id']}_polarity") or None
+            intensity = int(request.form.get(f"npc_{npc['id']}_intensity") or 1)
             if note:
-                db.log_npc(slug, npc["id"], session_n, note)
-            if rel and rel != npc.get("relationship"):
-                db.update_npc(slug, npc["id"], relationship=rel)
+                db.log_npc(slug, npc["id"], session_n, note, polarity=polarity, intensity=intensity)
 
         for f in factions:
             note = request.form.get(f"faction_{f['id']}_note", "").strip()
@@ -831,8 +836,10 @@ def dm_edit_npc(slug, npc_id):
 def dm_log_npc(slug, npc_id):
     note = request.form.get("note", "").strip()
     session_n = int(request.form.get("session") or 0)
+    polarity = request.form.get("polarity") or None
+    intensity = int(request.form.get("intensity") or 1)
     if note:
-        db.log_npc(slug, npc_id, session_n, note)
+        db.log_npc(slug, npc_id, session_n, note, polarity=polarity, intensity=intensity)
     return redirect(url_for("npc", slug=slug, npc_id=npc_id))
 
 
@@ -935,6 +942,31 @@ def dm_update_character(slug, char_name):
         status=request.form.get("status") or None,
         notes=request.form.get("notes"),
     )
+    return redirect(url_for("party", slug=slug))
+
+
+@app.route("/<slug>/npc/<npc_id>/log", methods=["POST"])
+def player_log_npc(slug, npc_id):
+    r = campaign_access(slug)
+    if r: return r
+    if not session.get("user"):
+        abort(403)
+    note = request.form.get("note", "").strip()
+    session_n = int(request.form.get("session") or 0)
+    polarity = request.form.get("polarity") or None
+    intensity = int(request.form.get("intensity") or 1)
+    if note:
+        db.log_npc(slug, npc_id, session_n, note, polarity=polarity, intensity=intensity)
+    return redirect(url_for("npc", slug=slug, npc_id=npc_id))
+
+
+@app.route("/<slug>/character/<char_name>/notes", methods=["POST"])
+def player_update_character_notes(slug, char_name):
+    r = campaign_access(slug)
+    if r: return r
+    if not session.get("user"):
+        abort(403)
+    db.update_character(slug, char_name, notes=request.form.get("notes", "").strip())
     return redirect(url_for("party", slug=slug))
 
 

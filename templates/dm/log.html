@@ -18,20 +18,32 @@
   {% if npcs %}
   <h2 class="section-title mt-8">NPCs</h2>
   {% for npc in npcs %}
+  {% set rel_data = npc | compute_rel %}
   <div class="card mb-4">
     <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; flex-wrap:wrap;">
       <div>
         <h3 style="margin-bottom:2px;">{{ npc.name }}</h3>
         <span class="role">{{ npc.role }}</span>
-        <span class="badge badge-{{ npc.relationship }}">{{ npc.relationship }}</span>
+        <span class="badge badge-{{ rel_data.relationship }}">{{ rel_data.relationship }}</span>
+        {% if rel_data.trend == 'up' %}<span style="color:#7ec87e; font-size:0.8rem; margin-left:4px;">↑</span>
+        {% elif rel_data.trend == 'down' %}<span style="color:#e05c5c; font-size:0.8rem; margin-left:4px;">↓</span>{% endif %}
       </div>
       <div style="display:flex; flex-direction:column; gap:8px; min-width:200px; flex:1;">
-        <select name="npc_{{ npc.id }}_rel"
-                style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:6px 10px; font-size:0.85rem;">
-          {% for rel in ['friendly','neutral','hostile','allied','unknown'] %}
-          <option value="{{ rel }}" {% if rel == npc.relationship %}selected{% endif %}>{{ rel }}</option>
-          {% endfor %}
-        </select>
+        <div style="display:flex; gap:8px;">
+          <select name="npc_{{ npc.id }}_polarity"
+                  style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:6px 10px; font-size:0.85rem; flex:1;">
+            <option value="">— tone —</option>
+            <option value="positive">positive</option>
+            <option value="neutral">neutral</option>
+            <option value="negative">negative</option>
+          </select>
+          <select name="npc_{{ npc.id }}_intensity"
+                  style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:6px 10px; font-size:0.85rem; width:100px;">
+            <option value="1">1 minor</option>
+            <option value="2">2 moderate</option>
+            <option value="3">3 major</option>
+          </select>
+        </div>
         <input type="text" name="npc_{{ npc.id }}_note" placeholder="Log note (leave blank to skip)"
                style="background:var(--surface2); border:1px solid var(--border); color:var(--text);
                       border-radius:4px; padding:6px 10px; font-size:0.85rem; width:100%;">

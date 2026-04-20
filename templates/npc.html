@@ -6,9 +6,41 @@
 
 <h1 class="page-title" style="margin-top:12px;">{{ npc.name }}</h1>
 <div class="role">{{ npc.role }}</div>
-<span class="badge badge-{{ npc.relationship }}">{{ npc.relationship }}</span>
-{% if session.get('dm_' ~ slug) and npc.hidden %}
-<span class="badge" style="background:var(--surface2); color:var(--muted); margin-left:8px;">Hidden from players</span>
+
+<div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:6px;">
+  <span class="badge badge-{{ rel_data.relationship }}">{{ rel_data.relationship }}</span>
+  {% if rel_data.trend == 'up' %}
+  <span style="color:#7ec87e; font-size:0.85rem; font-weight:700;" title="Relationship improving">↑</span>
+  {% elif rel_data.trend == 'down' %}
+  <span style="color:#e05c5c; font-size:0.85rem; font-weight:700;" title="Relationship worsening">↓</span>
+  {% elif rel_data.trend == 'stable' %}
+  <span style="color:var(--muted); font-size:0.85rem;" title="Relationship stable">→</span>
+  {% endif %}
+  {% if rel_data.computed %}
+  <span style="color:var(--muted); font-size:0.72rem; font-style:italic;">derived from interactions</span>
+  {% endif %}
+  {% if session.get('dm_' ~ slug) and npc.hidden %}
+  <span class="badge" style="background:var(--surface2); color:var(--muted);">Hidden from players</span>
+  {% endif %}
+</div>
+
+{% if rel_data.contributors %}
+<details style="margin-top:8px;">
+  <summary style="list-style:none; cursor:pointer; color:var(--muted); font-size:0.75rem; letter-spacing:0.04em;">
+    Why this relationship?
+  </summary>
+  <ul style="margin:8px 0 0 0; padding:0; list-style:none; display:flex; flex-direction:column; gap:4px;">
+    {% for c in rel_data.contributors %}
+    <li style="font-size:0.82rem; color:var(--text-dim);">
+      <span class="log-session">Session {{ c.session }}</span>
+      <span style="color:{% if c.polarity == 'positive' %}#7ec87e{% elif c.polarity == 'negative' %}#e05c5c{% else %}var(--muted){% endif %}; font-size:0.72rem; margin-right:6px;">
+        {% if c.polarity == 'positive' %}+{% elif c.polarity == 'negative' %}−{% endif %}{{ c.intensity }}
+      </span>
+      {{ c.note }}
+    </li>
+    {% endfor %}
+  </ul>
+</details>
 {% endif %}
 
 {% if npc.description %}
@@ -23,7 +55,15 @@
   <ul class="log-list">
     {% for entry in npc.log | reverse %}
     <li style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
-      <span><span class="log-session">Session {{ entry.session }}</span>{{ entry.note }}</span>
+      <span>
+        <span class="log-session">Session {{ entry.session }}</span>
+        {% if entry.polarity %}
+        <span style="color:{% if entry.polarity == 'positive' %}#7ec87e{% elif entry.polarity == 'negative' %}#e05c5c{% else %}var(--muted){% endif %}; font-size:0.72rem; margin-right:4px;">
+          {% if entry.polarity == 'positive' %}+{% elif entry.polarity == 'negative' %}−{% endif %}{{ entry.intensity }}
+        </span>
+        {% endif %}
+        {{ entry.note }}
+      </span>
       {% if session.get('dm_' ~ slug) %}
       <form method="POST" action="/{{ slug }}/dm/npc/{{ npc.id }}/log/{{ (npc.log | length) - 1 - loop.index0 }}/delete" style="flex-shrink:0;">
         <button type="submit" style="background:none; border:none; color:var(--muted); font-size:0.8rem; cursor:pointer; padding:0 4px;">×</button>
@@ -35,10 +75,38 @@
 </div>
 {% endif %}
 
-{% if session.get('dm_' ~ slug) %}
 {% set input_style = "background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:6px 10px; font-size:0.85rem; width:100%;" %}
-{% set label_style = "color:var(--gold); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;" %}
 {% set btn_style = "background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:6px 16px; font-size:0.85rem; font-weight:700; cursor:pointer;" %}
+
+{% if is_player %}
+<div class="card mt-8">
+  <h3 style="color:var(--muted); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:12px;">Log Interaction</h3>
+  <form method="POST" action="/{{ slug }}/npc/{{ npc.id }}/log" style="display:flex; flex-direction:column; gap:8px;">
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <input type="number" name="session" placeholder="Session #" min="1" value="{{ current_session }}"
+             style="{{ input_style }} width:90px; flex-shrink:0;">
+      <select name="polarity" style="{{ input_style }} width:130px; flex-shrink:0;">
+        <option value="">— tone —</option>
+        <option value="positive">positive</option>
+        <option value="neutral">neutral</option>
+        <option value="negative">negative</option>
+      </select>
+      <select name="intensity" style="{{ input_style }} width:110px; flex-shrink:0;">
+        <option value="1">minor (1)</option>
+        <option value="2">moderate (2)</option>
+        <option value="3">major (3)</option>
+      </select>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <input type="text" name="note" placeholder="What happened?" required style="{{ input_style }} flex:1;">
+      <button type="submit" style="{{ btn_style }}">Log</button>
+    </div>
+  </form>
+</div>
+{% endif %}
+
+{% if session.get('dm_' ~ slug) %}
+{% set label_style = "color:var(--gold); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;" %}
 
 <details class="card mt-8" style="border-color:var(--gold-dim);">
   <summary style="list-style:none; cursor:pointer; color:var(--gold); font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em;">
@@ -57,26 +125,44 @@
 
   <h3 style="color:var(--muted); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:12px;">Log Interaction</h3>
   <form method="POST" action="/{{ slug }}/dm/npc/{{ npc.id }}/log" style="display:flex; flex-direction:column; gap:8px;">
-    <div style="display:flex; gap:8px;">
-      <input type="number" name="session" placeholder="Session #" min="1"
-             style="{{ input_style }} width:100px; flex-shrink:0;">
-      <input type="text" name="note" placeholder="What happened?" required style="{{ input_style }}">
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <input type="number" name="session" placeholder="Session #" min="1" value="{{ current_session }}"
+             style="{{ input_style }} width:90px; flex-shrink:0;">
+      <select name="polarity" style="{{ input_style }} width:130px; flex-shrink:0;">
+        <option value="">— tone —</option>
+        <option value="positive">positive</option>
+        <option value="neutral">neutral</option>
+        <option value="negative">negative</option>
+      </select>
+      <select name="intensity" style="{{ input_style }} width:110px; flex-shrink:0;">
+        <option value="1">minor (1)</option>
+        <option value="2">moderate (2)</option>
+        <option value="3">major (3)</option>
+      </select>
     </div>
-    <div><button type="submit" style="{{ btn_style }}">Add Log Entry</button></div>
+    <div style="display:flex; gap:8px;">
+      <input type="text" name="note" placeholder="What happened?" required style="{{ input_style }} flex:1;">
+      <button type="submit" style="{{ btn_style }}">Add</button>
+    </div>
   </form>
 
   <hr class="divider">
 
-  <h3 style="color:var(--muted); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:12px;">Edit NPC</h3>
+  <h3 style="color:var(--muted); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">Edit NPC</h3>
   <form method="POST" action="/{{ slug }}/dm/npc/{{ npc.id }}/edit" style="display:flex; flex-direction:column; gap:12px;">
+    {% if not rel_data.computed %}
     <div style="display:flex; flex-direction:column; gap:4px;">
-      <label style="{{ label_style }}">Relationship</label>
+      <label style="{{ label_style }}">Starting Relationship</label>
+      <p style="color:var(--muted); font-size:0.72rem; margin:0 0 4px 0;">Overridden automatically once interactions are logged.</p>
       <select name="relationship" style="{{ input_style }}">
         {% for rel in ['friendly','neutral','hostile','allied','unknown'] %}
         <option value="{{ rel }}" {% if rel == npc.relationship %}selected{% endif %}>{{ rel }}</option>
         {% endfor %}
       </select>
     </div>
+    {% else %}
+    <input type="hidden" name="relationship" value="{{ npc.relationship }}">
+    {% endif %}
     <div style="display:flex; flex-direction:column; gap:4px;">
       <label style="{{ label_style }}">Description</label>
       <textarea name="description" rows="3"

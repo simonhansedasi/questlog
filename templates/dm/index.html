@@ -176,14 +176,24 @@ function generateRecap(slug) {
                     border-radius:4px; padding:6px 10px; font-size:0.85rem; width:72px;">
     </div>
     <div style="display:flex; flex-direction:column; gap:4px;">
-      <label style="color:var(--muted); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Status</label>
-      <select name="relationship"
+      <label style="color:var(--muted); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Tone</label>
+      <select name="polarity"
               style="background:var(--surface2); border:1px solid var(--border); color:var(--text);
                      border-radius:4px; padding:6px 10px; font-size:0.85rem;">
-        <option value="">— unchanged —</option>
-        {% for rel in ['neutral','friendly','allied','hostile','unknown'] %}
-        <option value="{{ rel }}">{{ rel }}</option>
-        {% endfor %}
+        <option value="">— untagged —</option>
+        <option value="positive">positive</option>
+        <option value="neutral">neutral</option>
+        <option value="negative">negative</option>
+      </select>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:4px;">
+      <label style="color:var(--muted); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Weight</label>
+      <select name="intensity"
+              style="background:var(--surface2); border:1px solid var(--border); color:var(--text);
+                     border-radius:4px; padding:6px 10px; font-size:0.85rem; width:90px;">
+        <option value="1">1 minor</option>
+        <option value="2">2 moderate</option>
+        <option value="3">3 major</option>
       </select>
     </div>
     <div style="display:flex; flex-direction:column; gap:4px; flex:1; min-width:200px;">

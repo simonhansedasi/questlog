@@ -87,12 +87,57 @@ def delete_npc_log_entry(slug, npc_id, entry_idx):
     _save(slug, data, "world/npcs.json")
 
 
-def log_npc(slug, npc_id, session, note):
+def log_npc(slug, npc_id, session, note, polarity=None, intensity=None):
     data = _load(slug, "world/npcs.json")
     for npc in data.get("npcs", []):
         if npc["id"] == npc_id:
-            npc.setdefault("log", []).append({"session": session, "note": note})
+            entry = {"session": session, "note": note}
+            if polarity in ("positive", "neutral", "negative"):
+                entry["polarity"] = polarity
+                entry["intensity"] = int(intensity) if intensity in (1, 2, 3) else 1
+            npc.setdefault("log", []).append(entry)
     _save(slug, data, "world/npcs.json")
+
+
+def compute_npc_relationship(npc):
+    """Derive relationship, trend, and top contributors from typed log entries.
+    Falls back to stored relationship if no typed entries exist."""
+    typed = [e for e in npc.get("log", []) if e.get("polarity") in ("positive", "negative", "neutral")]
+    if not typed:
+        return {"relationship": npc.get("relationship", "unknown"), "trend": None,
+                "contributors": [], "computed": False, "score": None}
+
+    max_session = max(e.get("session", 0) for e in typed)
+    score = 0.0
+    contributors = []
+    for entry in typed:
+        age = max_session - entry.get("session", 0)
+        decay = 0.85 ** age
+        intensity = entry.get("intensity", 1)
+        sign = {"positive": 1, "negative": -1, "neutral": 0}.get(entry["polarity"], 0)
+        weight = sign * intensity * decay
+        score += weight
+        if weight != 0:
+            contributors.append({**entry, "_weight": round(weight, 2)})
+
+    contributors.sort(key=lambda x: abs(x["_weight"]), reverse=True)
+
+    if score >= 4:
+        rel = "allied"
+    elif score >= 1.5:
+        rel = "friendly"
+    elif score >= -1.5:
+        rel = "neutral"
+    else:
+        rel = "hostile"
+
+    recent = sorted(typed, key=lambda e: e.get("session", 0))[-3:]
+    pos = sum(1 for e in recent if e.get("polarity") == "positive")
+    neg = sum(1 for e in recent if e.get("polarity") == "negative")
+    trend = "up" if pos >= 2 else ("down" if neg >= 2 else "stable")
+
+    return {"relationship": rel, "trend": trend,
+            "contributors": contributors[:5], "computed": True, "score": round(score, 2)}
 
 
 # ── Factions ──────────────────────────────────────────────────────────────────

@@ -28,6 +28,15 @@
     </div>
   </div>
 
+  {% if is_player %}
+  <form method="POST" action="/{{ slug }}/character/{{ char.name }}/notes"
+        style="margin-top:12px; display:flex; gap:8px; align-items:center;">
+    <input type="text" name="notes" value="{{ char.notes }}" placeholder="Notes..."
+           style="{{ input_style }} flex:1;">
+    <button type="submit" style="{{ btn_style }}">Save</button>
+  </form>
+  {% endif %}
+
   {% if session.get('dm_' ~ slug) %}
   <details style="margin-top:12px;">
     <summary style="list-style:none; cursor:pointer; color:var(--gold-dim); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">
