@@ -54,6 +54,9 @@
 <div class="card">
   <ul class="log-list">
     {% for entry in npc.log | reverse %}
+    {% set vis = entry.visibility if entry.visibility is defined else ('dm_only' if entry.get('dm_only') else 'public') %}
+    {% set show = is_dm or (vis == 'public') or (vis == 'restricted' and viewer_known_events is not none and entry.get('id') in viewer_known_events) %}
+    {% if show %}
     <li style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
       <span>
         <span class="log-session">Session {{ entry.session }}</span>
@@ -64,13 +67,37 @@
         </span>
         {% endif %}
         {{ entry.note }}
+        {% if is_dm %}
+          {% if vis == 'dm_only' %}<span style="color:var(--muted); font-size:0.7rem; margin-left:6px; font-style:italic;">DM only</span>{% endif %}
+          {% if vis == 'restricted' %}<span style="color:var(--purple); font-size:0.7rem; margin-left:6px; font-style:italic;">restricted</span>{% endif %}
+        {% endif %}
       </span>
-      {% if session.get('dm_' ~ slug) %}
-      <form method="POST" action="/{{ slug }}/dm/npc/{{ npc.id }}/log/{{ (npc.log | length) - 1 - loop.index0 }}/delete" style="flex-shrink:0;">
-        <button type="submit" style="background:none; border:none; color:var(--muted); font-size:0.8rem; cursor:pointer; padding:0 4px;">×</button>
-      </form>
-      {% endif %}
+      <div style="display:flex; gap:4px; align-items:flex-start; flex-shrink:0;">
+        {% if is_dm and vis == 'restricted' and entry.get('id') and party %}
+        <details style="position:relative;">
+          <summary style="list-style:none; cursor:pointer; color:var(--purple); font-size:0.75rem; font-weight:700; padding:0 4px;">reveal</summary>
+          <div style="position:absolute; right:0; background:var(--surface); border:1px solid var(--purple); border-radius:6px; padding:8px; z-index:10; min-width:160px;">
+            <form method="POST" action="/{{ slug }}/dm/npc/{{ npc.id }}/event/{{ entry.id }}/reveal" style="display:flex; flex-direction:column; gap:6px;">
+              <select name="char_name" style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:3px 6px; font-size:0.78rem;">
+                {% for char in party %}
+                <option value="{{ char.name }}" {% if char.get('known_events') and entry.get('id') in char.known_events %}style="color:var(--purple)"{% endif %}>
+                  {{ char.name }}{% if char.get('known_events') and entry.get('id') in char.known_events %} ✓{% endif %}
+                </option>
+                {% endfor %}
+              </select>
+              <button type="submit" style="background:var(--purple); color:#fff; border:none; border-radius:4px; padding:3px 10px; font-size:0.75rem; cursor:pointer;">Reveal</button>
+            </form>
+          </div>
+        </details>
+        {% endif %}
+        {% if is_dm %}
+        <form method="POST" action="/{{ slug }}/dm/npc/{{ npc.id }}/log/{{ (npc.log | length) - 1 - loop.index0 }}/delete">
+          <button type="submit" style="background:none; border:none; color:var(--muted); font-size:0.8rem; cursor:pointer; padding:0 4px;">×</button>
+        </form>
+        {% endif %}
+      </div>
     </li>
+    {% endif %}
     {% endfor %}
   </ul>
 </div>
@@ -114,6 +141,13 @@
 </div>
 {% endif %}
 
+{% if preview_char %}
+<div style="background:var(--surface2); border:1px solid var(--purple); border-radius:6px; padding:8px 14px; margin-top:12px; display:flex; justify-content:space-between; align-items:center;">
+  <span style="color:var(--purple); font-size:0.82rem; font-weight:700;">⚔ Previewing as {{ preview_char.name }}</span>
+  <a href="/{{ slug }}/world/npc/{{ npc.id }}" style="color:var(--muted); font-size:0.75rem;">Exit preview</a>
+</div>
+{% endif %}
+
 {% if session.get('dm_' ~ slug) %}
 {% set label_style = "color:var(--gold); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;" %}
 
@@ -132,9 +166,37 @@
 
   <hr class="divider">
 
+  {% if party %}
+  <h3 style="color:var(--muted); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;">Preview As Player</h3>
+  <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:4px;">
+    {% for char in party %}
+    <a href="/{{ slug }}/world/npc/{{ npc.id }}?preview={{ char.name }}"
+       style="background:{% if preview_char and preview_char.name == char.name %}var(--purple){% else %}var(--surface2){% endif %};
+              color:{% if preview_char and preview_char.name == char.name %}#fff{% else %}var(--muted){% endif %};
+              border:1px solid {% if preview_char and preview_char.name == char.name %}var(--purple){% else %}var(--border){% endif %};
+              border-radius:4px; padding:4px 12px; font-size:0.78rem; text-decoration:none; white-space:nowrap;">
+      {{ char.name }}
+    </a>
+    {% endfor %}
+    {% if preview_char %}
+    <a href="/{{ slug }}/world/npc/{{ npc.id }}"
+       style="color:var(--muted); font-size:0.75rem; margin-left:4px;">clear</a>
+    {% endif %}
+  </div>
+
+  <hr class="divider">
+  {% endif %}
+
   <h3 style="color:var(--muted); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:12px;">Log Interaction</h3>
   <form method="POST" action="/{{ slug }}/dm/npc/{{ npc.id }}/log">
     {{ log_form("/{{ slug }}/dm/npc/{{ npc.id }}/log") }}
+    <div style="margin-top:4px;">
+      <select name="visibility" style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:4px 8px; font-size:0.8rem;">
+        <option value="public">Public — all players</option>
+        <option value="restricted">Restricted — reveal individually</option>
+        <option value="dm_only">DM only — never shown</option>
+      </select>
+    </div>
   </form>
 
   <hr class="divider">

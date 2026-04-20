@@ -1,5 +1,6 @@
 import json
 import re
+import secrets
 from pathlib import Path
 
 CAMPAIGNS = Path(__file__).parent.parent / "campaigns"
@@ -87,11 +88,16 @@ def delete_npc_log_entry(slug, npc_id, entry_idx):
     _save(slug, data, "world/npcs.json")
 
 
-def log_npc(slug, npc_id, session, note, polarity=None, intensity=None, event_type=None):
+def log_npc(slug, npc_id, session, note, polarity=None, intensity=None, event_type=None, visibility="public"):
     data = _load(slug, "world/npcs.json")
     for npc in data.get("npcs", []):
         if npc["id"] == npc_id:
-            entry = {"session": session, "note": note}
+            entry = {
+                "id": "evt_" + secrets.token_hex(3),
+                "session": session,
+                "note": note,
+                "visibility": visibility,
+            }
             if polarity in ("positive", "neutral", "negative"):
                 entry["polarity"] = polarity
                 entry["intensity"] = int(intensity) if intensity in (1, 2, 3) else 1
@@ -101,10 +107,35 @@ def log_npc(slug, npc_id, session, note, polarity=None, intensity=None, event_ty
     _save(slug, data, "world/npcs.json")
 
 
-def compute_npc_relationship(npc):
+def _entry_visibility(entry):
+    """Derive visibility from an entry, handling legacy dm_only flag."""
+    if "visibility" in entry:
+        return entry["visibility"]
+    return "dm_only" if entry.get("dm_only") else "public"
+
+
+def get_visible_log(log, known_events=None, is_dm=False):
+    """Filter a log list to what this viewer can see."""
+    result = []
+    for entry in log:
+        vis = _entry_visibility(entry)
+        if is_dm:
+            result.append(entry)
+        elif vis == "dm_only":
+            pass
+        elif vis == "restricted":
+            if known_events and entry.get("id") in known_events:
+                result.append(entry)
+        else:
+            result.append(entry)
+    return result
+
+
+def compute_npc_relationship(npc, known_events=None, is_dm=False):
     """Derive relationship, trend, and top contributors from typed log entries.
     Falls back to stored relationship if no typed entries exist."""
-    typed = [e for e in npc.get("log", []) if e.get("polarity") in ("positive", "negative", "neutral")]
+    all_log = get_visible_log(npc.get("log", []), known_events=known_events, is_dm=is_dm)
+    typed = [e for e in all_log if e.get("polarity") in ("positive", "negative", "neutral")]
     if not typed:
         return {"relationship": npc.get("relationship", "unknown"), "trend": None,
                 "contributors": [], "computed": False, "score": None}
@@ -335,6 +366,7 @@ def add_character(slug, name, race, char_class, level, notes="", hidden=False):
         "status": "active",
         "hidden": hidden,
         "notes": notes,
+        "known_events": [],
     })
     _save(slug, data, "party.json")
 
@@ -364,6 +396,36 @@ def update_character(slug, char_name, level=None, status=None, notes=None):
             if notes is not None:
                 char["notes"] = notes
     _save(slug, data, "party.json")
+
+
+def reveal_event(slug, event_id, char_name):
+    """Add event_id to a character's known_events list."""
+    data = _load(slug, "party.json")
+    for c in data.get("characters", []):
+        if c["name"] == char_name:
+            known = c.setdefault("known_events", [])
+            if event_id not in known:
+                known.append(event_id)
+    _save(slug, data, "party.json")
+
+
+def assign_character_user(slug, char_name, username):
+    data = _load(slug, "party.json")
+    for c in data.get("characters", []):
+        if c["name"] == char_name:
+            if username:
+                c["assigned_user"] = username
+            else:
+                c.pop("assigned_user", None)
+    _save(slug, data, "party.json")
+
+
+def get_player_character(slug, username):
+    """Return the character assigned to this username in this campaign, or None."""
+    for c in _load(slug, "party.json").get("characters", []):
+        if c.get("assigned_user") == username:
+            return c
+    return None
 
 
 # ── Assets ────────────────────────────────────────────────────────────────────
@@ -606,7 +668,7 @@ def get_recent_entities(slug, current_session, window=2, include_hidden=True):
                 "id": npc["id"],
                 "name": npc["name"],
                 "role": npc.get("role", ""),
-                "rel_data": compute_npc_relationship(npc),
+                "rel_data": compute_npc_relationship(npc, is_dm=True),
                 "last_session": max(e.get("session", 0) for e in recent_log),
                 "last_entry": _last_entry(recent_log),
             })
@@ -642,7 +704,7 @@ def get_neglected_entities(slug, current_session, cold_after=3, min_events=3):
             neglected.append({
                 "kind": "npc", "id": npc["id"], "name": npc["name"],
                 "role": npc.get("role", ""),
-                "rel_data": compute_npc_relationship(npc),
+                "rel_data": compute_npc_relationship(npc, is_dm=True),
                 "last_session": last, "event_count": len(log),
                 "last_entry": _last_entry(log),
             })
@@ -673,13 +735,13 @@ def get_relationship_shifts(slug, current_session, include_hidden=True):
         typed = [e for e in npc.get("log", []) if e.get("polarity") in ("positive", "negative", "neutral")]
         if not typed:
             continue
-        current = compute_npc_relationship(npc)
+        current = compute_npc_relationship(npc, is_dm=True)
         if not current["computed"]:
             continue
         prev_entries = [e for e in typed if e.get("session", 0) < current_session]
         if not prev_entries:
             continue
-        prev = compute_npc_relationship({**npc, "log": prev_entries})
+        prev = compute_npc_relationship({**npc, "log": prev_entries}, is_dm=True)
         if prev["relationship"] != current["relationship"]:
             direction = "improved" if current["score"] > prev.get("score", 0) else "worsened"
             shifts.append({

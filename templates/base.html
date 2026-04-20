@@ -35,6 +35,9 @@
     {% endif %}
     {% if session.get('user') %}
     <div style="margin-left:auto; display:flex; align-items:center; gap:10px;">
+      {% if viewer_character is defined and viewer_character %}
+      <span style="color:var(--purple); font-size:0.75rem; font-weight:700; letter-spacing:0.03em;" title="Your character">⚔ {{ viewer_character.name }}</span>
+      {% endif %}
       <span style="color:var(--muted); font-size:0.8rem;">{{ session.get('display_name', session.get('user')) }}</span>
       <form method="POST" action="/logout" style="display:inline;">
         <button type="submit"

@@ -264,16 +264,36 @@ function generateRecap(slug) {
   <div style="display:flex; flex-direction:column; gap:6px; margin-bottom:16px;">
     {% for char in party %}
     <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
-      <div style="display:flex; align-items:center; gap:8px;">
+      <div style="display:flex; align-items:center; gap:8px; flex:1; min-width:0;">
         <span style="font-size:0.88rem;">{{ char.name }}</span>
         {% if char.hidden %}<span class="badge" style="background:var(--surface2); color:var(--muted); font-size:0.68rem;">Hidden</span>{% endif %}
+        {% if char.assigned_user %}
+        <span style="color:var(--purple); font-size:0.72rem; font-weight:600;">→ {{ char.assigned_user }}</span>
+        {% endif %}
       </div>
-      <form method="POST" action="/{{ slug }}/dm/character/{{ char.name }}/toggle_hidden">
-        <input type="hidden" name="next" value="dm">
-        <button type="submit" style="background:{% if char.hidden %}var(--gold){% else %}var(--surface2){% endif %}; color:{% if char.hidden %}#080a18{% else %}var(--muted){% endif %}; border:1px solid {% if char.hidden %}var(--gold){% else %}var(--border){% endif %}; border-radius:4px; padding:3px 10px; font-size:0.75rem; font-weight:600; cursor:pointer; white-space:nowrap;">
-          {% if char.hidden %}Reveal{% else %}Hide{% endif %}
-        </button>
-      </form>
+      <div style="display:flex; gap:6px; align-items:center; flex-shrink:0;">
+        <form method="POST" action="/{{ slug }}/dm/party/{{ char.name }}/assign" style="display:flex; gap:4px; align-items:center;">
+          <select name="username"
+                  style="background:var(--surface2); border:1px solid var(--border); color:var(--text);
+                         border-radius:4px; padding:2px 6px; font-size:0.72rem;">
+            <option value="">— unassigned —</option>
+            {% for u in all_users %}
+            <option value="{{ u }}" {% if char.assigned_user == u %}selected{% endif %}>{{ u }}</option>
+            {% endfor %}
+          </select>
+          <button type="submit"
+                  style="background:var(--surface2); border:1px solid var(--border); color:var(--muted);
+                         border-radius:4px; padding:2px 8px; font-size:0.72rem; cursor:pointer;">
+            Set
+          </button>
+        </form>
+        <form method="POST" action="/{{ slug }}/dm/character/{{ char.name }}/toggle_hidden">
+          <input type="hidden" name="next" value="dm">
+          <button type="submit" style="background:{% if char.hidden %}var(--gold){% else %}var(--surface2){% endif %}; color:{% if char.hidden %}#080a18{% else %}var(--muted){% endif %}; border:1px solid {% if char.hidden %}var(--gold){% else %}var(--border){% endif %}; border-radius:4px; padding:3px 10px; font-size:0.75rem; font-weight:600; cursor:pointer; white-space:nowrap;">
+            {% if char.hidden %}Reveal{% else %}Hide{% endif %}
+          </button>
+        </form>
+      </div>
     </div>
     {% endfor %}
   </div>

@@ -38,8 +38,17 @@ CAMPAIGNS = Path(__file__).parent / "campaigns"
 USERS_FILE = Path(__file__).parent / "users.json"
 
 @app.template_filter("compute_rel")
-def compute_rel_filter(npc):
-    return db.compute_npc_relationship(npc)
+def compute_rel_filter(npc, is_dm=True):
+    return db.compute_npc_relationship(npc, is_dm=is_dm)
+
+
+@app.context_processor
+def inject_viewer_character():
+    slug = request.view_args.get("slug") if request.view_args else None
+    if slug and session.get("user") and not session.get(f"dm_{slug}"):
+        char = db.get_player_character(slug, session["user"])
+        return {"viewer_character": char}
+    return {"viewer_character": None}
 
 
 def load_users():
@@ -217,7 +226,7 @@ def world(slug):
     is_dm = bool(session.get(f"dm_{slug}"))
     npcs = db.get_npcs(slug, include_hidden=is_dm)
     factions = db.get_factions(slug, include_hidden=is_dm)
-    return render_template("world.html", meta=meta, npcs=npcs, factions=factions, slug=slug)
+    return render_template("world.html", meta=meta, npcs=npcs, factions=factions, slug=slug, is_dm=is_dm)
 
 
 @app.route("/<slug>/world/npc/<npc_id>")
@@ -227,13 +236,39 @@ def npc(slug, npc_id):
     meta = load(slug, "campaign.json")
     is_dm = bool(session.get(f"dm_{slug}"))
     is_player = bool(session.get("user")) and not is_dm
-    npc = next((n for n in db.get_npcs(slug, include_hidden=is_dm) if n["id"] == npc_id), None)
-    if not npc:
+    npc_obj = next((n for n in db.get_npcs(slug, include_hidden=is_dm) if n["id"] == npc_id), None)
+    if not npc_obj:
         abort(404)
-    rel_data = db.compute_npc_relationship(npc)
-    return render_template("npc.html", meta=meta, npc=npc, slug=slug,
-                           is_player=is_player, current_session=db.get_current_session(slug),
-                           rel_data=rel_data)
+    viewer_character = None
+    viewer_known_events = None
+    if is_player and session.get("user"):
+        viewer_character = db.get_player_character(slug, session["user"])
+        if viewer_character:
+            viewer_known_events = set(viewer_character.get("known_events", []))
+
+    party = db.get_party(slug) if is_dm else []
+
+    # DM preview: see the world through a character's eyes
+    preview_char = None
+    preview_known_events = None
+    if is_dm:
+        preview_name = request.args.get("preview", "").strip()
+        if preview_name:
+            preview_char = next((c for c in party if c["name"] == preview_name), None)
+            if preview_char:
+                preview_known_events = set(preview_char.get("known_events", []))
+
+    # Use preview lens if active, otherwise viewer lens
+    effective_known_events = preview_known_events if preview_char else viewer_known_events
+    effective_is_dm = is_dm and not preview_char
+    rel_data = db.compute_npc_relationship(npc_obj, known_events=effective_known_events, is_dm=effective_is_dm)
+
+    return render_template("npc.html", meta=meta, npc=npc_obj, slug=slug,
+                           is_dm=is_dm, is_player=is_player,
+                           viewer_known_events=effective_known_events,
+                           preview_char=preview_char,
+                           current_session=db.get_current_session(slug),
+                           rel_data=rel_data, party=party)
 
 
 @app.route("/<slug>/world/faction/<faction_id>")
@@ -386,6 +421,7 @@ def dm(slug):
     raw_plan = db.get_session_plan(slug)
     plan_html = Markup(markdown.markdown(raw_plan, extensions=["nl2br"])) if raw_plan else None
     current_session = db.get_current_session(slug)
+    all_users = list(load_users().keys())
     return render_template("dm/index.html", meta=meta, slug=slug,
                            session_plan=raw_plan, plan_html=plan_html,
                            session_notes=db.get_session_notes(slug),
@@ -394,7 +430,8 @@ def dm(slug):
                            party=db.get_party(slug),
                            current_session=current_session,
                            recent_entities=db.get_recent_entities(slug, current_session),
-                           assets=db.get_assets(slug))
+                           assets=db.get_assets(slug),
+                           all_users=all_users)
 
 
 @app.route("/<slug>/dm/log/quick", methods=["POST"])
@@ -872,8 +909,12 @@ def dm_log_npc(slug, npc_id):
     polarity = request.form.get("polarity") or None
     intensity = int(request.form.get("intensity") or 1)
     event_type = request.form.get("event_type", "").strip() or None
+    visibility = request.form.get("visibility", "public")
+    if visibility not in ("public", "restricted", "dm_only"):
+        visibility = "public"
     if note:
-        db.log_npc(slug, npc_id, session_n, note, polarity=polarity, intensity=intensity, event_type=event_type)
+        db.log_npc(slug, npc_id, session_n, note, polarity=polarity, intensity=intensity,
+                   event_type=event_type, visibility=visibility)
         flash("Entry added", "success")
     return redirect(url_for("npc", slug=slug, npc_id=npc_id))
 
@@ -966,6 +1007,25 @@ def dm_toggle_objective(slug, quest_id, idx):
         current = quest.get("objectives", [])[idx].get("done", False)
         db.set_objective(slug, quest_id, idx, not current)
     return redirect(url_for("story", slug=slug))
+
+
+@app.route("/<slug>/dm/npc/<npc_id>/event/<event_id>/reveal", methods=["POST"])
+@dm_required
+def dm_reveal_event(slug, npc_id, event_id):
+    char_name = request.form.get("char_name", "").strip()
+    if char_name:
+        db.reveal_event(slug, event_id, char_name)
+        flash(f"Revealed to {char_name}", "success")
+    return redirect(url_for("npc", slug=slug, npc_id=npc_id))
+
+
+@app.route("/<slug>/dm/party/<char_name>/assign", methods=["POST"])
+@dm_required
+def dm_assign_character_user(slug, char_name):
+    username = request.form.get("username", "").strip()
+    db.assign_character_user(slug, char_name, username)
+    flash(f"{'Assigned ' + username if username else 'Unassigned'}", "success")
+    return redirect(url_for("dm", slug=slug) + "#world")
 
 
 @app.route("/<slug>/dm/character/<char_name>/update", methods=["POST"])
