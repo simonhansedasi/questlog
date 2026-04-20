@@ -587,6 +587,11 @@ def set_session_notes(slug, notes):
     _save(slug, data, "dm/session.json")
 
 
+def _last_entry(log):
+    """Return the most recent log entry or None."""
+    return max(log, key=lambda e: e.get("session", 0)) if log else None
+
+
 def get_recent_entities(slug, current_session, window=2):
     """Return NPCs and factions with log entries in the last `window` sessions."""
     threshold = max(1, current_session - window)
@@ -594,23 +599,22 @@ def get_recent_entities(slug, current_session, window=2):
     for npc in _load(slug, "world/npcs.json").get("npcs", []):
         if npc.get("hidden"):
             continue
-        sessions_touched = [e.get("session", 0) for e in npc.get("log", [])
-                            if e.get("session", 0) >= threshold]
-        if sessions_touched:
+        recent_log = [e for e in npc.get("log", []) if e.get("session", 0) >= threshold]
+        if recent_log:
             recent.append({
                 "kind": "npc",
                 "id": npc["id"],
                 "name": npc["name"],
                 "role": npc.get("role", ""),
                 "rel_data": compute_npc_relationship(npc),
-                "last_session": max(sessions_touched),
+                "last_session": max(e.get("session", 0) for e in recent_log),
+                "last_entry": _last_entry(recent_log),
             })
     for faction in _load(slug, "world/factions.json").get("factions", []):
         if faction.get("hidden"):
             continue
-        sessions_touched = [e.get("session", 0) for e in faction.get("log", [])
-                            if e.get("session", 0) >= threshold]
-        if sessions_touched:
+        recent_log = [e for e in faction.get("log", []) if e.get("session", 0) >= threshold]
+        if recent_log:
             recent.append({
                 "kind": "faction",
                 "id": faction["id"],
@@ -618,10 +622,72 @@ def get_recent_entities(slug, current_session, window=2):
                 "role": faction.get("role", ""),
                 "rel_data": {"relationship": faction.get("relationship", "unknown"),
                              "trend": None, "computed": False},
-                "last_session": max(sessions_touched),
+                "last_session": max(e.get("session", 0) for e in recent_log),
+                "last_entry": _last_entry(recent_log),
             })
     recent.sort(key=lambda x: x["last_session"], reverse=True)
     return recent
+
+
+def get_neglected_entities(slug, current_session, cold_after=3, min_events=3):
+    """Entities with significant history but no activity in last `cold_after` sessions."""
+    threshold = current_session - cold_after
+    neglected = []
+    for npc in _load(slug, "world/npcs.json").get("npcs", []):
+        log = npc.get("log", [])
+        if len(log) < min_events:
+            continue
+        last = max(e.get("session", 0) for e in log)
+        if last <= threshold:
+            neglected.append({
+                "kind": "npc", "id": npc["id"], "name": npc["name"],
+                "role": npc.get("role", ""),
+                "rel_data": compute_npc_relationship(npc),
+                "last_session": last, "event_count": len(log),
+                "last_entry": _last_entry(log),
+            })
+    for faction in _load(slug, "world/factions.json").get("factions", []):
+        log = faction.get("log", [])
+        if len(log) < min_events:
+            continue
+        last = max(e.get("session", 0) for e in log)
+        if last <= threshold:
+            neglected.append({
+                "kind": "faction", "id": faction["id"], "name": faction["name"],
+                "role": faction.get("role", ""),
+                "rel_data": {"relationship": faction.get("relationship", "unknown"),
+                             "trend": None, "computed": False},
+                "last_session": last, "event_count": len(log),
+                "last_entry": _last_entry(log),
+            })
+    neglected.sort(key=lambda x: x["last_session"], reverse=True)
+    return neglected
+
+
+def get_relationship_shifts(slug, current_session):
+    """NPCs whose computed relationship badge changed in the last session."""
+    shifts = []
+    for npc in _load(slug, "world/npcs.json").get("npcs", []):
+        typed = [e for e in npc.get("log", []) if e.get("polarity") in ("positive", "negative", "neutral")]
+        if not typed:
+            continue
+        current = compute_npc_relationship(npc)
+        if not current["computed"]:
+            continue
+        prev_entries = [e for e in typed if e.get("session", 0) < current_session]
+        if not prev_entries:
+            continue
+        prev = compute_npc_relationship({**npc, "log": prev_entries})
+        if prev["relationship"] != current["relationship"]:
+            direction = "improved" if current["score"] > prev.get("score", 0) else "worsened"
+            shifts.append({
+                "kind": "npc", "id": npc["id"], "name": npc["name"],
+                "from_rel": prev["relationship"],
+                "to_rel": current["relationship"],
+                "direction": direction,
+                "rel_data": current,
+            })
+    return shifts
 
 
 def get_all_log_entries(slug):

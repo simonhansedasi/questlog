@@ -357,6 +357,18 @@ def campaign_revision(slug):
     return jsonify({"rev": rev})
 
 
+@app.route("/<slug>/dm/brief")
+@dm_required
+def dm_brief(slug):
+    meta = load(slug, "campaign.json")
+    current_session = db.get_current_session(slug)
+    return render_template("dm/brief.html", meta=meta, slug=slug,
+                           current_session=current_session,
+                           hot=db.get_recent_entities(slug, current_session),
+                           cold=db.get_neglected_entities(slug, current_session),
+                           shifts=db.get_relationship_shifts(slug, current_session))
+
+
 @app.route("/<slug>/dm")
 @dm_required
 def dm(slug):

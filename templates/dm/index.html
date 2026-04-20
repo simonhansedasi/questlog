@@ -5,7 +5,13 @@
 <div style="display:flex; justify-content:space-between; align-items:flex-start;">
   <div>
     <h1 class="page-title">DM Dashboard</h1>
-    <p class="subtitle">{{ meta.name }}</p>
+    <p class="subtitle">
+      {{ meta.name }} &mdash;
+      <a href="/{{ slug }}/dm/brief"
+         style="color:var(--purple); font-weight:700; font-size:0.85rem; text-decoration:none;">
+        ✦ Session Briefing
+      </a>
+    </p>
   </div>
   <form method="POST" action="/{{ slug }}/dm/logout" style="margin-top:8px;">
     <button type="submit"
