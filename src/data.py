@@ -91,12 +91,14 @@ def delete_npc_log_entry(slug, npc_id, entry_idx):
     _save(slug, data, "world/npcs.json")
 
 
-def log_npc(slug, npc_id, session, note, polarity=None, intensity=None, event_type=None, visibility="public"):
+def log_npc(slug, npc_id, session, note, polarity=None, intensity=None, event_type=None,
+            visibility="public", ripple_source=None):
     data = _load(slug, "world/npcs.json")
+    event_id = "evt_" + secrets.token_hex(3)
     for npc in data.get("npcs", []):
         if npc["id"] == npc_id:
             entry = {
-                "id": "evt_" + secrets.token_hex(3),
+                "id": event_id,
                 "session": session,
                 "note": note,
                 "visibility": visibility,
@@ -106,8 +108,11 @@ def log_npc(slug, npc_id, session, note, polarity=None, intensity=None, event_ty
                 entry["intensity"] = int(intensity) if intensity in (1, 2, 3) else 1
             if event_type:
                 entry["event_type"] = event_type.strip()
+            if ripple_source:
+                entry["ripple_source"] = ripple_source
             npc.setdefault("log", []).append(entry)
     _save(slug, data, "world/npcs.json")
+    return event_id
 
 
 def _entry_visibility(entry):
@@ -233,12 +238,14 @@ def delete_faction_log_entry(slug, faction_id, entry_idx):
     _save(slug, data, "world/factions.json")
 
 
-def log_faction(slug, faction_id, session, note, polarity=None, intensity=None, event_type=None, visibility="public"):
+def log_faction(slug, faction_id, session, note, polarity=None, intensity=None, event_type=None,
+                visibility="public", ripple_source=None):
     data = _load(slug, "world/factions.json")
+    event_id = "evt_" + secrets.token_hex(3)
     for f in data.get("factions", []):
         if f["id"] == faction_id:
             entry = {
-                "id": "evt_" + secrets.token_hex(3),
+                "id": event_id,
                 "session": session,
                 "note": note,
                 "visibility": visibility,
@@ -248,8 +255,11 @@ def log_faction(slug, faction_id, session, note, polarity=None, intensity=None, 
                 entry["intensity"] = int(intensity) if intensity in (1, 2, 3) else 1
             if event_type:
                 entry["event_type"] = event_type.strip()
+            if ripple_source:
+                entry["ripple_source"] = ripple_source
             f.setdefault("log", []).append(entry)
     _save(slug, data, "world/factions.json")
+    return event_id
 
 
 # ── Quests ────────────────────────────────────────────────────────────────────
@@ -454,8 +464,9 @@ def remove_faction_relation(slug, faction_id, rel_idx):
     _save(slug, data, "world/factions.json")
 
 
-def apply_ripple(slug, source_id, source_type, session_n, note, polarity, intensity, event_type=None):
-    """Log derived events to entities related to the source. Ripples are dm_only."""
+def apply_ripple(slug, source_id, source_type, session_n, note, polarity, intensity,
+                 event_type=None, visibility="public", source_event_id=None):
+    """Log derived events to entities related to the source. Ripples inherit source visibility."""
     if not polarity:
         return []
     if source_type == "npc":
@@ -467,6 +478,11 @@ def apply_ripple(slug, source_id, source_type, session_n, note, polarity, intens
     if not source or not source.get("relations"):
         return []
     FLIP = {"positive": "negative", "negative": "positive", "neutral": "neutral"}
+    ripple_source = {
+        "entity_id": source_id,
+        "entity_type": source_type,
+        "event_id": source_event_id,
+    }
     rippled = []
     for rel in source["relations"]:
         target_id = rel.get("target")
@@ -474,17 +490,63 @@ def apply_ripple(slug, source_id, source_type, session_n, note, polarity, intens
         weight = float(rel.get("weight", 0.5))
         rpolarity = FLIP.get(polarity, polarity) if rel["relation"] == "rival" else polarity
         rintensity = max(1, round(intensity * weight))
-        rnote = f"[ripple from {source['name']}] {note}"
+        relation_label = "ally" if rel["relation"] == "ally" else "rival"
+        rnote = f"Consequence of {source['name']} ({relation_label}): {note}"
         if target_type == "npc":
             log_npc(slug, target_id, session_n, rnote,
                     polarity=rpolarity, intensity=rintensity,
-                    event_type=event_type, visibility="dm_only")
+                    event_type=event_type, visibility=visibility,
+                    ripple_source=ripple_source)
         else:
             log_faction(slug, target_id, session_n, rnote,
                         polarity=rpolarity, intensity=rintensity,
-                        event_type=event_type, visibility="dm_only")
+                        event_type=event_type, visibility=visibility,
+                        ripple_source=ripple_source)
         rippled.append({"target": target_id, "target_type": target_type, "relation": rel["relation"]})
     return rippled
+
+
+def edit_log_entry(slug, entity_id, entity_type, event_id, note=None, polarity=None,
+                   intensity=None, visibility=None):
+    """Edit a log entry by its UUID."""
+    if entity_type == "npc":
+        data = _load(slug, "world/npcs.json")
+        entities = data.get("npcs", [])
+        file_key = "world/npcs.json"
+    else:
+        data = _load(slug, "world/factions.json")
+        entities = data.get("factions", [])
+        file_key = "world/factions.json"
+    for entity in entities:
+        if entity["id"] == entity_id:
+            for entry in entity.get("log", []):
+                if entry.get("id") == event_id:
+                    if note is not None:
+                        entry["note"] = note
+                    if polarity in ("positive", "neutral", "negative"):
+                        entry["polarity"] = polarity
+                    if intensity is not None:
+                        entry["intensity"] = max(1, min(3, int(intensity)))
+                    if visibility in ("public", "restricted", "dm_only"):
+                        entry["visibility"] = visibility
+    _save(slug, data, file_key)
+
+
+def undo_ripple_chain(slug, source_event_id):
+    """Delete all log entries across all entities that were rippled from source_event_id."""
+    for file_key, entity_key in [("world/npcs.json", "npcs"), ("world/factions.json", "factions")]:
+        data = _load(slug, file_key)
+        changed = False
+        for entity in data.get(entity_key, []):
+            before = len(entity.get("log", []))
+            entity["log"] = [
+                e for e in entity.get("log", [])
+                if not (e.get("ripple_source") or {}).get("event_id") == source_event_id
+            ]
+            if len(entity.get("log", [])) != before:
+                changed = True
+        if changed:
+            _save(slug, data, file_key)
 
 
 def reveal_event(slug, event_id, char_name):

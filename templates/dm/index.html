@@ -251,10 +251,18 @@ function generateRecap(slug) {
       Log
     </button>
   </form>
-  <label id="also-faction-label" style="display:none; align-items:center; gap:6px; cursor:pointer; font-size:0.78rem; color:var(--muted); margin-top:6px;">
-    <input type="checkbox" name="also_faction" form="quick-log-form" style="accent-color:var(--gold);">
-    Also affect <span id="also-faction-name"></span>
-  </label>
+  <div style="display:flex; align-items:center; gap:12px; margin-top:6px; flex-wrap:wrap;">
+    <label id="also-faction-label" style="display:none; align-items:center; gap:6px; cursor:pointer; font-size:0.78rem; color:var(--muted);">
+      <input type="checkbox" name="also_faction" form="quick-log-form" style="accent-color:var(--gold);">
+      Also affect <span id="also-faction-name"></span>
+    </label>
+    <select name="visibility" form="quick-log-form"
+            style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:4px 8px; font-size:0.78rem;">
+      <option value="public">Public — all players</option>
+      <option value="restricted">Restricted — reveal individually</option>
+      <option value="dm_only">DM only</option>
+    </select>
+  </div>
   <script>
   (function() {
     var factionNames = {

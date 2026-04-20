@@ -271,7 +271,8 @@ def npc(slug, npc_id):
                            preview_char=preview_char,
                            current_session=db.get_current_session(slug),
                            rel_data=rel_data, party=party,
-                           factions=factions, world_npcs=world_npcs)
+                           factions=factions, world_npcs=world_npcs,
+                           all_factions=db.get_factions(slug, include_hidden=True) if is_dm else factions)
 
 
 @app.route("/<slug>/world/faction/<faction_id>")
@@ -456,24 +457,29 @@ def dm_quick_log(slug):
     intensity = int(request.form.get("intensity") or 1)
     event_type = request.form.get("event_type", "").strip() or None
     session_n = int(request.form.get("session") or 0)
+    visibility = request.form.get("visibility", "public")
     if ":" in entity:
         entity_type, entity_id = entity.split(":", 1)
         if entity_type == "npc" and note:
-            db.log_npc(slug, entity_id, session_n, note, polarity=polarity, intensity=intensity, event_type=event_type)
+            src_evt = db.log_npc(slug, entity_id, session_n, note, polarity=polarity,
+                                 intensity=intensity, event_type=event_type, visibility=visibility)
             if "also_faction" in request.form:
                 npcs = db.get_npcs(slug)
                 npc_obj = next((n for n in npcs if n["id"] == entity_id), None)
                 if npc_obj and npc_obj.get("faction"):
                     db.log_faction(slug, npc_obj["faction"], session_n, note,
-                                   polarity=polarity, intensity=intensity, event_type=event_type)
+                                   polarity=polarity, intensity=intensity,
+                                   event_type=event_type, visibility=visibility)
             if polarity:
-                db.apply_ripple(slug, entity_id, "npc", session_n, note, polarity, intensity, event_type)
+                db.apply_ripple(slug, entity_id, "npc", session_n, note, polarity, intensity,
+                                event_type, visibility=visibility, source_event_id=src_evt)
             flash("Logged", "success")
         elif entity_type == "faction" and note:
-            db.log_faction(slug, entity_id, session_n, note, polarity=polarity,
-                           intensity=intensity, event_type=event_type)
+            src_evt = db.log_faction(slug, entity_id, session_n, note, polarity=polarity,
+                                     intensity=intensity, event_type=event_type, visibility=visibility)
             if polarity:
-                db.apply_ripple(slug, entity_id, "faction", session_n, note, polarity, intensity, event_type)
+                db.apply_ripple(slug, entity_id, "faction", session_n, note, polarity, intensity,
+                                event_type, visibility=visibility, source_event_id=src_evt)
             flash("Logged", "success")
     return redirect(url_for("dm", slug=slug))
 
@@ -861,11 +867,41 @@ def dm_delete_npc_log(slug, npc_id, idx):
     return redirect(url_for("npc", slug=slug, npc_id=npc_id))
 
 
+@app.route("/<slug>/dm/npc/<npc_id>/log/<event_id>/edit", methods=["POST"])
+@dm_required
+def dm_edit_npc_log(slug, npc_id, event_id):
+    db.edit_log_entry(slug, npc_id, "npc", event_id,
+                      note=request.form.get("note", "").strip() or None,
+                      polarity=request.form.get("polarity") or None,
+                      intensity=request.form.get("intensity"),
+                      visibility=request.form.get("visibility"))
+    return redirect(url_for("npc", slug=slug, npc_id=npc_id))
+
+
 @app.route("/<slug>/dm/faction/<faction_id>/log/<int:idx>/delete", methods=["POST"])
 @dm_required
 def dm_delete_faction_log(slug, faction_id, idx):
     db.delete_faction_log_entry(slug, faction_id, idx)
     return redirect(url_for("faction", slug=slug, faction_id=faction_id))
+
+
+@app.route("/<slug>/dm/faction/<faction_id>/log/<event_id>/edit", methods=["POST"])
+@dm_required
+def dm_edit_faction_log(slug, faction_id, event_id):
+    db.edit_log_entry(slug, faction_id, "faction", event_id,
+                      note=request.form.get("note", "").strip() or None,
+                      polarity=request.form.get("polarity") or None,
+                      intensity=request.form.get("intensity"),
+                      visibility=request.form.get("visibility"))
+    return redirect(url_for("faction", slug=slug, faction_id=faction_id))
+
+
+@app.route("/<slug>/dm/event/<event_id>/undo_ripple", methods=["POST"])
+@dm_required
+def dm_undo_ripple(slug, event_id):
+    db.undo_ripple_chain(slug, event_id)
+    next_url = request.form.get("next") or request.referrer or url_for("dm", slug=slug)
+    return redirect(next_url)
 
 
 @app.route("/<slug>/dm/quest/<quest_id>/log/<int:idx>/delete", methods=["POST"])
@@ -940,10 +976,8 @@ def dm_log_npc(slug, npc_id):
     if visibility not in ("public", "restricted", "dm_only"):
         visibility = "public"
     if note:
-        db.log_npc(slug, npc_id, session_n, note, polarity=polarity, intensity=intensity,
-                   event_type=event_type, visibility=visibility)
-        # Ripple to affiliated faction if requested
-        # Explicit faction ripple
+        src_evt = db.log_npc(slug, npc_id, session_n, note, polarity=polarity, intensity=intensity,
+                             event_type=event_type, visibility=visibility)
         if "also_faction" in request.form:
             npcs = db.get_npcs(slug)
             npc_obj = next((n for n in npcs if n["id"] == npc_id), None)
@@ -951,9 +985,9 @@ def dm_log_npc(slug, npc_id):
                 db.log_faction(slug, npc_obj["faction"], session_n, note,
                                polarity=polarity, intensity=intensity,
                                event_type=event_type, visibility=visibility)
-        # Automatic relation ripple
         if polarity:
-            db.apply_ripple(slug, npc_id, "npc", session_n, note, polarity, intensity, event_type)
+            db.apply_ripple(slug, npc_id, "npc", session_n, note, polarity, intensity,
+                            event_type, visibility=visibility, source_event_id=src_evt)
         flash("Entry added", "success")
     return redirect(url_for("npc", slug=slug, npc_id=npc_id))
 
@@ -993,10 +1027,11 @@ def dm_log_faction(slug, faction_id):
     if visibility not in ("public", "restricted", "dm_only"):
         visibility = "public"
     if note:
-        db.log_faction(slug, faction_id, session_n, note, polarity=polarity,
-                       intensity=intensity, event_type=event_type, visibility=visibility)
+        src_evt = db.log_faction(slug, faction_id, session_n, note, polarity=polarity,
+                                 intensity=intensity, event_type=event_type, visibility=visibility)
         if polarity:
-            db.apply_ripple(slug, faction_id, "faction", session_n, note, polarity, intensity, event_type)
+            db.apply_ripple(slug, faction_id, "faction", session_n, note, polarity, intensity,
+                            event_type, visibility=visibility, source_event_id=src_evt)
         flash("Entry added", "success")
     return redirect(url_for("faction", slug=slug, faction_id=faction_id))
 

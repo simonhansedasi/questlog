@@ -65,22 +65,76 @@
   <ul class="log-list">
     {% for entry in faction.log | reverse %}
     {% set vis = entry.visibility if entry.visibility is defined else ('dm_only' if entry.get('dm_only') else 'public') %}
+    {% set is_ripple = entry.get('ripple_source') is not none %}
     {% if is_dm or vis == 'public' %}
-    <li style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
-      <span>
-        <span class="log-session">Session {{ entry.session }}</span>
-        {% if entry.event_type %}<span style="color:var(--purple); font-size:0.72rem; font-weight:700; margin-right:5px; text-transform:uppercase; letter-spacing:0.04em;">{{ entry.event_type }}</span>{% endif %}
-        {% if entry.polarity %}
-        <span style="color:{% if entry.polarity == 'positive' %}#7ec87e{% elif entry.polarity == 'negative' %}#e05c5c{% else %}var(--muted){% endif %}; font-size:0.72rem; margin-right:4px;">
-          {% if entry.polarity == 'positive' %}+{% elif entry.polarity == 'negative' %}−{% endif %}{{ entry.intensity }}
+    <li style="display:flex; flex-direction:column; gap:4px; {% if is_ripple %}border-left:2px solid var(--border); padding-left:8px; margin-left:6px;{% endif %}">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+        <span>
+          {% if is_ripple %}
+          <span style="color:var(--muted); font-size:0.72rem; margin-right:4px;">↳</span>
+          {% set rsrc = entry.ripple_source %}
+          {% if rsrc.entity_type == 'npc' %}
+            {% set src_npc = world_npcs | selectattr('id','equalto',rsrc.entity_id) | first if world_npcs else none %}
+            <a href="/{{ slug }}/world/npc/{{ rsrc.entity_id }}" style="color:var(--muted); font-size:0.7rem; font-style:italic; text-decoration:none; margin-right:4px;">from {{ src_npc.name if src_npc else rsrc.entity_id }}</a>
+          {% else %}
+            {% set src_fac = all_factions | selectattr('id','equalto',rsrc.entity_id) | first if all_factions else none %}
+            <a href="/{{ slug }}/world/faction/{{ rsrc.entity_id }}" style="color:var(--muted); font-size:0.7rem; font-style:italic; text-decoration:none; margin-right:4px;">from {{ src_fac.name if src_fac else rsrc.entity_id }}</a>
+          {% endif %}
+          {% endif %}
+          <span class="log-session">Session {{ entry.session }}</span>
+          {% if entry.event_type %}<span style="color:var(--purple); font-size:0.72rem; font-weight:700; margin-right:5px; text-transform:uppercase; letter-spacing:0.04em;">{{ entry.event_type }}</span>{% endif %}
+          {% if entry.polarity %}
+          <span style="color:{% if entry.polarity == 'positive' %}#7ec87e{% elif entry.polarity == 'negative' %}#e05c5c{% else %}var(--muted){% endif %}; font-size:0.72rem; margin-right:4px;">
+            {% if entry.polarity == 'positive' %}+{% elif entry.polarity == 'negative' %}−{% endif %}{{ entry.intensity }}
+          </span>
+          {% endif %}
+          {{ entry.note }}
+          {% if is_dm and vis == 'dm_only' %}<span style="color:var(--muted); font-size:0.7rem; margin-left:6px; font-style:italic;">DM only</span>{% endif %}
+          {% if is_dm and vis == 'restricted' %}<span style="color:var(--purple); font-size:0.7rem; margin-left:6px; font-style:italic;">restricted</span>{% endif %}
         </span>
-        {% endif %}
-        {{ entry.note }}
-        {% if is_dm and vis == 'dm_only' %}<span style="color:var(--muted); font-size:0.7rem; margin-left:6px; font-style:italic;">DM only</span>{% endif %}
-      </span>
-      {% if is_dm %}
-      <form method="POST" action="/{{ slug }}/dm/faction/{{ faction.id }}/log/{{ (faction.log | length) - 1 - loop.index0 }}/delete" style="flex-shrink:0;">
-        <button type="submit" style="background:none; border:none; color:var(--muted); font-size:0.8rem; cursor:pointer; padding:0 4px;">×</button>
+        <div style="display:flex; gap:4px; align-items:flex-start; flex-shrink:0;">
+          {% if is_dm and entry.get('id') %}
+          <details>
+            <summary style="list-style:none; cursor:pointer; color:var(--muted); font-size:0.75rem; padding:0 4px;" title="Edit">✎</summary>
+            <div style="background:var(--surface2); border:1px solid var(--border); border-radius:6px; padding:8px; margin-top:4px;">
+              <form method="POST" action="/{{ slug }}/dm/faction/{{ faction.id }}/log/{{ entry.id }}/edit"
+                    style="display:flex; flex-direction:column; gap:6px;">
+                <input type="text" name="note" value="{{ entry.note }}"
+                       style="background:var(--surface); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:4px 8px; font-size:0.8rem; width:100%; box-sizing:border-box;">
+                <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                  <select name="polarity" style="background:var(--surface); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:3px 6px; font-size:0.78rem;">
+                    <option value="">— tone —</option>
+                    {% for p in ['positive','neutral','negative'] %}
+                    <option value="{{ p }}" {% if entry.get('polarity') == p %}selected{% endif %}>{{ p }}</option>
+                    {% endfor %}
+                  </select>
+                  <select name="intensity" style="background:var(--surface); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:3px 6px; font-size:0.78rem;">
+                    {% for i in [1,2,3] %}
+                    <option value="{{ i }}" {% if entry.get('intensity') == i %}selected{% endif %}>{{ i }}</option>
+                    {% endfor %}
+                  </select>
+                  <select name="visibility" style="background:var(--surface); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:3px 6px; font-size:0.78rem;">
+                    {% for v in ['public','restricted','dm_only'] %}
+                    <option value="{{ v }}" {% if vis == v %}selected{% endif %}>{{ v }}</option>
+                    {% endfor %}
+                  </select>
+                  <button type="submit" style="background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:3px 10px; font-size:0.78rem; font-weight:700; cursor:pointer;">Save</button>
+                </div>
+              </form>
+            </div>
+          </details>
+          {% endif %}
+          {% if is_dm %}
+          <form method="POST" action="/{{ slug }}/dm/faction/{{ faction.id }}/log/{{ (faction.log | length) - 1 - loop.index0 }}/delete" style="flex-shrink:0;">
+            <button type="submit" style="background:none; border:none; color:var(--muted); font-size:0.8rem; cursor:pointer; padding:0 4px;">×</button>
+          </form>
+          {% endif %}
+        </div>
+      </div>
+      {% if is_dm and not is_ripple and entry.get('polarity') and entry.get('id') %}
+      <form method="POST" action="/{{ slug }}/dm/event/{{ entry.id }}/undo_ripple" style="margin-left:2px;">
+        <input type="hidden" name="next" value="/{{ slug }}/world/faction/{{ faction.id }}">
+        <button type="submit" style="background:none; border:none; color:var(--muted); font-size:0.68rem; cursor:pointer; padding:0; text-decoration:underline dotted;" title="Delete all ripple events caused by this entry">undo ripple</button>
       </form>
       {% endif %}
     </li>
