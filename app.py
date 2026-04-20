@@ -436,6 +436,9 @@ def dm(slug):
     plan_html = Markup(markdown.markdown(raw_plan, extensions=["nl2br"])) if raw_plan else None
     current_session = db.get_current_session(slug)
     all_users = list(load_users().keys())
+    intel = db.get_dm_intelligence(slug, current_session)
+    delta_session = int(request.args.get("delta", current_session - 1)) if current_session > 1 else None
+    session_delta = db.get_session_delta(slug, delta_session) if delta_session else []
     return render_template("dm/index.html", meta=meta, slug=slug,
                            session_plan=raw_plan, plan_html=plan_html,
                            session_notes=db.get_session_notes(slug),
@@ -445,7 +448,10 @@ def dm(slug):
                            current_session=current_session,
                            recent_entities=db.get_recent_entities(slug, current_session),
                            assets=db.get_assets(slug),
-                           all_users=all_users)
+                           all_users=all_users,
+                           intel=intel,
+                           session_delta=session_delta,
+                           delta_session=delta_session)
 
 
 @app.route("/<slug>/dm/log/quick", methods=["POST"])
@@ -514,6 +520,55 @@ def dm_generate_recap(slug):
         return jsonify({"recap": recap})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+@app.route("/<slug>/dm/session/propose", methods=["POST"])
+@dm_required
+def dm_propose_entries(slug):
+    meta = load(slug, "campaign.json")
+    notes = db.get_session_notes(slug)
+    if not notes or not notes.strip():
+        return jsonify({"error": "No session notes to parse."}), 400
+    current_session = db.get_current_session(slug)
+    npcs = db.get_npcs(slug, include_hidden=True)
+    factions = db.get_factions(slug, include_hidden=True)
+    try:
+        proposals = ai.propose_log_entries(notes, meta.get("name", ""), current_session, npcs, factions)
+        return jsonify({"proposals": proposals, "session": current_session})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/<slug>/dm/session/commit_proposals", methods=["POST"])
+@dm_required
+def dm_commit_proposals(slug):
+    data = request.get_json()
+    if not data or "entries" not in data:
+        return jsonify({"error": "No entries"}), 400
+    current_session = db.get_current_session(slug)
+    committed = 0
+    for entry in data["entries"]:
+        entity_id = entry.get("entity_id")
+        entity_type = entry.get("entity_type", "npc")
+        note = entry.get("note", "").strip()
+        if not entity_id or not note:
+            continue
+        polarity = entry.get("polarity") or None
+        intensity = int(entry.get("intensity") or 1)
+        event_type = entry.get("event_type") or None
+        visibility = entry.get("visibility", "public")
+        session_n = int(entry.get("session") or current_session)
+        if entity_type == "npc":
+            src_evt = db.log_npc(slug, entity_id, session_n, note, polarity=polarity,
+                                 intensity=intensity, event_type=event_type, visibility=visibility)
+        else:
+            src_evt = db.log_faction(slug, entity_id, session_n, note, polarity=polarity,
+                                     intensity=intensity, event_type=event_type, visibility=visibility)
+        if polarity:
+            db.apply_ripple(slug, entity_id, entity_type, session_n, note, polarity, intensity,
+                            event_type, visibility=visibility, source_event_id=src_evt)
+        committed += 1
+    return jsonify({"committed": committed})
 
 
 @app.route("/<slug>/dm/session/notes/export")

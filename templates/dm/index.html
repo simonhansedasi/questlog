@@ -23,7 +23,9 @@
 </div>
 
 <nav class="dm-jumpnav">
+  <a href="#worldstate">World State</a>
   <a href="#session">Session</a>
+  {% if delta_session %}<a href="#delta">S{{ delta_session }}</a>{% endif %}
   {% if recent_entities %}<a href="#recent">Recent</a>{% endif %}
   <a href="#quicklog">Quick Log</a>
   <a href="#world">World</a>
@@ -32,6 +34,56 @@
   <a href="#share">Share</a>
   <a href="#settings">Settings</a>
 </nav>
+
+{# ── World State (Intelligence Layer) ───────────────────────────────────── #}
+<h2 class="section-title" id="worldstate">World State</h2>
+{% set has_intel = intel and (intel.pressures or intel.stale or intel.risks or intel.gaps) %}
+{% if not has_intel %}
+<div class="card mb-4" style="padding:20px 24px; text-align:center;">
+  <p class="text-muted text-sm">Nothing to surface yet — log interactions to activate the intelligence layer.</p>
+</div>
+{% else %}
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px;" class="session-grid">
+
+{% macro dm_intel_row(items, color, label) %}
+{% if items %}
+<div>
+  <p style="color:{{ color }}; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; margin:0 0 6px 0;">{{ label }}</p>
+  <div style="display:flex; flex-direction:column; gap:5px;">
+    {% for e in items[:3] %}
+    <a href="/{{ slug }}/world/{% if e.kind == 'quest' %}story{% else %}{{ e.kind }}/{{ e.id }}{% endif %}"
+       style="text-decoration:none; display:flex; justify-content:space-between; align-items:flex-start; gap:8px;
+              background:var(--surface2); border:1px solid var(--border); border-left:3px solid {{ color }};
+              border-radius:5px; padding:7px 10px;">
+      <div style="min-width:0;">
+        <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+          <span style="font-weight:700; font-size:0.83rem; color:var(--text);">{{ e.name }}</span>
+          {% if e.rel_data and e.rel_data.relationship %}
+          <span class="badge badge-{{ e.rel_data.relationship }}" style="font-size:0.65rem; padding:1px 5px;">{{ e.rel_data.relationship }}</span>
+          {% endif %}
+          {% if e.rel_data and e.rel_data.trend == 'down' %}<span style="color:#e05c5c; font-size:0.75rem;">↓</span>
+          {% elif e.rel_data and e.rel_data.trend == 'up' %}<span style="color:#7ec87e; font-size:0.75rem;">↑</span>{% endif %}
+        </div>
+        <p style="font-size:0.72rem; color:var(--muted); margin:2px 0 0 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ e.reason }}</p>
+      </div>
+      {% if e.last_session is defined %}<span style="color:var(--muted); font-size:0.68rem; white-space:nowrap; padding-top:2px;">S{{ e.last_session }}</span>{% endif %}
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+{% endmacro %}
+
+{{ dm_intel_row(intel.pressures, '#e05c5c', '🔥 Active Pressure') }}
+{{ dm_intel_row(intel.risks, '#d97706', '⚠️ Consequence Risk') }}
+{{ dm_intel_row(intel.stale, 'var(--muted)', '⏳ Stale Threads') }}
+{{ dm_intel_row(intel.gaps, 'var(--purple)', '🧩 Narrative Gaps') }}
+
+</div>
+<p style="text-align:right; margin:-12px 0 20px 0;">
+  <a href="/{{ slug }}/brief" style="color:var(--muted); font-size:0.75rem; text-decoration:none;">Full briefing →</a>
+</p>
+{% endif %}
 
 <h2 class="section-title" id="session">Session Tools</h2>
 <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;" class="session-grid mb-4">
@@ -90,6 +142,12 @@
                        padding:5px 14px; font-size:0.82rem; font-weight:700; cursor:pointer;">
           ✦ Generate Recap
         </button>
+        <button type="button" id="propose-btn"
+                onclick="proposeEntries('{{ slug }}')"
+                style="background:none; border:1px solid var(--purple); color:var(--purple); border-radius:4px;
+                       padding:5px 14px; font-size:0.82rem; font-weight:700; cursor:pointer;">
+          ✦ Parse into Events
+        </button>
       </div>
     </form>
   </div></div>
@@ -143,7 +201,31 @@
   </div>
 </div>
 
+{# ── Proposed Events (AI parse output) ─────────────────── #}
+<div id="proposals-section" style="display:none;" class="mb-4">
+  <h2 class="section-title">Proposed Events</h2>
+  <div class="card">
+    <p style="color:var(--muted); font-size:0.78rem; margin-bottom:14px;">Review AI-parsed events. Uncheck any you don't want to log, edit notes inline, then commit.</p>
+    <div id="proposals-list" style="display:flex; flex-direction:column; gap:10px; margin-bottom:16px;"></div>
+    <div style="display:flex; gap:8px; align-items:center;">
+      <button onclick="commitProposals('{{ slug }}')"
+              style="background:var(--gold); color:#080a18; border:none; border-radius:4px;
+                     padding:6px 18px; font-size:0.85rem; font-weight:700; cursor:pointer;">
+        Commit Selected
+      </button>
+      <button onclick="document.getElementById('proposals-section').style.display='none'"
+              style="background:none; border:1px solid var(--border); color:var(--muted); border-radius:4px;
+                     padding:6px 14px; font-size:0.85rem; cursor:pointer;">
+        Discard All
+      </button>
+      <span id="commit-status" style="color:var(--muted); font-size:0.8rem;"></span>
+    </div>
+  </div>
+</div>
+
 <script>
+var _proposalData = [];
+
 function generateRecap(slug) {
   const btn = document.getElementById('recap-btn');
   btn.textContent = 'Generating…';
@@ -163,7 +245,143 @@ function generateRecap(slug) {
     })
     .catch(() => { btn.textContent = '✦ Generate Recap'; btn.disabled = false; alert('Something went wrong.'); });
 }
+
+function proposeEntries(slug) {
+  const btn = document.getElementById('propose-btn');
+  btn.textContent = 'Parsing…';
+  btn.disabled = true;
+  fetch('/' + slug + '/dm/session/propose', { method: 'POST' })
+    .then(r => r.json())
+    .then(data => {
+      btn.textContent = '✦ Parse into Events';
+      btn.disabled = false;
+      if (data.error) { alert(data.error); return; }
+      _proposalData = data.proposals;
+      renderProposals(data.proposals, data.session);
+      document.getElementById('proposals-section').style.display = 'block';
+      document.getElementById('proposals-section').scrollIntoView({ behavior: 'smooth' });
+    })
+    .catch(() => { btn.textContent = '✦ Parse into Events'; btn.disabled = false; alert('Something went wrong.'); });
+}
+
+function renderProposals(proposals, sessionN) {
+  const list = document.getElementById('proposals-list');
+  if (!proposals.length) {
+    list.innerHTML = '<p style="color:var(--muted); font-size:0.85rem;">No events detected in the notes.</p>';
+    return;
+  }
+  const polarityColor = {positive:'#7ec87e', negative:'#e05c5c', neutral:'var(--muted)'};
+  list.innerHTML = proposals.map((p, i) => {
+    const col = polarityColor[p.polarity] || 'var(--border)';
+    const knownId = p.entity_id ? '' : ' style="color:#d97706;"';
+    const unknownBadge = p.entity_id ? '' : '<span style="color:#d97706; font-size:0.68rem; font-weight:700; margin-left:4px;">unknown entity</span>';
+    return `<div style="display:flex; gap:10px; align-items:flex-start; background:var(--surface2);
+                       border:1px solid var(--border); border-left:3px solid ${col}; border-radius:5px; padding:10px 12px;">
+      <input type="checkbox" id="prop-${i}" checked style="margin-top:3px; accent-color:var(--gold); flex-shrink:0;">
+      <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:6px;">
+        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+          <span style="font-weight:700; font-size:0.83rem;"${knownId}>${p.entity_name}</span>
+          ${unknownBadge}
+          <span style="font-size:0.7rem; color:var(--muted); text-transform:uppercase;">${p.entity_type}</span>
+          ${p.polarity ? `<span style="color:${col}; font-size:0.72rem;">${p.polarity} ×${p.intensity}</span>` : ''}
+          ${p.event_type ? `<span style="color:var(--purple); font-size:0.7rem; font-weight:700; text-transform:uppercase;">${p.event_type}</span>` : ''}
+          <span style="color:var(--muted); font-size:0.7rem;">${p.visibility === 'dm_only' ? 'DM only' : 'public'}</span>
+        </div>
+        <input type="text" value="${p.note.replace(/"/g, '&quot;')}"
+               onchange="_proposalData[${i}].note = this.value"
+               style="background:var(--surface); border:1px solid var(--border); color:var(--text);
+                      border-radius:4px; padding:4px 8px; font-size:0.82rem; width:100%; box-sizing:border-box;">
+        ${!p.entity_id ? `<p style="color:#d97706; font-size:0.7rem; margin:0;">Entity not found in world — will be skipped on commit unless you add them first.</p>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function commitProposals(slug) {
+  const entries = _proposalData
+    .filter((p, i) => document.getElementById('prop-' + i) && document.getElementById('prop-' + i).checked && p.entity_id)
+    .map((p, i) => ({
+      entity_id: p.entity_id,
+      entity_type: p.entity_type,
+      note: p.note,
+      polarity: p.polarity,
+      intensity: p.intensity,
+      event_type: p.event_type,
+      visibility: p.visibility,
+    }));
+  if (!entries.length) {
+    document.getElementById('commit-status').textContent = 'Nothing to commit.';
+    return;
+  }
+  document.getElementById('commit-status').textContent = 'Committing…';
+  fetch('/' + slug + '/dm/session/commit_proposals', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({entries})
+  })
+    .then(r => r.json())
+    .then(data => {
+      if (data.error) { document.getElementById('commit-status').textContent = data.error; return; }
+      document.getElementById('commit-status').textContent = `${data.committed} event${data.committed !== 1 ? 's' : ''} logged.`;
+      setTimeout(() => { document.getElementById('proposals-section').style.display = 'none'; location.reload(); }, 1200);
+    })
+    .catch(() => { document.getElementById('commit-status').textContent = 'Something went wrong.'; });
+}
 </script>
+
+{# ── Session Delta ───────────────────────────────────────── #}
+{% if delta_session and session_delta is defined %}
+<h2 class="section-title mt-8" id="delta">
+  Session {{ delta_session }} Delta
+  <span style="margin-left:8px;">
+    {% if delta_session > 1 %}
+    <a href="/{{ slug }}/dm?delta={{ delta_session - 1 }}" style="color:var(--muted); font-size:0.75rem; text-decoration:none;">← S{{ delta_session - 1 }}</a>
+    {% endif %}
+    {% if delta_session < current_session %}
+    <a href="/{{ slug }}/dm?delta={{ delta_session + 1 }}" style="color:var(--muted); font-size:0.75rem; text-decoration:none; margin-left:6px;">S{{ delta_session + 1 }} →</a>
+    {% endif %}
+  </span>
+</h2>
+{% if not session_delta %}
+<div class="card mb-4" style="padding:16px 20px;">
+  <p class="text-muted text-sm">No events logged for session {{ delta_session }}.</p>
+</div>
+{% else %}
+<div style="display:flex; flex-direction:column; gap:8px; margin-bottom:20px;">
+  {% for group in session_delta %}
+  <div class="card" style="padding:10px 14px;">
+    <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px; flex-wrap:wrap;">
+      <a href="/{{ slug }}/world/{{ group.kind }}/{{ group.id }}"
+         style="font-weight:700; color:var(--gold); font-size:0.88rem; text-decoration:none;">{{ group.name }}</a>
+      {% if group.rel_data %}
+      <span class="badge badge-{{ group.rel_data.relationship }}" style="font-size:0.65rem; padding:1px 5px;">{{ group.rel_data.relationship }}</span>
+      {% if group.rel_data.trend == 'up' %}<span style="color:#7ec87e; font-size:0.75rem;">↑</span>
+      {% elif group.rel_data.trend == 'down' %}<span style="color:#e05c5c; font-size:0.75rem;">↓</span>{% endif %}
+      {% endif %}
+      <span style="color:var(--muted); font-size:0.7rem;">{{ group.role }}</span>
+    </div>
+    <ul style="margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:4px;">
+      {% for entry in group.entries %}
+      {% set is_ripple = entry.get('ripple_source') is not none %}
+      <li style="font-size:0.8rem; color:var(--text-dim); {% if is_ripple %}padding-left:10px; border-left:2px solid var(--border); color:var(--muted);{% endif %}">
+        {% if is_ripple %}<span style="color:var(--muted); margin-right:3px;">↳</span>{% endif %}
+        {% if entry.polarity %}
+        <span style="color:{% if entry.polarity == 'positive' %}#7ec87e{% elif entry.polarity == 'negative' %}#e05c5c{% else %}var(--muted){% endif %}; font-size:0.68rem; margin-right:3px;">
+          {% if entry.polarity == 'positive' %}+{% elif entry.polarity == 'negative' %}−{% endif %}{{ entry.intensity }}
+        </span>
+        {% endif %}
+        {% if entry.event_type %}<span style="color:var(--purple); font-size:0.68rem; font-weight:700; text-transform:uppercase; margin-right:3px;">{{ entry.event_type }}</span>{% endif %}
+        {{ entry.note }}
+        {% set vis = entry.visibility if entry.visibility is defined else ('dm_only' if entry.get('dm_only') else 'public') %}
+        {% if vis == 'dm_only' %}<span style="color:var(--muted); font-size:0.65rem; margin-left:4px; font-style:italic;">DM only</span>{% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+{% endif %}
 
 {% if recent_entities %}
 <h2 class="section-title mt-8" id="recent">Recent Activity</h2>

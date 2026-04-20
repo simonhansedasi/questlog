@@ -1032,6 +1032,32 @@ def get_dm_intelligence(slug, current_session):
     }
 
 
+def get_session_delta(slug, session_n):
+    """Return all events logged in a specific session, grouped by entity, for the DM."""
+    groups = []
+    for npc in _load(slug, "world/npcs.json").get("npcs", []):
+        entries = [e for e in npc.get("log", []) if e.get("session") == session_n]
+        if entries:
+            groups.append({
+                "kind": "npc", "id": npc["id"], "name": npc["name"],
+                "role": npc.get("role", ""),
+                "rel_data": compute_npc_relationship(npc, is_dm=True),
+                "entries": entries,
+            })
+    for faction in _load(slug, "world/factions.json").get("factions", []):
+        entries = [e for e in faction.get("log", []) if e.get("session") == session_n]
+        if entries:
+            groups.append({
+                "kind": "faction", "id": faction["id"], "name": faction["name"],
+                "role": faction.get("role", ""),
+                "rel_data": {"relationship": faction.get("relationship", "unknown"),
+                             "trend": None, "computed": False},
+                "entries": entries,
+            })
+    groups.sort(key=lambda g: g["name"])
+    return groups
+
+
 def get_all_log_entries(slug):
     entries = []
     for npc in _load(slug, "world/npcs.json").get("npcs", []):
