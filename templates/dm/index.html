@@ -16,7 +16,18 @@
   </form>
 </div>
 
-<h2 class="section-title">Session Tools</h2>
+<nav class="dm-jumpnav">
+  <a href="#session">Session</a>
+  {% if recent_entities %}<a href="#recent">Recent</a>{% endif %}
+  <a href="#quicklog">Quick Log</a>
+  <a href="#world">World</a>
+  {% if assets and assets.ships %}<a href="#ships">Ships</a>{% endif %}
+  <a href="#add">Add New</a>
+  <a href="#share">Share</a>
+  <a href="#settings">Settings</a>
+</nav>
+
+<h2 class="section-title" id="session">Session Tools</h2>
 <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;" class="session-grid mb-4">
 
   <!-- Plan (left) -->
@@ -79,6 +90,7 @@
 
 </div>
 
+<span id="recap"></span>
 <div id="recap-section" style="display:none;" class="mb-4">
   <h2 class="section-title">Player Recap</h2>
   <div class="card">
@@ -147,7 +159,26 @@ function generateRecap(slug) {
 }
 </script>
 
-<h2 class="section-title mt-8">Quick Log</h2>
+{% if recent_entities %}
+<h2 class="section-title mt-8" id="recent">Recent Activity</h2>
+<div class="card mb-4" style="padding:12px 16px;">
+  <div style="display:flex; flex-wrap:wrap; gap:8px;">
+    {% for e in recent_entities %}
+    <a href="/{{ slug }}/world/{% if e.kind == 'npc' %}npc{% else %}faction{% endif %}/{{ e.id }}"
+       style="display:flex; align-items:center; gap:8px; background:var(--surface2); border:1px solid var(--border);
+              border-radius:6px; padding:6px 12px; text-decoration:none; color:var(--text); font-size:0.85rem;">
+      <span style="font-weight:600;">{{ e.name }}</span>
+      <span class="badge badge-{{ e.rel_data.relationship }}" style="font-size:0.7rem; padding:2px 7px;">{{ e.rel_data.relationship }}</span>
+      {% if e.rel_data.trend == 'up' %}<span style="color:#7ec87e; font-size:0.8rem;">↑</span>
+      {% elif e.rel_data.trend == 'down' %}<span style="color:#e05c5c; font-size:0.8rem;">↓</span>{% endif %}
+      <span style="color:var(--muted); font-size:0.72rem;">S{{ e.last_session }}</span>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<h2 class="section-title mt-8" id="quicklog">Quick Log</h2>
 <div class="card mb-4">
   {% if npcs or factions %}
   <form method="POST" action="/{{ slug }}/dm/log/quick"
@@ -196,6 +227,12 @@ function generateRecap(slug) {
         <option value="3">3 major</option>
       </select>
     </div>
+    <div style="display:flex; flex-direction:column; gap:4px;">
+      <label style="color:var(--muted); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Type</label>
+      <input type="text" name="event_type" placeholder="combat, dialogue…"
+             style="background:var(--surface2); border:1px solid var(--border); color:var(--text);
+                    border-radius:4px; padding:6px 10px; font-size:0.85rem; width:140px;">
+    </div>
     <div style="display:flex; flex-direction:column; gap:4px; flex:1; min-width:200px;">
       <label style="color:var(--muted); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Note</label>
       <input type="text" name="note" placeholder="One-line interaction note…"
@@ -213,7 +250,7 @@ function generateRecap(slug) {
   {% endif %}
 </div>
 
-<h2 class="section-title mt-8">World</h2>
+<h2 class="section-title mt-8" id="world">World</h2>
 <div class="card mb-4">
   {% if npcs or factions or party %}
   {% if party %}
@@ -280,7 +317,7 @@ function generateRecap(slug) {
   {% endif %}
 </div>
 
-<h2 class="section-title mt-8">Ships</h2>
+<h2 class="section-title mt-8" id="ships">Ships</h2>
 {% set input_s = "background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:5px 9px; font-size:0.82rem;" %}
 {% set btn_s = "background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:5px 14px; font-size:0.82rem; font-weight:700; cursor:pointer;" %}
 {% set btn_del_s = "background:none; border:1px solid #e05c5c; color:#e05c5c; border-radius:4px; padding:3px 10px; font-size:0.78rem; cursor:pointer;" %}
@@ -381,7 +418,7 @@ function generateRecap(slug) {
   </details>
 </div>
 
-<h2 class="section-title mt-8">Add New</h2>
+<h2 class="section-title mt-8" id="add">Add New</h2>
 <div class="card-grid">
   <a href="/{{ slug }}/dm/npcs/add" style="text-decoration:none;">
     <div class="card" style="transition:border-color 0.15s;" onmouseover="this.style.borderColor='var(--gold-dim)'" onmouseout="this.style.borderColor='var(--border)'">
@@ -410,7 +447,7 @@ function generateRecap(slug) {
 </div>
 
 {% if meta.get('owner') == session.get('user') %}
-<h2 class="section-title mt-8">Player Share Link</h2>
+<h2 class="section-title mt-8" id="share">Player Share Link</h2>
 <div class="card mb-4">
   {% if meta.get('share_token') %}
   <p class="text-muted text-sm" style="margin-bottom:10px;">Send this link to your players. It gives read-only access — no login required.</p>
@@ -438,7 +475,7 @@ function generateRecap(slug) {
   {% endif %}
 </div>
 
-<h2 class="section-title mt-8">Campaign Settings</h2>
+<h2 class="section-title mt-8" id="settings">Campaign Settings</h2>
 <div class="card mb-4">
   <form method="POST" action="/{{ slug }}/dm/settings" style="display:flex; flex-direction:column; gap:12px;">
     {% set input_style = "background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:6px 10px; font-size:0.85rem; width:100%; box-sizing:border-box;" %}

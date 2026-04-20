@@ -9,17 +9,54 @@
 <h2 class="section-title">NPCs</h2>
 <div class="card-grid mb-4">
   {% for npc in npcs %}
-  <a href="/{{ slug }}/world/npc/{{ npc.id }}" style="text-decoration:none;">
-    <div class="card" style="transition:border-color 0.15s; {% if session.get('dm_' ~ slug) and npc.hidden %}opacity:0.6;{% endif %}" onmouseover="this.style.borderColor='var(--gold-dim)'" onmouseout="this.style.borderColor='var(--border)'">
-      <h3>{{ npc.name }}</h3>
-      <div class="role">{{ npc.role }}</div>
-      <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center; margin-top:4px;">
-        <span class="badge badge-{{ npc.relationship }}">{{ npc.relationship }}</span>
-        {% if session.get('dm_' ~ slug) and npc.hidden %}<span class="badge" style="background:var(--surface2); color:var(--muted); font-size:0.7rem;">Hidden</span>{% endif %}
+  {% set rel = npc | compute_rel %}
+  <details class="card" style="{% if session.get('dm_' ~ slug) and npc.hidden %}opacity:0.6;{% endif %}">
+    <summary style="list-style:none; cursor:pointer;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+        <div>
+          <h3 style="margin-bottom:4px;">{{ npc.name }}</h3>
+          <div class="role">{{ npc.role }}</div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center; margin-top:6px;">
+            <span class="badge badge-{{ rel.relationship }}">{{ rel.relationship }}</span>
+            {% if rel.trend == 'up' %}<span style="color:#7ec87e; font-size:0.8rem;">↑</span>
+            {% elif rel.trend == 'down' %}<span style="color:#e05c5c; font-size:0.8rem;">↓</span>{% endif %}
+            {% if session.get('dm_' ~ slug) and npc.hidden %}<span class="badge" style="background:var(--surface2); color:var(--muted); font-size:0.7rem;">Hidden</span>{% endif %}
+          </div>
+        </div>
+        <span style="color:var(--muted); font-size:0.8rem; padding-top:4px;">{% if npc.log %}{{ npc.log | length }}{% endif %}</span>
       </div>
-      {% if npc.log %}<p class="text-muted text-sm mt-4">{{ npc.log | length }} interaction{{ 's' if npc.log | length != 1 }}</p>{% endif %}
-    </div>
-  </a>
+    </summary>
+
+    <hr class="divider" style="margin:10px 0;">
+
+    {% if npc.description %}
+    <p style="font-size:0.88rem; color:var(--text); margin-bottom:10px;">{{ npc.description }}</p>
+    {% endif %}
+
+    {% if npc.log %}
+    <ul class="log-list" style="margin-bottom:10px;">
+      {% for entry in npc.log | reverse %}
+      <li style="font-size:0.82rem;">
+        <span class="log-session">Session {{ entry.session }}</span>
+        {% if entry.event_type %}<span style="color:var(--purple); font-size:0.72rem; font-weight:700; margin-right:5px; text-transform:uppercase; letter-spacing:0.04em;">{{ entry.event_type }}</span>{% endif %}
+        {% if entry.polarity %}
+        <span style="color:{% if entry.polarity == 'positive' %}#7ec87e{% elif entry.polarity == 'negative' %}#e05c5c{% else %}var(--muted){% endif %}; font-size:0.72rem; margin-right:4px;">
+          {% if entry.polarity == 'positive' %}+{% elif entry.polarity == 'negative' %}−{% endif %}{{ entry.intensity }}
+        </span>
+        {% endif %}
+        {{ entry.note }}
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="text-muted text-sm" style="margin-bottom:10px;">No interactions logged yet.</p>
+    {% endif %}
+
+    <a href="/{{ slug }}/world/npc/{{ npc.id }}"
+       style="font-size:0.78rem; color:var(--gold-dim); text-decoration:none;">
+      Full page {% if session.get('dm_' ~ slug) %}+ DM controls{% endif %} →
+    </a>
+  </details>
   {% endfor %}
 </div>
 {% endif %}
@@ -28,16 +65,45 @@
 <h2 class="section-title mt-8">Factions</h2>
 <div class="card-grid">
   {% for faction in factions %}
-  <a href="/{{ slug }}/world/faction/{{ faction.id }}" style="text-decoration:none;">
-    <div class="card" style="transition:border-color 0.15s; {% if session.get('dm_' ~ slug) and faction.hidden %}opacity:0.6;{% endif %}" onmouseover="this.style.borderColor='var(--gold-dim)'" onmouseout="this.style.borderColor='var(--border)'">
-      <h3>{{ faction.name }}</h3>
-      <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center; margin-top:4px;">
-        <span class="badge badge-{{ faction.relationship }}">{{ faction.relationship }}</span>
-        {% if session.get('dm_' ~ slug) and faction.hidden %}<span class="badge" style="background:var(--surface2); color:var(--muted); font-size:0.7rem;">Hidden</span>{% endif %}
+  <details class="card" style="{% if session.get('dm_' ~ slug) and faction.hidden %}opacity:0.6;{% endif %}">
+    <summary style="list-style:none; cursor:pointer;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+        <div>
+          <h3 style="margin-bottom:4px;">{{ faction.name }}</h3>
+          {% if faction.role %}<div class="role">{{ faction.role }}</div>{% endif %}
+          <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center; margin-top:6px;">
+            <span class="badge badge-{{ faction.relationship }}">{{ faction.relationship }}</span>
+            {% if session.get('dm_' ~ slug) and faction.hidden %}<span class="badge" style="background:var(--surface2); color:var(--muted); font-size:0.7rem;">Hidden</span>{% endif %}
+          </div>
+        </div>
+        <span style="color:var(--muted); font-size:0.8rem; padding-top:4px;">{% if faction.log %}{{ faction.log | length }}{% endif %}</span>
       </div>
-      {% if faction.log %}<p class="text-muted text-sm mt-4">{{ faction.log | length }} interaction{{ 's' if faction.log | length != 1 }}</p>{% endif %}
-    </div>
-  </a>
+    </summary>
+
+    <hr class="divider" style="margin:10px 0;">
+
+    {% if faction.description %}
+    <p style="font-size:0.88rem; color:var(--text); margin-bottom:10px;">{{ faction.description }}</p>
+    {% endif %}
+
+    {% if faction.log %}
+    <ul class="log-list" style="margin-bottom:10px;">
+      {% for entry in faction.log | reverse %}
+      <li style="font-size:0.82rem;">
+        <span class="log-session">Session {{ entry.session }}</span>
+        {{ entry.note }}
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="text-muted text-sm" style="margin-bottom:10px;">No interactions logged yet.</p>
+    {% endif %}
+
+    <a href="/{{ slug }}/world/faction/{{ faction.id }}"
+       style="font-size:0.78rem; color:var(--gold-dim); text-decoration:none;">
+      Full page {% if session.get('dm_' ~ slug) %}+ DM controls{% endif %} →
+    </a>
+  </details>
   {% endfor %}
 </div>
 {% endif %}

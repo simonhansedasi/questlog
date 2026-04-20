@@ -87,7 +87,7 @@ def delete_npc_log_entry(slug, npc_id, entry_idx):
     _save(slug, data, "world/npcs.json")
 
 
-def log_npc(slug, npc_id, session, note, polarity=None, intensity=None):
+def log_npc(slug, npc_id, session, note, polarity=None, intensity=None, event_type=None):
     data = _load(slug, "world/npcs.json")
     for npc in data.get("npcs", []):
         if npc["id"] == npc_id:
@@ -95,6 +95,8 @@ def log_npc(slug, npc_id, session, note, polarity=None, intensity=None):
             if polarity in ("positive", "neutral", "negative"):
                 entry["polarity"] = polarity
                 entry["intensity"] = int(intensity) if intensity in (1, 2, 3) else 1
+            if event_type:
+                entry["event_type"] = event_type.strip()
             npc.setdefault("log", []).append(entry)
     _save(slug, data, "world/npcs.json")
 
@@ -583,6 +585,43 @@ def set_session_notes(slug, notes):
     data = _load(slug, "dm/session.json")
     data["notes"] = notes
     _save(slug, data, "dm/session.json")
+
+
+def get_recent_entities(slug, current_session, window=2):
+    """Return NPCs and factions with log entries in the last `window` sessions."""
+    threshold = max(1, current_session - window)
+    recent = []
+    for npc in _load(slug, "world/npcs.json").get("npcs", []):
+        if npc.get("hidden"):
+            continue
+        sessions_touched = [e.get("session", 0) for e in npc.get("log", [])
+                            if e.get("session", 0) >= threshold]
+        if sessions_touched:
+            recent.append({
+                "kind": "npc",
+                "id": npc["id"],
+                "name": npc["name"],
+                "role": npc.get("role", ""),
+                "rel_data": compute_npc_relationship(npc),
+                "last_session": max(sessions_touched),
+            })
+    for faction in _load(slug, "world/factions.json").get("factions", []):
+        if faction.get("hidden"):
+            continue
+        sessions_touched = [e.get("session", 0) for e in faction.get("log", [])
+                            if e.get("session", 0) >= threshold]
+        if sessions_touched:
+            recent.append({
+                "kind": "faction",
+                "id": faction["id"],
+                "name": faction["name"],
+                "role": faction.get("role", ""),
+                "rel_data": {"relationship": faction.get("relationship", "unknown"),
+                             "trend": None, "computed": False},
+                "last_session": max(sessions_touched),
+            })
+    recent.sort(key=lambda x: x["last_session"], reverse=True)
+    return recent
 
 
 def get_all_log_entries(slug):

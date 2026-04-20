@@ -57,6 +57,7 @@
     <li style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
       <span>
         <span class="log-session">Session {{ entry.session }}</span>
+        {% if entry.event_type %}<span style="color:var(--purple); font-size:0.72rem; font-weight:700; margin-right:5px; text-transform:uppercase; letter-spacing:0.04em;">{{ entry.event_type }}</span>{% endif %}
         {% if entry.polarity %}
         <span style="color:{% if entry.polarity == 'positive' %}#7ec87e{% elif entry.polarity == 'negative' %}#e05c5c{% else %}var(--muted){% endif %}; font-size:0.72rem; margin-right:4px;">
           {% if entry.polarity == 'positive' %}+{% elif entry.polarity == 'negative' %}−{% endif %}{{ entry.intensity }}
@@ -78,29 +79,37 @@
 {% set input_style = "background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:6px 10px; font-size:0.85rem; width:100%;" %}
 {% set btn_style = "background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:6px 16px; font-size:0.85rem; font-weight:700; cursor:pointer;" %}
 
+{% macro log_form(action) %}
+<div style="display:flex; flex-direction:column; gap:8px;">
+  <div style="display:flex; gap:8px; flex-wrap:wrap;">
+    <input type="number" name="session" placeholder="Session #" min="1" value="{{ current_session }}"
+           style="{{ input_style }} width:90px; flex-shrink:0;">
+    <select name="polarity" style="{{ input_style }} width:130px; flex-shrink:0;">
+      <option value="">— tone —</option>
+      <option value="positive">positive</option>
+      <option value="neutral">neutral</option>
+      <option value="negative">negative</option>
+    </select>
+    <select name="intensity" style="{{ input_style }} width:110px; flex-shrink:0;">
+      <option value="1">minor (1)</option>
+      <option value="2">moderate (2)</option>
+      <option value="3">major (3)</option>
+    </select>
+    <input type="text" name="event_type" placeholder="type (combat, dialogue…)"
+           style="{{ input_style }} width:180px; flex-shrink:0;">
+  </div>
+  <div style="display:flex; gap:8px;">
+    <input type="text" name="note" placeholder="What happened?" required style="{{ input_style }} flex:1;">
+    <button type="submit" style="{{ btn_style }}">Log</button>
+  </div>
+</div>
+{% endmacro %}
+
 {% if is_player %}
 <div class="card mt-8">
   <h3 style="color:var(--muted); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:12px;">Log Interaction</h3>
-  <form method="POST" action="/{{ slug }}/npc/{{ npc.id }}/log" style="display:flex; flex-direction:column; gap:8px;">
-    <div style="display:flex; gap:8px; flex-wrap:wrap;">
-      <input type="number" name="session" placeholder="Session #" min="1" value="{{ current_session }}"
-             style="{{ input_style }} width:90px; flex-shrink:0;">
-      <select name="polarity" style="{{ input_style }} width:130px; flex-shrink:0;">
-        <option value="">— tone —</option>
-        <option value="positive">positive</option>
-        <option value="neutral">neutral</option>
-        <option value="negative">negative</option>
-      </select>
-      <select name="intensity" style="{{ input_style }} width:110px; flex-shrink:0;">
-        <option value="1">minor (1)</option>
-        <option value="2">moderate (2)</option>
-        <option value="3">major (3)</option>
-      </select>
-    </div>
-    <div style="display:flex; gap:8px;">
-      <input type="text" name="note" placeholder="What happened?" required style="{{ input_style }} flex:1;">
-      <button type="submit" style="{{ btn_style }}">Log</button>
-    </div>
+  <form method="POST" action="/{{ slug }}/npc/{{ npc.id }}/log">
+    {{ log_form("/{{ slug }}/npc/{{ npc.id }}/log") }}
   </form>
 </div>
 {% endif %}
@@ -124,26 +133,8 @@
   <hr class="divider">
 
   <h3 style="color:var(--muted); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:12px;">Log Interaction</h3>
-  <form method="POST" action="/{{ slug }}/dm/npc/{{ npc.id }}/log" style="display:flex; flex-direction:column; gap:8px;">
-    <div style="display:flex; gap:8px; flex-wrap:wrap;">
-      <input type="number" name="session" placeholder="Session #" min="1" value="{{ current_session }}"
-             style="{{ input_style }} width:90px; flex-shrink:0;">
-      <select name="polarity" style="{{ input_style }} width:130px; flex-shrink:0;">
-        <option value="">— tone —</option>
-        <option value="positive">positive</option>
-        <option value="neutral">neutral</option>
-        <option value="negative">negative</option>
-      </select>
-      <select name="intensity" style="{{ input_style }} width:110px; flex-shrink:0;">
-        <option value="1">minor (1)</option>
-        <option value="2">moderate (2)</option>
-        <option value="3">major (3)</option>
-      </select>
-    </div>
-    <div style="display:flex; gap:8px;">
-      <input type="text" name="note" placeholder="What happened?" required style="{{ input_style }} flex:1;">
-      <button type="submit" style="{{ btn_style }}">Add</button>
-    </div>
+  <form method="POST" action="/{{ slug }}/dm/npc/{{ npc.id }}/log">
+    {{ log_form("/{{ slug }}/dm/npc/{{ npc.id }}/log") }}
   </form>
 
   <hr class="divider">

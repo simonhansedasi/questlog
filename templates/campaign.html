@@ -51,6 +51,25 @@
 </div>
 {% endif %}
 
+<!-- Recently Active -->
+{% if recent_entities %}
+<h2 class="section-title mt-8">Recently Active</h2>
+<div class="card mb-4" style="padding:12px 16px;">
+  <div style="display:flex; flex-wrap:wrap; gap:8px;">
+    {% for e in recent_entities %}
+    <a href="/{{ slug }}/world/{% if e.kind == 'npc' %}npc{% else %}faction{% endif %}/{{ e.id }}"
+       style="display:flex; align-items:center; gap:8px; background:var(--surface2); border:1px solid var(--border);
+              border-radius:6px; padding:6px 12px; text-decoration:none; color:var(--text); font-size:0.85rem;">
+      <span style="font-weight:600;">{{ e.name }}</span>
+      <span class="badge badge-{{ e.rel_data.relationship }}" style="font-size:0.7rem; padding:2px 7px;">{{ e.rel_data.relationship }}</span>
+      {% if e.rel_data.trend == 'up' %}<span style="color:#7ec87e; font-size:0.8rem;">↑</span>
+      {% elif e.rel_data.trend == 'down' %}<span style="color:#e05c5c; font-size:0.8rem;">↓</span>{% endif %}
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
 <!-- Party -->
 {% if party %}
 <h2 class="section-title mt-8">Party</h2>

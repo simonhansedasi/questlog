@@ -1,4 +1,4 @@
-from flask import Flask, render_template, abort, redirect, url_for, request, session, Response, jsonify
+from flask import Flask, render_template, abort, redirect, url_for, request, session, Response, jsonify, flash
 from markupsafe import Markup
 from werkzeug.security import check_password_hash
 from functools import wraps
@@ -179,9 +179,11 @@ def campaign(slug):
         latest_journal = {**e, "recap_html": Markup(markdown.markdown(e.get("recap", ""), extensions=["nl2br"]))}
     npcs = db.get_npcs(slug, include_hidden=is_dm)
     factions = db.get_factions(slug, include_hidden=is_dm)
+    current_session = db.get_current_session(slug)
     return render_template("campaign.html", meta=meta, party=party, active=active, slug=slug,
                            latest_journal=latest_journal,
-                           current_session=db.get_current_session(slug),
+                           current_session=current_session,
+                           recent_entities=db.get_recent_entities(slug, current_session),
                            npc_count=len(npcs), faction_count=len(factions))
 
 
@@ -278,6 +280,7 @@ def dm_post_journal(slug):
     recap = request.form.get("recap", "").strip()
     if recap:
         db.post_journal(slug, session_n, date, recap)
+        flash("Posted to journal", "success")
     return redirect(url_for("journal", slug=slug))
 
 
@@ -362,13 +365,15 @@ def dm(slug):
         abort(404)
     raw_plan = db.get_session_plan(slug)
     plan_html = Markup(markdown.markdown(raw_plan, extensions=["nl2br"])) if raw_plan else None
+    current_session = db.get_current_session(slug)
     return render_template("dm/index.html", meta=meta, slug=slug,
                            session_plan=raw_plan, plan_html=plan_html,
                            session_notes=db.get_session_notes(slug),
                            npcs=db.get_npcs(slug),
                            factions=db.get_factions(slug),
                            party=db.get_party(slug),
-                           current_session=db.get_current_session(slug),
+                           current_session=current_session,
+                           recent_entities=db.get_recent_entities(slug, current_session),
                            assets=db.get_assets(slug))
 
 
@@ -379,13 +384,16 @@ def dm_quick_log(slug):
     note = request.form.get("note", "").strip()
     polarity = request.form.get("polarity") or None
     intensity = int(request.form.get("intensity") or 1)
+    event_type = request.form.get("event_type", "").strip() or None
     session_n = int(request.form.get("session") or 0)
     if ":" in entity:
         entity_type, entity_id = entity.split(":", 1)
         if entity_type == "npc" and note:
-            db.log_npc(slug, entity_id, session_n, note, polarity=polarity, intensity=intensity)
+            db.log_npc(slug, entity_id, session_n, note, polarity=polarity, intensity=intensity, event_type=event_type)
+            flash("Logged", "success")
         elif entity_type == "faction" and note:
             db.log_faction(slug, entity_id, session_n, note)
+            flash("Logged", "success")
     return redirect(url_for("dm", slug=slug))
 
 
@@ -393,6 +401,7 @@ def dm_quick_log(slug):
 @dm_required
 def dm_set_session_plan(slug):
     db.set_session_plan(slug, request.form.get("plan", ""))
+    flash("Plan saved", "success")
     return redirect(url_for("dm", slug=slug))
 
 
@@ -400,6 +409,7 @@ def dm_set_session_plan(slug):
 @dm_required
 def dm_set_session_notes(slug):
     db.set_session_notes(slug, request.form.get("notes", ""))
+    flash("Notes saved", "success")
     return redirect(url_for("dm", slug=slug))
 
 
@@ -445,8 +455,9 @@ def dm_log(slug):
             note = request.form.get(f"npc_{npc['id']}_note", "").strip()
             polarity = request.form.get(f"npc_{npc['id']}_polarity") or None
             intensity = int(request.form.get(f"npc_{npc['id']}_intensity") or 1)
+            event_type = request.form.get(f"npc_{npc['id']}_event_type", "").strip() or None
             if note:
-                db.log_npc(slug, npc["id"], session_n, note, polarity=polarity, intensity=intensity)
+                db.log_npc(slug, npc["id"], session_n, note, polarity=polarity, intensity=intensity, event_type=event_type)
 
         for f in factions:
             note = request.form.get(f"faction_{f['id']}_note", "").strip()
@@ -468,6 +479,7 @@ def dm_log(slug):
                 if checked != obj.get("done", False):
                     db.set_objective(slug, q["id"], i, checked)
 
+        flash("Session log saved", "success")
         return redirect(url_for("dm", slug=slug))
 
     return render_template("dm/log.html", meta=meta, slug=slug,
@@ -828,6 +840,7 @@ def dm_edit_npc(slug, npc_id):
         relationship=request.form.get("relationship") or None,
         description=request.form.get("description") or None,
     )
+    flash("NPC updated", "success")
     return redirect(url_for("npc", slug=slug, npc_id=npc_id))
 
 
@@ -838,8 +851,10 @@ def dm_log_npc(slug, npc_id):
     session_n = int(request.form.get("session") or 0)
     polarity = request.form.get("polarity") or None
     intensity = int(request.form.get("intensity") or 1)
+    event_type = request.form.get("event_type", "").strip() or None
     if note:
-        db.log_npc(slug, npc_id, session_n, note, polarity=polarity, intensity=intensity)
+        db.log_npc(slug, npc_id, session_n, note, polarity=polarity, intensity=intensity, event_type=event_type)
+        flash("Entry added", "success")
     return redirect(url_for("npc", slug=slug, npc_id=npc_id))
 
 
@@ -942,6 +957,7 @@ def dm_update_character(slug, char_name):
         status=request.form.get("status") or None,
         notes=request.form.get("notes"),
     )
+    flash("Character updated", "success")
     return redirect(url_for("party", slug=slug))
 
 
@@ -955,8 +971,10 @@ def player_log_npc(slug, npc_id):
     session_n = int(request.form.get("session") or 0)
     polarity = request.form.get("polarity") or None
     intensity = int(request.form.get("intensity") or 1)
+    event_type = request.form.get("event_type", "").strip() or None
     if note:
-        db.log_npc(slug, npc_id, session_n, note, polarity=polarity, intensity=intensity)
+        db.log_npc(slug, npc_id, session_n, note, polarity=polarity, intensity=intensity, event_type=event_type)
+        flash("Entry added", "success")
     return redirect(url_for("npc", slug=slug, npc_id=npc_id))
 
 
@@ -967,6 +985,7 @@ def player_update_character_notes(slug, char_name):
     if not session.get("user"):
         abort(403)
     db.update_character(slug, char_name, notes=request.form.get("notes", "").strip())
+    flash("Notes saved", "success")
     return redirect(url_for("party", slug=slug))
 
 
@@ -1010,6 +1029,7 @@ def dm_settings(slug):
     meta["system"] = request.form.get("system", "").strip()
     meta["description"] = request.form.get("description", "").strip()
     (CAMPAIGNS / slug / "campaign.json").write_text(json.dumps(meta, indent=2))
+    flash("Settings saved", "success")
     return redirect(url_for("dm", slug=slug))
 
 
