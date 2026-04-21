@@ -585,7 +585,9 @@ def journal(slug):
         {**e, "idx": i, "recap_html": Markup(markdown.markdown(e.get("recap", ""), extensions=["nl2br"]))}
         for i, e in reversed(list(enumerate(entries)))
     ]
-    return render_template("journal.html", meta=meta, slug=slug, is_dm=is_dm, entries=entries_rendered)
+    session_nums = {e["session"] for e in entries_rendered if "session" in e}
+    deltas = {n: db.get_session_delta(slug, n) for n in session_nums}
+    return render_template("journal.html", meta=meta, slug=slug, is_dm=is_dm, entries=entries_rendered, deltas=deltas)
 
 
 @app.route("/<slug>/dm/journal/post", methods=["POST"])

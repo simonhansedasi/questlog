@@ -28,6 +28,48 @@
     {% endif %}
   </div>
   <div class="md-render" style="font-size:0.92rem; line-height:1.7;">{{ entry.recap_html }}</div>
+  {% set groups = deltas.get(entry.session, []) %}
+  {% if groups %}
+  <div style="margin-top:16px; border-top:1px solid var(--border); padding-top:14px; display:flex; flex-direction:column; gap:8px;">
+    {% for group in groups %}
+    {% set visible_entries = [] %}
+    {% for e in group.entries %}
+      {% set vis = e.visibility if e.visibility is defined else ('dm_only' if e.get('dm_only') else 'public') %}
+      {% if is_dm or vis != 'dm_only' %}{% set _ = visible_entries.append(e) %}{% endif %}
+    {% endfor %}
+    {% if visible_entries %}
+    <div>
+      <div style="margin-bottom:5px;">
+        <a href="/{{ slug }}/world/{{ group.kind }}/{{ group.id }}"
+           style="font-weight:700; color:var(--gold); font-size:0.8rem; text-decoration:none;">{{ group.name }}</a>
+        {% if group.rel_data %}
+        <span class="badge badge-{{ group.rel_data.relationship }}" style="font-size:0.62rem; padding:1px 5px; margin-left:6px;">{{ group.rel_data.relationship }}</span>
+        {% if group.rel_data.trend == 'up' %}<span style="color:#7ec87e; font-size:0.72rem; margin-left:2px;">↑</span>
+        {% elif group.rel_data.trend == 'down' %}<span style="color:#e05c5c; font-size:0.72rem; margin-left:2px;">↓</span>{% endif %}
+        {% endif %}
+      </div>
+      <ul style="margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:3px;">
+        {% for entry in visible_entries %}
+        {% set is_ripple = entry.get('ripple_source') is not none %}
+        {% set vis = entry.visibility if entry.visibility is defined else ('dm_only' if entry.get('dm_only') else 'public') %}
+        <li style="font-size:0.78rem; color:{% if is_ripple %}var(--muted){% else %}var(--text-dim){% endif %}; {% if is_ripple %}padding-left:10px; border-left:2px solid var(--border);{% endif %}">
+          {% if is_ripple %}<span style="color:var(--muted); margin-right:3px;">↳</span>{% endif %}
+          {% if entry.polarity %}
+          <span style="color:{% if entry.polarity == 'positive' %}#7ec87e{% elif entry.polarity == 'negative' %}#e05c5c{% else %}var(--muted){% endif %}; font-size:0.65rem; margin-right:3px;">
+            {% if entry.polarity == 'positive' %}+{% elif entry.polarity == 'negative' %}−{% endif %}{{ entry.intensity }}
+          </span>
+          {% endif %}
+          {% if entry.event_type %}<span style="color:var(--purple); font-size:0.65rem; font-weight:700; text-transform:uppercase; margin-right:3px;">{{ entry.event_type }}</span>{% endif %}
+          {{ entry.note }}
+          {% if is_dm and vis == 'dm_only' %}<span style="color:var(--muted); font-size:0.62rem; margin-left:4px; font-style:italic;">DM only</span>{% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+    {% endfor %}
+  </div>
+  {% endif %}
 </div>
 {% endfor %}
 {% else %}

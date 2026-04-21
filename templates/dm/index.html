@@ -1024,15 +1024,22 @@ function commitFutures() {
     <div style="margin-top:14px;">
       <p style="color:#e05c5c; font-size:0.85rem; margin-bottom:10px;">Type the campaign name to confirm:</p>
       <form method="POST" action="/{{ slug }}/dm/delete"
-            style="display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap;"
-            onsubmit="return document.getElementById('confirm-name').value === '{{ meta.name }}';">
+            style="display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap;">
         <input type="text" id="confirm-name" name="confirm_name" placeholder="{{ meta.name }}"
+               oninput="document.getElementById('delete-forever-btn').disabled = this.value !== {{ meta.name | tojson }};"
                style="background:var(--surface2); border:1px solid #e05c5c; color:var(--text); border-radius:4px; padding:5px 9px; font-size:0.82rem; min-width:220px;">
-        <button type="submit"
-                style="background:#e05c5c; color:#fff; border:none; border-radius:4px; padding:5px 16px; font-size:0.82rem; font-weight:700; cursor:pointer;">
+        <button type="submit" id="delete-forever-btn" disabled
+                style="background:#e05c5c; color:#fff; border:none; border-radius:4px; padding:5px 16px; font-size:0.82rem; font-weight:700; cursor:pointer; opacity:0.4;">
           Delete Forever
         </button>
       </form>
+      <script>
+        document.getElementById('confirm-name').addEventListener('input', function() {
+          var btn = document.getElementById('delete-forever-btn');
+          btn.style.opacity = btn.disabled ? '0.4' : '1';
+          btn.style.cursor = btn.disabled ? 'not-allowed' : 'pointer';
+        });
+      </script>
     </div>
   </details>
 </div>
