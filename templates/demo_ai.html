@@ -1,0 +1,471 @@
+{% extends "base.html" %}
+{% block title %}AI Tools — RippleForge Demo{% endblock %}
+{% block content %}
+
+<div style="max-width:720px; margin:0 auto;">
+
+<p class="text-muted text-sm" style="margin-bottom:4px;"><a href="/demo/">← Demo Home</a></p>
+<h1 class="page-title" style="margin-top:12px;">AI Tools</h1>
+<p style="color:var(--muted); font-size:0.88rem; margin-bottom:32px;">Two features that save hours and make worlds feel alive — no prompting required.</p>
+
+<!-- ── WHAT HAPPENS NEXT ── -->
+<div class="card" style="margin-bottom:32px;">
+  <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
+    <span style="font-size:1.1rem;">🔮</span>
+    <h2 style="margin:0; font-size:1.05rem;">What Happens Next?</h2>
+  </div>
+  <p style="color:var(--muted); font-size:0.82rem; margin-bottom:18px;">RippleForge reads every NPC relationship, faction tension, and unresolved quest thread — then predicts the most probable consequences if the party does nothing.</p>
+
+  <button id="futures-btn" onclick="showFutures()"
+    style="background:var(--purple);color:#fff;border:none;border-radius:5px;padding:9px 20px;font-size:0.88rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px;">
+    <span id="futures-spinner" style="display:none;">⏳</span>
+    Generate consequences
+  </button>
+
+  <div id="futures-result" style="display:none; margin-top:20px; display:none; flex-direction:column; gap:12px;"></div>
+</div>
+
+<!-- ── PARSE NOTES ── -->
+<div class="card">
+  <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
+    <span style="font-size:1.1rem;">📋</span>
+    <h2 style="margin:0; font-size:1.05rem;">Messy Notes → Structured Events</h2>
+  </div>
+  <p style="color:var(--muted); font-size:0.82rem; margin-bottom:14px;">Paste raw session notes. RippleForge extracts discrete world events, matches them to known NPCs and factions, and assigns polarity and intensity — ready to commit to the world log.</p>
+
+  <textarea id="notes-input" rows="9"
+    style="width:100%; background:var(--surface2); border:1px solid var(--border); border-radius:5px; padding:10px 12px; color:var(--text); font-size:0.82rem; line-height:1.6; resize:vertical; box-sizing:border-box; font-family:inherit;">Session 6 notes —
+
+Cragmaw Castle. Party snuck in through collapsed wall, avoided goblins in guard tower. Found Gundren in King Grol's chamber — beaten up but alive. Grol had a drow messenger there (Vel'rar) — she tried to flee when the fight started, Aldric tackled her. Grol killed in combat (Pip landed killing blow with sneak attack).
+
+Vel'rar surrendered. Questioned her — she works directly for the Black Spider. Revealed Wave Echo Cave entrance is through the Phandelver mine, not the pass. Says the Black Spider is already there with a crew. She offered to guide them in exchange for her freedom. Party debated. Split vote — Mira wanted to let her go, Aldric wanted to keep her prisoner. Eventually freed her on Mira's insistence, she left east toward Neverwinter.
+
+Gundren in bad shape. Has the map — or had it, Grol destroyed it but Gundren remembers the route. He wants to go home to Phandalin to recover first, offered the party a 10% stake in the mine if they clear it. Party agreed.
+
+Harbin Wester met them on the road back — he'd heard rumors about the castle assault. Seemed nervous. Asked if they found "any documents." Pip lied and said no. Harbin visibly relieved.</textarea>
+
+  <div style="display:flex; align-items:center; gap:14px; margin-top:12px; flex-wrap:wrap;">
+    <button id="parse-btn" onclick="parseNotes()"
+      style="background:var(--purple);color:#fff;border:none;border-radius:5px;padding:9px 20px;font-size:0.88rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px;">
+      <span id="parse-spinner" style="display:none;">⏳</span>
+      Parse into events
+    </button>
+    <span id="parse-limit" style="font-size:0.78rem; color:var(--muted);">3 free parses with custom notes</span>
+  </div>
+
+  <div id="parse-result" style="display:none; margin-top:20px;"></div>
+</div>
+
+</div>
+
+<script>
+var FUTURES_DATA = [
+  {
+    entity_id: "nezznar",
+    entity_type: "npc",
+    entity_name: "Nezznar (The Black Spider)",
+    hypothesis: "Accelerates excavation of Wave Echo Cave after losing contact with Vel'rar — likely to activate the Forge of Spells before the party arrives.",
+    reasoning: "Vel'rar's capture removed his only early-warning system; he will assume Cragmaw has fallen and move fast.",
+    confidence: "high"
+  },
+  {
+    entity_id: "harbin_wester",
+    entity_type: "npc",
+    entity_name: "Harbin Wester",
+    hypothesis: "Attempts to warn the Black Spider's network that the party is heading to Wave Echo Cave — his nervousness at the castle road suggests an active courier relationship.",
+    reasoning: "His pointed questions about documents and visible relief at Pip's lie indicate prior dealings with Nezznar's operation.",
+    confidence: "medium"
+  },
+  {
+    entity_id: "halia_thornton",
+    entity_type: "npc",
+    entity_name: "Halia Thornton",
+    hypothesis: "Moves to consolidate influence in Phandalin now that Iarno's Redbrand operation is broken — likely recruiting independently or probing the party for an alliance.",
+    reasoning: "With her chief rival neutralised and the Black Spider's local network in disarray, the power vacuum in Phandalin is hers to fill.",
+    confidence: "medium"
+  }
+];
+
+var PARSE_DATA = [
+  {
+    entity_id: "king_grol",
+    entity_type: "npc",
+    entity_name: "King Grol",
+    faction_name: "Cragmaw Tribe",
+    note: "Killed in combat — Pip landed the killing blow with a sneak attack.",
+    polarity: "negative",
+    intensity: 3,
+    event_type: "combat",
+    visibility: "public",
+    conflict: false
+  },
+  {
+    entity_id: "gundren_rockseeker",
+    entity_type: "npc",
+    entity_name: "Gundren Rockseeker",
+    faction_name: null,
+    note: "Rescued from Cragmaw Castle; agreed to grant the party a 10% stake in Wave Echo Cave in exchange for clearing it.",
+    polarity: "positive",
+    intensity: 3,
+    event_type: "dialogue",
+    visibility: "public",
+    conflict: false
+  },
+  {
+    entity_id: "velrar",
+    entity_type: "npc",
+    entity_name: "Vel'rar",
+    faction_name: "The Black Spider",
+    note: "Surrendered after Grol's death; revealed Wave Echo Cave's entrance location and the Black Spider's presence there, then was released east toward Neverwinter.",
+    polarity: "neutral",
+    intensity: 2,
+    event_type: "dialogue",
+    visibility: "dm_only",
+    conflict: false
+  },
+  {
+    entity_id: "harbin_wester",
+    entity_type: "npc",
+    entity_name: "Harbin Wester",
+    faction_name: null,
+    note: "Intercepted the party on the road and asked if they found any documents at Cragmaw; visibly relieved when Pip lied and said no.",
+    polarity: "neutral",
+    intensity: 2,
+    event_type: "dialogue",
+    visibility: "dm_only",
+    conflict: false
+  }
+];
+
+var _defaultNotes = document.getElementById('notes-input') ? document.getElementById('notes-input').value : '';
+
+var _parseState = {};
+var _futureState = {};
+var _currentProposals = [];
+
+function _btnStyle(active, color) {
+  color = color || 'var(--purple)';
+  return active
+    ? 'padding:2px 8px;font-size:0.7rem;border-radius:3px;cursor:pointer;border:1px solid ' + color + ';background:' + color + ';color:#fff;'
+    : 'padding:2px 8px;font-size:0.7rem;border-radius:3px;cursor:pointer;border:1px solid var(--border);background:none;color:var(--muted);';
+}
+var _polColor = { positive: '#7ec87e', negative: '#e05c5c', neutral: 'var(--muted)' };
+var _confColor = { high: '#7ec87e', medium: 'var(--gold)', low: 'var(--muted)' };
+
+function setParsePolarity(i, pol) {
+  _parseState[i].polarity = pol;
+  ['positive','neutral','negative'].forEach(function(p) {
+    var b = document.getElementById('pol-' + p + '-' + i);
+    if (b) b.style.cssText = _btnStyle(p === pol, _polColor[p]);
+  });
+}
+function setParseIntensity(i, n) {
+  _parseState[i].intensity = n;
+  [1,2,3].forEach(function(v) {
+    var b = document.getElementById('int-' + v + '-' + i);
+    if (b) b.style.cssText = _btnStyle(v === n);
+  });
+}
+function toggleParseVis(i) {
+  _parseState[i].visibility = _parseState[i].visibility === 'public' ? 'dm_only' : 'public';
+  var b = document.getElementById('vis-' + i);
+  if (b) { b.textContent = _parseState[i].visibility === 'dm_only' ? 'DM only' : 'public'; b.style.cssText = _btnStyle(_parseState[i].visibility === 'dm_only'); }
+}
+function setFutureConf(i, conf) {
+  _futureState[i].confidence = conf;
+  ['high','medium','low'].forEach(function(c) {
+    var b = document.getElementById('conf-' + c + '-' + i);
+    if (b) b.style.cssText = _btnStyle(c === conf, _confColor[c]);
+  });
+}
+
+function showFutures() {
+  var btn = document.getElementById('futures-btn');
+  var spinner = document.getElementById('futures-spinner');
+  var result = document.getElementById('futures-result');
+  btn.disabled = true;
+  spinner.style.display = 'inline';
+  setTimeout(function() {
+    spinner.style.display = 'none';
+    btn.style.display = 'none';
+    result.style.display = 'flex';
+    FUTURES_DATA.forEach(function(f, i) { _futureState[i] = { confidence: f.confidence, reasoning: f.reasoning }; });
+    var html = '';
+    FUTURES_DATA.forEach(function(f, i) {
+      html += '<div style="border:1px solid var(--border); border-radius:6px; padding:12px 14px;">' +
+        '<div style="display:flex; align-items:flex-start; gap:10px;">' +
+          '<input type="checkbox" id="future-cb-' + i + '" checked style="margin-top:4px; accent-color:var(--purple); flex-shrink:0;" onchange="updateCommitBtn()">' +
+          '<div style="flex:1;">' +
+            '<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; gap:8px; flex-wrap:wrap;">' +
+              '<span style="font-weight:700; font-size:0.88rem; color:var(--text);">' + f.entity_name + '</span>' +
+              '<div style="display:flex; gap:3px;">' +
+                '<button id="conf-high-' + i + '" style="' + _btnStyle(f.confidence==='high', _confColor.high) + '" onclick="setFutureConf(' + i + ',\'high\')">high</button>' +
+                '<button id="conf-medium-' + i + '" style="' + _btnStyle(f.confidence==='medium', _confColor.medium) + '" onclick="setFutureConf(' + i + ',\'medium\')">med</button>' +
+                '<button id="conf-low-' + i + '" style="' + _btnStyle(f.confidence==='low', _confColor.low) + '" onclick="setFutureConf(' + i + ',\'low\')">low</button>' +
+              '</div>' +
+            '</div>' +
+            '<textarea id="future-note-' + i + '" rows="2" style="width:100%;box-sizing:border-box;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:6px 8px;color:var(--text);font-size:0.82rem;line-height:1.5;resize:vertical;font-family:inherit;margin-bottom:6px;">' + f.hypothesis + '</textarea>' +
+            '<textarea id="future-reasoning-' + i + '" rows="1" style="width:100%;box-sizing:border-box;background:none;border:1px solid var(--border);border-radius:4px;padding:5px 8px;color:var(--muted);font-size:0.75rem;line-height:1.5;resize:vertical;font-family:inherit;font-style:italic;">' + f.reasoning + '</textarea>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    });
+    html += '<div style="display:flex; align-items:center; gap:12px; padding-top:4px;">' +
+      '<button id="commit-btn" onclick="commitFutures()" style="background:var(--purple);color:#fff;border:none;border-radius:5px;padding:8px 18px;font-size:0.85rem;font-weight:700;cursor:pointer;">Commit to world log</button>' +
+      '<span style="color:var(--muted); font-size:0.77rem;">Selected entries will appear as <strong style="color:var(--purple);">PROJECTED</strong> events.</span>' +
+    '</div>';
+    result.innerHTML = html;
+  }, 1600);
+}
+
+function updateCommitBtn() {
+  var btn = document.getElementById('commit-btn');
+  if (!btn) return;
+  var anyChecked = FUTURES_DATA.some(function(_, i) {
+    var cb = document.getElementById('future-cb-' + i);
+    return cb && cb.checked;
+  });
+  btn.disabled = !anyChecked;
+  btn.style.opacity = anyChecked ? '1' : '0.4';
+}
+
+function renderWorldDiff(diffs) {
+  if (!diffs || !diffs.length) return '';
+  var relColor = { allied: '#7ec87e', friendly: '#7ec87e', neutral: 'var(--muted)', hostile: '#e05c5c' };
+  var rows = diffs.map(function(d) {
+    var parts = [];
+    if (d.log_added) parts.push('+' + d.log_added + ' entr' + (d.log_added === 1 ? 'y' : 'ies'));
+    if (d.score_before !== undefined && d.score_after !== undefined && d.score_before !== d.score_after) {
+      parts.push('score ' + d.score_before + ' → ' + d.score_after);
+    }
+    var relPart = '';
+    if (d.relationship_before && d.relationship_after && d.relationship_before !== d.relationship_after) {
+      relPart = ' <span style="color:' + (relColor[d.relationship_before]||'var(--muted)') + ';">' + d.relationship_before + '</span>' +
+                ' → <span style="color:' + (relColor[d.relationship_after]||'var(--muted)') + '; font-weight:700;">' + d.relationship_after + '</span>';
+    }
+    return '<div style="display:flex; justify-content:space-between; align-items:baseline; padding:4px 0; border-bottom:1px solid var(--border); font-size:0.78rem;">' +
+      '<span style="color:var(--text); font-weight:700;">' + d.entity_name + relPart + '</span>' +
+      '<span style="color:var(--muted);">' + parts.join(' · ') + '</span>' +
+    '</div>';
+  }).join('');
+  return '<div style="margin-top:10px;">' +
+    '<p style="color:var(--muted); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; margin:0 0 6px 0;">World changed</p>' +
+    rows +
+  '</div>';
+}
+
+function commitFutures() {
+  var btn = document.getElementById('commit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Committing…';
+  var entries = [];
+  FUTURES_DATA.forEach(function(f, i) {
+    var cb = document.getElementById('future-cb-' + i);
+    if (cb && cb.checked) {
+      var ta = document.getElementById('future-note-' + i);
+      entries.push({
+        entity_id: f.entity_id,
+        entity_type: f.entity_type,
+        note: ta ? ta.value.trim() : f.hypothesis,
+        confidence: (_futureState[i] || {}).confidence || f.confidence
+      });
+    }
+  });
+  fetch('/demo/ai/commit_futures', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({entries: entries})
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    window.rfSuppressReload = true;
+    var result = document.getElementById('futures-result');
+    result.innerHTML = '<div style="border:1px solid #7ec87e44; background:#7ec87e11; border-radius:6px; padding:16px 18px;">' +
+      '<p style="color:#7ec87e; font-weight:700; font-size:0.9rem; margin:0 0 6px 0;">✓ ' + data.committed + ' consequence' + (data.committed !== 1 ? 's' : '') + ' committed to world log</p>' +
+      '<p style="color:var(--muted); font-size:0.82rem; margin:0 0 10px 0;">Each entity\'s timeline now shows a <strong style="color:var(--purple);">PROJECTED</strong> entry. If the party intervenes, the DM removes or overwrites it. If they don\'t — it stands.</p>' +
+      renderWorldDiff(data.diffs) +
+      '<div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:12px;">' +
+        '<a href="/demo/world" style="color:var(--purple); font-size:0.82rem; font-weight:700; text-decoration:none;">View world →</a>' +
+        '<a href="/demo/world/ripples" style="color:var(--purple); font-size:0.82rem; font-weight:700; text-decoration:none;">View ripple chains →</a>' +
+      '</div>' +
+    '</div>';
+  })
+  .catch(function() {
+    btn.disabled = false;
+    btn.textContent = 'Commit to world log';
+  });
+}
+
+function _renderProposals(proposals) {
+  var result = document.getElementById('parse-result');
+  result.style.display = 'block';
+  _currentProposals = proposals;
+  proposals.forEach(function(e, i) {
+    _parseState[i] = { polarity: e.polarity || 'neutral', intensity: e.intensity || 1, visibility: e.visibility || 'public' };
+  });
+  var html = '<p style="color:var(--muted); font-size:0.78rem; margin:0 0 12px 0;">Found ' + proposals.length + ' events — edit and select to commit:</p>' +
+    '<div style="display:flex; flex-direction:column; gap:8px;">';
+  proposals.forEach(function(e, i) {
+    var pol = e.polarity || 'neutral';
+    var isDm = e.visibility === 'dm_only';
+    html += '<div style="border:1px solid var(--border); border-radius:5px; padding:11px 14px;">' +
+      '<div style="display:flex; gap:10px; align-items:flex-start;">' +
+        '<input type="checkbox" id="parse-cb-' + i + '" checked style="margin-top:4px; accent-color:var(--purple); flex-shrink:0;" onchange="updateParseCommitBtn()">' +
+        '<div style="flex:1;">' +
+          '<div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-bottom:7px;">' +
+            '<span style="font-weight:700; font-size:0.85rem; color:var(--text);">' + e.entity_name + '</span>' +
+            '<span style="font-size:0.68rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em;">' + e.entity_type + '</span>' +
+            (e.event_type ? '<span style="font-size:0.68rem; color:var(--purple); font-weight:700; text-transform:uppercase; letter-spacing:0.04em;">' + e.event_type + '</span>' : '') +
+            (e.conflict ? '<span style="color:#e05c5c; font-size:0.68rem; font-weight:700;" title="May contradict known state — review before committing">&#9888; conflict</span>' : '') +
+          '</div>' +
+          '<textarea id="parse-note-' + i + '" rows="2" style="width:100%;box-sizing:border-box;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:6px 8px;color:var(--text);font-size:0.82rem;line-height:1.5;resize:vertical;font-family:inherit;margin-bottom:8px;">' + (e.note || '') + '</textarea>' +
+          '<div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">' +
+            '<div style="display:flex; gap:3px; align-items:center;">' +
+              '<span style="font-size:0.68rem; color:var(--muted); margin-right:2px;">polarity</span>' +
+              '<button id="pol-positive-' + i + '" style="' + _btnStyle(pol==='positive', _polColor.positive) + '" onclick="setParsePolarity(' + i + ',\'positive\')">+</button>' +
+              '<button id="pol-neutral-' + i + '" style="' + _btnStyle(pol==='neutral', _polColor.neutral) + '" onclick="setParsePolarity(' + i + ',\'neutral\')">~</button>' +
+              '<button id="pol-negative-' + i + '" style="' + _btnStyle(pol==='negative', _polColor.negative) + '" onclick="setParsePolarity(' + i + ',\'negative\')">−</button>' +
+            '</div>' +
+            '<div style="display:flex; gap:3px; align-items:center;">' +
+              '<span style="font-size:0.68rem; color:var(--muted); margin-right:2px;">weight</span>' +
+              '<button id="int-1-' + i + '" style="' + _btnStyle(e.intensity===1) + '" onclick="setParseIntensity(' + i + ',1)">1</button>' +
+              '<button id="int-2-' + i + '" style="' + _btnStyle(e.intensity===2) + '" onclick="setParseIntensity(' + i + ',2)">2</button>' +
+              '<button id="int-3-' + i + '" style="' + _btnStyle(e.intensity===3) + '" onclick="setParseIntensity(' + i + ',3)">3</button>' +
+            '</div>' +
+            '<button id="vis-' + i + '" style="' + _btnStyle(isDm) + '" onclick="toggleParseVis(' + i + ')">' + (isDm ? 'DM only' : 'public') + '</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  });
+  html += '</div>' +
+    '<div style="display:flex; align-items:center; gap:12px; padding-top:12px;">' +
+      '<button id="parse-commit-btn" onclick="commitParsed()" style="background:var(--purple);color:#fff;border:none;border-radius:5px;padding:8px 18px;font-size:0.85rem;font-weight:700;cursor:pointer;">Commit to world log</button>' +
+      '<span style="color:var(--muted); font-size:0.77rem;">Polarity events ripple automatically.</span>' +
+    '</div>';
+  result.innerHTML = html;
+}
+
+function _updateLimitDisplay(remaining) {
+  var el = document.getElementById('parse-limit');
+  if (!el) return;
+  if (remaining <= 0) {
+    el.innerHTML = '<a href="/login" style="color:var(--purple); font-weight:700; text-decoration:none;">Sign up for unlimited parses →</a>';
+  } else {
+    el.textContent = remaining + ' free parse' + (remaining === 1 ? '' : 's') + ' remaining';
+  }
+}
+
+function parseNotes() {
+  var btn = document.getElementById('parse-btn');
+  var spinner = document.getElementById('parse-spinner');
+  var notes = (document.getElementById('notes-input').value || '').trim();
+  if (!notes) return;
+
+  // Use pre-loaded results if the notes haven't been changed — no API call, no counter decrement
+  if (notes === _defaultNotes.trim()) {
+    btn.style.display = 'none';
+    _renderProposals(PARSE_DATA);
+    return;
+  }
+
+  btn.disabled = true;
+  spinner.style.display = 'inline';
+  fetch('/demo/ai/propose', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({notes: notes})
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    spinner.style.display = 'none';
+    if (data.error === 'limit') {
+      btn.style.display = 'none';
+      var result = document.getElementById('parse-result');
+      result.style.display = 'block';
+      result.innerHTML = '<div style="border:1px solid var(--border); border-radius:6px; padding:20px; text-align:center;">' +
+        '<p style="color:var(--text); font-weight:700; font-size:0.95rem; margin:0 0 8px 0;">You\'ve used your 3 free parses.</p>' +
+        '<p style="color:var(--muted); font-size:0.85rem; margin:0 0 16px 0;">Sign up to parse unlimited sessions, track your own campaign, and commit consequences to your world.</p>' +
+        '<a href="/login" style="background:var(--purple);color:#fff;border-radius:5px;padding:9px 20px;font-size:0.88rem;font-weight:700;text-decoration:none;">Create a free account →</a>' +
+      '</div>';
+      _updateLimitDisplay(0);
+      return;
+    }
+    if (data.error || !data.proposals) {
+      btn.disabled = false;
+      var result = document.getElementById('parse-result');
+      result.style.display = 'block';
+      result.innerHTML = '<p style="color:#e05c5c; font-size:0.85rem; margin:0;">Something went wrong — try again.</p>';
+      return;
+    }
+    btn.style.display = 'none';
+    _renderProposals(data.proposals);
+    _updateLimitDisplay(data.remaining);
+  })
+  .catch(function() {
+    spinner.style.display = 'none';
+    btn.disabled = false;
+  });
+}
+
+function updateParseCommitBtn() {
+  var btn = document.getElementById('parse-commit-btn');
+  if (!btn) return;
+  var anyChecked = _currentProposals.some(function(_, i) {
+    var cb = document.getElementById('parse-cb-' + i);
+    return cb && cb.checked;
+  });
+  btn.disabled = !anyChecked;
+  btn.style.opacity = anyChecked ? '1' : '0.4';
+}
+
+function commitParsed() {
+  var btn = document.getElementById('parse-commit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Committing…';
+  var entries = [];
+  _currentProposals.forEach(function(e, i) {
+    var cb = document.getElementById('parse-cb-' + i);
+    if (cb && cb.checked) {
+      var ta = document.getElementById('parse-note-' + i);
+      var st = _parseState[i] || {};
+      entries.push({
+        entity_id: e.entity_id,
+        entity_type: e.entity_type,
+        entity_name: e.entity_name,
+        note: ta ? ta.value.trim() : e.note,
+        polarity: st.polarity || e.polarity,
+        intensity: st.intensity || e.intensity,
+        event_type: e.event_type,
+        visibility: st.visibility || e.visibility,
+        session: e.session
+      });
+    }
+  });
+  fetch('/demo/ai/commit_parsed', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({entries: entries})
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    window.rfSuppressReload = true;
+    var result = document.getElementById('parse-result');
+    result.innerHTML = '<div style="border:1px solid #7ec87e44; background:#7ec87e11; border-radius:6px; padding:16px 18px;">' +
+      '<p style="color:#7ec87e; font-weight:700; font-size:0.9rem; margin:0 0 6px 0;">✓ ' + data.committed + ' event' + (data.committed !== 1 ? 's' : '') + ' committed to world log</p>' +
+      '<p style="color:var(--muted); font-size:0.82rem; margin:0 0 10px 0;">Polarity events have rippled to related entities automatically.</p>' +
+      renderWorldDiff(data.diffs) +
+      '<div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:12px;">' +
+        '<a href="/demo/world" style="color:var(--purple); font-size:0.82rem; font-weight:700; text-decoration:none;">View world →</a>' +
+        '<a href="/demo/world/ripples" style="color:var(--purple); font-size:0.82rem; font-weight:700; text-decoration:none;">View ripple chains →</a>' +
+      '</div>' +
+    '</div>';
+  })
+  .catch(function() {
+    btn.disabled = false;
+    btn.textContent = 'Commit to world log';
+  });
+}
+</script>
+
+{% endblock %}

@@ -139,6 +139,22 @@ def get_visible_log(log, known_events=None, is_dm=False):
     return result
 
 
+def entity_snapshot(slug, entity_id, entity_type):
+    """Snapshot an entity's relationship state and log count for diff comparison."""
+    if entity_type == "npc":
+        for npc in get_npcs(slug, include_hidden=True):
+            if npc["id"] == entity_id:
+                rel = compute_npc_relationship(npc, is_dm=True)
+                return {"name": npc["name"], "log_count": len(npc.get("log", [])),
+                        "relationship": rel["relationship"], "score": rel.get("score")}
+    else:
+        for f in get_factions(slug, include_hidden=True):
+            if f["id"] == entity_id:
+                return {"name": f["name"], "log_count": len(f.get("log", [])),
+                        "relationship": f.get("relationship", "unknown"), "score": None}
+    return None
+
+
 def compute_npc_relationship(npc, known_events=None, is_dm=False):
     """Derive relationship, trend, and top contributors from typed log entries.
     Falls back to stored relationship if no typed entries exist."""
@@ -687,6 +703,20 @@ def delete_ship(slug, ship_idx):
     if 0 <= ship_idx < len(ships):
         ships.pop(ship_idx)
     _save(slug, data, "assets.json")
+
+
+def log_ship(slug, ship_name, session, note, event_type=None, visibility="public"):
+    data = _load(slug, "assets.json")
+    name_lower = ship_name.strip().lower()
+    for ship in data.get("ships", []):
+        if ship.get("name", "").lower() == name_lower:
+            entry = {"session": session, "note": note, "visibility": visibility}
+            if event_type:
+                entry["event_type"] = event_type.strip()
+            ship.setdefault("log", []).append(entry)
+            _save(slug, data, "assets.json")
+            return True
+    return False
 
 
 def delete_weapon(slug, ship_idx, weapon_idx):

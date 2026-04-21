@@ -3,12 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}QuestLog{% endblock %}</title>
+  <title>{% block title %}RippleForge{% endblock %}</title>
+  {% block meta %}
+  <meta name="description" content="RippleForge — living world simulation for tabletop RPGs. Log events, track NPC relationships, and let AI project consequences. The world keeps moving even when your players don't.">
+  {% endblock %}
   <link rel="stylesheet" href="/static/style.css">
+  {% if is_demo %}<script src="/static/tour.js"></script>{% endif %}
 </head>
 <body>
   <nav>
-    <a class="brand" href="/">QuestLog</a>
+    <a class="brand" href="/">RippleForge</a>
     {% if slug is defined and slug %}
     <a href="/{{ slug }}/" {% if request.path == '/' ~ slug ~ '/' %}class="active"{% endif %}>Home</a>
     <a href="/{{ slug }}/party" {% if request.path.startswith('/' ~ slug ~ '/party') %}class="active"{% endif %}>Party</a>
@@ -18,6 +22,7 @@
     <a href="/{{ slug }}/journal" {% if request.path.startswith('/' ~ slug ~ '/journal') %}class="active"{% endif %}>Journal</a>
     <a href="/{{ slug }}/brief" {% if request.path.startswith('/' ~ slug ~ '/brief') %}class="active"{% endif %} style="color:var(--purple);">Brief</a>
     <a href="/{{ slug }}/references" {% if request.path.startswith('/' ~ slug ~ '/references') %}class="active"{% endif %}>Ref</a>
+    {% if not is_demo %}
     <div class="dm-sep">
       {% if session.get('dm_' ~ slug) %}
       <a href="/{{ slug }}/dm" style="color:var(--purple); font-size:0.8rem; font-weight:700; padding:0 8px; letter-spacing:0.05em; text-decoration:none;">DM</a>
@@ -32,6 +37,7 @@
       <a href="/{{ slug }}/dm" style="color:var(--purple); font-size:0.85rem;">DM</a>
       {% endif %}
     </div>
+    {% endif %}
     {% endif %}
     {% if session.get('user') %}
     <div style="margin-left:auto; display:flex; align-items:center; gap:10px;">
@@ -49,6 +55,19 @@
     </div>
     {% endif %}
   </nav>
+  {% if is_demo %}
+  <div style="background:var(--surface2); border-bottom:1px solid var(--border); padding:6px 16px; display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:0.78rem;">
+    <span style="color:var(--gold); font-weight:700; letter-spacing:0.05em;">DEMO</span>
+    <span style="color:var(--muted);">Lost Mine of Phandelver — try it out. Changes reset every 30 minutes.</span>
+    <div style="display:flex; gap:12px; flex-shrink:0;">
+      <a href="/demo/ai" style="color:var(--purple); font-size:0.78rem; text-decoration:none; font-weight:700;">AI tools ✦</a>
+      <a href="/demo/" onclick="sessionStorage.setItem('rf_tour','0');" style="color:var(--purple); font-size:0.78rem; text-decoration:none; font-weight:700;">take the tour</a>
+      <form method="POST" action="/demo/reset" style="display:inline;" onsubmit="sessionStorage.setItem('rf_tour','0');">
+        <button type="submit" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.78rem;padding:0;text-decoration:underline dotted;">reset</button>
+      </form>
+    </div>
+  </div>
+  {% endif %}
   {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
   <div id="flash-container" style="position:fixed; top:56px; right:16px; z-index:9999; display:flex; flex-direction:column; gap:8px; pointer-events:none;">
@@ -72,6 +91,41 @@
   <div class="container">
     {% block content %}{% endblock %}
   </div>
+{% if is_public %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('form').forEach(function(form) {
+    if (form.action && form.action.includes('/dm/login')) return;
+    form.querySelectorAll('button[type="submit"], input[type="submit"]').forEach(function(btn) {
+      btn.disabled = true;
+      btn.style.opacity = '0.35';
+      btn.style.cursor = 'not-allowed';
+      btn.title = 'Not allowed in demo';
+    });
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var c = document.getElementById('flash-container');
+      if (!c) {
+        c = document.createElement('div');
+        c.id = 'flash-container';
+        c.style.cssText = 'position:fixed;top:56px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none;';
+        document.body.appendChild(c);
+      }
+      var t = document.createElement('div');
+      t.className = 'flash flash-error';
+      t.style.pointerEvents = 'auto';
+      t.textContent = 'Not allowed in demo';
+      c.appendChild(t);
+      setTimeout(function() {
+        t.style.transition = 'opacity 0.4s';
+        t.style.opacity = '0';
+        setTimeout(function() { t.remove(); }, 450);
+      }, 2200);
+    });
+  });
+});
+</script>
+{% endif %}
 {% if slug is defined and slug and not session.get('dm_' ~ slug) %}
 <script>
 (function() {
@@ -82,7 +136,7 @@
       .then(function(data) {
         if (!data) return;
         if (rev === null) { rev = data.rev; return; }
-        if (data.rev !== rev) { location.reload(); }
+        if (data.rev !== rev) { if (window.rfSuppressReload) { rev = data.rev; } else { location.reload(); } }
       })
       .catch(function() {});
   }

@@ -1,36 +1,47 @@
-# QuestLog
+# RippleForge
 
-A campaign-agnostic CRM (Campaign Relationship Manager) for tabletop RPGs. Track your party, assets, world relationships, and story across any system.
+A living world simulation engine for tabletop RPG campaigns. Player actions propagate automatically through every connected NPC and faction — the world remembers, and visibly changes.
 
 ## Live
 
-`https://questlog.duckdns.org`
+`https://rippleforge.gg` — also `https://game-ranking.duckdns.org/questbook/` (legacy)
 
-Also accessible at `https://game-ranking.duckdns.org/questbook/` (legacy path).
+Try it: `https://rippleforge.gg/demo/`
 
-## Concept
+---
 
-QuestLog is not a character sheet replacement. It does not track spell slots, inventory weight, ability scores, or combat mechanics — those live in your VTT or character sheet.
+## What it does
 
-What it tracks:
+RippleForge is not a note-taking tool or character sheet replacement. It models **cause and effect** across your world state.
 
-- **Party** — who is in the party, their status, and brief notes
-- **Assets** — shared resources: currency, items, ships (weapon loadouts + HP tracking), stronghold, property
-- **World** — NPCs and factions, each with a relationship status and running interaction log
-- **Story** — quest log with objectives, status tracking, and session history
-- **References** — rulebook tables and notes, editable per campaign
+- **Ripple system** — log one event, and every related NPC and faction updates automatically based on their relationship (allies share the impact, rivals feel the opposite)
+- **AI event parsing** — paste messy session notes, get structured log entries matched to known entities with polarity and intensity assigned
+- **Projected consequences** — AI reads every active tension in the world and forecasts what happens if the party does nothing; DM reviews, selects, commits
+- **World diff** — every commit shows a before/after snapshot: score changes, relationship label shifts, entries added
+- **DM intelligence layer** — algorithmic ranked lists of active pressure, consequence risk, stale threads, and narrative gaps; no manual curation
+- **Per-player fog of war** — each player sees only what their character knows; DM can preview the world through any character's eyes
+- **Ripple chain view** — visual cause→effect chains showing every downstream consequence of any source event
 
-The interaction log is the core feature: every meaningful encounter with an NPC or faction gets a one-line entry tied to a session number, building a full relationship history over time.
+RippleForge does not invent narrative. AI proposes; DM approves; the world updates.
+
+---
+
+## Concept: AI as referee
+
+The AI role is constraint enforcement, not storytelling:
+
+- **Summarization** — compresses session notes into a player-facing chronicle
+- **Event parsing** — extracts discrete world events from freeform notes
+- **Consequence projection** — given current world state, predicts what logically follows
+- **DM always approves** — nothing is written without explicit commit
 
 ---
 
 ## User Accounts
 
-QuestLog uses username/password login. Users only see campaigns they own.
+Username/password login. Users only see campaigns they own.
 
-Accounts are stored in `users.json` at the repo root with werkzeug pbkdf2-hashed passwords.
-
-To add a user, generate a hash and edit `users.json`:
+Accounts stored in `users.json` at repo root with werkzeug pbkdf2-hashed passwords.
 
 ```bash
 python3 -c "from werkzeug.security import generate_password_hash; print(generate_password_hash('yourpassword'))"
@@ -39,10 +50,7 @@ python3 -c "from werkzeug.security import generate_password_hash; print(generate
 ```json
 {
   "users": {
-    "username": {
-      "password_hash": "<hash>",
-      "display_name": "Display Name"
-    }
+    "username": { "password_hash": "<hash>", "display_name": "Display Name" }
   }
 }
 ```
@@ -51,209 +59,152 @@ python3 -c "from werkzeug.security import generate_password_hash; print(generate
 
 ## Campaigns
 
-### Ownership
+Each campaign is a folder under `campaigns/<slug>/`. Three modes:
 
-Each `campaign.json` has an `"owner"` field (username). Non-demo campaigns are only accessible to their owner. Demo campaigns (marked `"demo": true`) are accessible to all users as templates.
+| Mode | Flag in campaign.json | Who can write |
+|------|----------------------|---------------|
+| Normal | `"owner": "username"` | Owner + DM PIN |
+| Public (read-only) | `"public": true` | Nobody (DM login still works) |
+| Demo | `"demo_mode": true` | Everyone |
 
 ### Starting a Campaign
 
-From the index page:
-- **Start from Scratch** — clone the Blank Campaign template
-- **Starter Campaigns** — clone a pre-populated system-specific demo (D&D 5e, PF2e, Blades in the Dark)
-
-Cloning copies the full campaign folder, assigns ownership to the current user, and generates a unique slug (`pabtso-a3f2b1`). The DM is auto-logged-in and redirected to the DM dashboard.
+From the index page: clone a Blank Campaign or a starter template. Cloning copies the full folder, assigns ownership, and generates a unique slug (`pabtso-a3f2b1`).
 
 ### Player Share Link
 
-From the DM dashboard → **Player Share Link**: generate a token URL (`/share/<token>`). Players visit the link, get a read-only session, and can browse the campaign without creating an account. Regenerating the link invalidates the old one.
+DM dashboard → **Player Share Link**: generates a token URL. Players browse read-only without an account.
+
+---
+
+## Demo
+
+`/demo/` is a live writable copy of the Lost Mine of Phandelver campaign. It resets from `campaigns/lmop/` every 30 minutes (or on force reset via the banner).
+
+- `campaigns/lmop/` — frozen source, never written to
+- `campaigns/demo/` — resettable copy, writable by anyone without login
+
+The demo includes a 3-step guided tour and an AI tools page at `/demo/ai`.
+
+**Parse limit:** Visitors get 3 free live parses with custom notes. Tracked server-side via a persistent `demo_id` cookie (30-day expiry) + `campaigns/demo_parse_counts.json`. Survives demo resets and new tabs — tied to the visitor, not the session.
+
+If the user parses without changing the pre-filled notes, a pre-loaded result (`PARSE_DATA` in `demo_ai.html`) is served instantly — no API call, no counter decrement.
 
 ---
 
 ## DM Mode
 
-Each campaign has a DM PIN set in `campaign.json`. Log in via the **DM** link in the nav.
+Log in via the **DM** link in the nav. Each campaign has a DM PIN in `campaign.json`.
 
-When authenticated as DM:
+DM dashboard (top to bottom):
 
-- **Reveal/hide** entities from players (NPCs, factions, quests, party members)
-- **Add/edit/delete** NPCs, factions, quests, party members, assets, ships, weapons
-- **Edit objectives** — toggle done, edit text, delete individual objectives
-- **Edit quest description** inline from the story page
-- **Edit ship details** — name, type, HP, notes, crew, cargo (add/remove)
-- **Edit stronghold** — name, type, location, condition, notes, features, upgrades; delete stronghold
-- **Delete ship** — remove a ship entirely from DM Controls
-- **Session Plan** — write in markdown, rendered on the DM dashboard
-- **Session Notes** — freeform textarea; use Export .md to save as next session plan
-- **✦ Generate Recap** — AI-generated player-facing session recap from notes (Claude Haiku)
-- **Campaign Settings** — rename campaign, update system and description
-- **Delete Campaign** — permanent, requires typing campaign name to confirm (owner only)
-
-To exit DM mode: **Exit DM** in the nav or the logout button on the dashboard.
+1. **World State** — DM intelligence grid: Active Pressure / Consequence Risk / Stale Threads / Narrative Gaps
+2. **What happens next? ✦** — AI projects 2–3 consequences from current world tensions; checkboxes + Commit writes them as `PROJECTED` log entries and shows a world diff
+3. **Session Tools** — plan (markdown) + notes; notes card has ✦ Generate Recap and ✦ Parse into Events
+4. **Proposed Events** — AI parse output; DM reviews/edits/rejects, Commit logs with full ripple propagation
+5. **Player Recap** — AI-generated chronicle recap; post to journal
+6. **Session Delta** — all events from session N grouped by entity (← → navigation)
+7. **Recent Activity** — entities touched in last 2 sessions
+8. **Quick Log** — inline logging with tone, weight, visibility, ripple checkbox
+9. **World / Ships / Add New / Share / Settings / Danger Zone**
 
 ---
 
-## Hidden Entities
+## AI Features
 
-All entities support `"hidden": true`. Hidden entities are visible only to the DM — players see nothing until revealed.
+Requires `ANTHROPIC_API_KEY` in `.env` at repo root. Uses `claude-haiku-4-5-20251001`.
 
-Demo campaign entities all start hidden. The DM reveals them as the story unfolds using the **Reveal to Players** button on each entity's detail page (NPCs, factions) or in the quest's DM Controls (story page). Hidden entities appear dimmed on the World page with a "Hidden" badge.
+| Feature | Route | Description |
+|---------|-------|-------------|
+| Generate Recap | `POST /<slug>/dm/session/recap` | Player-facing chronicle from session notes |
+| Parse into Events | `POST /<slug>/dm/session/propose` | Notes → structured log entries for review |
+| Commit parsed | `POST /<slug>/dm/session/commit_proposals` | Write approved entries + trigger ripples |
+| What happens next | `POST /<slug>/dm/world/futures` | Consequence projections from world state |
+| Commit futures | `POST /<slug>/dm/world/commit_futures` | Write as PROJECTED entries, returns world diff |
 
----
+All AI routes are `@dm_required`.
 
-## Assets
+### Event parsing — entity types
 
-### Ships
+The parser extracts three entity types from session notes:
 
-Ships track name, type, HP, crew, cargo, notes, and weapons. Weapon HP is trackable by players without DM login.
+| entity_type | Commit behavior | Notes |
+|-------------|----------------|-------|
+| `npc` | `log_npc()` + ripple | Auto-creates hidden NPC if unknown |
+| `faction` | `log_faction()` + ripple | Auto-creates hidden faction if unknown |
+| `ship` | `log_ship()` (matched by name) | No ripple; no auto-create; blue badge in UI |
 
-DM controls on the Assets page allow editing all ship fields, adding/removing crew and cargo members, and adding weapons after creation.
-
-### Stronghold
-
-A single stronghold per campaign. Fields: name, type, location, condition, notes, features (list), upgrades (list). DM can add/remove individual features and upgrades.
+Ships are passed to the AI as known entities. Ship log entries are appended to `assets.json` under `ships[].log[]`. Party members are excluded as entity subjects but their interactions with ships/NPCs are still captured from the target entity's perspective.
 
 ---
 
 ## URL Structure
 
 ```
-/login                       Login page
-/                            My Campaigns + Start a Campaign (login required)
-/share/<token>               Player read-only access via share link
-/demo/<slug>/clone           Clone a demo campaign (POST)
+/                            Login page (unauthenticated) / My campaigns (authenticated)
+/demo/                       Live writable demo (LMoP)
+/demo/ai                     AI tools demo page
+/demo/reset                  Force reset demo (POST)
+/lmop/                       LMoP read-only public view
+/share/<token>               Player read-only via share link
 
 /<slug>/                     Campaign home
 /<slug>/party                Full party roster
 /<slug>/assets               Currency, items, ships, stronghold
 /<slug>/world                NPC and faction overview
+/<slug>/world/ripples        Ripple chain visualization
 /<slug>/world/npc/<id>       NPC detail + interaction log
-/<slug>/world/faction/<id>   Faction detail + interaction log
-/<slug>/story                Quest log grouped by status
+/<slug>/world/faction/<id>   Faction detail
+/<slug>/story                Quest log
+/<slug>/journal              Session journal
+/<slug>/brief                DM briefing (full intelligence report)
 /<slug>/references           Rulebook reference tables
 
-/<slug>/dm                   DM dashboard (PIN required)
+/<slug>/dm                   DM dashboard
 /<slug>/dm/log               Post-session logging tool
 /<slug>/dm/login             DM PIN entry
-/<slug>/dm/logout            Exit DM mode
 ```
 
 ---
 
 ## Data Model
 
-Each campaign is a folder under `campaigns/<slug>/`:
-
 ```
-campaigns/
-  my-campaign/
-    campaign.json        name, system, slug, description, owner, dm_pin, share_token
-    party.json           characters array
-    assets.json          currency, items, ships, stronghold, property
-    world/
-      npcs.json          npcs array
-      factions.json      factions array
-    story/
-      quests.json        quests array
-    references.json      optional lookup tables
-    dm/
-      session.json       session plan (markdown) + notes
+campaigns/<slug>/
+  campaign.json        name, system, slug, owner/demo_mode/public, dm_pin, share_token
+  party.json           characters: [{name, assigned_user, known_events, ...}]
+  assets.json          currency, items, ships[{name, type, hp, crew, cargo, notes, log[]}], stronghold
+  world/
+    npcs.json          npcs: [{id, name, role, relationship, log, hidden, faction, relations}]
+    factions.json      factions: [{id, name, relationship, log, hidden, relations}]
+  story/
+    quests.json
+  dm/
+    session.json       plan (markdown), notes
+  journal.json         {entries: [{session, date, recap}]}
+  references.json
 ```
 
-### campaign.json
+### Log entry schema
 
 ```json
 {
-  "name": "My Campaign",
-  "system": "D&D 5e",
-  "slug": "my-campaign",
-  "description": "Optional one-liner.",
-  "created": "2026-04-19",
-  "owner": "username",
-  "dm_pin": "1234",
-  "share_token": "abc123..."
+  "id": "evt_abc123",
+  "session": 4,
+  "note": "Captured by the party.",
+  "visibility": "public",
+  "polarity": "negative",
+  "intensity": 3,
+  "event_type": "combat",
+  "ripple_source": { "entity_id": "iarno_albrek", "entity_type": "npc", "event_id": "evt_111ddd" }
 }
 ```
 
-Add `"demo": true` instead of `"owner"` for template campaigns.
+`event_type` is freeform. Reserved values: `projected` (AI-committed consequence projection).
 
-### assets.json
+### Relationship computation
 
-```json
-{
-  "currency": { "gold": 0 },
-  "items": [{ "name": "Rope (50 ft)", "notes": "" }],
-  "ships": [
-    {
-      "name": "The Osprey",
-      "type": "Sloop",
-      "hp": "80/80",
-      "crew": ["Captain Vex"],
-      "weapons": [{ "name": "Ballista #1", "hp": 50, "max_hp": 50 }],
-      "cargo": ["50 barrels of ale"],
-      "notes": ""
-    }
-  ],
-  "stronghold": {
-    "name": "The Old Keep",
-    "type": "Fortress",
-    "location": "Phandalin",
-    "condition": "Ruined",
-    "notes": "",
-    "features": ["Great hall", "Dungeon"],
-    "upgrades": ["Reinforced gate"]
-  },
-  "property": []
-}
-```
-
-### story/quests.json
-
-```json
-{
-  "quests": [
-    {
-      "id": "missing_merchant",
-      "title": "The Missing Merchant",
-      "status": "active",
-      "description": "Torvald vanished on the road to Millhaven.",
-      "hidden": false,
-      "objectives": [
-        { "text": "Find out what happened", "done": false }
-      ],
-      "log": [
-        { "session": 1, "note": "Quest picked up from Mara." }
-      ]
-    }
-  ]
-}
-```
-
-Status options: `active`, `complete`, `failed`
-
-### dm/session.json
-
-```json
-{
-  "plan": "# Session Plan\n\n## Beat 1...",
-  "notes": ""
-}
-```
-
-Notes export as `.md` for direct use as next session's plan.
-
----
-
-## AI Session Recap
-
-The DM dashboard includes a **✦ Generate Recap** button. After writing session notes, click it to generate a player-facing chronicle-style recap using Claude Haiku (Anthropic API).
-
-Requires `ANTHROPIC_API_KEY` in a `.env` file at the repo root:
-
-```
-ANTHROPIC_API_KEY=sk-ant-...
-```
-
-The `.env` is gitignored. If the key is missing the button will return a 500 error.
+`compute_npc_relationship(npc)` — decay-weighted score from polarity events. Score thresholds: `allied` (≥4), `friendly` (≥1.5), `neutral` (≥−1.5), `hostile` (<−1.5). Decay: `0.85^age_in_sessions`.
 
 ---
 
@@ -270,39 +221,19 @@ Runs at `http://localhost:5052`.
 
 ---
 
-## Deploying to Raspberry Pi
-
-Deploy individual changed files:
+## Deploy (Raspberry Pi)
 
 ```bash
-rsync -av /path/to/file simonhans@raspberrypi:/home/simonhans/coding/questbook/path/to/file
+cd questbook && ./deploy.sh
+```
+
+`deploy.sh` rsyncs all non-data files (excludes `venv/`, `campaigns/`, `.env`) and restarts the service. For single-file deploys:
+
+```bash
+rsync -av --checksum <file> simonhans@raspberrypi:/mnt/serverdrive/coding/questbook/<relative-path>
 ssh simonhans@raspberrypi "sudo systemctl restart questbook"
 ```
 
-Or sync everything:
+Always use the explicit `/mnt/serverdrive/` path, never `~/coding` (symlink).
 
-```bash
-rsync -av --exclude='venv' --exclude='__pycache__' --exclude='*.pyc' \
-  ~/coding/questbook/ simonhans@raspberrypi:~/coding/questbook/
-ssh simonhans@raspberrypi "sudo systemctl restart questbook"
-```
-
-### Systemd service
-
-`/etc/systemd/system/questbook.service`:
-
-```ini
-[Service]
-User=simonhans
-WorkingDirectory=/home/simonhans/coding/questbook
-ExecStart=/home/simonhans/coding/questbook/venv/bin/python app.py
-Environment=FLASK_ENV=production
-Environment=QUESTBOOK_PREFIX=
-Environment=QUESTBOOK_SECRET=<hex secret>
-```
-
-Generate a secret: `python3 -c "import secrets; print(secrets.token_hex(32))"`
-
-### nginx
-
-Configured in `/etc/nginx/sites-enabled/default` (certbot-managed). Routes `questlog.duckdns.org` → `127.0.0.1:5052`. Do not expose port 5052 directly.
+Systemd service: `/etc/systemd/system/questbook.service`. nginx routes `rippleforge.gg` → `127.0.0.1:5052`.

@@ -2,7 +2,10 @@
 {% block title %}World — {{ meta.name }}{% endblock %}
 {% block content %}
 
-<h1 class="page-title">World</h1>
+<div style="display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:8px;">
+  <h1 class="page-title" style="margin:0;">World</h1>
+  <a href="/{{ slug }}/world/ripples" style="font-size:0.82rem; color:var(--purple); text-decoration:none; font-weight:700; letter-spacing:0.03em;">Ripple Chains →</a>
+</div>
 <p class="subtitle">{{ meta.name }}</p>
 
 {% if npcs %}
@@ -72,7 +75,7 @@
           <h3 style="margin-bottom:4px;">{{ faction.name }}</h3>
           {% if faction.role %}<div class="role">{{ faction.role }}</div>{% endif %}
           <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center; margin-top:6px;">
-            <span class="badge badge-{{ faction.relationship }}">{{ faction.relationship }}</span>
+            <span class="badge badge-{{ faction._rel.relationship }}">{{ faction._rel.relationship }}</span>
             {% if session.get('dm_' ~ slug) and faction.hidden %}<span class="badge" style="background:var(--surface2); color:var(--muted); font-size:0.7rem;">Hidden</span>{% endif %}
           </div>
         </div>

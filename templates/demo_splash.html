@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+{% block title %}RippleForge — Living World Simulation for TTRPGs{% endblock %}
+{% block meta %}
+<meta name="description" content="Write your session notes. RippleForge tracks every NPC relationship, propagates consequences, and AI-projects what happens if the party does nothing. Free demo — no login required.">
+<meta property="og:title" content="RippleForge — The world reacts, even when your players don't">
+<meta property="og:description" content="Living world simulation for tabletop RPGs. Log events, track ripple effects, and let AI project consequences into your campaign's future.">
+<meta property="og:url" content="https://rippleforge.gg/demo/">
+{% endblock %}
+{% block content %}
+<script>sessionStorage.setItem('rf_tour', '0');</script>
+
+<!-- Hero -->
+<div style="max-width:640px; margin:0 auto 32px; text-align:center; padding-top:16px;">
+  <h1 style="font-size:1.5rem; font-weight:800; color:var(--text); letter-spacing:-0.02em; margin:0 0 10px 0;">The world reacts — even when your players don't.</h1>
+  <p style="color:var(--muted); font-size:0.95rem; line-height:1.6; margin:0 0 16px 0;">
+    Write what happened. Every NPC, faction, and future consequence updates automatically.
+  </p>
+  <p style="color:var(--muted); font-size:0.8rem; margin:0 0 24px 0;">
+    Explore a living <strong style="color:var(--text);">Phandelver</strong> — five sessions of Lost Mine, fully playable. Changes reset every 30 minutes.
+  </p>
+  <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+    <a href="/demo/world/ripples"
+       style="background:var(--purple);color:#fff;border-radius:5px;padding:10px 22px;font-size:0.9rem;font-weight:700;text-decoration:none;">
+      See a ripple happen →
+    </a>
+    <a href="#" onclick="sessionStorage.setItem('rf_tour','0'); location.reload(); return false;"
+       style="color:var(--muted);padding:10px 10px;font-size:0.88rem;text-decoration:none;">
+      Take the guided tour
+    </a>
+    <a href="/demo/world"
+       style="color:var(--muted);padding:10px 10px;font-size:0.88rem;text-decoration:none;">
+      Explore the world →
+    </a>
+  </div>
+</div>
+
+<!-- Killer hook -->
+<div style="text-align:center; margin:0 auto 40px; max-width:480px;">
+  <p style="color:var(--text); font-size:1.1rem; font-weight:700; font-style:italic; letter-spacing:-0.01em; margin:0; opacity:0.9;">Do nothing. The world still moves.</p>
+</div>
+
+<!-- Preview panels -->
+<div class="card-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:20px; margin-bottom:48px;">
+
+  <!-- Panel 1: Ripple chains -->
+  <div class="card" style="padding:0; overflow:hidden;">
+    <div style="padding:14px 18px; background:var(--surface2); border-bottom:1px solid var(--border); min-height:185px; box-sizing:border-box;">
+      <p style="color:var(--purple); font-size:0.65rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; margin:0 0 4px 0;">01 — Ripple Chains</p>
+      <h3 style="margin:0 0 4px 0; font-size:0.95rem;">One event. Four consequences.</h3>
+      <p style="color:var(--text); font-size:0.82rem; margin:0 0 4px 0; font-style:italic;">Capture a leader. His faction fractures overnight.</p>
+      <p style="color:var(--muted); font-size:0.78rem; margin:0;">One log entry. Every connected entity updates automatically. Scores show relationship standing.</p>
+    </div>
+    <div style="padding:14px 18px;">
+      <!-- Source event -->
+      <div style="margin-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+          <span style="font-weight:700; font-size:0.88rem; color:var(--text);">Iarno Albrek</span>
+          <span style="font-size:0.68rem; color:var(--muted);">Session 4</span>
+          <span style="font-size:0.68rem; color:var(--purple); font-weight:700; text-transform:uppercase; letter-spacing:0.04em;">capture</span>
+          <span style="font-size:0.75rem; font-weight:700; color:#e05c5c;">−3</span>
+        </div>
+        <p style="color:var(--text); font-size:0.82rem; margin:0;">Unmasked as Glasstaff and captured by the party. His cooperation extracted key intelligence.</p>
+      </div>
+      <!-- Ripples -->
+      <div style="display:flex; flex-direction:column; gap:7px; padding-left:12px; border-left:2px solid var(--border);">
+        <div style="display:flex; gap:6px;">
+          <span style="color:var(--muted); font-size:0.72rem; flex-shrink:0; padding-top:1px;">↳</span>
+          <div>
+            <span style="font-weight:700; font-size:0.82rem; color:var(--text);">Redbrands</span>
+            <span style="font-size:0.72rem; color:#e05c5c; font-weight:700; margin-left:5px;">−3</span>
+            <p style="color:var(--muted); font-size:0.78rem; margin:2px 0 0 0;">Lost their leader — broke apart within days.</p>
+          </div>
+        </div>
+        <div style="display:flex; gap:6px;">
+          <span style="color:var(--muted); font-size:0.72rem; flex-shrink:0; padding-top:1px;">↳</span>
+          <div>
+            <span style="font-weight:700; font-size:0.82rem; color:var(--text);">Sildar Hallwinter</span>
+            <span style="font-size:0.72rem; color:#7ec87e; font-weight:700; margin-left:5px;">+2</span>
+            <p style="color:var(--muted); font-size:0.78rem; margin:2px 0 0 0;">Confirmed Glasstaff's identity. A weight lifted.</p>
+          </div>
+        </div>
+        <div style="display:flex; gap:6px;">
+          <span style="color:var(--muted); font-size:0.72rem; flex-shrink:0; padding-top:1px;">↳</span>
+          <div>
+            <span style="font-weight:700; font-size:0.82rem; color:var(--text);">Harbin Wester</span>
+            <p style="color:var(--muted); font-size:0.78rem; margin:2px 0 0 0;">Visibly nervous. Asked pointed questions.</p>
+          </div>
+        </div>
+        <div style="display:flex; gap:6px;">
+          <span style="color:var(--muted); font-size:0.72rem; flex-shrink:0; padding-top:1px;">↳</span>
+          <div>
+            <span style="font-weight:700; font-size:0.82rem; color:var(--text);">Halia Thornton</span>
+            <p style="color:var(--muted); font-size:0.78rem; margin:2px 0 0 0;">Expressed quiet satisfaction. Power vacuum noted.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="padding:10px 18px; border-top:1px solid var(--border);">
+      <a href="/demo/world/ripples" style="color:var(--purple); font-size:0.8rem; font-weight:700; text-decoration:none;">See all ripple chains →</a>
+    </div>
+  </div>
+
+  <!-- Panel 2: AI note parsing -->
+  <div class="card" style="padding:0; overflow:hidden;">
+    <div style="padding:14px 18px; background:var(--surface2); border-bottom:1px solid var(--border); min-height:185px; box-sizing:border-box;">
+      <p style="color:var(--purple); font-size:0.65rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; margin:0 0 4px 0;">02 — AI Event Parsing</p>
+      <h3 style="margin:0 0 4px 0; font-size:0.95rem;">Messy notes → structured events</h3>
+      <p style="color:var(--text); font-size:0.82rem; margin:0 0 4px 0; font-style:italic;">Your chaotic session notes become world-changing events.</p>
+      <p style="color:var(--muted); font-size:0.78rem; margin:0;">Paste raw session notes. AI extracts every meaningful interaction, matches entities, assigns polarity.</p>
+    </div>
+    <div style="padding:14px 18px;">
+      <!-- Fake notes input -->
+      <div style="background:var(--surface2); border:1px solid var(--border); border-radius:4px; padding:8px 10px; margin-bottom:12px; font-size:0.75rem; color:var(--muted); font-family:monospace; line-height:1.5;">
+        Cragmaw Castle. Found <strong style="color:var(--text);">Gundren</strong> in <strong style="color:var(--text);">Grol</strong>'s chamber — alive but beaten. <strong style="color:var(--text);">Grol</strong> had a drow messenger (<strong style="color:var(--text);">Vel'rar</strong>), she tried to flee. <strong style="color:var(--text);">Grol</strong> killed in combat, <strong style="color:var(--text);">Pip</strong> landed killing blow...
+      </div>
+      <!-- Parsed entries -->
+      <div style="display:flex; flex-direction:column; gap:6px;">
+        <div style="border:1px solid var(--border); border-radius:4px; padding:8px 10px;">
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom:3px; flex-wrap:wrap;">
+            <span style="font-weight:700; font-size:0.82rem; color:var(--text);">King Grol</span>
+            <span style="font-size:0.67rem; color:var(--purple); font-weight:700; text-transform:uppercase; letter-spacing:0.04em;">combat</span>
+            <span style="font-size:0.72rem; font-weight:700; color:#e05c5c;">−3</span>
+          </div>
+          <p style="color:var(--muted); font-size:0.78rem; margin:0;">Killed in combat — Pip landed the killing blow with a sneak attack.</p>
+        </div>
+        <div style="border:1px solid var(--border); border-radius:4px; padding:8px 10px;">
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom:3px; flex-wrap:wrap;">
+            <span style="font-weight:700; font-size:0.82rem; color:var(--text);">Gundren Rockseeker</span>
+            <span style="font-size:0.67rem; color:var(--purple); font-weight:700; text-transform:uppercase; letter-spacing:0.04em;">dialogue</span>
+            <span style="font-size:0.72rem; font-weight:700; color:#7ec87e;">+3</span>
+          </div>
+          <p style="color:var(--muted); font-size:0.78rem; margin:0;">Rescued; agreed to grant party 10% stake in Wave Echo Cave.</p>
+        </div>
+        <div style="border:1px solid var(--border); border-radius:4px; padding:8px 10px; opacity:0.6;">
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom:3px;">
+            <span style="font-weight:700; font-size:0.82rem; color:var(--text);">Harbin Wester</span>
+            <span style="font-size:0.67rem; color:var(--purple); font-weight:700; text-transform:uppercase; letter-spacing:0.04em;">dialogue</span>
+            <span style="font-size:0.68rem; color:var(--muted); font-style:italic;">DM only</span>
+          </div>
+          <p style="color:var(--muted); font-size:0.78rem; margin:0;">Asked pointed questions about recovered documents — visibly relieved when told there were none.</p>
+        </div>
+      </div>
+    </div>
+    <div style="padding:10px 18px; border-top:1px solid var(--border);">
+      <a href="/demo/ai" style="color:var(--purple); font-size:0.8rem; font-weight:700; text-decoration:none;">Try the parser →</a>
+    </div>
+  </div>
+
+  <!-- Panel 3: Consequence projection -->
+  <div class="card" style="padding:0; overflow:hidden;">
+    <div style="padding:14px 18px; background:var(--surface2); border-bottom:1px solid var(--border); min-height:185px; box-sizing:border-box;">
+      <p style="color:var(--purple); font-size:0.65rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; margin:0 0 4px 0;">03 — Consequence Projection</p>
+      <h3 style="margin:0 0 4px 0; font-size:0.95rem;">What if the party does nothing?</h3>
+      <p style="color:var(--text); font-size:0.82rem; margin:0 0 4px 0; font-style:italic;">Ignore a threat, and it grows without you.</p>
+      <p style="color:var(--muted); font-size:0.78rem; margin:0;">AI reads every active tension and forecasts probable outcomes. Unlike a chatbot, these commit to your world's timeline as <strong style="color:var(--purple);">PROJECTED</strong> entries — not suggestions, world state.</p>
+    </div>
+    <div style="padding:14px 18px; display:flex; flex-direction:column; gap:8px;">
+      <div style="border:1px solid var(--border); border-left:3px solid #7ec87e; border-radius:4px; padding:10px 12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+          <span style="font-weight:700; font-size:0.83rem; color:var(--text);">Nezznar (The Black Spider)</span>
+          <span style="font-size:0.68rem; font-weight:700; color:#7ec87e; text-transform:uppercase; letter-spacing:0.06em;">high</span>
+        </div>
+        <p style="color:var(--text); font-size:0.8rem; margin:0 0 4px 0;">Accelerates excavation of Wave Echo Cave after losing contact with Vel'rar — likely to activate the Forge of Spells before the party arrives.</p>
+        <p style="color:var(--muted); font-size:0.72rem; margin:0; font-style:italic;">Vel'rar's capture removed his only early-warning system.</p>
+      </div>
+      <div style="border:1px solid var(--border); border-left:3px solid var(--gold); border-radius:4px; padding:10px 12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+          <span style="font-weight:700; font-size:0.83rem; color:var(--text);">Harbin Wester</span>
+          <span style="font-size:0.68rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:0.06em;">medium</span>
+        </div>
+        <p style="color:var(--text); font-size:0.8rem; margin:0 0 4px 0;">Attempts to warn the Black Spider's network — his nervousness suggests an active courier relationship.</p>
+        <p style="color:var(--muted); font-size:0.72rem; margin:0; font-style:italic;">Prior dealings inferred from his reaction to Pip's lie.</p>
+      </div>
+      <p style="color:var(--muted); font-size:0.73rem; margin:4px 0 0 0;">Select consequences to commit → they appear on each entity's timeline as <strong style="color:var(--purple);">PROJECTED</strong> entries.</p>
+    </div>
+    <div style="padding:10px 18px; border-top:1px solid var(--border);">
+      <a href="/demo/ai" style="color:var(--purple); font-size:0.8rem; font-weight:700; text-decoration:none;">Generate consequences →</a>
+    </div>
+  </div>
+
+</div>
+
+<!-- Bottom nav -->
+<div style="text-align:center; padding-bottom:32px;">
+  <p style="color:var(--muted); font-size:0.8rem; margin:0 0 12px 0;">Ready to explore? The whole campaign is live.</p>
+  <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap; font-size:0.82rem;">
+    <a href="/demo/world" style="color:var(--muted); text-decoration:none;">World →</a>
+    <a href="/demo/party" style="color:var(--muted); text-decoration:none;">Party →</a>
+    <a href="/demo/story" style="color:var(--muted); text-decoration:none;">Quests →</a>
+    <a href="/demo/journal" style="color:var(--muted); text-decoration:none;">Journal →</a>
+    <a href="/demo/world/ripples" style="color:var(--muted); text-decoration:none;">Ripple chains →</a>
+    <a href="/demo/ai" style="color:var(--purple); font-weight:700; text-decoration:none;">AI tools →</a>
+  </div>
+</div>
+
+{% endblock %}

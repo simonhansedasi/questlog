@@ -10,6 +10,7 @@ import secrets
 import shutil
 import datetime
 import markdown
+import uuid
 
 sys.path.insert(0, str(Path(__file__).parent))
 from src import data as db
@@ -42,13 +43,60 @@ def compute_rel_filter(npc, is_dm=True):
     return db.compute_npc_relationship(npc, is_dm=is_dm)
 
 
+@app.after_request
+def stamp_demo_visitor(response):
+    if request.path.startswith("/demo") and not request.cookies.get("demo_id"):
+        response.set_cookie("demo_id", str(uuid.uuid4()), max_age=30*24*3600, samesite="Lax", httponly=True)
+    return response
+
+
 @app.context_processor
 def inject_viewer_character():
     slug = request.view_args.get("slug") if request.view_args else None
+    if not slug and request.path.startswith("/demo"):
+        slug = "demo"
+    meta = load(slug, "campaign.json") if slug else {}
+    is_public = bool(meta.get("public"))
+    is_demo = bool(meta.get("demo_mode"))
     if slug and session.get("user") and not session.get(f"dm_{slug}"):
         char = db.get_player_character(slug, session["user"])
-        return {"viewer_character": char}
-    return {"viewer_character": None}
+        return {"viewer_character": char, "is_public": is_public, "is_demo": is_demo}
+    return {"viewer_character": None, "is_public": is_public, "is_demo": is_demo}
+
+
+DEMO_SOURCE = CAMPAIGNS / "lmop"
+DEMO_DIR = CAMPAIGNS / "demo"
+DEMO_STAMP = DEMO_DIR / ".reset_stamp"
+DEMO_COUNTS_FILE = CAMPAIGNS / "demo_parse_counts.json"
+
+
+def _load_demo_counts():
+    if DEMO_COUNTS_FILE.exists():
+        try:
+            return json.loads(DEMO_COUNTS_FILE.read_text())
+        except Exception:
+            return {}
+    return {}
+
+
+def _save_demo_counts(counts):
+    DEMO_COUNTS_FILE.write_text(json.dumps(counts))
+
+def reset_demo(force=False):
+    if not force and DEMO_STAMP.exists():
+        age = datetime.datetime.now() - datetime.datetime.fromtimestamp(DEMO_STAMP.stat().st_mtime)
+        if age < datetime.timedelta(minutes=30):
+            return
+    if DEMO_DIR.exists():
+        shutil.rmtree(DEMO_DIR)
+    shutil.copytree(DEMO_SOURCE, DEMO_DIR)
+    meta = json.loads((DEMO_DIR / "campaign.json").read_text())
+    meta["slug"] = "demo"
+    meta.pop("public", None)
+    meta.pop("demo", None)
+    meta["demo_mode"] = True
+    (DEMO_DIR / "campaign.json").write_text(json.dumps(meta, indent=2))
+    DEMO_STAMP.touch()
 
 
 def load_users():
@@ -67,8 +115,14 @@ def login_required(f):
 
 
 def campaign_access(slug):
-    """Allow access if: logged-in owner, logged-in user with share link, or share link viewer."""
+    """Allow access if: public campaign, logged-in owner, logged-in user with share link, or share link viewer."""
     meta = load(slug, "campaign.json")
+    if meta.get("public"):
+        if request.method != "GET" and not request.path.endswith("/dm/login"):
+            abort(403)
+        return None
+    if meta.get("demo_mode"):
+        return None  # full read+write, no auth required
     owner = meta.get("owner")
     if session.get("user"):
         if owner and session.get("user") != owner:
@@ -136,13 +190,33 @@ def logout():
 # ── Public routes ─────────────────────────────────────────────────────────────
 
 @app.route("/")
-@login_required
 def index():
+    if not session.get("user"):
+        return redirect("/login")
     username = session["user"]
     all_campaigns = campaigns()
     my_campaigns = [c for c in all_campaigns if c.get("owner") == username]
     demo_campaigns = [c for c in all_campaigns if c.get("demo")]
     return render_template("index.html", my_campaigns=my_campaigns, demo_campaigns=demo_campaigns)
+
+
+@app.route("/robots.txt")
+def robots_txt():
+    return app.response_class(
+        "User-agent: *\nAllow: /demo/\nDisallow: /\nSitemap: https://rippleforge.gg/sitemap.xml\n",
+        mimetype="text/plain"
+    )
+
+
+@app.route("/sitemap.xml")
+def sitemap_xml():
+    xml = ('<?xml version="1.0" encoding="UTF-8"?>'
+           '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+           '<url><loc>https://rippleforge.gg/demo/</loc><priority>1.0</priority></url>'
+           '<url><loc>https://rippleforge.gg/demo/world/ripples</loc><priority>0.8</priority></url>'
+           '<url><loc>https://rippleforge.gg/demo/ai</loc><priority>0.8</priority></url>'
+           '</urlset>')
+    return app.response_class(xml, mimetype="application/xml")
 
 
 @app.route("/demo/<slug>/clone", methods=["POST"])
@@ -170,8 +244,166 @@ def clone_campaign(slug):
     return redirect(url_for("dm", slug=new_slug))
 
 
+@app.route("/demo/reset", methods=["POST"])
+def demo_reset():
+    reset_demo(force=True)
+    return redirect("/demo/")
+
+
+@app.route("/demo/")
+def demo_splash():
+    reset_demo()
+    r = campaign_access("demo")
+    if r: return r
+    meta = load("demo", "campaign.json")
+    return render_template("demo_splash.html", meta=meta, slug="demo")
+
+
+@app.route("/demo/ai")
+def demo_ai_page():
+    reset_demo()
+    r = campaign_access("demo")
+    if r: return r
+    meta = load("demo", "campaign.json")
+    return render_template("demo_ai.html", meta=meta, slug="demo")
+
+
+def _build_diffs(slug, before_snaps, entries):
+    """Compare before snapshots to current state and return diff list."""
+    diffs = []
+    for (eid, etype), before in before_snaps.items():
+        after = db.entity_snapshot(slug, eid, etype)
+        if not after:
+            continue
+        diff = {"entity_name": before["name"], "log_added": after["log_count"] - before["log_count"]}
+        if before["score"] is not None and after["score"] is not None:
+            diff["score_before"] = before["score"]
+            diff["score_after"] = after["score"]
+        if before["relationship"] != after["relationship"]:
+            diff["relationship_before"] = before["relationship"]
+            diff["relationship_after"] = after["relationship"]
+        diffs.append(diff)
+    return diffs
+
+
+@app.route("/demo/ai/propose", methods=["POST"])
+def demo_ai_propose():
+    r = campaign_access("demo")
+    if r: return r
+    LIMIT = 3
+    visitor_id = request.cookies.get("demo_id")
+    counts = _load_demo_counts()
+    used = counts.get(visitor_id, 0) if visitor_id else 0
+    if used >= LIMIT:
+        return jsonify({"error": "limit", "remaining": 0})
+    data = request.get_json()
+    notes = (data.get("notes") or "").strip()
+    if not notes:
+        return jsonify({"error": "empty"}), 400
+    meta = load("demo", "campaign.json")
+    current_session = db.get_current_session("demo")
+    npcs = db.get_npcs("demo", include_hidden=True)
+    factions = db.get_factions("demo", include_hidden=True)
+    party = db.get_party("demo")
+    try:
+        proposals = ai.propose_log_entries(notes, meta.get("name", "Demo"), current_session, npcs, factions, party=party)
+    except Exception:
+        return jsonify({"error": "ai_error"}), 500
+    if visitor_id:
+        counts[visitor_id] = used + 1
+        _save_demo_counts(counts)
+    remaining = LIMIT - (used + 1)
+    return jsonify({"proposals": proposals, "remaining": remaining})
+
+
+@app.route("/demo/ai/commit_parsed", methods=["POST"])
+def demo_ai_commit_parsed():
+    r = campaign_access("demo")
+    if r: return r
+    data = request.get_json()
+    entries = data.get("entries", [])
+    current_session = db.get_current_session("demo")
+    npc_by_name = {n["name"].lower(): n["id"] for n in db.get_npcs("demo", include_hidden=True)}
+    faction_by_name = {f["name"].lower(): f["id"] for f in db.get_factions("demo", include_hidden=True)}
+    before = {}
+    for e in entries:
+        eid = e.get("entity_id")
+        if eid:
+            before[(eid, e.get("entity_type", "npc"))] = db.entity_snapshot("demo", eid, e.get("entity_type", "npc"))
+    committed = 0
+    for entry in entries:
+        entity_id = entry.get("entity_id")
+        entity_type = entry.get("entity_type", "npc")
+        note = entry.get("note", "").strip()
+        if not note:
+            continue
+        if not entity_id:
+            name = entry.get("entity_name", "").strip()
+            if not name:
+                continue
+            name_lower = name.lower()
+            entity_id = npc_by_name.get(name_lower) or faction_by_name.get(name_lower)
+            if not entity_id:
+                pol = entry.get("polarity")
+                rel = "friendly" if pol == "positive" else "hostile" if pol == "negative" else "neutral"
+                entity_id = db.slugify(name)
+                if entity_type == "faction":
+                    db.add_faction("demo", name, rel, description="", hidden=True)
+                    faction_by_name[name_lower] = entity_id
+                else:
+                    db.add_npc("demo", name, role="", relationship=rel, description="", hidden=True, faction=None)
+                    npc_by_name[name_lower] = entity_id
+            before[(entity_id, entity_type)] = db.entity_snapshot("demo", entity_id, entity_type)
+        polarity = entry.get("polarity") or None
+        intensity = int(entry.get("intensity") or 1)
+        event_type = entry.get("event_type") or None
+        visibility = entry.get("visibility", "public")
+        session_n = int(entry.get("session") or current_session)
+        if entity_type == "npc":
+            src_evt = db.log_npc("demo", entity_id, session_n, note, polarity=polarity,
+                                 intensity=intensity, event_type=event_type, visibility=visibility)
+        else:
+            src_evt = db.log_faction("demo", entity_id, session_n, note, polarity=polarity,
+                                     intensity=intensity, event_type=event_type, visibility=visibility)
+        if polarity and polarity != "neutral":
+            db.apply_ripple("demo", entity_id, entity_type, session_n, note, polarity, intensity,
+                            event_type, visibility=visibility, source_event_id=src_evt)
+        committed += 1
+    return jsonify({"committed": committed, "diffs": _build_diffs("demo", before, entries)})
+
+
+@app.route("/demo/ai/commit_futures", methods=["POST"])
+def demo_ai_commit_futures():
+    r = campaign_access("demo")
+    if r: return r
+    data = request.get_json()
+    entries = data.get("entries", [])
+    current_session = db.get_current_session("demo")
+    before = {(e["entity_id"], e.get("entity_type", "npc")): db.entity_snapshot("demo", e["entity_id"], e.get("entity_type", "npc"))
+              for e in entries if e.get("entity_id")}
+    committed = 0
+    for entry in entries:
+        entity_id = entry.get("entity_id")
+        entity_type = entry.get("entity_type", "npc")
+        note = entry.get("note", "").strip()
+        if not entity_id or not note:
+            continue
+        confidence = entry.get("confidence", "medium")
+        intensity = 3 if confidence == "high" else 2 if confidence == "medium" else 1
+        if entity_type == "npc":
+            db.log_npc("demo", entity_id, current_session, note,
+                       intensity=intensity, event_type="projected", visibility="public")
+        else:
+            db.log_faction("demo", entity_id, current_session, note,
+                           intensity=intensity, event_type="projected", visibility="public")
+        committed += 1
+    return jsonify({"committed": committed, "diffs": _build_diffs("demo", before, entries)})
+
+
 @app.route("/<slug>/")
 def campaign(slug):
+    if slug == "demo":
+        reset_demo()
     r = campaign_access(slug)
     if r: return r
     meta = load(slug, "campaign.json")
@@ -226,7 +458,44 @@ def world(slug):
     is_dm = bool(session.get(f"dm_{slug}"))
     npcs = db.get_npcs(slug, include_hidden=is_dm)
     factions = db.get_factions(slug, include_hidden=is_dm)
+    for f in factions:
+        f["_rel"] = db.compute_npc_relationship(f, is_dm=is_dm)
     return render_template("world.html", meta=meta, npcs=npcs, factions=factions, slug=slug, is_dm=is_dm)
+
+
+def get_ripple_chains(slug, include_hidden=False):
+    npcs = db.get_npcs(slug, include_hidden=include_hidden)
+    factions = db.get_factions(slug, include_hidden=include_hidden)
+    all_events = {}
+    for npc in npcs:
+        for entry in npc.get("log", []):
+            if entry.get("id"):
+                all_events[entry["id"]] = {"event": entry, "entity_name": npc["name"], "entity_id": npc["id"], "entity_type": "npc"}
+    for faction in factions:
+        for entry in faction.get("log", []):
+            if entry.get("id"):
+                all_events[entry["id"]] = {"event": entry, "entity_name": faction["name"], "entity_id": faction["id"], "entity_type": "faction"}
+    chains = {}
+    for event_data in all_events.values():
+        src = event_data["event"].get("ripple_source")
+        if src and src.get("event_id"):
+            sid = src["event_id"]
+            if sid not in chains:
+                chains[sid] = {"source": all_events.get(sid), "ripples": []}
+            chains[sid]["ripples"].append(event_data)
+    result = [c for c in chains.values() if c["source"]]
+    result.sort(key=lambda x: x["source"]["event"].get("session", 0), reverse=True)
+    return result
+
+
+@app.route("/<slug>/world/ripples")
+def ripple_chains(slug):
+    r = campaign_access(slug)
+    if r: return r
+    meta = load(slug, "campaign.json")
+    is_dm = bool(session.get(f"dm_{slug}"))
+    chains = get_ripple_chains(slug, include_hidden=is_dm)
+    return render_template("ripples.html", meta=meta, slug=slug, chains=chains, is_dm=is_dm)
 
 
 @app.route("/<slug>/world/npc/<npc_id>")
@@ -369,6 +638,8 @@ def share(token):
 @app.route("/<slug>/dm/login", methods=["GET", "POST"])
 @login_required
 def dm_login(slug):
+    if slug == "demo":
+        abort(404)
     campaign_access(slug)
     meta = load(slug, "campaign.json")
     if not meta:
@@ -538,12 +809,30 @@ def dm_propose_entries(slug):
     current_session = db.get_current_session(slug)
     npcs = db.get_npcs(slug, include_hidden=True)
     factions = db.get_factions(slug, include_hidden=True)
+    party = db.get_party(slug)
+    ships = db.get_assets(slug).get("ships", [])
     try:
-        proposals = ai.propose_log_entries(notes, meta.get("name", ""), current_session, npcs, factions)
+        proposals = ai.propose_log_entries(notes, meta.get("name", ""), current_session, npcs, factions, party, ships=ships)
+        party_names = {c["name"].lower() for c in party}
+        proposals = [p for p in proposals if p.get("entity_name", "").lower() not in party_names]
         db.save_proposals(slug, proposals, current_session)
         return jsonify({"proposals": proposals, "session": current_session})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+def _resolve_faction(slug, faction_name, faction_by_name, created):
+    """Return faction id for faction_name, creating the faction if it doesn't exist."""
+    if not faction_name:
+        return ""
+    name_lower = faction_name.strip().lower()
+    if name_lower in faction_by_name:
+        return faction_by_name[name_lower]
+    new_id = db.slugify(faction_name.strip())
+    db.add_faction(slug, faction_name.strip(), "neutral", description="", hidden=True)
+    faction_by_name[name_lower] = new_id
+    created.append({"name": faction_name.strip(), "type": "faction", "id": new_id})
+    return new_id
 
 
 @app.route("/<slug>/dm/session/commit_proposals", methods=["POST"])
@@ -554,29 +843,77 @@ def dm_commit_proposals(slug):
         return jsonify({"error": "No entries"}), 400
     current_session = db.get_current_session(slug)
     db.clear_proposals(slug)
+
+    npc_by_name = {n["name"].lower(): n["id"] for n in db.get_npcs(slug, include_hidden=True)}
+    faction_by_name = {f["name"].lower(): f["id"] for f in db.get_factions(slug, include_hidden=True)}
+
     committed = 0
+    created = []
     for entry in data["entries"]:
         entity_id = entry.get("entity_id")
         entity_type = entry.get("entity_type", "npc")
         note = entry.get("note", "").strip()
-        if not entity_id or not note:
+        if not note:
             continue
+
+        if entity_type == "ship":
+            ship_name = entry.get("entity_name", "").strip()
+            event_type = entry.get("event_type") or None
+            visibility = entry.get("visibility", "public")
+            session_n = int(entry.get("session") or current_session)
+            if ship_name and db.log_ship(slug, ship_name, session_n, note, event_type=event_type, visibility=visibility):
+                committed += 1
+            continue
+
+        if not entity_id:
+            name = entry.get("entity_name", "").strip()
+            if not name:
+                continue
+            name_lower = name.lower()
+            if entity_type == "faction":
+                entity_id = faction_by_name.get(name_lower) or npc_by_name.get(name_lower)
+            else:
+                entity_id = npc_by_name.get(name_lower) or faction_by_name.get(name_lower)
+
+            if not entity_id:
+                polarity_hint = entry.get("polarity") or 0
+                rel = "friendly" if polarity_hint and polarity_hint > 0 else "hostile" if polarity_hint and polarity_hint < 0 else "neutral"
+                new_id = db.slugify(name)
+                if entity_type == "faction":
+                    db.add_faction(slug, name, rel, description="", hidden=True)
+                    faction_by_name[name_lower] = new_id
+                else:
+                    faction_ref = _resolve_faction(slug, entry.get("faction_name"), faction_by_name, created)
+                    db.add_npc(slug, name, role="", relationship=rel, description="", hidden=True,
+                               faction=faction_ref)
+                    npc_by_name[name_lower] = new_id
+                entity_id = new_id
+                created.append({"name": name, "type": entity_type, "id": new_id})
+
+        if entity_type == "npc" and entry.get("faction_name"):
+            faction_ref = _resolve_faction(slug, entry.get("faction_name"), faction_by_name, created)
+            if faction_ref:
+                npcs_current = db.get_npcs(slug, include_hidden=True)
+                npc_obj = next((n for n in npcs_current if n["id"] == entity_id), None)
+                if npc_obj and not npc_obj.get("faction"):
+                    db.update_npc(slug, entity_id, faction=faction_ref)
+
         polarity = entry.get("polarity") or None
         intensity = int(entry.get("intensity") or 1)
         event_type = entry.get("event_type") or None
         visibility = entry.get("visibility", "public")
         session_n = int(entry.get("session") or current_session)
-        if entity_type == "npc":
-            src_evt = db.log_npc(slug, entity_id, session_n, note, polarity=polarity,
-                                 intensity=intensity, event_type=event_type, visibility=visibility)
-        else:
+        if entity_type == "faction" or entity_id in faction_by_name.values():
             src_evt = db.log_faction(slug, entity_id, session_n, note, polarity=polarity,
                                      intensity=intensity, event_type=event_type, visibility=visibility)
+        else:
+            src_evt = db.log_npc(slug, entity_id, session_n, note, polarity=polarity,
+                                 intensity=intensity, event_type=event_type, visibility=visibility)
         if polarity:
             db.apply_ripple(slug, entity_id, entity_type, session_n, note, polarity, intensity,
                             event_type, visibility=visibility, source_event_id=src_evt)
         committed += 1
-    return jsonify({"committed": committed})
+    return jsonify({"committed": committed, "created": created})
 
 
 @app.route("/<slug>/dm/session/notes/export")
@@ -982,10 +1319,54 @@ def dm_propose_futures(slug):
     world_summary = db.get_world_state_summary(slug, current_session)
     try:
         futures = ai.propose_futures(meta.get("name", ""), current_session, world_summary)
+        npc_by_name = {n["name"].lower(): n["id"] for n in db.get_npcs(slug, include_hidden=True)}
+        faction_by_name = {f["name"].lower(): f["id"] for f in db.get_factions(slug, include_hidden=True)}
+        for f in futures:
+            name = f.get("entity_name", "").lower()
+            kind = f.get("entity_kind", "npc")
+            if kind == "faction":
+                f["entity_id"] = faction_by_name.get(name) or npc_by_name.get(name)
+            else:
+                f["entity_id"] = npc_by_name.get(name) or faction_by_name.get(name)
         db.save_futures(slug, futures, current_session)
         return jsonify({"futures": futures, "session": current_session})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+@app.route("/<slug>/dm/world/commit_futures", methods=["POST"])
+@dm_required
+def dm_commit_futures(slug):
+    data = request.get_json()
+    entries = data.get("entries", [])
+    current_session = db.get_current_session(slug)
+    npc_by_name = {n["name"].lower(): n["id"] for n in db.get_npcs(slug, include_hidden=True)}
+    faction_by_name = {f["name"].lower(): f["id"] for f in db.get_factions(slug, include_hidden=True)}
+    for entry in entries:
+        if not entry.get("entity_id"):
+            name = entry.get("entity_name", "").lower()
+            entry["entity_id"] = npc_by_name.get(name) or faction_by_name.get(name)
+            if entry["entity_id"] and entry["entity_id"] in faction_by_name.values():
+                entry["entity_type"] = "faction"
+    before = {(e["entity_id"], e.get("entity_type", "npc")): db.entity_snapshot(slug, e["entity_id"], e.get("entity_type", "npc"))
+              for e in entries if e.get("entity_id")}
+    committed = 0
+    for entry in entries:
+        entity_id = entry.get("entity_id")
+        entity_type = entry.get("entity_type", "npc")
+        note = entry.get("note", "").strip()
+        if not entity_id or not note:
+            continue
+        confidence = entry.get("confidence", "medium")
+        intensity = 3 if confidence == "high" else 2 if confidence == "medium" else 1
+        if entity_type == "npc":
+            db.log_npc(slug, entity_id, current_session, note,
+                       intensity=intensity, event_type="projected", visibility="public")
+        else:
+            db.log_faction(slug, entity_id, current_session, note,
+                           intensity=intensity, event_type="projected", visibility="public")
+        committed += 1
+    return jsonify({"committed": committed, "diffs": _build_diffs(slug, before, entries)})
 
 
 @app.route("/<slug>/dm/quest/<quest_id>/log/<int:idx>/delete", methods=["POST"])

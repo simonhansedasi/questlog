@@ -93,20 +93,58 @@
   <div id="futures-loading" style="display:none; color:var(--muted); font-size:0.8rem; padding:8px 0;">Generating hypotheses…</div>
   <div id="futures-cards" style="display:flex; flex-direction:column; gap:8px;">
   {% if saved_futures and saved_futures.futures %}
+  <script>
+  var _futureDmState = [
+    {% for f in saved_futures.futures %}
+    { note: {{ f.hypothesis | tojson }}, confidence: {{ f.confidence | tojson }} }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ];
+  </script>
     {% set confColor = {'high': '#e05c5c', 'medium': '#d97706', 'low': 'var(--muted)'} %}
     {% for f in saved_futures.futures %}
-    <div style="background:var(--surface2); border:1px solid var(--border);
+    {% set i = loop.index0 %}
+    <div id="dmfcard-{{ i }}" style="background:var(--surface2); border:1px solid var(--border);
                 border-left:3px solid {{ confColor.get(f.confidence, 'var(--purple)') }};
-                border-radius:5px; padding:10px 14px;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-        <span style="font-weight:700; font-size:0.83rem; color:var(--text);">{{ f.entity_name }}</span>
-        <span style="font-size:0.68rem; color:{{ confColor.get(f.confidence, 'var(--purple)') }}; text-transform:uppercase; letter-spacing:0.05em;">{{ f.confidence }}</span>
+                border-radius:5px; padding:10px 14px; display:flex; gap:10px; align-items:flex-start;">
+      <input type="checkbox" class="future-cb" checked
+             data-idx="{{ i }}"
+             data-entity-id="{{ f.entity_id if f.entity_id is defined else '' }}"
+             data-entity-type="{{ f.entity_kind if f.entity_kind is defined else 'npc' }}"
+             data-entity-name="{{ f.entity_name }}"
+             style="margin-top:4px; accent-color:var(--purple); flex-shrink:0;"
+             onchange="updateFuturesCommitBtn()">
+      <div style="flex:1;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; flex-wrap:wrap; gap:6px;">
+          <span style="font-weight:700; font-size:0.83rem; color:var(--text);">{{ f.entity_name }}</span>
+          <div style="display:flex; gap:3px;">
+            {% for conf in ['high', 'medium', 'low'] %}
+            <button onclick="setDmFutureConf({{ i }}, '{{ conf }}')" id="dmfc-{{ i }}-{{ conf }}"
+                    style="background:{% if f.confidence == conf %}{{ confColor.get(conf, 'var(--purple)') }}{% else %}none{% endif %};
+                           color:{% if f.confidence == conf %}#fff{% else %}var(--muted){% endif %};
+                           border:1px solid var(--border); border-radius:3px; padding:2px 7px;
+                           font-size:0.65rem; cursor:pointer; font-weight:700; text-transform:uppercase;">
+              {{ 'med' if conf == 'medium' else conf }}
+            </button>
+            {% endfor %}
+          </div>
+        </div>
+        <textarea id="dmft-{{ i }}" oninput="_futureDmState[{{ i }}].note = this.value"
+                  style="width:100%; box-sizing:border-box; background:var(--surface); border:1px solid var(--border);
+                         color:var(--text); border-radius:4px; padding:6px 8px; font-size:0.82rem;
+                         font-family:inherit; line-height:1.45; resize:vertical; margin-bottom:4px;"
+                  rows="3">{{ f.hypothesis }}</textarea>
+        <p style="margin:0; font-size:0.72rem; color:var(--muted); font-style:italic;">{{ f.reasoning }}</p>
       </div>
-      <p style="margin:0 0 4px 0; font-size:0.82rem; color:var(--text);">{{ f.hypothesis }}</p>
-      <p style="margin:0; font-size:0.72rem; color:var(--muted);">{{ f.reasoning }}</p>
     </div>
     {% endfor %}
-    <p style="font-size:0.68rem; color:var(--muted); margin:4px 0 0 0;">Generated S{{ saved_futures.session }} — click Refresh ✦ to update</p>
+    <div style="display:flex; align-items:center; gap:12px; padding-top:4px;">
+      <button id="futures-commit-btn" onclick="commitFutures()"
+              style="background:var(--purple);color:#fff;border:none;border-radius:4px;padding:5px 14px;font-size:0.78rem;font-weight:700;cursor:pointer;">
+        Commit selected
+      </button>
+      <span style="font-size:0.68rem; color:var(--muted);">Generated S{{ saved_futures.session }} — click Refresh ✦ to update</span>
+    </div>
+    <div id="futures-commit-msg" style="display:none;"></div>
   {% endif %}
   </div>
 </div>
@@ -302,16 +340,20 @@ function renderProposals(proposals, sessionN) {
   }
   const polarityColor = {positive:'#7ec87e', negative:'#e05c5c', neutral:'var(--muted)'};
   list.innerHTML = proposals.map((p, i) => {
-    const col = polarityColor[p.polarity] || 'var(--border)';
-    const knownId = p.entity_id ? '' : ' style="color:#d97706;"';
-    const unknownBadge = p.entity_id ? '' : '<span style="color:#d97706; font-size:0.68rem; font-weight:700; margin-left:4px;">unknown entity</span>';
+    const isShip = p.entity_type === 'ship';
+    const col = isShip ? '#5ba4cf' : (polarityColor[p.polarity] || 'var(--border)');
+    const knownId = (p.entity_id || isShip) ? '' : ' style="color:#d97706;"';
+    const unknownBadge = (p.entity_id || isShip) ? '' : '<span style="color:#d97706; font-size:0.68rem; font-weight:700; margin-left:4px;">unknown entity</span>';
+    const shipBadge = isShip ? '<span style="color:#5ba4cf; font-size:0.68rem; font-weight:700; margin-left:4px;">ship log</span>' : '';
+    const conflictBadge = p.conflict ? '<span style="color:#e05c5c; font-size:0.68rem; font-weight:700; margin-left:4px;" title="This may contradict the entity\'s known state — review before committing">⚠ conflict</span>' : '';
+    const borderCol = p.conflict ? '#e05c5c' : col;
     return `<div style="display:flex; gap:10px; align-items:flex-start; background:var(--surface2);
-                       border:1px solid var(--border); border-left:3px solid ${col}; border-radius:5px; padding:10px 12px;">
+                       border:1px solid var(--border); border-left:3px solid ${borderCol}; border-radius:5px; padding:10px 12px;">
       <input type="checkbox" id="prop-${i}" checked style="margin-top:3px; accent-color:var(--gold); flex-shrink:0;">
       <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:6px;">
         <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
           <span style="font-weight:700; font-size:0.83rem;"${knownId}>${p.entity_name}</span>
-          ${unknownBadge}
+          ${unknownBadge}${shipBadge}${conflictBadge}
           <span style="font-size:0.7rem; color:var(--muted); text-transform:uppercase;">${p.entity_type}</span>
           ${p.polarity ? `<span style="color:${col}; font-size:0.72rem;">${p.polarity} ×${p.intensity}</span>` : ''}
           ${p.event_type ? `<span style="color:var(--purple); font-size:0.7rem; font-weight:700; text-transform:uppercase;">${p.event_type}</span>` : ''}
@@ -321,7 +363,7 @@ function renderProposals(proposals, sessionN) {
                onchange="_proposalData[${i}].note = this.value"
                style="background:var(--surface); border:1px solid var(--border); color:var(--text);
                       border-radius:4px; padding:4px 8px; font-size:0.82rem; width:100%; box-sizing:border-box;">
-        ${!p.entity_id ? `<p style="color:#d97706; font-size:0.7rem; margin:0;">Entity not found in world — will be skipped on commit unless you add them first.</p>` : ''}
+        ${(!p.entity_id && !isShip) ? `<p style="color:#7ec87e; font-size:0.7rem; margin:0;">New entity — will be created automatically on commit (hidden, edit in World).</p>` : ''}
       </div>
     </div>`;
   }).join('');
@@ -329,9 +371,10 @@ function renderProposals(proposals, sessionN) {
 
 function commitProposals(slug) {
   const entries = _proposalData
-    .filter((p, i) => document.getElementById('prop-' + i) && document.getElementById('prop-' + i).checked && p.entity_id)
+    .filter((p, i) => document.getElementById('prop-' + i) && document.getElementById('prop-' + i).checked)
     .map((p, i) => ({
-      entity_id: p.entity_id,
+      entity_id: p.entity_id || '',
+      entity_name: p.entity_name || '',
       entity_type: p.entity_type,
       note: p.note,
       polarity: p.polarity,
@@ -352,7 +395,11 @@ function commitProposals(slug) {
     .then(r => r.json())
     .then(data => {
       if (data.error) { document.getElementById('commit-status').textContent = data.error; return; }
-      document.getElementById('commit-status').textContent = `${data.committed} event${data.committed !== 1 ? 's' : ''} logged.`;
+      var msg = `${data.committed} event${data.committed !== 1 ? 's' : ''} logged.`;
+      if (data.created && data.created.length) {
+        msg += ' Created: ' + data.created.map(e => e.name + ' (' + e.type + ')').join(', ') + ' — hidden, edit in World.';
+      }
+      document.getElementById('commit-status').textContent = msg;
       setTimeout(() => { document.getElementById('proposals-section').style.display = 'none'; location.reload(); }, 1200);
     })
     .catch(() => { document.getElementById('commit-status').textContent = 'Something went wrong.'; });
@@ -384,24 +431,133 @@ function loadFutures() {
         return;
       }
       const confColor = { high: '#e05c5c', medium: '#d97706', low: 'var(--muted)' };
-      cards.innerHTML = data.futures.map(f => `
-        <div style="background:var(--surface2); border:1px solid var(--border);
+      window._futureDmState = data.futures.map(f => ({ note: f.hypothesis, confidence: f.confidence }));
+      const btnS = (i, c) => {
+        const active = c === data.futures[i].confidence;
+        return `background:${active ? (confColor[c]||'var(--purple)') : 'none'}; color:${active ? '#fff' : 'var(--muted)'}; border:1px solid var(--border); border-radius:3px; padding:2px 7px; font-size:0.65rem; cursor:pointer; font-weight:700; text-transform:uppercase;`;
+      };
+      cards.innerHTML = data.futures.map((f, i) => `
+        <div id="dmfcard-${i}" style="background:var(--surface2); border:1px solid var(--border);
                     border-left:3px solid ${confColor[f.confidence] || 'var(--purple)'};
-                    border-radius:5px; padding:10px 14px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-            <span style="font-weight:700; font-size:0.83rem; color:var(--text);">${f.entity_name}</span>
-            <span style="font-size:0.68rem; color:${confColor[f.confidence] || 'var(--purple)'}; text-transform:uppercase; letter-spacing:0.05em;">${f.confidence}</span>
+                    border-radius:5px; padding:10px 14px; display:flex; gap:10px; align-items:flex-start;">
+          <input type="checkbox" class="future-cb" checked
+                 data-idx="${i}"
+                 data-entity-id="${f.entity_id || ''}"
+                 data-entity-type="${f.entity_kind || 'npc'}"
+                 data-entity-name="${f.entity_name || ''}"
+                 style="margin-top:4px; accent-color:var(--purple); flex-shrink:0;"
+                 onchange="updateFuturesCommitBtn()">
+          <div style="flex:1;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; flex-wrap:wrap; gap:6px;">
+              <span style="font-weight:700; font-size:0.83rem; color:var(--text);">${f.entity_name}</span>
+              <div style="display:flex; gap:3px;">
+                <button onclick="setDmFutureConf(${i},'high')" id="dmfc-${i}-high" style="${btnS(i,'high')}">high</button>
+                <button onclick="setDmFutureConf(${i},'medium')" id="dmfc-${i}-medium" style="${btnS(i,'medium')}">med</button>
+                <button onclick="setDmFutureConf(${i},'low')" id="dmfc-${i}-low" style="${btnS(i,'low')}">low</button>
+              </div>
+            </div>
+            <textarea id="dmft-${i}" oninput="_futureDmState[${i}].note = this.value"
+                      style="width:100%; box-sizing:border-box; background:var(--surface); border:1px solid var(--border);
+                             color:var(--text); border-radius:4px; padding:6px 8px; font-size:0.82rem;
+                             font-family:inherit; line-height:1.45; resize:vertical; margin-bottom:4px;"
+                      rows="3">${f.hypothesis.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</textarea>
+            <p style="margin:0; font-size:0.72rem; color:var(--muted); font-style:italic;">${f.reasoning}</p>
           </div>
-          <p style="margin:0 0 4px 0; font-size:0.82rem; color:var(--text);">${f.hypothesis}</p>
-          <p style="margin:0; font-size:0.72rem; color:var(--muted);">${f.reasoning}</p>
         </div>
-      `).join('');
+      `).join('') +
+      `<div style="display:flex; align-items:center; gap:12px; padding-top:4px;">
+        <button id="futures-commit-btn" onclick="commitFutures()"
+                style="background:var(--purple);color:#fff;border:none;border-radius:4px;padding:5px 14px;font-size:0.78rem;font-weight:700;cursor:pointer;">
+          Commit selected
+        </button>
+      </div>
+      <div id="futures-commit-msg" style="display:none;"></div>`;
     })
     .catch(() => {
       loading.style.display = 'none';
       btn.textContent = 'What happens next? ✦';
       btn.disabled = false;
       cards.innerHTML = '<p style="color:#e05c5c; font-size:0.8rem;">Request failed.</p>';
+    });
+}
+
+function updateFuturesCommitBtn() {
+  const btn = document.getElementById('futures-commit-btn');
+  if (!btn) return;
+  const any = [...document.querySelectorAll('.future-cb')].some(cb => cb.checked);
+  btn.disabled = !any;
+  btn.style.opacity = any ? '1' : '0.4';
+}
+
+function setDmFutureConf(i, conf) {
+  if (!window._futureDmState) return;
+  _futureDmState[i].confidence = conf;
+  const confColor = { high: '#e05c5c', medium: '#d97706', low: 'var(--muted)' };
+  ['high', 'medium', 'low'].forEach(function(c) {
+    var btn = document.getElementById('dmfc-' + i + '-' + c);
+    if (!btn) return;
+    btn.style.background = c === conf ? (confColor[c] || 'var(--purple)') : 'none';
+    btn.style.color = c === conf ? '#fff' : 'var(--muted)';
+  });
+  var card = document.getElementById('dmfcard-' + i);
+  if (card) card.style.borderLeftColor = confColor[conf] || 'var(--purple)';
+}
+
+function renderWorldDiff(diffs) {
+  if (!diffs || !diffs.length) return '';
+  const relColor = { allied: '#7ec87e', friendly: '#7ec87e', neutral: 'var(--muted)', hostile: '#e05c5c' };
+  const rows = diffs.map(d => {
+    const parts = [];
+    if (d.log_added) parts.push(`+${d.log_added} entr${d.log_added === 1 ? 'y' : 'ies'}`);
+    if (d.score_before !== undefined && d.score_after !== undefined && d.score_before !== d.score_after) {
+      parts.push(`score ${d.score_before} → ${d.score_after}`);
+    }
+    let relPart = '';
+    if (d.relationship_before && d.relationship_after && d.relationship_before !== d.relationship_after) {
+      relPart = ` <span style="color:${relColor[d.relationship_before]||'var(--muted)'};">${d.relationship_before}</span>` +
+                ` → <span style="color:${relColor[d.relationship_after]||'var(--muted)'}; font-weight:700;">${d.relationship_after}</span>`;
+    }
+    return `<div style="display:flex; justify-content:space-between; align-items:baseline; padding:3px 0; border-bottom:1px solid var(--border); font-size:0.72rem;">
+      <span style="color:var(--text); font-weight:700;">${d.entity_name}${relPart}</span>
+      <span style="color:var(--muted);">${parts.join(' · ')}</span>
+    </div>`;
+  }).join('');
+  return `<div style="margin-top:8px;"><p style="color:var(--muted); font-size:0.68rem; text-transform:uppercase; letter-spacing:0.08em; margin:0 0 4px 0;">World changed</p>${rows}</div>`;
+}
+
+function commitFutures() {
+  const btn = document.getElementById('futures-commit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Committing…';
+  const entries = [...document.querySelectorAll('.future-cb')]
+    .filter(cb => cb.checked)
+    .map(cb => {
+      const i = parseInt(cb.dataset.idx);
+      const st = window._futureDmState && _futureDmState[i];
+      return {
+        entity_id: cb.dataset.entityId,
+        entity_type: cb.dataset.entityType,
+        entity_name: cb.dataset.entityName || '',
+        note: st ? st.note : (cb.dataset.note || ''),
+        confidence: st ? st.confidence : (cb.dataset.confidence || 'medium')
+      };
+    });
+  fetch('/{{ slug }}/dm/world/commit_futures', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ entries })
+  })
+    .then(r => r.json())
+    .then(data => {
+      btn.style.display = 'none';
+      const msg = document.getElementById('futures-commit-msg');
+      msg.style.display = 'block';
+      msg.innerHTML = `<p style="color:#7ec87e; font-size:0.75rem; margin:4px 0 0 0;">✓ ${data.committed} consequence${data.committed !== 1 ? 's' : ''} committed as PROJECTED events.</p>` +
+        renderWorldDiff(data.diffs);
+    })
+    .catch(() => {
+      btn.disabled = false;
+      btn.textContent = 'Commit selected';
     });
 }
 </script>
