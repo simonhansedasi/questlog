@@ -882,4 +882,4 @@ db.post_journal(SLUG, 9, "2024-01-01",
 )
 
 print("\nWars of the Roses campaign seeded successfully.")
-print("To deploy to Pi:  rsync -av campaigns/roses/ simonhans@raspberrypi:/mnt/serverdrive/coding/questbook/campaigns/roses/")
+print("To deploy to Pi:  rsync -av campaigns/roses/ simonhans@raspberrypi:/mnt/serverdrive/coding/rippleforge/campaigns/roses/")

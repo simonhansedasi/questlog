@@ -663,4 +663,4 @@ db.post_journal(SLUG, 7, "Book 7: Priam's Embassy",
     "That's the point. The Iliad is not a poem about winning.")
 
 print(f"\nDone. Campaign '{SLUG}' seeded at {CAMP_DIR}")
-print("To deploy to Pi:  rsync -av campaigns/iliad/ simonhans@raspberrypi:/mnt/serverdrive/coding/questbook/campaigns/iliad/")
+print("To deploy to Pi:  rsync -av campaigns/iliad/ simonhans@raspberrypi:/mnt/serverdrive/coding/rippleforge/campaigns/iliad/")

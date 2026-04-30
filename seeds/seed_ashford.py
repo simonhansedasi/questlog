@@ -578,5 +578,5 @@ db.post_journal(SLUG, 5, "Session 5 — The Ledger",
     "knows we're here. Greystone Keep is next.")
 
 print(f"\nDone. Campaign '{SLUG}' seeded at {CAMP_DIR}")
-print("To deploy to Pi:  rsync -av campaigns/ashford/ simonhans@raspberrypi:/mnt/serverdrive/coding/questbook/campaigns/ashford/")
+print("To deploy to Pi:  rsync -av campaigns/ashford/ simonhans@raspberrypi:/mnt/serverdrive/coding/rippleforge/campaigns/ashford/")
 print("Remember to update DEMO_SOURCE in app.py to CAMPAIGNS / 'ashford' if using as demo.")

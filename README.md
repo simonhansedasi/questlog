@@ -236,7 +236,7 @@ When viewing branch X forked at session N:
 ## Setup
 
 ```bash
-cd questbook
+cd rippleforge
 python3 -m venv venv
 venv/bin/pip install flask markdown werkzeug anthropic python-dotenv flask-limiter
 venv/bin/python app.py
@@ -249,16 +249,16 @@ Runs at `http://localhost:5052`.
 ## Deploy (Raspberry Pi)
 
 ```bash
-cd questbook && ./deploy.sh
+cd rippleforge && ./deploy.sh
 ```
 
 `deploy.sh` rsyncs all non-data files (excludes `venv/`, `campaigns/`, `.env`) and restarts the service. For single-file deploys:
 
 ```bash
-rsync -av --checksum <file> simonhans@raspberrypi:/mnt/serverdrive/coding/questbook/<relative-path>
-ssh simonhans@raspberrypi "sudo systemctl restart questbook"
+rsync -av --checksum <file> simonhans@raspberrypi:/mnt/serverdrive/coding/rippleforge/<relative-path>
+ssh simonhans@raspberrypi "sudo systemctl restart rippleforge"
 ```
 
 Always use the explicit `/mnt/serverdrive/` path, never `~/coding` (symlink).
 
-Systemd service: `/etc/systemd/system/questbook.service`. nginx routes `rippleforge.gg` → `127.0.0.1:5052`.
+Systemd service: `/etc/systemd/system/rippleforge.service`. nginx routes `rippleforge.gg` → `127.0.0.1:5052`.

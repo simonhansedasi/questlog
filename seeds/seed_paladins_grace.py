@@ -421,4 +421,4 @@ db.post_journal(SLUG, 4, "Session 4 — The Underbrick",
     "We need to reach the cache before either delegation realizes they both paid for it.")
 
 print(f"\nDone. Campaign '{SLUG}' seeded at {CAMP_DIR}")
-print("To deploy to Pi:  rsync -av campaigns/paladins_grace/ simonhans@raspberrypi:/mnt/serverdrive/coding/questbook/campaigns/paladins_grace/")
+print("To deploy to Pi:  rsync -av campaigns/paladins_grace/ simonhans@raspberrypi:/mnt/serverdrive/coding/rippleforge/campaigns/paladins_grace/")

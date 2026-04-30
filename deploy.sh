@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-DEST="simonhans@raspberrypi:/mnt/serverdrive/coding/questbook"
+DEST="simonhans@raspberrypi:/mnt/serverdrive/coding/rippleforge"
 
 rsync -av --checksum \
   --exclude='venv/' \
@@ -10,10 +10,9 @@ rsync -av --checksum \
   --exclude='.env' \
   --exclude='campaigns/' \
   --exclude='users.json' \
-  --exclude='invites.json' \
   --exclude='*.egg-info/' \
   . "$DEST"
 
-ssh simonhans@raspberrypi "find /mnt/serverdrive/coding/questbook -name '*.pyc' -delete && sudo systemctl restart questbook"
+ssh simonhans@raspberrypi "find /mnt/serverdrive/coding/rippleforge -name '*.pyc' -delete && sudo systemctl restart rippleforge"
 
 echo "Deployed and restarted."

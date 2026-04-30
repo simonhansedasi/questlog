@@ -650,4 +650,4 @@ db.post_journal(SLUG, 10, "Joseph Weeps",
     "That is the most extraordinary thing in the book.")
 
 print(f"\nDone. Campaign '{SLUG}' seeded at {CAMP_DIR}")
-print("To deploy to Pi:  rsync -av campaigns/genesis/ simonhans@raspberrypi:/mnt/serverdrive/coding/questbook/campaigns/genesis/")
+print("To deploy to Pi:  rsync -av campaigns/genesis/ simonhans@raspberrypi:/mnt/serverdrive/coding/rippleforge/campaigns/genesis/")

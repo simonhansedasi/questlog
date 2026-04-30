@@ -1145,4 +1145,4 @@ db.post_journal(SLUG, 12, "2024-01-01",
 )
 
 print("\nWorld War II campaign seeded successfully.")
-print("To deploy to Pi:  rsync -av campaigns/ww2/ simonhans@raspberrypi:/mnt/serverdrive/coding/questbook/campaigns/ww2/")
+print("To deploy to Pi:  rsync -av campaigns/ww2/ simonhans@raspberrypi:/mnt/serverdrive/coding/rippleforge/campaigns/ww2/")
