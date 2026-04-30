@@ -1,9 +1,13 @@
 {
-  "name": "Blank Campaign",
+  "name": "Blank World",
   "system": "Any",
   "slug": "example",
-  "description": "A clean starting point. Clone this to begin your own campaign from scratch.",
+  "description": "A clean starting point. Clone this to begin your own world from scratch.",
   "created": "2026-04-19",
   "demo": true,
-  "dm_pin": "1234"
+  "public": true,
+  "dm_pin": "1234",
+  "terminology": {
+    "dm": "Narrator"
+  }
 }

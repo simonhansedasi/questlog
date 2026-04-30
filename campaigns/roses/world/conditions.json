@@ -1,0 +1,56 @@
+{
+  "conditions": [
+    {
+      "id": "the_royal_madness",
+      "name": "The Royal Madness",
+      "region": "England",
+      "effect_type": "danger",
+      "effect_scope": "governance",
+      "magnitude": "total collapse of royal authority",
+      "status": "active",
+      "description": "Henry VI's first complete mental collapse begins in August 1453 and lasts eighteen months. He cannot speak, move, or recognise his newborn son. England has a king who is not there. Richard of York is appointed Protector. Henry's recovery in December 1454 ends York's protectorate and restores the Lancastrian court faction \u2014 but the damage is done. Every magnate in England now knows the throne can be taken.",
+      "hidden": false,
+      "relations": [],
+      "log": []
+    },
+    {
+      "id": "the_attainder_spiral",
+      "name": "The Attainder Spiral",
+      "region": "England",
+      "effect_type": "danger",
+      "effect_scope": "nobility",
+      "magnitude": "estates and titles stripped by act of parliament",
+      "status": "active",
+      "description": "Both sides use acts of attainder \u2014 parliamentary declarations of treason \u2014 to strip their enemies of land and title without trial. Hundreds of noble families are attainted, restored, and attainted again as the political winds shift. The practice destroys the stable property rights that underpin noble loyalty to any dynasty. Lords fight not only for principle but to recover what they have already lost.",
+      "hidden": false,
+      "relations": [],
+      "log": []
+    },
+    {
+      "id": "french_interference",
+      "name": "French Interference",
+      "region": "Channel Ports",
+      "effect_type": "politics",
+      "effect_scope": "diplomacy",
+      "magnitude": "active foreign backing of pretenders",
+      "status": "active",
+      "description": "Louis XI of France \u2014 the Spider King \u2014 consistently backs whichever English faction is most likely to keep England divided and weak. He funds Warwick's switch to Lancaster in 1470. He harbours Henry Tudor in exile for fourteen years. He provides ships and soldiers for the Tudor invasion of 1485. England's civil war is partly sustained by French interest in its continuation.",
+      "hidden": true,
+      "relations": [],
+      "log": []
+    },
+    {
+      "id": "the_missing_princes",
+      "name": "The Missing Princes",
+      "region": "Tower of London",
+      "effect_type": "danger",
+      "effect_scope": "succession",
+      "magnitude": "heirs imprisoned and presumed dead",
+      "status": "active",
+      "description": "Edward V (age 12) and his brother Richard Duke of York (age 9) are placed in the Tower of London in the spring of 1483 by their uncle Richard. They are seen less and less frequently. After the summer of 1483 they are not seen at all. No bodies are found in their lifetimes. Richard III never explains their absence. Their disappearance delegitimises his reign and drives defections to Henry Tudor. Whether Richard ordered their deaths is the most debated mystery in English history.",
+      "hidden": true,
+      "relations": [],
+      "log": []
+    }
+  ]
+}

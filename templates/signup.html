@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Sign Up — RippleForge{% endblock %}
+{% block content %}
+
+<div style="max-width:400px; margin:60px auto 0;">
+
+  <div style="text-align:center; margin-bottom:28px;">
+    <h1 style="font-size:2rem; font-weight:800; color:var(--text); letter-spacing:-0.02em; margin:0 0 6px 0;">RippleForge</h1>
+    <p style="font-size:0.9rem; color:var(--muted); margin:0;">Free — 1 world. No card required.</p>
+  </div>
+
+  <div class="card">
+    {% if error %}
+    <p style="color:#e05c5c; font-size:0.85rem; margin-bottom:16px;">{{ error }}</p>
+    {% endif %}
+    <form method="POST" action="/signup" style="display:flex; flex-direction:column; gap:14px;">
+      <div style="display:flex; flex-direction:column; gap:4px;">
+        <label style="color:var(--muted); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Username</label>
+        <input type="text" name="username" required autofocus placeholder="3–20 chars, letters/numbers/underscores"
+               style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:8px 12px; font-size:0.95rem; width:100%; box-sizing:border-box;">
+      </div>
+      <div style="display:flex; flex-direction:column; gap:4px;">
+        <label style="color:var(--muted); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Password</label>
+        <input type="password" name="password" required placeholder="At least 8 characters"
+               style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:8px 12px; font-size:0.95rem; width:100%; box-sizing:border-box;">
+      </div>
+      <button type="submit"
+              style="background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:9px 0; font-size:0.95rem; font-weight:700; cursor:pointer; margin-top:4px;">
+        Create Account
+      </button>
+    </form>
+    <p style="text-align:center; margin:16px 0 0; font-size:0.82rem; color:var(--muted);">
+      Already have an account? <a href="/login" style="color:var(--purple);">Log in</a>
+    </p>
+  </div>
+</div>
+
+{% endblock %}

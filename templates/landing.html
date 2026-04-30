@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% block title %}RippleForge — Causality Engine for Narrative{% endblock %}
+{% block meta %}
+<meta name="description" content="RippleForge tracks any narrative world as a living graph of events and consequences. Log one event — every connected character and faction feels it automatically. Use it for TTRPG campaigns, novels, historical timelines, or alternate histories.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "RippleForge",
+  "url": "https://rippleforge.gg",
+  "description": "A causality engine for narrative. Log one event and every connected character and faction updates automatically through a relationship graph. Works for TTRPG campaigns, novels, historical timelines, and alternate histories. AI parses notes into structured world events, projects consequences, and tracks cause-and-effect chains.",
+  "applicationCategory": "UtilitiesApplication",
+  "applicationSubCategory": "Narrative and Worldbuilding Tool",
+  "operatingSystem": "Web",
+  "browserRequirements": "Requires a modern web browser",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD",
+    "description": "Free demo — no account required"
+  },
+  "featureList": [
+    "Character and faction relationship graph",
+    "Automatic ripple propagation — one event, automatic consequences",
+    "AI note parsing — extract structured events from freeform text",
+    "Consequence projection engine",
+    "Branching alternate timelines — fork history, compare divergence",
+    "Time travel — view world state at any point in the timeline",
+    "Per-reader fog of war",
+    "Ripple chain visualization",
+    "Domain-agnostic — TTRPG, fiction, historical analysis, alternate history"
+  ],
+  "screenshot": "https://rippleforge.gg/demo/",
+  "author": {
+    "@type": "Person",
+    "name": "Simon Hans"
+  },
+  "aggregateRating": null,
+  "softwareVersion": "alpha"
+}
+</script>
+{% endblock %}
+{% block content %}
+
+<div style="max-width:680px; margin:60px auto 80px;">
+
+  <!-- Hero -->
+  <div style="text-align:center; margin-bottom:52px;">
+    <h1 style="font-size:2.4rem; font-weight:800; color:var(--text); letter-spacing:-0.03em; margin:0 0 14px 0; line-height:1.15;">
+      Every event leaves a mark.<br>Every mark leaves a consequence.
+    </h1>
+    <p style="font-size:1.05rem; color:var(--muted); line-height:1.6; margin:0 auto 28px; max-width:520px;">
+      RippleForge is a causality engine for narrative. Log one event — every connected character and faction feels it automatically. Use it for campaigns, novels, historical timelines, or alternate histories.
+    </p>
+    <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+      <a href="/demo/" style="background:var(--gold); color:#080a18; border-radius:5px; padding:11px 28px; font-size:0.95rem; font-weight:800; text-decoration:none; letter-spacing:0.01em;">
+        Try the demo →
+      </a>
+      <a href="/guide" style="background:none; border:1px solid var(--border); color:var(--muted); border-radius:5px; padding:11px 20px; font-size:0.9rem; font-weight:600; text-decoration:none;">
+        How it works
+      </a>
+    </div>
+    <p style="color:var(--muted); font-size:0.78rem; margin:14px 0 0; opacity:0.7;">
+      World War II — no account required
+    </p>
+  </div>
+
+  <!-- Branching — HERO FEATURE -->
+  <div class="card" style="margin-bottom:16px; border-color:var(--gold)55;">
+    <div style="display:flex; gap:16px; align-items:flex-start;">
+      <span style="font-size:1.4rem; flex-shrink:0; margin-top:2px;">⎇</span>
+      <div>
+        <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 8px 0;">Timeline Forking</h3>
+        <p style="color:var(--muted); font-size:0.9rem; line-height:1.65; margin:0;">
+          Rewind your world to any session and fork an alternate timeline — without touching the original. What if Japan never bombed Pearl Harbor? What if your party left Avernus one session earlier? Branch, log events, and see exactly how the relationship graph diverges from the main timeline.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ripple concept -->
+  <div class="card" style="margin-bottom:16px; border-color:var(--purple)33;">
+    <div style="display:flex; gap:16px; align-items:flex-start;">
+      <span style="font-size:1.4rem; flex-shrink:0; margin-top:2px;">⟳</span>
+      <div>
+        <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 8px 0;">The Ripple System</h3>
+        <p style="color:var(--muted); font-size:0.9rem; line-height:1.65; margin:0;">
+          Every character and faction exists in a relationship graph. Log that the guild master was betrayed — his allies grow wary, his rivals sense an opportunity. One event, automatic consequences across the whole web. Works for tabletop sessions, novel chapters, historical pivots.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Parser -->
+  <div class="card" style="margin-bottom:16px;">
+    <div style="display:flex; gap:16px; align-items:flex-start;">
+      <span style="font-size:1.4rem; flex-shrink:0; margin-top:2px;">✦</span>
+      <div>
+        <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 8px 0;">AI Session Parser</h3>
+        <p style="color:var(--muted); font-size:0.9rem; line-height:1.65; margin:0;">
+          Paste raw notes — session scrawls, chapter drafts, historical records, anything. The AI extracts discrete world events, one per entity. Review them, edit anything, commit. Ripples fire across your whole world in one step.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Futures -->
+  <div class="card" style="margin-bottom:40px;">
+    <div style="display:flex; gap:16px; align-items:flex-start;">
+      <span style="font-size:1.4rem; flex-shrink:0; margin-top:2px;">◈</span>
+      <div>
+        <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 8px 0;">Consequence Engine</h3>
+        <p style="color:var(--muted); font-size:0.9rem; line-height:1.65; margin:0;">
+          Ask "What happens next?" and get concrete projections grounded in your actual world state — not generic plot suggestions. Named entities, specific actions, direct causation. The world moves predictably from known forces.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hook line -->
+  <div style="text-align:center; margin-bottom:40px;">
+    <p style="font-size:1.1rem; font-weight:700; color:var(--text); font-style:italic; margin:0; opacity:0.8;">
+      Do nothing. The world still moves.
+    </p>
+  </div>
+
+  <!-- Domain agnostic note -->
+  <div style="text-align:center; margin-bottom:16px; padding:18px 24px; background:var(--surface2); border-radius:8px; border:1px solid var(--border);">
+    <p style="color:var(--muted); font-size:0.85rem; line-height:1.6; margin:0;">
+      Works for any narrative — tabletop campaigns, novels, historical timelines, alternate histories. RippleForge tracks <em>events and consequences</em>, not game rules. No stats, no HP, no mechanics. Just cause and consequence.
+    </p>
+  </div>
+
+  <!-- Data freedom note -->
+  <div style="text-align:center; margin-bottom:40px; padding:18px 24px; background:var(--surface2); border-radius:8px; border:1px solid var(--border);">
+    <p style="color:var(--muted); font-size:0.85rem; line-height:1.6; margin:0;">
+      Your world is yours. Every campaign exports as plain JSON at any time — no lock-in, no hostage data, no subscription required to get your own work back.
+    </p>
+  </div>
+
+  <!-- Footer CTAs -->
+  <div style="text-align:center; display:flex; flex-direction:column; gap:10px; align-items:center;">
+    <a href="/demo/" style="background:var(--gold); color:#080a18; border-radius:5px; padding:10px 28px; font-size:0.92rem; font-weight:800; text-decoration:none;">
+      Try the demo — World War II →
+    </a>
+    <p style="color:var(--muted); font-size:0.76rem; margin:4px 0 0;">Or browse read-only: <a href="/share/k_21q-vg-gdASJMx1BkOLg" style="color:var(--gold); text-decoration:none;">The Iliad</a> &nbsp;·&nbsp; <a href="/share/Et-R0afQCkhoo3KodsLFcg" style="color:var(--gold); text-decoration:none;">The Ashcroft Vein</a> &nbsp;·&nbsp; <a href="/share/ykIkx4uVDpWfMoq1CsA4bg" style="color:var(--gold); text-decoration:none;">Wars of the Roses</a></p>
+    <div style="display:flex; gap:20px; font-size:0.82rem;">
+      <a href="/login" style="color:var(--purple); font-weight:700; text-decoration:none;">Create a free account</a>
+      <a href="/login" style="color:var(--muted); text-decoration:none;">Log in</a>
+      <a href="/guide" style="color:var(--muted); text-decoration:none;">Quick Start Guide</a>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

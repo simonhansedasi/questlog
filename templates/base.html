@@ -8,13 +8,26 @@
   <meta name="description" content="RippleForge — living world simulation for tabletop RPGs. Log events, track NPC relationships, and let AI project consequences. The world keeps moving even when your players don't.">
   {% endblock %}
   <link rel="stylesheet" href="/static/style.css">
+  <link rel="manifest" href="/static/manifest.json">
+  <link rel="apple-touch-icon" href="/static/icon-192.png">
+  <meta name="theme-color" content="#9b6bd4">
   {% if is_demo %}<script src="/static/tour.js"></script>{% endif %}
+  <script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
 </head>
 <body>
   <nav>
     <a class="brand" href="/">RippleForge</a>
     {% if slug is defined and slug %}
     <a href="/{{ slug }}/" {% if request.path == '/' ~ slug ~ '/' %}class="active"{% endif %}>Home</a>
+    {% if world_mode in ('fiction', 'historical') %}
+    {# ── Simplified nav for fiction / historical ── #}
+    <a href="/{{ slug }}/world" {% if request.path.startswith('/' ~ slug ~ '/world') %}class="active"{% endif %}>World</a>
+    <a href="/{{ slug }}/story" {% if request.path.startswith('/' ~ slug ~ '/story') %}class="active"{% endif %}>{{ terms.story_label or 'Arcs' }}</a>
+    <a href="/{{ slug }}/journal" {% if request.path.startswith('/' ~ slug ~ '/journal') %}class="active"{% endif %}>{{ terms.journal_label or 'Journal' }}</a>
+    <a href="/{{ slug }}/brief" {% if request.path.startswith('/' ~ slug ~ '/brief') %}class="active"{% endif %} style="color:var(--purple);">{{ terms.brief_nav or 'Brief' }}</a>
+    <a href="/{{ slug }}/references" {% if request.path.startswith('/' ~ slug ~ '/references') %}class="active"{% endif %}>Ref</a>
+    {% else %}
+    {# ── Full TTRPG nav ── #}
     <a href="/{{ slug }}/party" {% if request.path.startswith('/' ~ slug ~ '/party') %}class="active"{% endif %}>Party</a>
     <a href="/{{ slug }}/assets" {% if request.path.startswith('/' ~ slug ~ '/assets') %}class="active"{% endif %}>Assets</a>
     <a href="/{{ slug }}/world" {% if request.path.startswith('/' ~ slug ~ '/world') %}class="active"{% endif %}>World</a>
@@ -22,19 +35,20 @@
     <a href="/{{ slug }}/journal" {% if request.path.startswith('/' ~ slug ~ '/journal') %}class="active"{% endif %}>Journal</a>
     <a href="/{{ slug }}/brief" {% if request.path.startswith('/' ~ slug ~ '/brief') %}class="active"{% endif %} style="color:var(--purple);">Brief</a>
     <a href="/{{ slug }}/references" {% if request.path.startswith('/' ~ slug ~ '/references') %}class="active"{% endif %}>Ref</a>
+    {% endif %}
     {% if not is_demo %}
     <div class="dm-sep">
       {% if session.get('dm_' ~ slug) %}
-      <a href="/{{ slug }}/dm" style="color:var(--purple); font-size:0.8rem; font-weight:700; padding:0 8px; letter-spacing:0.05em; text-decoration:none;">DM</a>
+      <a href="/{{ slug }}/dm" style="color:var(--purple); font-size:0.8rem; font-weight:700; padding:0 8px; letter-spacing:0.05em; text-decoration:none;">{{ terms.dm or 'DM' }}</a>
       <form method="POST" action="/{{ slug }}/dm/logout" style="display:inline;">
         <button type="submit"
                 style="background:none; border:1px solid var(--border); color:var(--muted);
                        border-radius:4px; padding:4px 10px; font-size:0.8rem; cursor:pointer; margin-left:4px;">
-          Exit DM
+          Exit {{ terms.dm or 'DM' }}
         </button>
       </form>
-      {% else %}
-      <a href="/{{ slug }}/dm" style="color:var(--purple); font-size:0.85rem;">DM</a>
+      {% elif can_write %}
+      <a href="/{{ slug }}/dm" style="color:var(--purple); font-size:0.85rem;">{{ terms.dm or 'DM' }}</a>
       {% endif %}
     </div>
     {% endif %}
@@ -44,7 +58,13 @@
       {% if viewer_character is defined and viewer_character %}
       <span style="color:var(--purple); font-size:0.75rem; font-weight:700; letter-spacing:0.03em;" title="Your character">⚔ {{ viewer_character.name }}</span>
       {% endif %}
-      <span style="color:var(--muted); font-size:0.8rem;">{{ session.get('display_name', session.get('user')) }}</span>
+      <a href="/wiki" style="color:var(--muted); font-size:0.8rem; font-weight:700; text-decoration:none; opacity:0.6;" title="DM Knowledge Base">?</a>
+      {% if user_pro is defined %}
+      <a href="/billing" style="font-size:0.72rem; font-weight:700; letter-spacing:0.04em; text-decoration:none; padding:2px 7px; border-radius:3px;
+        {% if user_pro %}color:var(--purple); border:1px solid var(--purple); opacity:0.7;{% else %}color:var(--muted); border:1px solid var(--border);{% endif %}"
+        title="Billing">{{ 'PRO' if user_pro else 'FREE' }}</a>
+      {% endif %}
+      <a href="/account/password" style="color:var(--muted); font-size:0.8rem; text-decoration:none;" title="Change password">{{ session.get('user') }}</a>
       <form method="POST" action="/logout" style="display:inline;">
         <button type="submit"
                 style="background:none; border:1px solid var(--border); color:var(--muted);
@@ -58,7 +78,7 @@
   {% if is_demo %}
   <div style="background:var(--surface2); border-bottom:1px solid var(--border); padding:6px 16px; display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:0.78rem;">
     <span style="color:var(--gold); font-weight:700; letter-spacing:0.05em;">DEMO</span>
-    <span style="color:var(--muted);">Lost Mine of Phandelver — try it out. Changes reset every 30 minutes.</span>
+    <span style="color:var(--muted);">World War II — try it out. Changes reset every 30 minutes.</span>
     <div style="display:flex; gap:12px; flex-shrink:0;">
       <a href="/demo/ai" style="color:var(--purple); font-size:0.78rem; text-decoration:none; font-weight:700;">AI tools ✦</a>
       <a href="/demo/" onclick="sessionStorage.setItem('rf_tour','0');" style="color:var(--purple); font-size:0.78rem; text-decoration:none; font-weight:700;">take the tour</a>

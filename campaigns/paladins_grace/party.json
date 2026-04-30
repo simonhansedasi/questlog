@@ -1,0 +1,44 @@
+{
+  "characters": [
+    {
+      "name": "Carran Voss",
+      "race": "Human",
+      "class": "Paladin",
+      "level": 1,
+      "status": "active",
+      "hidden": false,
+      "notes": "Grace-Sworn initiate. Earnest. Believes in the compact harder than anyone born to it.",
+      "known_events": []
+    },
+    {
+      "name": "Mira Dune",
+      "race": "Half-Elf",
+      "class": "Rogue",
+      "level": 1,
+      "status": "active",
+      "hidden": false,
+      "notes": "Compact Guild courier. Knows every back street in Hartstone. Loyalties unclear.",
+      "known_events": []
+    },
+    {
+      "name": "Sera Eld",
+      "race": "Dwarf",
+      "class": "Cleric",
+      "level": 1,
+      "status": "active",
+      "hidden": false,
+      "notes": "Temple healer from outside Hartstone. Came to study the Grace-Sworn. Stayed.",
+      "known_events": []
+    },
+    {
+      "name": "Osric Fell",
+      "race": "Human",
+      "class": "Wizard",
+      "level": 1,
+      "status": "active",
+      "hidden": false,
+      "notes": "Kelrath Academy scholar. Officially studying civic law. Unofficially watching everything.",
+      "known_events": []
+    }
+  ]
+}

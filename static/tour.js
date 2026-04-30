@@ -3,21 +3,28 @@
     {
       path: /^\/demo\/?$/,
       title: "Welcome to RippleForge",
-      body: "This demo runs a full Lost Mine of Phandelver campaign, Sessions 1\u20135. We\u2019ll show you two things: how one event ripples through your world automatically, and the AI tools that save hours of prep.",
-      cta: "See the ripple chains \u2192",
+      body: "This demo runs a full World War II campaign \u2014 twelve chapters, eight nations, fully interactive. We\u2019ll show you three things: ripple chains, the AI layer, and timeline forking.",
+      cta: "See a ripple happen \u2192",
       next: "/demo/world/ripples"
     },
     {
       path: /^\/demo\/world\/ripples/,
       title: "One event. Four consequences.",
-      body: "When Iarno Albrek was captured in Session 4, RippleForge automatically updated four entities \u2014 each with a different consequence based on their relationship to him. You didn\u2019t write any of this.",
+      body: "When Paulus surrendered at Stalingrad, RippleForge automatically updated four entities \u2014 each with a different consequence based on their relationship to him. You didn\u2019t write any of this.",
       cta: "See the AI layer \u2192",
       next: "/demo/ai"
     },
     {
       path: /^\/demo\/ai/,
       title: "The AI layer",
-      body: "Two features that save hours. Paste messy session notes and get structured world events \u2014 or ask what probably happens next based on every active tension in your world.\n\nTry both buttons, then click around.",
+      body: "Two features that save hours. Paste messy session notes and get structured world events \u2014 or ask what probably happens next based on every active tension in your world.\n\nTry both buttons, then keep going.",
+      cta: "Try timeline forking \u2192",
+      next: "/demo/world"
+    },
+    {
+      path: /^\/demo\/world/,
+      title: "Timeline forking",
+      body: "Scroll down to \u201cNew alternate timeline.\u201d Pick any chapter as your fork point, give it a name, and branch. Events you log go into the branch only \u2014 the original history stays intact.\n\nThe relationship graph updates to show the divergence.",
       cta: "Got it",
       next: null
     }

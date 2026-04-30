@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Billing — RippleForge{% endblock %}
+{% block content %}
+<h1 class="page-title">Billing</h1>
+
+<div style="max-width:480px; display:flex; flex-direction:column; gap:20px;">
+
+  <div style="background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:20px 24px;">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+      <span style="font-weight:700; font-size:1rem; color:var(--text);">Current plan</span>
+      {% if is_pro and not cancel_at_period_end %}
+      <span style="background:var(--purple); color:#fff; border-radius:4px; padding:2px 10px; font-size:0.78rem; font-weight:700; letter-spacing:0.05em;">PRO</span>
+      {% elif is_pro and cancel_at_period_end %}
+      <span style="background:none; border:1px solid var(--purple); color:var(--purple); border-radius:4px; padding:2px 10px; font-size:0.78rem; font-weight:700; letter-spacing:0.05em;">PRO &mdash; cancelling</span>
+      {% else %}
+      <span style="background:var(--surface3,var(--border)); color:var(--muted); border-radius:4px; padding:2px 10px; font-size:0.78rem; font-weight:700; letter-spacing:0.05em;">FREE</span>
+      {% endif %}
+    </div>
+    <div style="color:var(--muted); font-size:0.88rem; margin-bottom:6px;">
+      Worlds: <strong style="color:var(--text);">{{ worlds_used }} / {{ worlds_limit }}</strong>
+    </div>
+    {% if is_pro and cancel_at_period_end %}
+    <div style="color:var(--muted); font-size:0.85rem; margin-bottom:8px;">Pro access until {% if cancel_date %}<strong style="color:var(--text);">{{ cancel_date }}</strong>{% else %}end of billing period{% endif %}, then free (1 world).</div>
+    {% if worlds_used > 1 %}
+    <div style="color:var(--gold); font-size:0.82rem; margin-bottom:12px;">You have {{ worlds_used }} worlds. After downgrade you can still access them all, but won't be able to create new ones until you're back on Pro.</div>
+    {% endif %}
+    <form method="POST" action="/billing/portal">
+      <button type="submit" style="background:none; border:1px solid var(--border); color:var(--muted); border-radius:4px; padding:6px 14px; font-size:0.82rem; cursor:pointer;">
+        Manage subscription
+      </button>
+    </form>
+    {% elif is_pro %}
+    <div style="color:var(--muted); font-size:0.85rem; margin-bottom:16px;">$8/month &middot; 5 worlds included &middot; AI features unlocked</div>
+    <form method="POST" action="/billing/portal">
+      <button type="submit" style="background:none; border:1px solid var(--border); color:var(--muted); border-radius:4px; padding:6px 14px; font-size:0.82rem; cursor:pointer;">
+        Manage subscription
+      </button>
+    </form>
+    {% else %}
+    <div style="color:var(--muted); font-size:0.85rem; margin-bottom:16px;">Free &middot; 1 world &middot; 14-day Pro trial available &middot; $1 per additional world</div>
+    <form method="POST" action="/billing/checkout/pro">
+      <button type="submit" style="background:var(--purple); color:#fff; border:none; border-radius:4px; padding:8px 20px; font-size:0.88rem; font-weight:700; cursor:pointer;">
+        Try Pro free for 14 days
+      </button>
+    </form>
+    <p style="color:var(--muted); font-size:0.78rem; margin-top:8px;">No charge for 14 days &mdash; then $8/month. Cancel anytime.</p>
+    {% endif %}
+  </div>
+
+  {% if not is_pro %}
+  <div style="background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:20px 24px;">
+    <div style="font-weight:700; font-size:0.95rem; color:var(--text); margin-bottom:8px;">Pro includes</div>
+    <ul style="color:var(--muted); font-size:0.88rem; line-height:1.8; padding-left:18px; margin:0;">
+      <li>5 worlds (vs 1 on free)</li>
+      <li>AI event parsing &amp; consequence projection</li>
+      <li>$1 to start each additional world beyond 5</li>
+    </ul>
+  </div>
+  {% endif %}
+
+  <a href="/" style="color:var(--muted); font-size:0.82rem; text-decoration:none;">&larr; Back to my worlds</a>
+
+</div>
+{% endblock %}

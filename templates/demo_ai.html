@@ -8,41 +8,24 @@
 <h1 class="page-title" style="margin-top:12px;">AI Tools</h1>
 <p style="color:var(--muted); font-size:0.88rem; margin-bottom:32px;">Two features that save hours and make worlds feel alive — no prompting required.</p>
 
-<!-- ── WHAT HAPPENS NEXT ── -->
-<div class="card" style="margin-bottom:32px;">
-  <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
-    <span style="font-size:1.1rem;">🔮</span>
-    <h2 style="margin:0; font-size:1.05rem;">What Happens Next?</h2>
-  </div>
-  <p style="color:var(--muted); font-size:0.82rem; margin-bottom:18px;">RippleForge reads every NPC relationship, faction tension, and unresolved quest thread — then predicts the most probable consequences if the party does nothing.</p>
-
-  <button id="futures-btn" onclick="showFutures()"
-    style="background:var(--purple);color:#fff;border:none;border-radius:5px;padding:9px 20px;font-size:0.88rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px;">
-    <span id="futures-spinner" style="display:none;">⏳</span>
-    Generate consequences
-  </button>
-
-  <div id="futures-result" style="display:none; margin-top:20px; display:none; flex-direction:column; gap:12px;"></div>
-</div>
-
 <!-- ── PARSE NOTES ── -->
-<div class="card">
+<div class="card" style="margin-bottom:32px;">
   <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
     <span style="font-size:1.1rem;">📋</span>
     <h2 style="margin:0; font-size:1.05rem;">Messy Notes → Structured Events</h2>
   </div>
-  <p style="color:var(--muted); font-size:0.82rem; margin-bottom:14px;">Paste raw session notes. RippleForge extracts discrete world events, matches them to known NPCs and factions, and assigns polarity and intensity — ready to commit to the world log.</p>
+  <p style="color:var(--muted); font-size:0.82rem; margin-bottom:14px;">Paste raw period notes. RippleForge extracts discrete world events, matches them to known figures and powers, and assigns polarity and intensity — ready to commit to the world log.</p>
 
   <textarea id="notes-input" rows="9"
-    style="width:100%; background:var(--surface2); border:1px solid var(--border); border-radius:5px; padding:10px 12px; color:var(--text); font-size:0.82rem; line-height:1.6; resize:vertical; box-sizing:border-box; font-family:inherit;">Session 6 notes —
+    style="width:100%; background:var(--surface2); border:1px solid var(--border); border-radius:5px; padding:10px 12px; color:var(--text); font-size:0.82rem; line-height:1.6; resize:vertical; box-sizing:border-box; font-family:inherit;">Period 7 notes — December 1941
 
-Cragmaw Castle. Party snuck in through collapsed wall, avoided goblins in guard tower. Found Gundren in King Grol's chamber — beaten up but alive. Grol had a drow messenger there (Vel'rar) — she tried to flee when the fight started, Aldric tackled her. Grol killed in combat (Pip landed killing blow with sneak attack).
+Japan attacks Pearl Harbor, December 7. Yamamoto's kido butai strikes in two waves — eight battleships hit, Arizona and Oklahoma lost entirely. 2,403 Americans killed. Pacific Fleet battleship force destroyed in two hours. US carrier fleet and oil reserves untouched — the carriers were at sea.
 
-Vel'rar surrendered. Questioned her — she works directly for the Black Spider. Revealed Wave Echo Cave entrance is through the Phandelver mine, not the pass. Says the Black Spider is already there with a crew. She offered to guide them in exchange for her freedom. Party debated. Split vote — Mira wanted to let her go, Aldric wanted to keep her prisoner. Eventually freed her on Mira's insistence, she left east toward Neverwinter.
+Roosevelt addresses Congress December 8 — "a date which will live in infamy." War declared against Japan 388 to 1. Germany and Italy declare war on the United States December 11; Roosevelt counters immediately. US is now in on both fronts.
 
-Gundren in bad shape. Has the map — or had it, Grol destroyed it but Gundren remembers the route. He wants to go home to Phandalin to recover first, offered the party a 10% stake in the mine if they clear it. Party agreed.
+Churchill cables Roosevelt on hearing the news. "So we had won after all." Privately relieved — British survival had been in real doubt before today. Stalin is informed but makes no public statement.
 
-Harbin Wester met them on the road back — he'd heard rumors about the castle assault. Seemed nervous. Asked if they found "any documents." Pip lied and said no. Harbin visibly relieved.</textarea>
+Yamamoto privately uneasy — regards the attack as an incomplete victory. The carrier fleet survived and oil reserves are intact. He believes the US will retaliate faster than Tokyo expects. He does not say this publicly.</textarea>
 
   <div style="display:flex; align-items:center; gap:14px; margin-top:12px; flex-wrap:wrap;">
     <button id="parse-btn" onclick="parseNotes()"
@@ -56,43 +39,60 @@ Harbin Wester met them on the road back — he'd heard rumors about the castle a
   <div id="parse-result" style="display:none; margin-top:20px;"></div>
 </div>
 
+<!-- ── WHAT HAPPENS NEXT ── -->
+<div class="card">
+  <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
+    <span style="font-size:1.1rem;">🔮</span>
+    <h2 style="margin:0; font-size:1.05rem;">What Happens Next?</h2>
+  </div>
+  <p style="color:var(--muted); font-size:0.82rem; margin-bottom:18px;">RippleForge reads every figure's relationships, power tensions, and unresolved threads — then predicts the most probable consequences if left unchecked.</p>
+
+  <button id="futures-btn" onclick="showFutures()"
+    style="background:var(--purple);color:#fff;border:none;border-radius:5px;padding:9px 20px;font-size:0.88rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px;">
+    <span id="futures-spinner" style="display:none;">⏳</span>
+    Generate consequences
+  </button>
+
+  <div id="futures-result" style="display:none; margin-top:20px; display:none; flex-direction:column; gap:12px;"></div>
+</div>
+
 </div>
 
 <script>
 var FUTURES_DATA = [
   {
-    entity_id: "nezznar",
+    entity_id: "joseph_stalin",
     entity_type: "npc",
-    entity_name: "Nezznar (The Black Spider)",
-    hypothesis: "Accelerates excavation of Wave Echo Cave after losing contact with Vel'rar — likely to activate the Forge of Spells before the party arrives.",
-    reasoning: "Vel'rar's capture removed his only early-warning system; he will assume Cragmaw has fallen and move fast.",
+    entity_name: "Joseph Stalin",
+    hypothesis: "Demands a second front in Western Europe at the next Allied summit — Soviet losses are catastrophic and the Eastern Front cannot hold without relief.",
+    reasoning: "The Soviet Union has absorbed the brunt of German aggression for eighteen months. US entry gives Stalin the leverage to demand a western offensive. He will not stop asking.",
     confidence: "high"
   },
   {
-    entity_id: "harbin_wester",
+    entity_id: "isoroku_yamamoto",
     entity_type: "npc",
-    entity_name: "Harbin Wester",
-    hypothesis: "Attempts to warn the Black Spider's network that the party is heading to Wave Echo Cave — his nervousness at the castle road suggests an active courier relationship.",
-    reasoning: "His pointed questions about documents and visible relief at Pip's lie indicate prior dealings with Nezznar's operation.",
-    confidence: "medium"
+    entity_name: "Isoroku Yamamoto",
+    hypothesis: "Moves to extend Japan's Pacific defensive perimeter — likely targeting Midway or the Aleutians — before American shipyards close the industrial gap.",
+    reasoning: "Yamamoto knows Japan's window is narrow. US industrial capacity will dwarf Japan's within eighteen months. The perimeter must be established now while the Pacific Fleet is still recovering.",
+    confidence: "high"
   },
   {
-    entity_id: "halia_thornton",
+    entity_id: "adolf_hitler",
     entity_type: "npc",
-    entity_name: "Halia Thornton",
-    hypothesis: "Moves to consolidate influence in Phandalin now that Iarno's Redbrand operation is broken — likely recruiting independently or probing the party for an alliance.",
-    reasoning: "With her chief rival neutralised and the Black Spider's local network in disarray, the power vacuum in Phandalin is hers to fill.",
+    entity_name: "Adolf Hitler",
+    hypothesis: "Presses toward Stalingrad despite overextended supply lines — regards it as a symbolic objective and will not authorize a strategic withdrawal.",
+    reasoning: "Hitler has declared US entry irrelevant and doubled down on the Eastern Front. His refusal to delegate tactical authority means Army Group South will push to the Volga regardless of logistics.",
     confidence: "medium"
   }
 ];
 
 var PARSE_DATA = [
   {
-    entity_id: "king_grol",
-    entity_type: "npc",
-    entity_name: "King Grol",
-    faction_name: "Cragmaw Tribe",
-    note: "Killed in combat — Pip landed the killing blow with a sneak attack.",
+    entity_id: "imperial_japan",
+    entity_type: "faction",
+    entity_name: "Imperial Japan",
+    faction_name: null,
+    note: "Launches surprise attack on Pearl Harbor — eight battleships struck, Arizona and Oklahoma lost, 2,403 Americans killed.",
     polarity: "negative",
     intensity: 3,
     event_type: "combat",
@@ -100,38 +100,38 @@ var PARSE_DATA = [
     conflict: false
   },
   {
-    entity_id: "gundren_rockseeker",
+    entity_id: "franklin_d_roosevelt",
     entity_type: "npc",
-    entity_name: "Gundren Rockseeker",
+    entity_name: "Franklin D. Roosevelt",
     faction_name: null,
-    note: "Rescued from Cragmaw Castle; agreed to grant the party a 10% stake in Wave Echo Cave in exchange for clearing it.",
+    note: "Delivers \"Day of Infamy\" address to Congress; war declared against Japan 388-1. Counters Germany and Italy's declarations immediately — United States enters on both fronts.",
     polarity: "positive",
     intensity: 3,
+    event_type: "politics",
+    visibility: "public",
+    conflict: false
+  },
+  {
+    entity_id: "winston_churchill",
+    entity_type: "npc",
+    entity_name: "Winston Churchill",
+    faction_name: null,
+    note: "Cables Roosevelt upon hearing the news: \"So we had won after all.\" US entry removes the existential threat to British survival.",
+    polarity: "positive",
+    intensity: 2,
     event_type: "dialogue",
     visibility: "public",
     conflict: false
   },
   {
-    entity_id: "velrar",
+    entity_id: "isoroku_yamamoto",
     entity_type: "npc",
-    entity_name: "Vel'rar",
-    faction_name: "The Black Spider",
-    note: "Surrendered after Grol's death; revealed Wave Echo Cave's entrance location and the Black Spider's presence there, then was released east toward Neverwinter.",
-    polarity: "neutral",
-    intensity: 2,
-    event_type: "dialogue",
-    visibility: "dm_only",
-    conflict: false
-  },
-  {
-    entity_id: "harbin_wester",
-    entity_type: "npc",
-    entity_name: "Harbin Wester",
+    entity_name: "Isoroku Yamamoto",
     faction_name: null,
-    note: "Intercepted the party on the road and asked if they found any documents at Cragmaw; visibly relieved when Pip lied and said no.",
+    note: "Privately regards Pearl Harbor as an incomplete victory — US carrier fleet and oil reserves untouched. Believes American retaliation will come faster than Tokyo expects.",
     polarity: "neutral",
     intensity: 2,
-    event_type: "dialogue",
+    event_type: "discovery",
     visibility: "dm_only",
     conflict: false
   }
@@ -169,7 +169,7 @@ function setParseIntensity(i, n) {
 function toggleParseVis(i) {
   _parseState[i].visibility = _parseState[i].visibility === 'public' ? 'dm_only' : 'public';
   var b = document.getElementById('vis-' + i);
-  if (b) { b.textContent = _parseState[i].visibility === 'dm_only' ? 'DM only' : 'public'; b.style.cssText = _btnStyle(_parseState[i].visibility === 'dm_only'); }
+  if (b) { b.textContent = _parseState[i].visibility === 'dm_only' ? 'Historian only' : 'public'; b.style.cssText = _btnStyle(_parseState[i].visibility === 'dm_only'); }
 }
 function setFutureConf(i, conf) {
   _futureState[i].confidence = conf;
@@ -282,7 +282,7 @@ function commitFutures() {
     var result = document.getElementById('futures-result');
     result.innerHTML = '<div style="border:1px solid #7ec87e44; background:#7ec87e11; border-radius:6px; padding:16px 18px;">' +
       '<p style="color:#7ec87e; font-weight:700; font-size:0.9rem; margin:0 0 6px 0;">✓ ' + data.committed + ' consequence' + (data.committed !== 1 ? 's' : '') + ' committed to world log</p>' +
-      '<p style="color:var(--muted); font-size:0.82rem; margin:0 0 10px 0;">Each entity\'s timeline now shows a <strong style="color:var(--purple);">PROJECTED</strong> entry. If the party intervenes, the DM removes or overwrites it. If they don\'t — it stands.</p>' +
+      '<p style="color:var(--muted); font-size:0.82rem; margin:0 0 10px 0;">Each entity\'s timeline now shows a <strong style="color:var(--purple);">PROJECTED</strong> entry. If events unfold differently, the Historian removes or overwrites it. If they don\'t — it stands.</p>' +
       renderWorldDiff(data.diffs) +
       '<div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:12px;">' +
         '<a href="/demo/world" style="color:var(--purple); font-size:0.82rem; font-weight:700; text-decoration:none;">View world →</a>' +
@@ -332,7 +332,7 @@ function _renderProposals(proposals) {
               '<button id="int-2-' + i + '" style="' + _btnStyle(e.intensity===2) + '" onclick="setParseIntensity(' + i + ',2)">2</button>' +
               '<button id="int-3-' + i + '" style="' + _btnStyle(e.intensity===3) + '" onclick="setParseIntensity(' + i + ',3)">3</button>' +
             '</div>' +
-            '<button id="vis-' + i + '" style="' + _btnStyle(isDm) + '" onclick="toggleParseVis(' + i + ')">' + (isDm ? 'DM only' : 'public') + '</button>' +
+            '<button id="vis-' + i + '" style="' + _btnStyle(isDm) + '" onclick="toggleParseVis(' + i + ')">' + (isDm ? 'Historian only' : 'public') + '</button>' +
           '</div>' +
         '</div>' +
       '</div>' +
@@ -389,6 +389,13 @@ function parseNotes() {
         '<a href="/login" style="background:var(--purple);color:#fff;border-radius:5px;padding:9px 20px;font-size:0.88rem;font-weight:700;text-decoration:none;">Create a free account →</a>' +
       '</div>';
       _updateLimitDisplay(0);
+      return;
+    }
+    if (data.error === 'too_long') {
+      btn.disabled = false;
+      var result = document.getElementById('parse-result');
+      result.style.display = 'block';
+      result.innerHTML = '<p style="color:#e05c5c; font-size:0.85rem; margin:0;">Notes too long — trim to under 5,000 characters and try again.</p>';
       return;
     }
     if (data.error || !data.proposals) {

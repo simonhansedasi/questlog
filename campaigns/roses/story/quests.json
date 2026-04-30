@@ -1,0 +1,40 @@
+{
+  "quests": [
+    {
+      "id": "the_legitimacy_question",
+      "title": "The Legitimacy Question",
+      "status": "active",
+      "description": "Who has the right to rule England? The Yorkist claim through Philippa of Clarence \u2014 Edward III's third son \u2014 is genealogically stronger than the Lancastrian claim through John of Gaunt's illegitimate line. But the Lancastrians have ruled for fifty years. Legitimacy is not just genealogy: it is also possession, precedent, and force. Each side argues law; each side wins with armies. Henry VII settles the question by winning and then marrying the other side.",
+      "hidden": false,
+      "objectives": [],
+      "log": []
+    },
+    {
+      "id": "warwick_s_gamble",
+      "title": "Warwick's Gamble",
+      "status": "active",
+      "description": "Richard Neville made Edward IV king. He expected to run the kingdom. Edward's secret marriage to a Woodville widow in 1464 ends this arrangement. Warwick's response \u2014 rebellion, capture of the king, restoration of Lancaster, alliance with the queen he spent years fighting \u2014 is the most dramatic political reversal of the entire conflict. Whether he could have succeeded is unanswerable: he is killed at Barnet before the alliance with Margaret can be tested at full strength.",
+      "hidden": false,
+      "objectives": [],
+      "log": []
+    },
+    {
+      "id": "the_princes_in_the_tower",
+      "title": "The Princes in the Tower",
+      "status": "active",
+      "description": "Edward IV dies in April 1483. His heir is twelve years old. Within two months his brother Richard has declared the boy illegitimate, imprisoned him and his brother in the Tower, and crowned himself. The two boys are never seen in public again. Richard's reign lasts twenty-six months. Every defection that ultimately kills him at Bosworth is driven at least partly by the question of what he did to his nephews.",
+      "hidden": false,
+      "objectives": [],
+      "log": []
+    },
+    {
+      "id": "the_tudor_settlement",
+      "title": "The Tudor Settlement",
+      "status": "active",
+      "description": "Henry Tudor has no real claim to the throne beyond survival and opportunity. He wins it by killing Richard III and immediately marries Elizabeth of York \u2014 uniting the two roses and ending the dynastic argument. His victory is not inevitable: it requires French money, Welsh loyalty, and the Stanley family's last-minute betrayal of Richard mid-battle. The Wars of the Roses end not because someone wins decisively but because Henry VII proves impossible to dislodge.",
+      "hidden": false,
+      "objectives": [],
+      "log": []
+    }
+  ]
+}

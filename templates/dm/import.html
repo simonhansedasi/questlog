@@ -1,0 +1,430 @@
+{% extends "base.html" %}
+{% block title %}Import — {{ meta.name }}{% endblock %}
+{% block content %}
+
+<div style="display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:8px; margin-bottom:4px;">
+  <h1 class="page-title">Import</h1>
+</div>
+<p class="subtitle" style="margin-bottom:20px;">
+  {{ meta.name }} &mdash; <a href="/{{ slug }}/dm" style="color:var(--muted); font-size:0.85rem;">DM Dashboard →</a>
+</p>
+
+<!-- Tab bar -->
+<div style="display:flex; border-bottom:1px solid var(--border); margin-bottom:24px; gap:0;">
+  <button id="tab-notes" onclick="switchTab('notes')"
+          style="background:none; border:none; border-bottom:2px solid var(--gold); color:var(--text); font-size:0.88rem; font-weight:700; padding:8px 20px; cursor:pointer; margin-bottom:-1px;">
+    Session Notes
+  </button>
+  <button id="tab-obsidian" onclick="switchTab('obsidian')"
+          style="background:none; border:none; border-bottom:2px solid transparent; color:var(--muted); font-size:0.88rem; padding:8px 20px; cursor:pointer; margin-bottom:-1px;">
+    Obsidian Vault
+  </button>
+</div>
+
+<!-- ── Tab: Session Notes ───────────────────────────────────────────────── -->
+<div id="pane-notes">
+<div class="card mb-4">
+  <p style="color:var(--muted); font-size:0.85rem; margin-bottom:16px; line-height:1.5;">
+    Upload a <code>.txt</code> or <code>.md</code> file containing your full campaign notes.
+    Sessions are auto-detected from headers like <code>## Session 3</code> or <code>Session 3:</code>.
+    Each session's notes will be parsed by AI and committed automatically — no review step.
+    You can edit individual entries from the DM dashboard afterward.
+  </p>
+
+  <div id="upload-section">
+    <label style="display:block; cursor:pointer; border:2px dashed var(--border); border-radius:6px; padding:32px; text-align:center;"
+           id="drop-zone">
+      <input type="file" id="notes-file" accept=".txt,.md" style="display:none;">
+      <div style="color:var(--muted); font-size:0.88rem;" id="drop-label">
+        Click to choose a file or drag and drop here<br>
+        <span style="font-size:0.78rem; opacity:0.6;">.txt or .md — up to 500 KB</span>
+      </div>
+    </label>
+  </div>
+
+  <div id="preview-section" style="display:none; margin-top:20px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <h3 style="margin:0; font-size:0.95rem; color:var(--text);">Detected Sessions</h3>
+      <span id="session-count" style="font-size:0.8rem; color:var(--muted);"></span>
+    </div>
+    <div id="session-list" style="display:flex; flex-direction:column; gap:6px; margin-bottom:16px; max-height:300px; overflow-y:auto;"></div>
+    <button id="start-import" style="background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:8px 20px; font-size:0.88rem; font-weight:700; cursor:pointer;">
+      Import All Sessions
+    </button>
+    <button id="cancel-import" style="background:none; border:1px solid var(--border); color:var(--muted); border-radius:4px; padding:8px 16px; font-size:0.88rem; cursor:pointer; margin-left:8px;">
+      Choose Different File
+    </button>
+  </div>
+
+  <div id="progress-section" style="display:none; margin-top:20px;">
+    <h3 style="margin:0 0 12px; font-size:0.95rem; color:var(--text);">Importing…</h3>
+    <div id="progress-bar-track" style="background:var(--surface2); border-radius:4px; height:6px; margin-bottom:16px;">
+      <div id="progress-bar" style="background:var(--gold); height:6px; border-radius:4px; width:0%; transition:width 0.3s;"></div>
+    </div>
+    <div id="session-results" style="display:flex; flex-direction:column; gap:4px; max-height:320px; overflow-y:auto;"></div>
+  </div>
+
+  <div id="done-section" style="display:none; margin-top:20px;">
+    <div style="background:var(--surface2); border:1px solid var(--border); border-radius:6px; padding:16px;">
+      <p style="margin:0 0 8px; font-weight:700; color:var(--gold);">Import complete</p>
+      <p id="done-summary" style="margin:0; font-size:0.85rem; color:var(--muted);"></p>
+    </div>
+    <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap;">
+      <a href="/{{ slug }}/dm" style="background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:7px 18px; font-size:0.85rem; font-weight:700; text-decoration:none;">
+        Go to Dashboard
+      </a>
+      <button id="import-another" style="background:none; border:1px solid var(--border); color:var(--muted); border-radius:4px; padding:7px 14px; font-size:0.85rem; cursor:pointer;">
+        Import Another File
+      </button>
+    </div>
+  </div>
+</div>
+</div><!-- /pane-notes -->
+
+<!-- ── Tab: Obsidian Vault ──────────────────────────────────────────────── -->
+<div id="pane-obsidian" style="display:none;">
+<div class="card mb-4">
+  <p style="color:var(--muted); font-size:0.85rem; margin-bottom:4px; line-height:1.5;">
+    Export your Obsidian vault (or a subfolder of it) as a <code>.zip</code> and upload it here.
+    RippleForge will detect <strong style="color:var(--text);">NPCs, factions, and quests</strong> from your notes — skipping locations, items, statblocks, and anything else that doesn't map to the engine.
+  </p>
+  <p style="color:var(--muted); font-size:0.82rem; margin-bottom:16px; line-height:1.5;">
+    Detection uses folder names (<code>NPCs/</code>, <code>Factions/</code>, <code>Quests/</code>), YAML frontmatter (<code>type: npc</code>), or tags (<code>#npc</code>, <code>#faction</code>).
+    Imported entities are visible to players by default — hide any you want to keep secret from the World page afterward.
+  </p>
+
+  <!-- Upload -->
+  <div id="obs-upload-section">
+    <label style="display:block; cursor:pointer; border:2px dashed var(--border); border-radius:6px; padding:32px; text-align:center;" id="obs-drop-zone">
+      <input type="file" id="obs-file" accept=".zip" style="display:none;">
+      <div style="color:var(--muted); font-size:0.88rem;" id="obs-drop-label">
+        Click to choose your vault <code>.zip</code> or drag and drop here<br>
+        <span style="font-size:0.78rem; opacity:0.6;">Up to 10 MB</span>
+      </div>
+    </label>
+  </div>
+
+  <!-- Parsing spinner -->
+  <div id="obs-parsing" style="display:none; margin-top:20px; text-align:center; color:var(--muted); font-size:0.85rem;">
+    Reading vault…
+  </div>
+
+  <!-- Preview -->
+  <div id="obs-preview-section" style="display:none; margin-top:20px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+      <h3 style="margin:0; font-size:0.95rem; color:var(--text);" id="obs-preview-title"></h3>
+      <div style="display:flex; gap:8px;">
+        <button onclick="obsSelectAll(true)" style="background:none; border:1px solid var(--border); color:var(--muted); border-radius:4px; padding:3px 10px; font-size:0.78rem; cursor:pointer;">Select all</button>
+        <button onclick="obsSelectAll(false)" style="background:none; border:1px solid var(--border); color:var(--muted); border-radius:4px; padding:3px 10px; font-size:0.78rem; cursor:pointer;">Deselect all</button>
+      </div>
+    </div>
+
+    <div id="obs-entity-list" style="margin-bottom:16px;"></div>
+
+    <div id="obs-skipped-wrap" style="margin-bottom:16px;">
+      <details>
+        <summary style="cursor:pointer; color:var(--muted); font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;" id="obs-skipped-label">0 files skipped</summary>
+        <div id="obs-skipped-list" style="margin-top:8px; display:flex; flex-direction:column; gap:3px;"></div>
+      </details>
+    </div>
+
+    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+      <button id="obs-confirm-btn" onclick="obsConfirm()"
+              style="background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:8px 20px; font-size:0.88rem; font-weight:700; cursor:pointer;">
+        Import Selected
+      </button>
+      <button onclick="obsReset()" style="background:none; border:1px solid var(--border); color:var(--muted); border-radius:4px; padding:8px 14px; font-size:0.88rem; cursor:pointer;">
+        Choose Different File
+      </button>
+      <span id="obs-confirm-status" style="font-size:0.82rem; color:var(--muted);"></span>
+    </div>
+  </div>
+
+  <!-- Done -->
+  <div id="obs-done-section" style="display:none; margin-top:20px;">
+    <div style="background:var(--surface2); border:1px solid var(--border); border-radius:6px; padding:16px;">
+      <p style="margin:0 0 8px; font-weight:700; color:var(--gold);">Import complete</p>
+      <p id="obs-done-summary" style="margin:0; font-size:0.85rem; color:var(--muted);"></p>
+    </div>
+    <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap;">
+      <a href="/{{ slug }}/world" style="background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:7px 18px; font-size:0.85rem; font-weight:700; text-decoration:none;">
+        Go to World
+      </a>
+      <button onclick="obsReset()" style="background:none; border:1px solid var(--border); color:var(--muted); border-radius:4px; padding:7px 14px; font-size:0.85rem; cursor:pointer;">
+        Import Another Vault
+      </button>
+    </div>
+  </div>
+</div>
+</div><!-- /pane-obsidian -->
+
+<script>
+const slug = {{ slug | tojson }};
+let fullSessions = [];
+let obsData = null;
+
+// ── Tab switching ───────────────────────────────────────────────────────────
+function switchTab(name) {
+  ['notes', 'obsidian'].forEach(t => {
+    document.getElementById('pane-' + t).style.display = t === name ? '' : 'none';
+    const btn = document.getElementById('tab-' + t);
+    btn.style.borderBottomColor = t === name ? 'var(--gold)' : 'transparent';
+    btn.style.color = t === name ? 'var(--text)' : 'var(--muted)';
+    btn.style.fontWeight = t === name ? '700' : '400';
+  });
+}
+
+// ── Session Notes ───────────────────────────────────────────────────────────
+const fileInput = document.getElementById("notes-file");
+const dropZone = document.getElementById("drop-zone");
+const dropLabel = document.getElementById("drop-label");
+const uploadSection = document.getElementById("upload-section");
+const previewSection = document.getElementById("preview-section");
+const progressSection = document.getElementById("progress-section");
+const doneSection = document.getElementById("done-section");
+
+function resetToUpload() {
+  fullSessions = [];
+  fileInput.value = "";
+  dropLabel.innerHTML = 'Click to choose a file or drag and drop here<br><span style="font-size:0.78rem;opacity:0.6;">.txt or .md — up to 500 KB</span>';
+  uploadSection.style.display = "";
+  previewSection.style.display = "none";
+  progressSection.style.display = "none";
+  doneSection.style.display = "none";
+  document.getElementById("session-list").innerHTML = "";
+  document.getElementById("session-results").innerHTML = "";
+  document.getElementById("progress-bar").style.width = "0%";
+}
+
+dropZone.addEventListener("dragover", e => { e.preventDefault(); dropZone.style.borderColor = "var(--gold)"; });
+dropZone.addEventListener("dragleave", () => { dropZone.style.borderColor = "var(--border)"; });
+dropZone.addEventListener("drop", e => {
+  e.preventDefault();
+  dropZone.style.borderColor = "var(--border)";
+  const file = e.dataTransfer.files[0];
+  if (file) handleFile(file);
+});
+fileInput.addEventListener("change", () => {
+  if (fileInput.files[0]) handleFile(fileInput.files[0]);
+});
+
+async function handleFile(file) {
+  dropLabel.textContent = `Loading ${file.name}…`;
+  const fd = new FormData();
+  fd.append("notes_file", file);
+  const resp = await fetch(`/${slug}/dm/import/preview`, { method: "POST", body: fd });
+  if (!resp.ok) { dropLabel.textContent = "Upload failed. Try again."; return; }
+  const data = await resp.json();
+  fullSessions = data.full;
+  showPreview(data.sessions, file.name);
+}
+
+function showPreview(sessions, filename) {
+  uploadSection.style.display = "none";
+  previewSection.style.display = "";
+  document.getElementById("session-count").textContent = `${sessions.length} session${sessions.length !== 1 ? "s" : ""} detected in ${filename}`;
+  const list = document.getElementById("session-list");
+  list.innerHTML = sessions.map(s =>
+    `<div style="background:var(--surface2); border:1px solid var(--border); border-radius:4px; padding:8px 12px;">
+      <span style="color:var(--gold); font-size:0.78rem; font-weight:700; margin-right:10px;">Session ${s.n}</span>
+      <span style="color:var(--muted); font-size:0.8rem;">${s.chars} chars — ${s.preview.replace(/</g,"&lt;").replace(/>/g,"&gt;")}</span>
+    </div>`
+  ).join("");
+}
+
+document.getElementById("start-import").addEventListener("click", runImport);
+document.getElementById("cancel-import").addEventListener("click", resetToUpload);
+document.getElementById("import-another").addEventListener("click", resetToUpload);
+
+async function runImport() {
+  previewSection.style.display = "none";
+  progressSection.style.display = "";
+  const results = document.getElementById("session-results");
+  const bar = document.getElementById("progress-bar");
+  let totalCommitted = 0, totalCreated = 0, errors = 0;
+
+  for (let i = 0; i < fullSessions.length; i++) {
+    const s = fullSessions[i];
+    bar.style.width = `${Math.round((i / fullSessions.length) * 100)}%`;
+    const row = document.createElement("div");
+    row.style.cssText = "font-size:0.82rem; color:var(--muted); padding:3px 0;";
+    row.textContent = `Session ${s.n}: parsing…`;
+    results.appendChild(row);
+    results.scrollTop = results.scrollHeight;
+
+    try {
+      const resp = await fetch(`/${slug}/dm/import/session`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ session_n: s.n, notes: s.text })
+      });
+      if (!resp.ok) throw new Error(resp.statusText);
+      const d = await resp.json();
+      if (d.error) throw new Error(d.error);
+      totalCommitted += d.committed || 0;
+      totalCreated += (d.created || []).length;
+      const newEntities = (d.created || []).length > 0 ? ` — ${d.created.length} new entities` : "";
+      row.innerHTML = `<span style="color:var(--gold);">✓</span> Session ${s.n}: ${d.committed} event${d.committed !== 1 ? "s" : ""}${newEntities}`;
+    } catch (err) {
+      errors++;
+      row.innerHTML = `<span style="color:#e05c5c;">✗</span> Session ${s.n}: ${err.message}`;
+    }
+  }
+
+  bar.style.width = "100%";
+  progressSection.style.display = "none";
+  doneSection.style.display = "";
+  document.getElementById("done-summary").textContent =
+    `${totalCommitted} events committed across ${fullSessions.length} sessions. ${totalCreated} new entities created.${errors > 0 ? ` ${errors} session(s) failed.` : ""}`;
+}
+
+// ── Obsidian Vault ──────────────────────────────────────────────────────────
+const obsFileInput = document.getElementById("obs-file");
+const obsDropZone = document.getElementById("obs-drop-zone");
+
+obsDropZone.addEventListener("dragover", e => { e.preventDefault(); obsDropZone.style.borderColor = "var(--gold)"; });
+obsDropZone.addEventListener("dragleave", () => { obsDropZone.style.borderColor = "var(--border)"; });
+obsDropZone.addEventListener("drop", e => {
+  e.preventDefault();
+  obsDropZone.style.borderColor = "var(--border)";
+  const file = e.dataTransfer.files[0];
+  if (file) obsHandleFile(file);
+});
+obsFileInput.addEventListener("change", () => {
+  if (obsFileInput.files[0]) obsHandleFile(obsFileInput.files[0]);
+});
+
+function obsReset() {
+  obsData = null;
+  obsFileInput.value = "";
+  document.getElementById("obs-drop-label").innerHTML =
+    'Click to choose your vault <code>.zip</code> or drag and drop here<br><span style="font-size:0.78rem;opacity:0.6;">Up to 10 MB</span>';
+  document.getElementById("obs-upload-section").style.display = "";
+  document.getElementById("obs-parsing").style.display = "none";
+  document.getElementById("obs-preview-section").style.display = "none";
+  document.getElementById("obs-done-section").style.display = "none";
+  document.getElementById("obs-entity-list").innerHTML = "";
+}
+
+async function obsHandleFile(file) {
+  document.getElementById("obs-drop-label").textContent = `Reading ${file.name}…`;
+  document.getElementById("obs-upload-section").style.display = "none";
+  document.getElementById("obs-parsing").style.display = "";
+
+  const fd = new FormData();
+  fd.append("vault_zip", file);
+
+  const resp = await fetch(`/${slug}/dm/import/obsidian`, { method: "POST", body: fd });
+  document.getElementById("obs-parsing").style.display = "none";
+
+  if (!resp.ok) {
+    const err = await resp.json().catch(() => ({error: resp.statusText}));
+    document.getElementById("obs-upload-section").style.display = "";
+    document.getElementById("obs-drop-label").innerHTML =
+      `<span style="color:#e05c5c;">${err.error || "Upload failed."}</span><br>
+       <span style="font-size:0.78rem; opacity:0.6;">Try again</span>`;
+    return;
+  }
+
+  obsData = await resp.json();
+  obsShowPreview(file.name);
+}
+
+function obsEntityRow(e, type, idx) {
+  const badge = type === 'npc' ? `<span style="color:var(--blue); font-size:0.7rem; font-weight:700;">NPC</span>`
+              : type === 'faction' ? `<span style="color:var(--purple); font-size:0.7rem; font-weight:700;">FACTION</span>`
+              : `<span style="color:var(--gold); font-size:0.7rem; font-weight:700;">QUEST</span>`;
+  const exists = e.exists
+    ? `<span style="color:var(--muted); font-size:0.7rem; font-style:italic; margin-left:4px;">already exists — will skip</span>` : '';
+  const role = e.role ? `<span style="color:var(--muted); font-size:0.75rem;"> · ${e.role}</span>` : '';
+  const faction = e.faction_name ? `<span style="color:var(--muted); font-size:0.75rem;"> · ${e.faction_name}</span>` : '';
+  const desc = e.description ? `<div style="color:var(--muted); font-size:0.78rem; margin-top:2px; line-height:1.4;">${e.description.substring(0,120)}${e.description.length>120?'…':''}</div>` : '';
+  return `<label style="display:flex; align-items:flex-start; gap:10px; padding:8px 10px; background:var(--surface2); border-radius:5px; cursor:pointer;">
+    <input type="checkbox" data-type="${type}" data-idx="${idx}" ${e.exists ? '' : 'checked'}
+           style="margin-top:3px; accent-color:var(--gold);" ${e.exists ? 'disabled' : ''}>
+    <div style="flex:1; min-width:0;">
+      <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+        ${badge}
+        <span style="font-weight:600; font-size:0.88rem;">${e.name}</span>${role}${faction}${exists}
+      </div>
+      ${desc}
+    </div>
+  </label>`;
+}
+
+function obsShowPreview(filename) {
+  const d = obsData;
+  const total = d.npcs.length + d.factions.length + d.quests.length;
+  document.getElementById("obs-preview-title").textContent =
+    `Found ${total} entities in ${filename}`;
+
+  const list = document.getElementById("obs-entity-list");
+  list.innerHTML = '<div style="display:flex; flex-direction:column; gap:4px;">' +
+    d.factions.map((e,i) => obsEntityRow(e, 'faction', i)).join('') +
+    d.npcs.map((e,i) => obsEntityRow(e, 'npc', i)).join('') +
+    d.quests.map((e,i) => obsEntityRow(e, 'quest', i)).join('') +
+    '</div>';
+
+  // Skipped
+  const skLbl = document.getElementById("obs-skipped-label");
+  skLbl.textContent = `${d.skipped.length} file${d.skipped.length !== 1 ? 's' : ''} skipped`;
+  const skList = document.getElementById("obs-skipped-list");
+  skList.innerHTML = d.skipped.map(s =>
+    `<div style="font-size:0.78rem; color:var(--muted); padding:2px 0;">
+      <span style="color:var(--text);">${s.name}</span>
+      <span style="margin-left:6px; opacity:0.6;">${s.reason}</span>
+    </div>`
+  ).join('');
+
+  document.getElementById("obs-confirm-status").textContent = '';
+  document.getElementById("obs-preview-section").style.display = "";
+}
+
+function obsSelectAll(checked) {
+  document.querySelectorAll('#obs-entity-list input[type=checkbox]:not(:disabled)')
+    .forEach(cb => cb.checked = checked);
+}
+
+async function obsConfirm() {
+  const checkboxes = document.querySelectorAll('#obs-entity-list input[type=checkbox]:checked:not(:disabled)');
+  if (!checkboxes.length) {
+    document.getElementById("obs-confirm-status").textContent = "Nothing selected.";
+    return;
+  }
+
+  const payload = { npcs: [], factions: [], quests: [] };
+  checkboxes.forEach(cb => {
+    const type = cb.dataset.type;
+    const idx = parseInt(cb.dataset.idx);
+    payload[type + 's'].push(obsData[type + 's'][idx]);
+  });
+
+  const btn = document.getElementById("obs-confirm-btn");
+  btn.disabled = true;
+  btn.textContent = "Importing…";
+  document.getElementById("obs-confirm-status").textContent = "";
+
+  try {
+    const resp = await fetch(`/${slug}/dm/import/obsidian/confirm`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    const d = await resp.json();
+    if (!resp.ok || !d.ok) throw new Error(d.error || "Import failed.");
+
+    document.getElementById("obs-preview-section").style.display = "none";
+    document.getElementById("obs-done-section").style.display = "";
+    document.getElementById("obs-done-summary").textContent =
+      `${d.total} entities created: ${d.created.factions} faction${d.created.factions !== 1 ? 's' : ''}, ` +
+      `${d.created.npcs} NPC${d.created.npcs !== 1 ? 's' : ''}, ` +
+      `${d.created.quests} quest${d.created.quests !== 1 ? 's' : ''}. ` +
+      `Entities are visible to players — hide any secrets from the World page.`;
+  } catch (err) {
+    btn.disabled = false;
+    btn.textContent = "Import Selected";
+    document.getElementById("obs-confirm-status").textContent = err.message;
+  }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,426 @@
+{
+  "factions": [
+    {
+      "id": "house_of_lancaster",
+      "name": "House of Lancaster",
+      "relationship": "neutral",
+      "description": "The red rose. The ruling house of England for three generations \u2014 Henry IV, Henry V, Henry VI. Their claim derives from John of Gaunt, fourth son of Edward III, but passes through an illegitimate line. Their strength is legitimacy; their weakness is Henry VI himself \u2014 a pious, gentle, occasionally catatonic king who cannot govern. The real Lancastrian force is his queen, Margaret of Anjou, whose ferocity and political will hold the cause together long after the cause should have collapsed. The red rose is finally extinguished at Bosworth Field in 1485.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_17bc4c",
+          "session": 1,
+          "note": "The Lancastrian court loses its chief military commander at St. Albans. Margaret of Anjou, excluded from formal power because she is a woman, begins building her own political network \u2014 writing to nobles, controlling access to the king, accumulating influence outside the structures that exclude her. She will not be excluded for long.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "politics"
+        },
+        {
+          "id": "evt_86898e",
+          "session": 3,
+          "note": "The Lancastrian cause after Towton is a rump: a fugitive king, an exile queen, and a handful of northern castles that hold out until 1464. Margaret leads fruitless campaigns from France and Scotland, burning through political capital and receiving less each time. The red rose is not extinguished \u2014 but it is very nearly so.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "combat"
+        },
+        {
+          "id": "evt_7ccf5a",
+          "session": 6,
+          "note": "The red rose is finished. Henry VI murdered in the Tower, the Prince of Wales killed at Tewkesbury, Margaret in exile. There is no Lancastrian heir. The cause has no rallying point. The only remaining Lancastrian bloodline passes through Henry Tudor \u2014 a fourteen-year-old exile in Brittany with a questionable claim who no one takes seriously yet.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "other"
+        },
+        {
+          "id": "evt_ed51c3",
+          "session": 8,
+          "note": "Consequence of House of York (rival): Richard III's usurpation fractures the Yorkist coalition. Lord Hastings \u2014 Edward IV's closest friend \u2014 is arrested and executed on Richard's orders within minutes, on a council table in the Tower, without trial. The message is clear: loyalty to Edward's memory is a threat. Many former Yorkists begin corresponding with Henry Tudor.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "betrayal",
+          "ripple_source": {
+            "entity_id": "house_of_york",
+            "entity_type": "faction",
+            "event_id": "evt_c627f8"
+          },
+          "actor_id": "house_of_york",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_bbc7c9",
+          "session": 9,
+          "note": "Consequence of House of Tudor (ally): Henry VII marries Elizabeth of York on January 18, 1486 \u2014 the union of the red and white roses. He does not adopt the combined Tudor rose as his symbol until the marriage is done: he is careful to make clear he holds the crown by conquest, not by right of his wife. The Tudor dynasty rules England for 118 years. The Wars of the Roses are over.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "house_of_tudor",
+            "entity_type": "faction",
+            "event_id": "evt_b62f0a"
+          },
+          "actor_id": "house_of_tudor",
+          "actor_type": "faction"
+        }
+      ],
+      "relations": [
+        {
+          "target": "house_of_york",
+          "target_type": "faction",
+          "relation": "rival",
+          "weight": 1.0
+        },
+        {
+          "target": "house_of_tudor",
+          "target_type": "faction",
+          "relation": "ally",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "id": "house_of_york",
+      "name": "House of York",
+      "relationship": "neutral",
+      "description": "The white rose. Their claim descends from Edward III through two lines \u2014 both stronger than Lancaster's if inheritance is traced honestly. Richard Duke of York asserts this claim not by ambition alone but by the specific failure of Lancastrian governance. His son Edward IV is everything Henry VI is not: physically imposing, politically shrewd, militarily devastating. York wins the crown twice. It is a Yorkist internal collapse \u2014 Richard III \u2014 that ends their dynasty.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_bae283",
+          "session": 1,
+          "note": "Consequence of House of Lancaster (rival): The Lancastrian court loses its chief military commander at St. Albans. Margaret of Anjou, excluded from formal power because she is a woman, begins building her own political network \u2014 writing to nobles, controlling access to the king, accumulating influence outside the structures that exclude her. She will not be excluded for long.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "house_of_lancaster",
+            "entity_type": "faction",
+            "event_id": "evt_17bc4c"
+          },
+          "actor_id": "house_of_lancaster",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_c662bb",
+          "session": 3,
+          "note": "Consequence of House of Lancaster (rival): The Lancastrian cause after Towton is a rump: a fugitive king, an exile queen, and a handful of northern castles that hold out until 1464. Margaret leads fruitless campaigns from France and Scotland, burning through political capital and receiving less each time. The red rose is not extinguished \u2014 but it is very nearly so.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "house_of_lancaster",
+            "entity_type": "faction",
+            "event_id": "evt_86898e"
+          },
+          "actor_id": "house_of_lancaster",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_0ef766",
+          "session": 6,
+          "note": "Consequence of House of Lancaster (rival): The red rose is finished. Henry VI murdered in the Tower, the Prince of Wales killed at Tewkesbury, Margaret in exile. There is no Lancastrian heir. The cause has no rallying point. The only remaining Lancastrian bloodline passes through Henry Tudor \u2014 a fourteen-year-old exile in Brittany with a questionable claim who no one takes seriously yet.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "house_of_lancaster",
+            "entity_type": "faction",
+            "event_id": "evt_7ccf5a"
+          },
+          "actor_id": "house_of_lancaster",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_c627f8",
+          "session": 8,
+          "note": "Richard III's usurpation fractures the Yorkist coalition. Lord Hastings \u2014 Edward IV's closest friend \u2014 is arrested and executed on Richard's orders within minutes, on a council table in the Tower, without trial. The message is clear: loyalty to Edward's memory is a threat. Many former Yorkists begin corresponding with Henry Tudor.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "betrayal"
+        },
+        {
+          "id": "evt_5ea162",
+          "session": 9,
+          "note": "Consequence of House of Tudor (rival): Henry VII marries Elizabeth of York on January 18, 1486 \u2014 the union of the red and white roses. He does not adopt the combined Tudor rose as his symbol until the marriage is done: he is careful to make clear he holds the crown by conquest, not by right of his wife. The Tudor dynasty rules England for 118 years. The Wars of the Roses are over.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "house_of_tudor",
+            "entity_type": "faction",
+            "event_id": "evt_b62f0a"
+          },
+          "actor_id": "house_of_tudor",
+          "actor_type": "faction"
+        }
+      ],
+      "relations": [
+        {
+          "target": "house_of_lancaster",
+          "target_type": "faction",
+          "relation": "rival",
+          "weight": 1.0
+        },
+        {
+          "target": "house_of_neville",
+          "target_type": "faction",
+          "relation": "ally",
+          "weight": 0.9
+        },
+        {
+          "target": "house_of_tudor",
+          "target_type": "faction",
+          "relation": "rival",
+          "weight": 0.9
+        }
+      ]
+    },
+    {
+      "id": "house_of_neville",
+      "name": "House of Neville",
+      "relationship": "neutral",
+      "description": "The kingmakers. The Nevilles are the most powerful noble family in England \u2014 wealthier than most kings, connected to both York and Lancaster by blood. Richard Neville, Earl of Warwick, is the central figure: he makes Edward IV king, then unmakes him, then dies trying to restore Lancaster. His nickname \u2014 the Kingmaker \u2014 is earned. No single magnate in English history holds more political and military power for longer. His fatal flaw: he cannot accept that the king he made does not need him anymore.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_566999",
+          "session": 8,
+          "note": "Consequence of House of York (ally): Richard III's usurpation fractures the Yorkist coalition. Lord Hastings \u2014 Edward IV's closest friend \u2014 is arrested and executed on Richard's orders within minutes, on a council table in the Tower, without trial. The message is clear: loyalty to Edward's memory is a threat. Many former Yorkists begin corresponding with Henry Tudor.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "betrayal",
+          "ripple_source": {
+            "entity_id": "house_of_york",
+            "entity_type": "faction",
+            "event_id": "evt_c627f8"
+          },
+          "actor_id": "house_of_york",
+          "actor_type": "faction"
+        }
+      ],
+      "relations": [
+        {
+          "target": "house_of_york",
+          "target_type": "faction",
+          "relation": "ally",
+          "weight": 0.9
+        }
+      ]
+    },
+    {
+      "id": "house_of_tudor",
+      "name": "House of Tudor",
+      "relationship": "neutral",
+      "description": "The red dragon. An obscure Welsh dynasty with a tenuous Lancastrian bloodline through an illegitimate line \u2014 Henry Tudor's claim is weak on paper. What Henry VII has instead of legitimacy is patience, timing, and French backing. He waits in Brittany and France for fourteen years. When Richard III's support collapses in 1485, he lands in Wales, gathers an army of Welsh and English defectors, and kills Richard at Bosworth. He then marries Elizabeth of York \u2014 uniting the roses \u2014 and rules for twenty-four years. Every English monarch since has been a Tudor or a Tudor descendant.",
+      "hidden": true,
+      "log": [
+        {
+          "id": "evt_866c5b",
+          "session": 1,
+          "note": "Consequence of House of Lancaster (ally): The Lancastrian court loses its chief military commander at St. Albans. Margaret of Anjou, excluded from formal power because she is a woman, begins building her own political network \u2014 writing to nobles, controlling access to the king, accumulating influence outside the structures that exclude her. She will not be excluded for long.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "house_of_lancaster",
+            "entity_type": "faction",
+            "event_id": "evt_17bc4c"
+          },
+          "actor_id": "house_of_lancaster",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_4571c5",
+          "session": 3,
+          "note": "Consequence of House of Lancaster (ally): The Lancastrian cause after Towton is a rump: a fugitive king, an exile queen, and a handful of northern castles that hold out until 1464. Margaret leads fruitless campaigns from France and Scotland, burning through political capital and receiving less each time. The red rose is not extinguished \u2014 but it is very nearly so.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "house_of_lancaster",
+            "entity_type": "faction",
+            "event_id": "evt_86898e"
+          },
+          "actor_id": "house_of_lancaster",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_b5d7a1",
+          "session": 6,
+          "note": "Consequence of House of Lancaster (ally): The red rose is finished. Henry VI murdered in the Tower, the Prince of Wales killed at Tewkesbury, Margaret in exile. There is no Lancastrian heir. The cause has no rallying point. The only remaining Lancastrian bloodline passes through Henry Tudor \u2014 a fourteen-year-old exile in Brittany with a questionable claim who no one takes seriously yet.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "house_of_lancaster",
+            "entity_type": "faction",
+            "event_id": "evt_7ccf5a"
+          },
+          "actor_id": "house_of_lancaster",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_dfd794",
+          "session": 8,
+          "note": "Consequence of House of York (rival): Richard III's usurpation fractures the Yorkist coalition. Lord Hastings \u2014 Edward IV's closest friend \u2014 is arrested and executed on Richard's orders within minutes, on a council table in the Tower, without trial. The message is clear: loyalty to Edward's memory is a threat. Many former Yorkists begin corresponding with Henry Tudor.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "betrayal",
+          "ripple_source": {
+            "entity_id": "house_of_york",
+            "entity_type": "faction",
+            "event_id": "evt_c627f8"
+          },
+          "actor_id": "house_of_york",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_b62f0a",
+          "session": 9,
+          "note": "Henry VII marries Elizabeth of York on January 18, 1486 \u2014 the union of the red and white roses. He does not adopt the combined Tudor rose as his symbol until the marriage is done: he is careful to make clear he holds the crown by conquest, not by right of his wife. The Tudor dynasty rules England for 118 years. The Wars of the Roses are over.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "politics"
+        }
+      ],
+      "relations": [
+        {
+          "target": "house_of_lancaster",
+          "target_type": "faction",
+          "relation": "ally",
+          "weight": 0.8
+        },
+        {
+          "target": "house_of_york",
+          "target_type": "faction",
+          "relation": "rival",
+          "weight": 0.9
+        }
+      ]
+    },
+    {
+      "id": "kingdom_of_france",
+      "name": "Kingdom of France",
+      "relationship": "neutral",
+      "description": "Louis XI \u2014 'the Spider King' \u2014 watches the English tear themselves apart with quiet satisfaction. An England consumed by civil war cannot threaten France. Louis funds Warwick when Warwick switches sides. He harbors Henry Tudor in exile. He is not England's enemy so much as England's opportunist: wherever the English conflict creates leverage, Louis applies it. His backing of Tudor at the critical moment in 1485 is the margin that makes Bosworth possible.",
+      "hidden": true,
+      "log": [
+        {
+          "id": "evt_56883c",
+          "session": 1,
+          "note": "Consequence of House of Lancaster (ally): The Lancastrian court loses its chief military commander at St. Albans. Margaret of Anjou, excluded from formal power because she is a woman, begins building her own political network \u2014 writing to nobles, controlling access to the king, accumulating influence outside the structures that exclude her. She will not be excluded for long.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 1,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "house_of_lancaster",
+            "entity_type": "faction",
+            "event_id": "evt_17bc4c"
+          },
+          "actor_id": "house_of_lancaster",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_0ac2dd",
+          "session": 3,
+          "note": "Consequence of House of Lancaster (ally): The Lancastrian cause after Towton is a rump: a fugitive king, an exile queen, and a handful of northern castles that hold out until 1464. Margaret leads fruitless campaigns from France and Scotland, burning through political capital and receiving less each time. The red rose is not extinguished \u2014 but it is very nearly so.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "house_of_lancaster",
+            "entity_type": "faction",
+            "event_id": "evt_86898e"
+          },
+          "actor_id": "house_of_lancaster",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_52890b",
+          "session": 6,
+          "note": "Consequence of House of Lancaster (ally): The red rose is finished. Henry VI murdered in the Tower, the Prince of Wales killed at Tewkesbury, Margaret in exile. There is no Lancastrian heir. The cause has no rallying point. The only remaining Lancastrian bloodline passes through Henry Tudor \u2014 a fourteen-year-old exile in Brittany with a questionable claim who no one takes seriously yet.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "house_of_lancaster",
+            "entity_type": "faction",
+            "event_id": "evt_7ccf5a"
+          },
+          "actor_id": "house_of_lancaster",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_a31702",
+          "session": 8,
+          "note": "Consequence of House of York (rival): Richard III's usurpation fractures the Yorkist coalition. Lord Hastings \u2014 Edward IV's closest friend \u2014 is arrested and executed on Richard's orders within minutes, on a council table in the Tower, without trial. The message is clear: loyalty to Edward's memory is a threat. Many former Yorkists begin corresponding with Henry Tudor.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "betrayal",
+          "ripple_source": {
+            "entity_id": "house_of_york",
+            "entity_type": "faction",
+            "event_id": "evt_c627f8"
+          },
+          "actor_id": "house_of_york",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_7fed83",
+          "session": 9,
+          "note": "Consequence of House of Tudor (ally): Henry VII marries Elizabeth of York on January 18, 1486 \u2014 the union of the red and white roses. He does not adopt the combined Tudor rose as his symbol until the marriage is done: he is careful to make clear he holds the crown by conquest, not by right of his wife. The Tudor dynasty rules England for 118 years. The Wars of the Roses are over.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "house_of_tudor",
+            "entity_type": "faction",
+            "event_id": "evt_b62f0a"
+          },
+          "actor_id": "house_of_tudor",
+          "actor_type": "faction"
+        }
+      ],
+      "relations": [
+        {
+          "target": "house_of_tudor",
+          "target_type": "faction",
+          "relation": "ally",
+          "weight": 0.7
+        },
+        {
+          "target": "house_of_lancaster",
+          "target_type": "faction",
+          "relation": "ally",
+          "weight": 0.6
+        },
+        {
+          "target": "house_of_york",
+          "target_type": "faction",
+          "relation": "rival",
+          "weight": 0.5
+        }
+      ]
+    }
+  ]
+}

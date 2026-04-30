@@ -1,0 +1,1139 @@
+{
+  "npcs": [
+    {
+      "id": "the_lord",
+      "name": "The LORD",
+      "role": "Creator and Covenant-Maker",
+      "relationship": "ally",
+      "description": "YHWH acts directly in Genesis: creating, judging, promising, relenting. He makes covenants he then tests. He destroys the world and regrets it. He chooses Jacob over Esau before either is born. He wrestles with Jacob in the dark. He is not distant or symbolic \u2014 he is present and surprising.",
+      "hidden": true,
+      "factions": [
+        "the_heavenly_court"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_b1df27",
+          "session": 5,
+          "note": "Consequence of Abraham (ally): Abraham rises early in the morning and takes Isaac to Mount Moriah. He builds the altar, binds his son, and raises the knife. God stops him: now I know you fear God, for you have not withheld your son.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "abraham",
+            "entity_type": "npc",
+            "event_id": null
+          },
+          "actor_id": "abraham",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_67eddf",
+          "session": 5,
+          "note": "Consequence of Jacob (ally): Jacob deceives his blind father and receives the blessing of the firstborn; Esau arrives minutes later and weeps: is he not rightly named Jacob? He has supplanted me twice. He plans to kill Jacob after Isaac's death.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "dialogue",
+          "ripple_source": {
+            "entity_id": "jacob",
+            "entity_type": "npc",
+            "event_id": null
+          },
+          "actor_id": "jacob",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_3d22e3",
+          "session": 8,
+          "note": "Consequence of Joseph (ally): Joseph is sold into Egypt by his own brothers.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "joseph",
+            "entity_type": "npc",
+            "event_id": null
+          },
+          "actor_id": "joseph",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_c18283",
+          "session": 10,
+          "note": "Consequence of Joseph (ally): Joseph can control himself no longer; he clears the room and weeps aloud. He says: I am Joseph. Is my father still alive? He cannot stop weeping. He kisses all his brothers and they talk together.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "dialogue",
+          "ripple_source": {
+            "entity_id": "joseph",
+            "entity_type": "npc",
+            "event_id": null
+          },
+          "actor_id": "joseph",
+          "actor_type": "npc"
+        }
+      ],
+      "relations": [
+        {
+          "target": "abraham",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 1.0,
+          "dm_only": true
+        },
+        {
+          "target": "jacob",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 1.0,
+          "dm_only": true
+        },
+        {
+          "target": "joseph",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 1.0,
+          "dm_only": true
+        }
+      ]
+    },
+    {
+      "id": "adam",
+      "name": "Adam",
+      "role": "The First Man, keeper of the garden",
+      "relationship": "neutral",
+      "description": "Made from dust, given breath, placed in a garden with one prohibition. He names every creature. He receives the woman and joins her in the one thing they were told not to do. He blames her when caught. He is every man.",
+      "hidden": false,
+      "factions": [
+        "house_of_israel"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_ce1ed7",
+          "session": 1,
+          "note": "Adam and Eve eat the fruit of the tree of knowledge of good and evil; they hide from God among the trees of the garden.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "other"
+        }
+      ]
+    },
+    {
+      "id": "eve",
+      "name": "Eve",
+      "role": "The First Woman, mother of all living",
+      "relationship": "neutral",
+      "description": "She hears the serpent's argument and finds it compelling \u2014 the fruit will make them wise, like God. She eats. She gives to Adam. She names herself Eve, 'mother of all living,' after the curse. The naming is an act of defiance and hope in the same breath.",
+      "hidden": false,
+      "factions": [
+        "house_of_israel"
+      ],
+      "hidden_factions": [],
+      "log": []
+    },
+    {
+      "id": "cain",
+      "name": "Cain",
+      "role": "The First Murderer, keeper of the earth",
+      "relationship": "negative",
+      "description": "He offers the fruits of the ground; Abel offers fat portions of his flock. God regards Abel's offering and not his. The text never explains why. Cain's rage at the injustice is understandable. What he does with it is not. He is marked but not destroyed \u2014 God protects the first murderer.",
+      "hidden": false,
+      "factions": [
+        "house_of_israel"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_8d9099",
+          "session": 1,
+          "note": "Cain kills his brother Abel in the field; when God asks where Abel is, Cain says: am I my brother's keeper?",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "combat"
+        }
+      ],
+      "relations": [
+        {
+          "target": "abel",
+          "target_type": "npc",
+          "formal_relation": "ally",
+          "personal_relation": "rival",
+          "weight": 0.9
+        }
+      ]
+    },
+    {
+      "id": "abel",
+      "name": "Abel",
+      "role": "Shepherd and first martyr",
+      "relationship": "ally",
+      "description": "He exists in the story for three verses and then he is dead. His blood cries from the ground. He has no voice in the text but God hears him. He is the first of many younger brothers the story loves better.",
+      "hidden": false,
+      "factions": [
+        "house_of_israel"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_0290a9",
+          "session": 1,
+          "note": "Consequence of Cain (ally): Cain kills Abel \u2014 the first violence in the world.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "cain",
+            "entity_type": "npc",
+            "event_id": null
+          },
+          "actor_id": "cain",
+          "actor_type": "npc"
+        }
+      ]
+    },
+    {
+      "id": "noah",
+      "name": "Noah",
+      "role": "Righteous survivor, builder of the ark",
+      "relationship": "ally",
+      "description": "God finds one righteous man in a generation given to violence, and tells him to build a boat. Noah does exactly what he is told, nothing more. After the flood he plants a vineyard, drinks too much, and curses his son Ham. The first act after survival is often embarrassing.",
+      "hidden": false,
+      "factions": [
+        "house_of_israel"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_717826",
+          "session": 2,
+          "note": "God tells Noah to build an ark; Noah does exactly what God commands without a word of protest or a question.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 1,
+          "event_type": "other"
+        },
+        {
+          "id": "evt_8c76fa",
+          "session": 2,
+          "note": "Noah plants a vineyard, drinks too much, and lies uncovered in his tent; Ham sees him and tells his brothers. Shem and Japheth walk in backward with a garment and cover him.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 1,
+          "event_type": "other"
+        }
+      ]
+    },
+    {
+      "id": "abraham",
+      "name": "Abraham",
+      "role": "Father of Nations, friend of God",
+      "relationship": "ally",
+      "description": "He leaves everything at seventy-five on the strength of a promise. He passes his wife off as his sister twice to save his own skin. He laughs when God promises a son at ninety-nine. He rises at dawn to take Isaac to Moriah without a word to Sarah. He is the central figure of Genesis: brave, flawed, chosen.",
+      "hidden": false,
+      "factions": [
+        "house_of_israel"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_0bf65a",
+          "session": 3,
+          "note": "God tells Abram to leave his country, his kindred, and his father's house for a land he will be shown. Abram leaves. He is seventy-five years old.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "other"
+        },
+        {
+          "id": "evt_c7c9f2",
+          "session": 3,
+          "note": "Entering Egypt during famine, Abram tells Sarai to say she is his sister to protect himself from men who would kill him for her. She is taken into Pharaoh's house. God strikes the household with plagues.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "politics"
+        },
+        {
+          "id": "evt_cd86cc",
+          "session": 5,
+          "note": "God appears to Abraham at age ninety-nine and promises a son from Sarah; Abraham falls on his face and laughs. He says: shall Sarah, at ninety, bear a child?",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "dialogue"
+        },
+        {
+          "id": "evt_03504f",
+          "session": 5,
+          "note": "Abraham rises early in the morning and takes Isaac to Mount Moriah. He builds the altar, binds his son, and raises the knife. God stops him: now I know you fear God, for you have not withheld your son.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "other"
+        }
+      ],
+      "relations": [
+        {
+          "target": "sarah",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 0.95
+        },
+        {
+          "target": "isaac",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 1.0
+        },
+        {
+          "target": "lot",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 0.8
+        },
+        {
+          "target": "ishmael",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 0.85
+        },
+        {
+          "target": "melchizedek",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 0.7
+        }
+      ]
+    },
+    {
+      "id": "sarah",
+      "name": "Sarah",
+      "role": "Matriarch, mother of the promise",
+      "relationship": "ally",
+      "description": "She laughs at the angel's announcement \u2014 a ninety-year-old woman bearing a son. She laughed, God notes. She says she didn't laugh. God says she did. The argument is never resolved. She named her son Isaac: laughter. She is fiercer and harder than Abraham in protecting her line.",
+      "hidden": false,
+      "factions": [
+        "house_of_israel"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_0fa6cd",
+          "session": 5,
+          "note": "Sarah listens from the tent entrance when the angels announce she will bear a son in a year. She laughs to herself. God asks: is anything too hard for the LORD?",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "dialogue"
+        },
+        {
+          "id": "evt_17cf95",
+          "session": 5,
+          "note": "Consequence of Abraham (ally): Abraham rises early in the morning and takes Isaac to Mount Moriah. He builds the altar, binds his son, and raises the knife. God stops him: now I know you fear God, for you have not withheld your son.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "abraham",
+            "entity_type": "npc",
+            "event_id": null
+          },
+          "actor_id": "abraham",
+          "actor_type": "npc"
+        }
+      ],
+      "relations": [
+        {
+          "target": "hagar",
+          "target_type": "npc",
+          "formal_relation": "ally",
+          "personal_relation": "hostile",
+          "weight": 0.8
+        },
+        {
+          "target": "abraham",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 0.95
+        }
+      ]
+    },
+    {
+      "id": "hagar",
+      "name": "Hagar",
+      "role": "Egyptian servant, mother of Ishmael",
+      "relationship": "neutral",
+      "description": "Sarah gives her to Abraham as a surrogate and then treats her with cruelty when Hagar grows proud of her pregnancy. She flees into the desert. An angel finds her at a spring. God sees her \u2014 the text emphasizes this: she is the only person in the Bible to name God. She calls him El-roi: the God who sees me.",
+      "hidden": false,
+      "factions": [
+        "the_nations"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_0835de",
+          "session": 4,
+          "note": "Hagar flees into the desert after Sarah mistreats her; the angel of the LORD finds her at a spring on the way to Shur and tells her to return. She names God El-roi: the one who sees me.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "other"
+        }
+      ],
+      "relations": [
+        {
+          "target": "sarah",
+          "target_type": "npc",
+          "formal_relation": "ally",
+          "personal_relation": "hostile",
+          "weight": 0.8
+        },
+        {
+          "target": "ishmael",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "ishmael",
+      "name": "Ishmael",
+      "role": "Son of Abraham and Hagar, father of twelve princes",
+      "relationship": "neutral",
+      "description": "The first son, the not-chosen one. He and his mother are sent into the desert with bread and a skin of water when Isaac is weaned. The water runs out. Hagar sets the boy under a bush and walks away so she won't watch him die. God hears the boy crying. He will be a great nation too \u2014 just not this story's nation.",
+      "hidden": false,
+      "factions": [
+        "the_nations"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_6a3e43",
+          "session": 5,
+          "note": "Consequence of Abraham (ally): Abraham rises early in the morning and takes Isaac to Mount Moriah. He builds the altar, binds his son, and raises the knife. God stops him: now I know you fear God, for you have not withheld your son.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "abraham",
+            "entity_type": "npc",
+            "event_id": null
+          },
+          "actor_id": "abraham",
+          "actor_type": "npc"
+        }
+      ]
+    },
+    {
+      "id": "melchizedek",
+      "name": "Melchizedek",
+      "role": "Priest-King of Salem, man of mystery",
+      "relationship": "ally",
+      "description": "He appears from nowhere to bless Abraham after battle, brings bread and wine, and disappears. He is priest of El-Elyon \u2014 God Most High \u2014 before Abraham ever hears that name. He has no genealogy in the text, no beginning or end. He becomes a type: priesthood outside the bloodline.",
+      "hidden": false,
+      "factions": [
+        "the_nations"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_a77f3f",
+          "session": 4,
+          "note": "After Abraham's victory over the kings, Melchizedek king of Salem brings bread and wine and blesses him: blessed be Abram by God Most High, creator of heaven and earth.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "dialogue"
+        },
+        {
+          "id": "evt_2cd1bb",
+          "session": 5,
+          "note": "Consequence of Abraham (ally): Abraham rises early in the morning and takes Isaac to Mount Moriah. He builds the altar, binds his son, and raises the knife. God stops him: now I know you fear God, for you have not withheld your son.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "abraham",
+            "entity_type": "npc",
+            "event_id": null
+          },
+          "actor_id": "abraham",
+          "actor_type": "npc"
+        }
+      ]
+    },
+    {
+      "id": "lot",
+      "name": "Lot",
+      "role": "Abraham's nephew, survivor of Sodom",
+      "relationship": "neutral",
+      "description": "He chooses the well-watered plain of Jordan and pitches his tent near Sodom. When the city is destroyed he escapes with his daughters. His wife looks back and becomes a pillar of salt. His daughters get him drunk on successive nights and conceive Moab and Ammon. Lot is the character to whom things happen.",
+      "hidden": false,
+      "factions": [
+        "house_of_israel"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_39c0b4",
+          "session": 5,
+          "note": "Consequence of Abraham (ally): Abraham rises early in the morning and takes Isaac to Mount Moriah. He builds the altar, binds his son, and raises the knife. God stops him: now I know you fear God, for you have not withheld your son.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "abraham",
+            "entity_type": "npc",
+            "event_id": null
+          },
+          "actor_id": "abraham",
+          "actor_type": "npc"
+        }
+      ]
+    },
+    {
+      "id": "isaac",
+      "name": "Isaac",
+      "role": "Son of Promise, quiet patriarch",
+      "relationship": "ally",
+      "description": "He is bound on the altar at Moriah and unmade. He is the passive center of his own story: the sacrifice that doesn't happen. He grows up, marries Rebekah, fathers twins he cannot see clearly \u2014 literally or otherwise. He blesses Jacob thinking he is Esau. He is deceived by his own family.",
+      "hidden": false,
+      "factions": [
+        "house_of_israel"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_6db9df",
+          "session": 5,
+          "note": "Consequence of Abraham (ally): Abraham rises early in the morning and takes Isaac to Mount Moriah. He builds the altar, binds his son, and raises the knife. God stops him: now I know you fear God, for you have not withheld your son.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "abraham",
+            "entity_type": "npc",
+            "event_id": null
+          },
+          "actor_id": "abraham",
+          "actor_type": "npc"
+        }
+      ],
+      "relations": [
+        {
+          "target": "abraham",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 1.0
+        },
+        {
+          "target": "rebekah",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 0.9
+        }
+      ]
+    },
+    {
+      "id": "rebekah",
+      "name": "Rebekah",
+      "role": "Matriarch, planner of the deception",
+      "relationship": "ally",
+      "description": "She waters ten camels unasked when Abraham's servant arrives at her family's well \u2014 an act of extraordinary generosity. She leaves everything to marry a stranger. She hears the oracle: the elder will serve the younger. She makes it happen, using her husband's blindness. She never sees Jacob again after she saves him.",
+      "hidden": false,
+      "factions": [
+        "house_of_israel"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_d271bc",
+          "session": 5,
+          "note": "Rebekah hears that Isaac intends to bless Esau; she dresses Jacob in goat skins so blind Isaac will mistake him for his hairy brother, and sends Jacob to steal the blessing.",
+          "visibility": "public",
+          "polarity": "neutral",
+          "intensity": 2,
+          "event_type": "other"
+        }
+      ],
+      "relations": [
+        {
+          "target": "isaac",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 0.9
+        }
+      ]
+    },
+    {
+      "id": "jacob",
+      "name": "Jacob",
+      "role": "Patriarch of Israel, heel-grabber and wrestler",
+      "relationship": "ally",
+      "description": "He is born grabbing his twin's heel. He buys Esau's birthright for stew. He steals Isaac's blessing. He flees, dreams of a ladder, bargains with God. He works seven years for Rachel and is given Leah instead. He works seven more. He wrestles God at the ford of Jabbok and refuses to let go. His name becomes Israel. He is the ancestor of everyone.",
+      "hidden": false,
+      "factions": [
+        "house_of_israel"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_558c49",
+          "session": 5,
+          "note": "Jacob deceives his blind father and receives the blessing of the firstborn; Esau arrives minutes later and weeps: is he not rightly named Jacob? He has supplanted me twice. He plans to kill Jacob after Isaac's death.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "dialogue"
+        },
+        {
+          "id": "evt_c39c30",
+          "session": 6,
+          "note": "Jacob flees to Laban's house and dreams of a ladder reaching to heaven with angels ascending and descending; God speaks from above and renews the covenant of Abraham. Jacob wakes: surely the LORD is in this place.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "other"
+        },
+        {
+          "id": "evt_a866e9",
+          "session": 6,
+          "note": "Consequence of Laban (ally): On the wedding night Laban substitutes Leah for Rachel; Jacob wakes to find the wrong wife. Laban explains: it is not done to give the younger before the firstborn. Jacob must work seven more years for Rachel.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "laban",
+            "entity_type": "npc",
+            "event_id": null
+          },
+          "actor_id": "laban",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_22229a",
+          "session": 7,
+          "note": "At the ford of Jabbok, Jacob wrestles with a man until daybreak; the man strikes Jacob's hip but cannot pin him. Jacob refuses to release him without a blessing. The man asks his name. Then renames him: Israel.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat"
+        },
+        {
+          "id": "evt_98bcaa",
+          "session": 8,
+          "note": "Consequence of Joseph (ally): Joseph is sold into Egypt by his own brothers.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "joseph",
+            "entity_type": "npc",
+            "event_id": null
+          },
+          "actor_id": "joseph",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_9de3da",
+          "session": 10,
+          "note": "Consequence of Joseph (ally): Joseph can control himself no longer; he clears the room and weeps aloud. He says: I am Joseph. Is my father still alive? He cannot stop weeping. He kisses all his brothers and they talk together.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "dialogue",
+          "ripple_source": {
+            "entity_id": "joseph",
+            "entity_type": "npc",
+            "event_id": null
+          },
+          "actor_id": "joseph",
+          "actor_type": "npc"
+        }
+      ],
+      "relations": [
+        {
+          "target": "esau",
+          "target_type": "npc",
+          "formal_relation": "family",
+          "personal_relation": "rival",
+          "weight": 0.9
+        },
+        {
+          "target": "laban",
+          "target_type": "npc",
+          "formal_relation": "ally",
+          "personal_relation": "rival",
+          "weight": 0.75
+        },
+        {
+          "target": "rachel",
+          "target_type": "npc",
+          "formal_relation": "ally",
+          "personal_relation": "respect",
+          "weight": 1.0
+        },
+        {
+          "target": "leah",
+          "target_type": "npc",
+          "formal_relation": "ally",
+          "personal_relation": "neutral",
+          "weight": 0.7
+        },
+        {
+          "target": "joseph",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "esau",
+      "name": "Esau",
+      "role": "The elder twin, man of the field",
+      "relationship": "neutral",
+      "description": "He sells his birthright for a bowl of red stew because he is starving and cannot see past the moment. He weeps when he finds the blessing stolen \u2014 a sound that tears the reader in two. He forgives Jacob decades later and runs to meet him. His mercy is greater than his loss.",
+      "hidden": false,
+      "factions": [
+        "house_of_israel"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_555470",
+          "session": 5,
+          "note": "Esau comes in from the field famished and sells his birthright to Jacob for bread and a bowl of red lentil stew. He eats, rises, and goes away, having despised his birthright.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "dialogue"
+        },
+        {
+          "id": "evt_766222",
+          "session": 5,
+          "note": "Consequence of Jacob (rival): Jacob deceives his blind father and receives the blessing of the firstborn; Esau arrives minutes later and weeps: is he not rightly named Jacob? He has supplanted me twice. He plans to kill Jacob after Isaac's death.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "dialogue",
+          "ripple_source": {
+            "entity_id": "jacob",
+            "entity_type": "npc",
+            "event_id": null
+          },
+          "actor_id": "jacob",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_785248",
+          "session": 7,
+          "note": "Esau runs to meet Jacob returning with his family and embraces him; Jacob had sent gifts ahead expecting violence and found forgiveness instead. Esau says: I have enough, my brother. Keep what you have.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "dialogue"
+        }
+      ],
+      "relations": [
+        {
+          "target": "jacob",
+          "target_type": "npc",
+          "formal_relation": "family",
+          "personal_relation": "rival",
+          "weight": 0.9
+        }
+      ]
+    },
+    {
+      "id": "laban",
+      "name": "Laban",
+      "role": "Jacob's uncle and adversary",
+      "relationship": "negative",
+      "description": "He substitutes Leah for Rachel on the wedding night and explains it away with local custom. He changes Jacob's wages ten times over fourteen years. He pursues Jacob when he finally leaves and finds his household gods missing. He is the mirror Jacob needed: he meets a manipulator who out-manipulates him.",
+      "hidden": false,
+      "factions": [
+        "the_nations"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_36f20e",
+          "session": 5,
+          "note": "Consequence of Jacob (ally): Jacob deceives his blind father and receives the blessing of the firstborn; Esau arrives minutes later and weeps: is he not rightly named Jacob? He has supplanted me twice. He plans to kill Jacob after Isaac's death.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "dialogue",
+          "ripple_source": {
+            "entity_id": "jacob",
+            "entity_type": "npc",
+            "event_id": null
+          },
+          "actor_id": "jacob",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_da0890",
+          "session": 6,
+          "note": "On the wedding night Laban substitutes Leah for Rachel; Jacob wakes to find the wrong wife. Laban explains: it is not done to give the younger before the firstborn. Jacob must work seven more years for Rachel.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "other"
+        }
+      ],
+      "relations": [
+        {
+          "target": "jacob",
+          "target_type": "npc",
+          "formal_relation": "ally",
+          "personal_relation": "rival",
+          "weight": 0.75
+        }
+      ]
+    },
+    {
+      "id": "rachel",
+      "name": "Rachel",
+      "role": "Beloved wife of Jacob",
+      "relationship": "ally",
+      "description": "Jacob sees her at the well and weeps. He works seven years for her. He works seven more. She steals her father's household gods when they leave \u2014 the text never explains why. She dies giving birth to Benjamin, naming him Son of My Sorrow with her last breath. Jacob renames him Son of My Right Hand.",
+      "hidden": false,
+      "factions": [
+        "house_of_israel"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_ebb1c9",
+          "session": 5,
+          "note": "Consequence of Jacob (ally): Jacob deceives his blind father and receives the blessing of the firstborn; Esau arrives minutes later and weeps: is he not rightly named Jacob? He has supplanted me twice. He plans to kill Jacob after Isaac's death.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "dialogue",
+          "ripple_source": {
+            "entity_id": "jacob",
+            "entity_type": "npc",
+            "event_id": null
+          },
+          "actor_id": "jacob",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_a2fd24",
+          "session": 8,
+          "note": "Consequence of Joseph (ally): Joseph is sold into Egypt by his own brothers.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "joseph",
+            "entity_type": "npc",
+            "event_id": null
+          },
+          "actor_id": "joseph",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_30b1c8",
+          "session": 10,
+          "note": "Consequence of Joseph (ally): Joseph can control himself no longer; he clears the room and weeps aloud. He says: I am Joseph. Is my father still alive? He cannot stop weeping. He kisses all his brothers and they talk together.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "dialogue",
+          "ripple_source": {
+            "entity_id": "joseph",
+            "entity_type": "npc",
+            "event_id": null
+          },
+          "actor_id": "joseph",
+          "actor_type": "npc"
+        }
+      ],
+      "relations": [
+        {
+          "target": "joseph",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "leah",
+      "name": "Leah",
+      "role": "Elder wife of Jacob, unseen and fertile",
+      "relationship": "neutral",
+      "description": "She was substituted for her sister. The text says Jacob loved Rachel more. God sees Leah's unloved condition and opens her womb. She names her sons with prayers: Reuben \u2014 God has seen my affliction. Simeon \u2014 God heard I am unloved. Her naming of her children is a theology of pain acknowledged.",
+      "hidden": false,
+      "factions": [
+        "house_of_israel"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_6eeeb6",
+          "session": 5,
+          "note": "Consequence of Jacob (ally): Jacob deceives his blind father and receives the blessing of the firstborn; Esau arrives minutes later and weeps: is he not rightly named Jacob? He has supplanted me twice. He plans to kill Jacob after Isaac's death.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "dialogue",
+          "ripple_source": {
+            "entity_id": "jacob",
+            "entity_type": "npc",
+            "event_id": null
+          },
+          "actor_id": "jacob",
+          "actor_type": "npc"
+        }
+      ]
+    },
+    {
+      "id": "joseph",
+      "name": "Joseph",
+      "role": "Dreamer and Vizier of Egypt",
+      "relationship": "ally",
+      "description": "Jacob's favorite son, given a coat of many colors. His dreams say his brothers will bow to him. His brothers throw him in a pit and sell him to Ishmaelite traders for twenty pieces of silver. In Egypt he rises to the top of every system he enters \u2014 Potiphar's house, the prison, Pharaoh's court. He weeps when he finally sees his brothers again. He forgives them.",
+      "hidden": false,
+      "factions": [
+        "house_of_israel"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_ed12ae",
+          "session": 5,
+          "note": "Consequence of Jacob (ally): Jacob deceives his blind father and receives the blessing of the firstborn; Esau arrives minutes later and weeps: is he not rightly named Jacob? He has supplanted me twice. He plans to kill Jacob after Isaac's death.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "dialogue",
+          "ripple_source": {
+            "entity_id": "jacob",
+            "entity_type": "npc",
+            "event_id": null
+          },
+          "actor_id": "jacob",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_cf92b0",
+          "session": 8,
+          "note": "Joseph tells his dreams \u2014 sheaves bowing, stars bowing \u2014 to his father and brothers. His brothers hate him and cannot speak peaceably to him.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 1,
+          "event_type": "dialogue"
+        },
+        {
+          "id": "evt_45a7f4",
+          "session": 9,
+          "note": "In Egypt Joseph rises to oversee Potiphar's household; Potiphar's wife falsely accuses him of assault when he rejects her; he is thrown into prison.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "other"
+        },
+        {
+          "id": "evt_eac738",
+          "session": 9,
+          "note": "In prison Joseph correctly interprets the dreams of Pharaoh's cupbearer and baker; the cupbearer forgets him for two years.",
+          "visibility": "public",
+          "polarity": "neutral",
+          "intensity": 1,
+          "event_type": "other"
+        },
+        {
+          "id": "evt_1d881a",
+          "session": 10,
+          "note": "Joseph recognizes his brothers but does not reveal himself; he tests them, accuses them of spying, keeps Simeon, and demands Benjamin be brought. He turns away and weeps.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "dialogue"
+        },
+        {
+          "id": "evt_45332d",
+          "session": 10,
+          "note": "Joseph can control himself no longer; he clears the room and weeps aloud. He says: I am Joseph. Is my father still alive? He cannot stop weeping. He kisses all his brothers and they talk together.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "dialogue"
+        }
+      ],
+      "relations": [
+        {
+          "target": "judah",
+          "target_type": "npc",
+          "formal_relation": "family",
+          "personal_relation": "rival",
+          "weight": 0.85
+        },
+        {
+          "target": "jacob",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 1.0
+        },
+        {
+          "target": "pharaoh",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 0.85
+        }
+      ]
+    },
+    {
+      "id": "judah",
+      "name": "Judah",
+      "role": "Fourth son of Jacob, the unexpected leader",
+      "relationship": "neutral",
+      "description": "He suggests selling Joseph instead of killing him. He fails his daughter-in-law Tamar. He stands surety for Benjamin before Jacob. In Egypt, when Pharaoh's vizier threatens to keep Benjamin, it is Judah \u2014 not Reuben \u2014 who steps forward and offers himself as a substitute. That speech changes Joseph. The line of Judah becomes the royal line.",
+      "hidden": false,
+      "factions": [
+        "house_of_israel"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_da4fe4",
+          "session": 8,
+          "note": "Judah persuades his brothers not to kill Joseph but to sell him to Ishmaelite traders for twenty pieces of silver. They dip his coat in goat's blood and bring it to Jacob: we found this. Is it your son's robe?",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "other",
+          "actor_id": "joseph",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_c04b72",
+          "session": 8,
+          "note": "Consequence of Joseph (rival): Joseph is sold into Egypt by his own brothers.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "joseph",
+            "entity_type": "npc",
+            "event_id": null
+          },
+          "actor_id": "joseph",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_b8c130",
+          "session": 10,
+          "note": "When Joseph threatens to keep Benjamin, Judah steps forward and offers himself as a substitute: let me remain as your servant in place of the boy. How can I go back to my father if the boy is not with me?",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "dialogue"
+        },
+        {
+          "id": "evt_bcc9ff",
+          "session": 10,
+          "note": "Consequence of Joseph (rival): Joseph can control himself no longer; he clears the room and weeps aloud. He says: I am Joseph. Is my father still alive? He cannot stop weeping. He kisses all his brothers and they talk together.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "dialogue",
+          "ripple_source": {
+            "entity_id": "joseph",
+            "entity_type": "npc",
+            "event_id": null
+          },
+          "actor_id": "joseph",
+          "actor_type": "npc"
+        }
+      ],
+      "relations": [
+        {
+          "target": "joseph",
+          "target_type": "npc",
+          "formal_relation": "family",
+          "personal_relation": "rival",
+          "weight": 0.85
+        }
+      ]
+    },
+    {
+      "id": "pharaoh",
+      "name": "Pharaoh",
+      "role": "King of Egypt, Joseph's patron",
+      "relationship": "neutral",
+      "description": "He dreams of seven fat cows and seven lean cows, and Joseph interprets it: seven years of plenty, then seven years of famine. He makes a Hebrew slave and prisoner second-in-command of all Egypt before breakfast. He is pragmatic, powerful, and \u2014 in Genesis \u2014 not yet an enemy.",
+      "hidden": false,
+      "factions": [
+        "the_nations"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_7f25de",
+          "session": 8,
+          "note": "Consequence of Joseph (ally): Joseph is sold into Egypt by his own brothers.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "joseph",
+            "entity_type": "npc",
+            "event_id": null
+          },
+          "actor_id": "joseph",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_0fffb5",
+          "session": 10,
+          "note": "Pharaoh dreams of seven fat cows and seven lean cows; Joseph interprets the dream: seven years of plenty, then seven years of famine. Pharaoh makes Joseph second in command of all Egypt.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "dialogue"
+        },
+        {
+          "id": "evt_58b394",
+          "session": 10,
+          "note": "Consequence of Joseph (ally): Joseph can control himself no longer; he clears the room and weeps aloud. He says: I am Joseph. Is my father still alive? He cannot stop weeping. He kisses all his brothers and they talk together.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "dialogue",
+          "ripple_source": {
+            "entity_id": "joseph",
+            "entity_type": "npc",
+            "event_id": null
+          },
+          "actor_id": "joseph",
+          "actor_type": "npc"
+        }
+      ]
+    }
+  ]
+}

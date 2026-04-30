@@ -1,0 +1,2281 @@
+{
+  "npcs": [
+    {
+      "id": "adolf_hitler",
+      "name": "Adolf Hitler",
+      "role": "F\u00fchrer of the Third Reich",
+      "relationship": "hostile",
+      "description": "Austrian-born failed artist who becomes the most destructive political leader of the twentieth century. His political genius is real: he reads mass psychology correctly, exploits the humiliation of Versailles, and outmaneuvers every opponent in the 1930s. His military instincts are erratic \u2014 brilliant in 1939\u20131941, catastrophic from 1942 onward as he refuses to retreat, relieves competent generals, and increasingly substitutes ideology for strategy. Dies by suicide in the Berlin bunker on April 30, 1945.",
+      "hidden": false,
+      "factions": [
+        "nazi_germany"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_4e7b95",
+          "session": 1,
+          "note": "Hitler is appointed Chancellor of Germany on January 30, 1933. Within eighteen months he is F\u00fchrer, having abolished the presidency, merged it with the chancellorship, and purged his own party's rivals in the Night of the Long Knives. The democratic Weimar Republic is dead.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "politics"
+        },
+        {
+          "id": "evt_a99f0a",
+          "session": 1,
+          "note": "Consequence of Benito Mussolini (ally): Mussolini invades Ethiopia in 1935 with chemical weapons and overwhelming force, in defiance of the League of Nations. The League's impotent response \u2014 toothless sanctions \u2014 signals to Hitler that the international order will not resist force with force. The Rome-Berlin Axis is formalized in 1936.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "benito_mussolini",
+            "entity_type": "npc",
+            "event_id": "evt_cdfbd3"
+          },
+          "actor_id": "benito_mussolini",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_24ba84",
+          "session": 2,
+          "note": "The Molotov-Ribbentrop Pact (August 23, 1939) \u2014 a non-aggression agreement with the Soviet Union that also secretly divides Eastern Europe between them. It frees Hitler to move west without a two-front war. Stalin believes he has bought time. Hitler believes he has solved his strategic problem. Both are partially right.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "politics"
+        },
+        {
+          "id": "evt_0eb0c9",
+          "session": 3,
+          "note": "Consequence of Winston Churchill (rival): Churchill becomes Prime Minister on May 10, 1940 \u2014 the day Germany attacks. He tells the House of Commons he has nothing to offer but blood, toil, tears, and sweat. He refuses to consider any armistice or negotiated peace. When the War Cabinet debates terms, he ends it: 'If this long island story of ours is to end at last, let it end only when each one of us lies choking in his own blood upon the ground.' The cabinet stands and cheers.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "dialogue",
+          "ripple_source": {
+            "entity_id": "winston_churchill",
+            "entity_type": "npc",
+            "event_id": "evt_a748aa"
+          },
+          "actor_id": "winston_churchill",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_81f8da",
+          "session": 4,
+          "note": "Hitler launches Operation Barbarossa on June 22, 1941 \u2014 3 million German troops invade the Soviet Union on a front 1,800 miles wide. It is the largest military operation in history. Stalin is warned by multiple intelligence sources. He ignores them all. The initial German advance is catastrophic for the Soviets: the Red Army loses 800,000 men in the first two months.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "combat"
+        },
+        {
+          "id": "evt_f1f604",
+          "session": 4,
+          "note": "Consequence of Joseph Stalin (rival): Stalin collapses psychologically for approximately ten days after Barbarossa begins \u2014 retreating to his dacha, unreachable. The Politburo comes to him. He recovers. He broadcasts to the Soviet people, calling them 'brothers and sisters' for the first time. He does not leave Moscow when the Germans reach its suburbs. The decision to stay \u2014 visible, symbolic, immovable \u2014 is one of the most consequential of the war.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "dialogue",
+          "ripple_source": {
+            "entity_id": "joseph_stalin",
+            "entity_type": "npc",
+            "event_id": "evt_b0c5cc"
+          },
+          "actor_id": "joseph_stalin",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_d3ee8e",
+          "session": 4,
+          "note": "Consequence of Georgy Zhukov (rival): Zhukov is appointed to defend Moscow in October 1941 when German forces are close enough to see the Kremlin's golden domes through field glasses. He holds. On December 5, 1941, he launches a counteroffensive with fresh Siberian divisions \u2014 troops acclimatized to cold that the Germans, who were never issued winter equipment, are not. The Wehrmacht is stopped forty miles from Moscow.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "georgy_zhukov",
+            "entity_type": "npc",
+            "event_id": "evt_123857"
+          },
+          "actor_id": "georgy_zhukov",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_44231d",
+          "session": 5,
+          "note": "Consequence of Franklin D. Roosevelt (rival): Roosevelt addresses Congress on December 8, 1941: 'Yesterday, December 7, 1941 \u2014 a date which will live in infamy.' Congress declares war on Japan in thirty-three minutes. Hitler, in the single most consequential blunder of the war, declares war on the United States four days later. He was not required to do this by the Axis pact. He does it anyway.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "dialogue",
+          "ripple_source": {
+            "entity_id": "franklin_d_roosevelt",
+            "entity_type": "npc",
+            "event_id": "evt_381812"
+          },
+          "actor_id": "franklin_d_roosevelt",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_37a72c",
+          "session": 5,
+          "note": "Consequence of Winston Churchill (rival): Churchill hears about Pearl Harbor on a radio and goes to bed and slept the sleep of the saved and thankful. He knows that with America in the war, victory is now certain \u2014 it is only a question of time and suffering. He sails immediately to Washington to meet Roosevelt and begin building the Grand Alliance.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "dialogue",
+          "ripple_source": {
+            "entity_id": "winston_churchill",
+            "entity_type": "npc",
+            "event_id": "evt_a41d20"
+          },
+          "actor_id": "winston_churchill",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_5080d8",
+          "session": 7,
+          "note": "Consequence of Erwin Rommel (ally): Rommel is beaten at El Alamein \u2014 outmanned, outgunned, and outmaneuvered. The Afrika Korps retreats across North Africa. Operation Torch (US landings in Morocco and Algeria) cuts off retreat. The last Axis forces in North Africa surrender in May 1943. Rommel has already been recalled to Germany on sick leave \u2014 Hitler does not want to be present for the defeat.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "erwin_rommel",
+            "entity_type": "npc",
+            "event_id": "evt_321617"
+          },
+          "actor_id": "erwin_rommel",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_9d59b0",
+          "session": 7,
+          "note": "Consequence of Georgy Zhukov (rival): Operation Uranus (November 1942): Zhukov's encirclement of the German 6th Army at Stalingrad. Three hundred thousand German troops are surrounded. Hitler forbids retreat. Operation Winter Storm \u2014 the relief attempt \u2014 fails. Field Marshal Paulus surrenders with 91,000 survivors on January 31, 1943. The Wehrmacht has never suffered a defeat of this magnitude. The war on the Eastern Front has turned.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "georgy_zhukov",
+            "entity_type": "npc",
+            "event_id": "evt_88009f"
+          },
+          "actor_id": "georgy_zhukov",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_13cb8d",
+          "session": 8,
+          "note": "Consequence of Benito Mussolini (ally): Mussolini's fall is sudden and ignominious: voted out by his own council, arrested by the king he served for twenty years. The German rescue gives him a final act as puppet, but real power is gone. He is captured by Italian partisans on April 27, 1945, attempting to escape to Switzerland. He and his mistress are shot the following day. Their bodies are hung upside down in Milan.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "benito_mussolini",
+            "entity_type": "npc",
+            "event_id": "evt_7bf5b0"
+          },
+          "actor_id": "benito_mussolini",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_0ecbca",
+          "session": 10,
+          "note": "Consequence of Georgy Zhukov (rival): Operation Bagration (June 1944): the Soviet summer offensive destroys Army Group Centre \u2014 17 German divisions annihilated, 350,000 casualties. It is the largest defeat in German military history, larger than Stalingrad, happening at the same time as D-Day. The Red Army advances 400 miles in two months. By early 1945, Zhukov is 40 miles from Berlin.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "georgy_zhukov",
+            "entity_type": "npc",
+            "event_id": "evt_3d3c03"
+          },
+          "actor_id": "georgy_zhukov",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_064ea1",
+          "session": 10,
+          "note": "The Battle of the Bulge (December 1944): Germany's last western offensive. 30 German divisions strike through the Ardennes in the American sector. The Americans are surprised, bent, and do not break. Bastogne holds. Patton turns his entire army ninety degrees in winter and relieves it in seventy-two hours. The Bulge costs Germany its last operational reserves. Hitler retreats to his Berlin bunker and does not emerge again.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "combat"
+        },
+        {
+          "id": "evt_ee7cd9",
+          "session": 10,
+          "note": "Consequence of Georgy Zhukov (rival): Berlin falls to the Red Army on May 2, 1945. Hitler dies by suicide on April 30 \u2014 a gunshot wound and cyanide, with Eva Braun, in the F\u00fchrerbunker. Their bodies are burned in the garden above. Germany signs unconditional surrender on May 8, 1945. V-E Day. The war in Europe is over.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "georgy_zhukov",
+            "entity_type": "npc",
+            "event_id": "evt_51ea80"
+          },
+          "actor_id": "georgy_zhukov",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_a5a6b8",
+          "session": 10,
+          "note": "Hitler kills himself in the F\u00fchrerbunker on April 30, 1945, as Soviet forces fight street by street through Berlin. He has governed Germany for twelve years, started a war that kills seventy to eighty-five million people, and presided over the deliberate murder of six million Jews. He dies blaming everyone else.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "other"
+        },
+        {
+          "id": "evt_136127",
+          "session": 11,
+          "note": "Consequence of Heinrich Himmler (ally): The Holocaust reaches its industrial peak in 1942\u20131944 at Auschwitz-Birkenau, Treblinka, Sobibor, Belzec, Chelmno, and Majdanek. Six million Jews are murdered \u2014 two-thirds of European Jewry. The killing does not stop when Germany begins losing the war; it accelerates. Himmler's SS continues deportations to the gas chambers until the camps are liberated by Allied forces in 1945.",
+          "visibility": "dm_only",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "heinrich_himmler",
+            "entity_type": "npc",
+            "event_id": "evt_f3dbd4"
+          },
+          "actor_id": "heinrich_himmler",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_320317",
+          "session": 11,
+          "note": "Consequence of Heinrich Himmler (ally): In the war's final weeks, Himmler secretly contacts the World Jewish Congress and Allied representatives through a Swedish intermediary \u2014 offering to exchange Jews for trucks, then offering to surrender Germany's forces in the west to the Americans. He believes, even now, that the Western Allies will accept a separate peace against the Soviet Union. Hitler strips him of all offices when he learns of this. Himmler is captured by British forces in disguise and bites down on a cyanide capsule on May 23, 1945.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "heinrich_himmler",
+            "entity_type": "npc",
+            "event_id": "evt_76b460"
+          },
+          "actor_id": "heinrich_himmler",
+          "actor_type": "npc"
+        }
+      ],
+      "relations": [
+        {
+          "target": "benito_mussolini",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 0.9
+        },
+        {
+          "target": "hideki_tojo",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 0.6
+        },
+        {
+          "target": "heinrich_himmler",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 1.0
+        },
+        {
+          "target": "erwin_rommel",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 0.85
+        },
+        {
+          "target": "winston_churchill",
+          "target_type": "npc",
+          "relation": "rival",
+          "weight": 1.0
+        },
+        {
+          "target": "franklin_d_roosevelt",
+          "target_type": "npc",
+          "relation": "rival",
+          "weight": 0.9
+        },
+        {
+          "target": "joseph_stalin",
+          "target_type": "npc",
+          "relation": "rival",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "benito_mussolini",
+      "name": "Benito Mussolini",
+      "role": "Duce of Fascist Italy",
+      "relationship": "hostile",
+      "description": "The original fascist, in power in Italy since 1922. Hitler models himself partly on Mussolini. But Italy's military is underequipped and poorly led, and Mussolini's strategic judgment is poor. He invades Greece without telling Hitler; the resulting disaster requires German rescue and delays Barbarossa. He is deposed by his own Grand Council on July 25, 1943, rescued by German commandos, and installed as puppet ruler of northern Italy until Italian partisans capture and execute him on April 28, 1945 \u2014 two days before Hitler's death.",
+      "hidden": false,
+      "factions": [
+        "fascist_italy"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_e9f080",
+          "session": 1,
+          "note": "Consequence of Adolf Hitler (ally): Hitler is appointed Chancellor of Germany on January 30, 1933. Within eighteen months he is F\u00fchrer, having abolished the presidency, merged it with the chancellorship, and purged his own party's rivals in the Night of the Long Knives. The democratic Weimar Republic is dead.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_4e7b95"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_cdfbd3",
+          "session": 1,
+          "note": "Mussolini invades Ethiopia in 1935 with chemical weapons and overwhelming force, in defiance of the League of Nations. The League's impotent response \u2014 toothless sanctions \u2014 signals to Hitler that the international order will not resist force with force. The Rome-Berlin Axis is formalized in 1936.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "combat"
+        },
+        {
+          "id": "evt_05fc42",
+          "session": 2,
+          "note": "Consequence of Adolf Hitler (ally): The Molotov-Ribbentrop Pact (August 23, 1939) \u2014 a non-aggression agreement with the Soviet Union that also secretly divides Eastern Europe between them. It frees Hitler to move west without a two-front war. Stalin believes he has bought time. Hitler believes he has solved his strategic problem. Both are partially right.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_24ba84"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_88e18d",
+          "session": 4,
+          "note": "Consequence of Adolf Hitler (ally): Hitler launches Operation Barbarossa on June 22, 1941 \u2014 3 million German troops invade the Soviet Union on a front 1,800 miles wide. It is the largest military operation in history. Stalin is warned by multiple intelligence sources. He ignores them all. The initial German advance is catastrophic for the Soviets: the Red Army loses 800,000 men in the first two months.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_81f8da"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_7bf5b0",
+          "session": 8,
+          "note": "Mussolini's fall is sudden and ignominious: voted out by his own council, arrested by the king he served for twenty years. The German rescue gives him a final act as puppet, but real power is gone. He is captured by Italian partisans on April 27, 1945, attempting to escape to Switzerland. He and his mistress are shot the following day. Their bodies are hung upside down in Milan.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "politics"
+        },
+        {
+          "id": "evt_764540",
+          "session": 10,
+          "note": "Consequence of Adolf Hitler (ally): The Battle of the Bulge (December 1944): Germany's last western offensive. 30 German divisions strike through the Ardennes in the American sector. The Americans are surprised, bent, and do not break. Bastogne holds. Patton turns his entire army ninety degrees in winter and relieves it in seventy-two hours. The Bulge costs Germany its last operational reserves. Hitler retreats to his Berlin bunker and does not emerge again.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_064ea1"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_213376",
+          "session": 10,
+          "note": "Consequence of Adolf Hitler (ally): Hitler kills himself in the F\u00fchrerbunker on April 30, 1945, as Soviet forces fight street by street through Berlin. He has governed Germany for twelve years, started a war that kills seventy to eighty-five million people, and presided over the deliberate murder of six million Jews. He dies blaming everyone else.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_a5a6b8"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        }
+      ],
+      "relations": [
+        {
+          "target": "adolf_hitler",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 0.9
+        }
+      ]
+    },
+    {
+      "id": "hideki_tojo",
+      "name": "Hideki Tojo",
+      "role": "Prime Minister and War Minister of Japan",
+      "relationship": "hostile",
+      "description": "Army general who becomes Prime Minister in October 1941 and drives Japan's decision to attack the United States. He believes Japan must strike before American rearmament makes war impossible to win. He is right about the window and wrong about the outcome. He is the dominant figure of Japanese war policy until July 1944, when the fall of Saipan forces his resignation. He survives the war, is tried as a war criminal, and is executed in 1948.",
+      "hidden": false,
+      "factions": [
+        "imperial_japan"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_b42e37",
+          "session": 1,
+          "note": "Consequence of Adolf Hitler (ally): Hitler is appointed Chancellor of Germany on January 30, 1933. Within eighteen months he is F\u00fchrer, having abolished the presidency, merged it with the chancellorship, and purged his own party's rivals in the Night of the Long Knives. The democratic Weimar Republic is dead.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_4e7b95"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_475a74",
+          "session": 2,
+          "note": "Consequence of Adolf Hitler (ally): The Molotov-Ribbentrop Pact (August 23, 1939) \u2014 a non-aggression agreement with the Soviet Union that also secretly divides Eastern Europe between them. It frees Hitler to move west without a two-front war. Stalin believes he has bought time. Hitler believes he has solved his strategic problem. Both are partially right.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_24ba84"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_f15a99",
+          "session": 4,
+          "note": "Consequence of Adolf Hitler (ally): Hitler launches Operation Barbarossa on June 22, 1941 \u2014 3 million German troops invade the Soviet Union on a front 1,800 miles wide. It is the largest military operation in history. Stalin is warned by multiple intelligence sources. He ignores them all. The initial German advance is catastrophic for the Soviets: the Red Army loses 800,000 men in the first two months.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_81f8da"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_09be31",
+          "session": 5,
+          "note": "Consequence of Isoroku Yamamoto (ally): Yamamoto's strike force attacks Pearl Harbor at dawn on December 7, 1941. Eighteen US warships are sunk or damaged; 2,403 Americans are killed. Four battleships go to the bottom. Crucially, three US aircraft carriers are not in port \u2014 they are at sea \u2014 and survive. Yamamoto knows this. He knows the carriers are what matter.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "isoroku_yamamoto",
+            "entity_type": "npc",
+            "event_id": "evt_e5c629"
+          },
+          "actor_id": "isoroku_yamamoto",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_00012d",
+          "session": 6,
+          "note": "Consequence of Isoroku Yamamoto (ally): Yamamoto plans the Midway operation: lure the US carriers into a trap at Midway Atoll and destroy them. US code-breakers read the Japanese naval codes and know the plan. Admiral Nimitz sets his own trap. June 4\u20137, 1942: in five minutes of divebombing, the US sinks four Japanese fleet carriers \u2014 the same carriers that attacked Pearl Harbor. Japan loses its offensive capability in the Pacific. The war's direction changes.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "isoroku_yamamoto",
+            "entity_type": "npc",
+            "event_id": "evt_eec217"
+          },
+          "actor_id": "isoroku_yamamoto",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_2456ee",
+          "session": 10,
+          "note": "Consequence of Adolf Hitler (ally): The Battle of the Bulge (December 1944): Germany's last western offensive. 30 German divisions strike through the Ardennes in the American sector. The Americans are surprised, bent, and do not break. Bastogne holds. Patton turns his entire army ninety degrees in winter and relieves it in seventy-two hours. The Bulge costs Germany its last operational reserves. Hitler retreats to his Berlin bunker and does not emerge again.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_064ea1"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_254c81",
+          "session": 10,
+          "note": "Consequence of Adolf Hitler (ally): Hitler kills himself in the F\u00fchrerbunker on April 30, 1945, as Soviet forces fight street by street through Berlin. He has governed Germany for twelve years, started a war that kills seventy to eighty-five million people, and presided over the deliberate murder of six million Jews. He dies blaming everyone else.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_a5a6b8"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_19f65e",
+          "session": 12,
+          "note": "Consequence of Emperor Hirohito (ally): Hirohito records a message on August 14, 1945 \u2014 the first time a Japanese emperor has spoken directly to the people. The army briefly attempts to seize the recording and prevent surrender. They fail. The broadcast goes out August 15: Japan has decided to 'endure the unendurable and suffer the insufferable.' He does not say 'surrender.' He does not need to.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "dialogue",
+          "ripple_source": {
+            "entity_id": "emperor_hirohito",
+            "entity_type": "npc",
+            "event_id": "evt_04f14c"
+          },
+          "actor_id": "emperor_hirohito",
+          "actor_type": "npc"
+        }
+      ],
+      "relations": [
+        {
+          "target": "isoroku_yamamoto",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 0.9
+        },
+        {
+          "target": "emperor_hirohito",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 0.75
+        }
+      ]
+    },
+    {
+      "id": "emperor_hirohito",
+      "name": "Emperor Hirohito",
+      "role": "Emperor of Japan \u2014 Divine Sovereign",
+      "relationship": "hostile",
+      "description": "The 124th Emperor of Japan, theoretically divine, practically constrained. His role in Japan's war decisions is historically disputed. He does not stop the war in 1944 or early 1945 despite catastrophic losses. He does end it in 1945: after the atomic bombs and the Soviet declaration of war, he makes the unprecedented decision to broadcast to his people in a recorded radio address on August 15, 1945. His voice has never been heard publicly before. He speaks in classical Japanese that most Japanese cannot understand. He does not use the word 'surrender.'",
+      "hidden": true,
+      "factions": [
+        "imperial_japan"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_04f14c",
+          "session": 12,
+          "note": "Hirohito records a message on August 14, 1945 \u2014 the first time a Japanese emperor has spoken directly to the people. The army briefly attempts to seize the recording and prevent surrender. They fail. The broadcast goes out August 15: Japan has decided to 'endure the unendurable and suffer the insufferable.' He does not say 'surrender.' He does not need to.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "dialogue"
+        }
+      ]
+    },
+    {
+      "id": "heinrich_himmler",
+      "name": "Heinrich Himmler",
+      "role": "Reichsf\u00fchrer-SS \u2014 Architect of the Holocaust",
+      "relationship": "hostile",
+      "description": "The second most powerful man in Nazi Germany after Hitler. Head of the SS, the Gestapo, and the entire apparatus of Nazi terror. He is the primary architect of the Holocaust \u2014 the systematic, industrial murder of six million Jews and millions of others. A former chicken farmer who implements genocide with bureaucratic precision. In the war's final months he makes secret contact with Allied representatives, trying to negotiate a separate peace. Hitler, learning of this, strips him of all offices. Himmler is captured by British forces in May 1945 and bites down on a cyanide capsule before he can be tried.",
+      "hidden": true,
+      "factions": [
+        "nazi_germany"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_3dbac8",
+          "session": 1,
+          "note": "Consequence of Adolf Hitler (ally): Hitler is appointed Chancellor of Germany on January 30, 1933. Within eighteen months he is F\u00fchrer, having abolished the presidency, merged it with the chancellorship, and purged his own party's rivals in the Night of the Long Knives. The democratic Weimar Republic is dead.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_4e7b95"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_75138e",
+          "session": 2,
+          "note": "Consequence of Adolf Hitler (ally): The Molotov-Ribbentrop Pact (August 23, 1939) \u2014 a non-aggression agreement with the Soviet Union that also secretly divides Eastern Europe between them. It frees Hitler to move west without a two-front war. Stalin believes he has bought time. Hitler believes he has solved his strategic problem. Both are partially right.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_24ba84"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_5c9503",
+          "session": 4,
+          "note": "Consequence of Adolf Hitler (ally): Hitler launches Operation Barbarossa on June 22, 1941 \u2014 3 million German troops invade the Soviet Union on a front 1,800 miles wide. It is the largest military operation in history. Stalin is warned by multiple intelligence sources. He ignores them all. The initial German advance is catastrophic for the Soviets: the Red Army loses 800,000 men in the first two months.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_81f8da"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_27717a",
+          "session": 10,
+          "note": "Consequence of Adolf Hitler (ally): The Battle of the Bulge (December 1944): Germany's last western offensive. 30 German divisions strike through the Ardennes in the American sector. The Americans are surprised, bent, and do not break. Bastogne holds. Patton turns his entire army ninety degrees in winter and relieves it in seventy-two hours. The Bulge costs Germany its last operational reserves. Hitler retreats to his Berlin bunker and does not emerge again.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_064ea1"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_0aaa90",
+          "session": 10,
+          "note": "Consequence of Adolf Hitler (ally): Hitler kills himself in the F\u00fchrerbunker on April 30, 1945, as Soviet forces fight street by street through Berlin. He has governed Germany for twelve years, started a war that kills seventy to eighty-five million people, and presided over the deliberate murder of six million Jews. He dies blaming everyone else.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_a5a6b8"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_f3dbd4",
+          "session": 11,
+          "note": "The Holocaust reaches its industrial peak in 1942\u20131944 at Auschwitz-Birkenau, Treblinka, Sobibor, Belzec, Chelmno, and Majdanek. Six million Jews are murdered \u2014 two-thirds of European Jewry. The killing does not stop when Germany begins losing the war; it accelerates. Himmler's SS continues deportations to the gas chambers until the camps are liberated by Allied forces in 1945.",
+          "visibility": "dm_only",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "other"
+        },
+        {
+          "id": "evt_76b460",
+          "session": 11,
+          "note": "In the war's final weeks, Himmler secretly contacts the World Jewish Congress and Allied representatives through a Swedish intermediary \u2014 offering to exchange Jews for trucks, then offering to surrender Germany's forces in the west to the Americans. He believes, even now, that the Western Allies will accept a separate peace against the Soviet Union. Hitler strips him of all offices when he learns of this. Himmler is captured by British forces in disguise and bites down on a cyanide capsule on May 23, 1945.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "politics"
+        }
+      ],
+      "relations": [
+        {
+          "target": "adolf_hitler",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "erwin_rommel",
+      "name": "Erwin Rommel",
+      "role": "Field Marshal \u2014 The Desert Fox",
+      "relationship": "neutral",
+      "description": "The Wehrmacht's most celebrated general. His tank command in France (1940) is a masterclass in armored warfare. In North Africa his Afrika Korps performs feats of operational brilliance against larger forces. He is also the most humane of the senior German commanders \u2014 he ignores Hitler's orders to execute prisoners and Jewish civilians. By 1944 he privately believes Germany cannot win and is connected to the July 20 assassination plot. He does not detonate the bomb. After the plot's failure, he is given the choice: public trial or private suicide. He takes poison on October 14, 1944. Germany announces he died of his wounds. He is given a state funeral.",
+      "hidden": false,
+      "factions": [
+        "nazi_germany"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_c6c617",
+          "session": 1,
+          "note": "Consequence of Adolf Hitler (ally): Hitler is appointed Chancellor of Germany on January 30, 1933. Within eighteen months he is F\u00fchrer, having abolished the presidency, merged it with the chancellorship, and purged his own party's rivals in the Night of the Long Knives. The democratic Weimar Republic is dead.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_4e7b95"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_faeefb",
+          "session": 2,
+          "note": "Consequence of Adolf Hitler (ally): The Molotov-Ribbentrop Pact (August 23, 1939) \u2014 a non-aggression agreement with the Soviet Union that also secretly divides Eastern Europe between them. It frees Hitler to move west without a two-front war. Stalin believes he has bought time. Hitler believes he has solved his strategic problem. Both are partially right.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_24ba84"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_fc1858",
+          "session": 4,
+          "note": "Consequence of Adolf Hitler (ally): Hitler launches Operation Barbarossa on June 22, 1941 \u2014 3 million German troops invade the Soviet Union on a front 1,800 miles wide. It is the largest military operation in history. Stalin is warned by multiple intelligence sources. He ignores them all. The initial German advance is catastrophic for the Soviets: the Red Army loses 800,000 men in the first two months.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_81f8da"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_7ebc5f",
+          "session": 7,
+          "note": "Consequence of Bernard Montgomery (rival): The Second Battle of El Alamein (October\u2013November 1942): Montgomery's 8th Army defeats Rommel's Afrika Korps in twelve days of fighting in the Egyptian desert. It is the first major British land victory of the war. Churchill orders church bells rung across Britain for the first time since the invasion threat of 1940. 'Before Alamein we never had a victory. After Alamein we never had a defeat.'",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "bernard_montgomery",
+            "entity_type": "npc",
+            "event_id": "evt_5d9996"
+          },
+          "actor_id": "bernard_montgomery",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_321617",
+          "session": 7,
+          "note": "Rommel is beaten at El Alamein \u2014 outmanned, outgunned, and outmaneuvered. The Afrika Korps retreats across North Africa. Operation Torch (US landings in Morocco and Algeria) cuts off retreat. The last Axis forces in North Africa surrender in May 1943. Rommel has already been recalled to Germany on sick leave \u2014 Hitler does not want to be present for the defeat.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "combat"
+        },
+        {
+          "id": "evt_b82ef9",
+          "session": 10,
+          "note": "Consequence of Adolf Hitler (ally): The Battle of the Bulge (December 1944): Germany's last western offensive. 30 German divisions strike through the Ardennes in the American sector. The Americans are surprised, bent, and do not break. Bastogne holds. Patton turns his entire army ninety degrees in winter and relieves it in seventy-two hours. The Bulge costs Germany its last operational reserves. Hitler retreats to his Berlin bunker and does not emerge again.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_064ea1"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_0e852e",
+          "session": 10,
+          "note": "Consequence of Adolf Hitler (ally): Hitler kills himself in the F\u00fchrerbunker on April 30, 1945, as Soviet forces fight street by street through Berlin. He has governed Germany for twelve years, started a war that kills seventy to eighty-five million people, and presided over the deliberate murder of six million Jews. He dies blaming everyone else.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_a5a6b8"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        }
+      ],
+      "relations": [
+        {
+          "target": "adolf_hitler",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 0.85
+        },
+        {
+          "target": "bernard_montgomery",
+          "target_type": "npc",
+          "relation": "rival",
+          "weight": 0.9
+        }
+      ]
+    },
+    {
+      "id": "winston_churchill",
+      "name": "Winston Churchill",
+      "role": "Prime Minister of Great Britain",
+      "relationship": "ally",
+      "description": "The right man for the worst moment. Becomes PM on May 10, 1940 \u2014 the same day Germany launches its western offensive. He has been warning about Hitler since 1933; no one listened. His value in 1940\u20131941 is not military but psychological: he convinces Britain and the watching world that this is survivable and worth surviving. 'We shall fight on the beaches.' He is also difficult: stubborn, Mediterranean-strategy-obsessed, condescending to Americans, and prone to operational interference. But the alliance holds, partly because of and partly despite him.",
+      "hidden": false,
+      "factions": [
+        "great_britain"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_857816",
+          "session": 1,
+          "note": "Consequence of Adolf Hitler (rival): Hitler is appointed Chancellor of Germany on January 30, 1933. Within eighteen months he is F\u00fchrer, having abolished the presidency, merged it with the chancellorship, and purged his own party's rivals in the Night of the Long Knives. The democratic Weimar Republic is dead.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_4e7b95"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_bc5961",
+          "session": 1,
+          "note": "Churchill is in his 'wilderness years' \u2014 out of government, warning from the backbenches about German rearmament that no one wants to hear. He is right about everything and politically irrelevant. He uses the time to write history and paint watercolors. His moment is coming.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 1,
+          "event_type": "politics"
+        },
+        {
+          "id": "evt_7c0ece",
+          "session": 2,
+          "note": "Consequence of Adolf Hitler (rival): The Molotov-Ribbentrop Pact (August 23, 1939) \u2014 a non-aggression agreement with the Soviet Union that also secretly divides Eastern Europe between them. It frees Hitler to move west without a two-front war. Stalin believes he has bought time. Hitler believes he has solved his strategic problem. Both are partially right.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_24ba84"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_a748aa",
+          "session": 3,
+          "note": "Churchill becomes Prime Minister on May 10, 1940 \u2014 the day Germany attacks. He tells the House of Commons he has nothing to offer but blood, toil, tears, and sweat. He refuses to consider any armistice or negotiated peace. When the War Cabinet debates terms, he ends it: 'If this long island story of ours is to end at last, let it end only when each one of us lies choking in his own blood upon the ground.' The cabinet stands and cheers.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "dialogue"
+        },
+        {
+          "id": "evt_740e3c",
+          "session": 3,
+          "note": "Consequence of Charles de Gaulle (ally): De Gaulle is a junior general when France falls. He flies to London and broadcasts on the BBC on June 18, 1940: 'Whatever happens, the flame of French resistance must not and shall not die.' The French government in Vichy considers him a traitor and sentences him to death in absentia. He has no army, no recognition, and no territory. He has the microphone and the argument.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 1,
+          "event_type": "dialogue",
+          "ripple_source": {
+            "entity_id": "charles_de_gaulle",
+            "entity_type": "npc",
+            "event_id": "evt_7a7d05"
+          },
+          "actor_id": "charles_de_gaulle",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_41023a",
+          "session": 4,
+          "note": "Consequence of Adolf Hitler (rival): Hitler launches Operation Barbarossa on June 22, 1941 \u2014 3 million German troops invade the Soviet Union on a front 1,800 miles wide. It is the largest military operation in history. Stalin is warned by multiple intelligence sources. He ignores them all. The initial German advance is catastrophic for the Soviets: the Red Army loses 800,000 men in the first two months.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_81f8da"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_c4dd13",
+          "session": 4,
+          "note": "Consequence of Joseph Stalin (ally): Stalin collapses psychologically for approximately ten days after Barbarossa begins \u2014 retreating to his dacha, unreachable. The Politburo comes to him. He recovers. He broadcasts to the Soviet people, calling them 'brothers and sisters' for the first time. He does not leave Moscow when the Germans reach its suburbs. The decision to stay \u2014 visible, symbolic, immovable \u2014 is one of the most consequential of the war.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "dialogue",
+          "ripple_source": {
+            "entity_id": "joseph_stalin",
+            "entity_type": "npc",
+            "event_id": "evt_b0c5cc"
+          },
+          "actor_id": "joseph_stalin",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_27bba7",
+          "session": 5,
+          "note": "Consequence of Franklin D. Roosevelt (ally): Roosevelt addresses Congress on December 8, 1941: 'Yesterday, December 7, 1941 \u2014 a date which will live in infamy.' Congress declares war on Japan in thirty-three minutes. Hitler, in the single most consequential blunder of the war, declares war on the United States four days later. He was not required to do this by the Axis pact. He does it anyway.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "dialogue",
+          "ripple_source": {
+            "entity_id": "franklin_d_roosevelt",
+            "entity_type": "npc",
+            "event_id": "evt_381812"
+          },
+          "actor_id": "franklin_d_roosevelt",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_a41d20",
+          "session": 5,
+          "note": "Churchill hears about Pearl Harbor on a radio and goes to bed and slept the sleep of the saved and thankful. He knows that with America in the war, victory is now certain \u2014 it is only a question of time and suffering. He sails immediately to Washington to meet Roosevelt and begin building the Grand Alliance.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "dialogue"
+        },
+        {
+          "id": "evt_8070ee",
+          "session": 9,
+          "note": "Consequence of Charles de Gaulle (ally): Paris is liberated on August 25, 1944. De Gaulle insists that French forces enter the city first. He then walks down the Champs-\u00c9lys\u00e9es on foot, in full uniform, under sniper fire from Vichy holdouts, in front of two million people. The scene is deliberate theater: it establishes that France liberated itself, not that it was liberated. The distinction matters enormously to de Gaulle.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "charles_de_gaulle",
+            "entity_type": "npc",
+            "event_id": "evt_00dd71"
+          },
+          "actor_id": "charles_de_gaulle",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_ca551f",
+          "session": 10,
+          "note": "Consequence of Adolf Hitler (rival): The Battle of the Bulge (December 1944): Germany's last western offensive. 30 German divisions strike through the Ardennes in the American sector. The Americans are surprised, bent, and do not break. Bastogne holds. Patton turns his entire army ninety degrees in winter and relieves it in seventy-two hours. The Bulge costs Germany its last operational reserves. Hitler retreats to his Berlin bunker and does not emerge again.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_064ea1"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_cf615e",
+          "session": 10,
+          "note": "Consequence of Adolf Hitler (rival): Hitler kills himself in the F\u00fchrerbunker on April 30, 1945, as Soviet forces fight street by street through Berlin. He has governed Germany for twelve years, started a war that kills seventy to eighty-five million people, and presided over the deliberate murder of six million Jews. He dies blaming everyone else.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_a5a6b8"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        }
+      ],
+      "relations": [
+        {
+          "target": "adolf_hitler",
+          "target_type": "npc",
+          "relation": "rival",
+          "weight": 1.0
+        },
+        {
+          "target": "franklin_d_roosevelt",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 1.0
+        },
+        {
+          "target": "joseph_stalin",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 0.7
+        },
+        {
+          "target": "charles_de_gaulle",
+          "target_type": "npc",
+          "formal_relation": "ally",
+          "personal_relation": "rival",
+          "weight": 0.7
+        }
+      ]
+    },
+    {
+      "id": "franklin_d_roosevelt",
+      "name": "Franklin D. Roosevelt",
+      "role": "President of the United States \u2014 1933\u20131945",
+      "relationship": "ally",
+      "description": "Serves an unprecedented four terms. Leads the US out of the Depression and into the war. His strategic instincts are sound: he identifies Germany as the primary threat, institutes Lend-Lease before America enters the war, and builds the coalition that wins it. He manages Churchill's stubbornness and Stalin's paranoia without fully satisfying either. He dies on April 12, 1945 \u2014 three weeks before Germany's surrender \u2014 of a cerebral hemorrhage at Warm Springs, Georgia. He does not live to see victory.",
+      "hidden": false,
+      "factions": [
+        "united_states"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_65a907",
+          "session": 1,
+          "note": "Consequence of Adolf Hitler (rival): Hitler is appointed Chancellor of Germany on January 30, 1933. Within eighteen months he is F\u00fchrer, having abolished the presidency, merged it with the chancellorship, and purged his own party's rivals in the Night of the Long Knives. The democratic Weimar Republic is dead.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_4e7b95"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_f8ed82",
+          "session": 2,
+          "note": "Consequence of Adolf Hitler (rival): The Molotov-Ribbentrop Pact (August 23, 1939) \u2014 a non-aggression agreement with the Soviet Union that also secretly divides Eastern Europe between them. It frees Hitler to move west without a two-front war. Stalin believes he has bought time. Hitler believes he has solved his strategic problem. Both are partially right.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_24ba84"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_4db08e",
+          "session": 2,
+          "note": "Roosevelt watches Europe go to war and begins positioning the United States to support Britain without entering the conflict \u2014 a delicate domestic political balance. He wins a third term in 1940 partly by promising not to send American boys into foreign wars. He does not believe this promise is one he will be able to keep.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "politics"
+        },
+        {
+          "id": "evt_e78aa8",
+          "session": 3,
+          "note": "Consequence of Winston Churchill (ally): Churchill becomes Prime Minister on May 10, 1940 \u2014 the day Germany attacks. He tells the House of Commons he has nothing to offer but blood, toil, tears, and sweat. He refuses to consider any armistice or negotiated peace. When the War Cabinet debates terms, he ends it: 'If this long island story of ours is to end at last, let it end only when each one of us lies choking in his own blood upon the ground.' The cabinet stands and cheers.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "dialogue",
+          "ripple_source": {
+            "entity_id": "winston_churchill",
+            "entity_type": "npc",
+            "event_id": "evt_a748aa"
+          },
+          "actor_id": "winston_churchill",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_959677",
+          "session": 4,
+          "note": "Consequence of Adolf Hitler (rival): Hitler launches Operation Barbarossa on June 22, 1941 \u2014 3 million German troops invade the Soviet Union on a front 1,800 miles wide. It is the largest military operation in history. Stalin is warned by multiple intelligence sources. He ignores them all. The initial German advance is catastrophic for the Soviets: the Red Army loses 800,000 men in the first two months.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_81f8da"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_b4b30c",
+          "session": 4,
+          "note": "Consequence of Joseph Stalin (ally): Stalin collapses psychologically for approximately ten days after Barbarossa begins \u2014 retreating to his dacha, unreachable. The Politburo comes to him. He recovers. He broadcasts to the Soviet people, calling them 'brothers and sisters' for the first time. He does not leave Moscow when the Germans reach its suburbs. The decision to stay \u2014 visible, symbolic, immovable \u2014 is one of the most consequential of the war.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "dialogue",
+          "ripple_source": {
+            "entity_id": "joseph_stalin",
+            "entity_type": "npc",
+            "event_id": "evt_b0c5cc"
+          },
+          "actor_id": "joseph_stalin",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_716cba",
+          "session": 5,
+          "note": "Consequence of Isoroku Yamamoto (rival): Yamamoto's strike force attacks Pearl Harbor at dawn on December 7, 1941. Eighteen US warships are sunk or damaged; 2,403 Americans are killed. Four battleships go to the bottom. Crucially, three US aircraft carriers are not in port \u2014 they are at sea \u2014 and survive. Yamamoto knows this. He knows the carriers are what matter.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "isoroku_yamamoto",
+            "entity_type": "npc",
+            "event_id": "evt_e5c629"
+          },
+          "actor_id": "isoroku_yamamoto",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_381812",
+          "session": 5,
+          "note": "Roosevelt addresses Congress on December 8, 1941: 'Yesterday, December 7, 1941 \u2014 a date which will live in infamy.' Congress declares war on Japan in thirty-three minutes. Hitler, in the single most consequential blunder of the war, declares war on the United States four days later. He was not required to do this by the Axis pact. He does it anyway.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "dialogue"
+        },
+        {
+          "id": "evt_dd2847",
+          "session": 5,
+          "note": "Consequence of Winston Churchill (ally): Churchill hears about Pearl Harbor on a radio and goes to bed and slept the sleep of the saved and thankful. He knows that with America in the war, victory is now certain \u2014 it is only a question of time and suffering. He sails immediately to Washington to meet Roosevelt and begin building the Grand Alliance.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "dialogue",
+          "ripple_source": {
+            "entity_id": "winston_churchill",
+            "entity_type": "npc",
+            "event_id": "evt_a41d20"
+          },
+          "actor_id": "winston_churchill",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_c3b1f7",
+          "session": 6,
+          "note": "Consequence of Isoroku Yamamoto (rival): Yamamoto plans the Midway operation: lure the US carriers into a trap at Midway Atoll and destroy them. US code-breakers read the Japanese naval codes and know the plan. Admiral Nimitz sets his own trap. June 4\u20137, 1942: in five minutes of divebombing, the US sinks four Japanese fleet carriers \u2014 the same carriers that attacked Pearl Harbor. Japan loses its offensive capability in the Pacific. The war's direction changes.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "isoroku_yamamoto",
+            "entity_type": "npc",
+            "event_id": "evt_eec217"
+          },
+          "actor_id": "isoroku_yamamoto",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_63dc94",
+          "session": 10,
+          "note": "Consequence of Adolf Hitler (rival): The Battle of the Bulge (December 1944): Germany's last western offensive. 30 German divisions strike through the Ardennes in the American sector. The Americans are surprised, bent, and do not break. Bastogne holds. Patton turns his entire army ninety degrees in winter and relieves it in seventy-two hours. The Bulge costs Germany its last operational reserves. Hitler retreats to his Berlin bunker and does not emerge again.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_064ea1"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_eaeff8",
+          "session": 10,
+          "note": "Consequence of Adolf Hitler (rival): Hitler kills himself in the F\u00fchrerbunker on April 30, 1945, as Soviet forces fight street by street through Berlin. He has governed Germany for twelve years, started a war that kills seventy to eighty-five million people, and presided over the deliberate murder of six million Jews. He dies blaming everyone else.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_a5a6b8"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_069009",
+          "session": 12,
+          "note": "Consequence of Harry S. Truman (ally): Truman authorizes the use of atomic bombs on Japan. Hiroshima: August 6, 1945. One bomb kills 80,000 people immediately; total deaths reach 135,000. Nagasaki: August 9. On August 8, the Soviet Union declares war on Japan and invades Manchuria. Japan faces atomic annihilation and Soviet invasion simultaneously. Truman's calculation \u2014 that the bombs save more lives than an invasion \u2014 is argued about for the rest of the century.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "harry_s_truman",
+            "entity_type": "npc",
+            "event_id": "evt_11bf65"
+          },
+          "actor_id": "harry_s_truman",
+          "actor_type": "npc"
+        }
+      ],
+      "relations": [
+        {
+          "target": "winston_churchill",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 1.0
+        },
+        {
+          "target": "joseph_stalin",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 0.75
+        },
+        {
+          "target": "harry_s_truman",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 0.9
+        }
+      ]
+    },
+    {
+      "id": "harry_s_truman",
+      "name": "Harry S. Truman",
+      "role": "President of the United States \u2014 1945",
+      "relationship": "ally",
+      "description": "Vice President for 82 days before Roosevelt's death. He is told about the Manhattan Project only after becoming president. He has to decide, within months of taking office, whether to use atomic weapons on Japan. He decides yes: he believes an invasion of the Japanese home islands would cost more lives \u2014 American and Japanese \u2014 than the bombs. He orders the destruction of Hiroshima on August 6, 1945. He orders Nagasaki on August 9. Japan surrenders August 15.",
+      "hidden": false,
+      "factions": [
+        "united_states"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_e4d4d6",
+          "session": 5,
+          "note": "Consequence of Franklin D. Roosevelt (ally): Roosevelt addresses Congress on December 8, 1941: 'Yesterday, December 7, 1941 \u2014 a date which will live in infamy.' Congress declares war on Japan in thirty-three minutes. Hitler, in the single most consequential blunder of the war, declares war on the United States four days later. He was not required to do this by the Axis pact. He does it anyway.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "dialogue",
+          "ripple_source": {
+            "entity_id": "franklin_d_roosevelt",
+            "entity_type": "npc",
+            "event_id": "evt_381812"
+          },
+          "actor_id": "franklin_d_roosevelt",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_11bf65",
+          "session": 12,
+          "note": "Truman authorizes the use of atomic bombs on Japan. Hiroshima: August 6, 1945. One bomb kills 80,000 people immediately; total deaths reach 135,000. Nagasaki: August 9. On August 8, the Soviet Union declares war on Japan and invades Manchuria. Japan faces atomic annihilation and Soviet invasion simultaneously. Truman's calculation \u2014 that the bombs save more lives than an invasion \u2014 is argued about for the rest of the century.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "other"
+        }
+      ]
+    },
+    {
+      "id": "dwight_d_eisenhower",
+      "name": "Dwight D. Eisenhower",
+      "role": "Supreme Allied Commander \u2014 Europe",
+      "relationship": "ally",
+      "description": "The coalition builder. Not the most tactically gifted Allied general \u2014 Montgomery and Patton both outperform him in pure battlefield terms \u2014 but the one who can hold the alliance together. He commands the North Africa landings, the Sicily invasion, and Operation Overlord (D-Day). He manages the egos of Churchill, Montgomery, and Patton simultaneously without losing any of them irreparably. After the war he becomes the 34th President of the United States.",
+      "hidden": false,
+      "factions": [
+        "united_states"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_bd873c",
+          "session": 6,
+          "note": "Consequence of Douglas MacArthur (ally): MacArthur, forced to abandon the Philippines ('I shall return'), commands the Southwest Pacific theater from Australia. The Guadalcanal campaign (August 1942 \u2013 February 1943) is the first major Allied land offensive of the Pacific war \u2014 six months of jungle fighting, naval battles, and attrition that Japan cannot sustain.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 1,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "douglas_macarthur",
+            "entity_type": "npc",
+            "event_id": "evt_bfd864"
+          },
+          "actor_id": "douglas_macarthur",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_309041",
+          "session": 7,
+          "note": "Consequence of Bernard Montgomery (ally): The Second Battle of El Alamein (October\u2013November 1942): Montgomery's 8th Army defeats Rommel's Afrika Korps in twelve days of fighting in the Egyptian desert. It is the first major British land victory of the war. Churchill orders church bells rung across Britain for the first time since the invasion threat of 1940. 'Before Alamein we never had a victory. After Alamein we never had a defeat.'",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "bernard_montgomery",
+            "entity_type": "npc",
+            "event_id": "evt_5d9996"
+          },
+          "actor_id": "bernard_montgomery",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_0b05c5",
+          "session": 8,
+          "note": "Eisenhower commands the Sicily invasion and the subsequent Italian campaign. The Italian front bogs down against the German Gustav Line \u2014 Monte Cassino is besieged for five months. The Italian campaign ties down German divisions but at enormous Allied cost. It is strategically important and operationally agonizing.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "combat"
+        },
+        {
+          "id": "evt_46a178",
+          "session": 9,
+          "note": "Operation Overlord, June 6, 1944: the largest amphibious assault in history. 156,000 Allied troops land on five Normandy beaches. Omaha Beach costs 2,000 American casualties in a single morning. By nightfall, the Allies have a foothold in France. The night before, Eisenhower prepares a message for if the operation fails: 'Our landings have failed... If any blame or fault attaches to the attempt, it is mine alone.' He writes it. He does not need to send it.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat"
+        },
+        {
+          "id": "evt_13aa38",
+          "session": 9,
+          "note": "Consequence of George S. Patton (ally): Operation Cobra (July 1944): Patton's Third Army breaks out of Normandy and races across France \u2014 600 miles in two weeks, the fastest advance in the history of armored warfare. Patton outstrips his supply lines and is eventually halted by fuel shortages. He argues \u2014 correctly \u2014 that if given the fuel he could end the war by Christmas. He is not given the fuel. The war does not end by Christmas.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "george_s_patton",
+            "entity_type": "npc",
+            "event_id": "evt_9d87d0"
+          },
+          "actor_id": "george_s_patton",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_1b5f5a",
+          "session": 12,
+          "note": "Consequence of Douglas MacArthur (ally): Iwo Jima (February\u2013March 1945): 26,000 American casualties to take an eight-square-mile island. Okinawa (April\u2013June 1945): 50,000 American casualties, 110,000 Japanese killed, 100,000 Okinawan civilians dead. The math of invading the Japanese home islands \u2014 Operation Downfall \u2014 projects 250,000 to one million Allied casualties. MacArthur is assigned to command it.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "douglas_macarthur",
+            "entity_type": "npc",
+            "event_id": "evt_1f4780"
+          },
+          "actor_id": "douglas_macarthur",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_734f31",
+          "session": 12,
+          "note": "Consequence of Douglas MacArthur (ally): Japan formally surrenders on the deck of the USS Missouri in Tokyo Bay on September 2, 1945. MacArthur accepts the surrender and signs for the Allied Powers. He speaks: 'It is my earnest hope \u2014 indeed the hope of all mankind \u2014 that from this solemn occasion a better world shall emerge.' The war is over. Total dead: seventy to eighty-five million people.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "douglas_macarthur",
+            "entity_type": "npc",
+            "event_id": "evt_77304b"
+          },
+          "actor_id": "douglas_macarthur",
+          "actor_type": "npc"
+        }
+      ],
+      "relations": [
+        {
+          "target": "george_s_patton",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 0.85
+        },
+        {
+          "target": "bernard_montgomery",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 0.75
+        },
+        {
+          "target": "douglas_macarthur",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 0.7
+        }
+      ]
+    },
+    {
+      "id": "douglas_macarthur",
+      "name": "Douglas MacArthur",
+      "role": "Supreme Commander \u2014 Pacific (Southwest)",
+      "relationship": "ally",
+      "description": "Brilliant, theatrical, and difficult. Escapes the Philippines by PT boat in March 1942 under orders, leaving his men to the Bataan Death March. 'I shall return' \u2014 and he does, wading ashore at Leyte in October 1944. He commands the island-hopping campaign that brings the war to Japan's doorstep. He accepts Japan's formal surrender on the deck of the USS Missouri on September 2, 1945, and then personally oversees Japan's postwar reconstruction.",
+      "hidden": false,
+      "factions": [
+        "united_states"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_bfd864",
+          "session": 6,
+          "note": "MacArthur, forced to abandon the Philippines ('I shall return'), commands the Southwest Pacific theater from Australia. The Guadalcanal campaign (August 1942 \u2013 February 1943) is the first major Allied land offensive of the Pacific war \u2014 six months of jungle fighting, naval battles, and attrition that Japan cannot sustain.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "combat"
+        },
+        {
+          "id": "evt_888bc3",
+          "session": 8,
+          "note": "Consequence of Dwight D. Eisenhower (ally): Eisenhower commands the Sicily invasion and the subsequent Italian campaign. The Italian front bogs down against the German Gustav Line \u2014 Monte Cassino is besieged for five months. The Italian campaign ties down German divisions but at enormous Allied cost. It is strategically important and operationally agonizing.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 1,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "dwight_d_eisenhower",
+            "entity_type": "npc",
+            "event_id": "evt_0b05c5"
+          },
+          "actor_id": "dwight_d_eisenhower",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_3af996",
+          "session": 9,
+          "note": "Consequence of Dwight D. Eisenhower (ally): Operation Overlord, June 6, 1944: the largest amphibious assault in history. 156,000 Allied troops land on five Normandy beaches. Omaha Beach costs 2,000 American casualties in a single morning. By nightfall, the Allies have a foothold in France. The night before, Eisenhower prepares a message for if the operation fails: 'Our landings have failed... If any blame or fault attaches to the attempt, it is mine alone.' He writes it. He does not need to send it.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "dwight_d_eisenhower",
+            "entity_type": "npc",
+            "event_id": "evt_46a178"
+          },
+          "actor_id": "dwight_d_eisenhower",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_1f4780",
+          "session": 12,
+          "note": "Iwo Jima (February\u2013March 1945): 26,000 American casualties to take an eight-square-mile island. Okinawa (April\u2013June 1945): 50,000 American casualties, 110,000 Japanese killed, 100,000 Okinawan civilians dead. The math of invading the Japanese home islands \u2014 Operation Downfall \u2014 projects 250,000 to one million Allied casualties. MacArthur is assigned to command it.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "combat"
+        },
+        {
+          "id": "evt_77304b",
+          "session": 12,
+          "note": "Japan formally surrenders on the deck of the USS Missouri in Tokyo Bay on September 2, 1945. MacArthur accepts the surrender and signs for the Allied Powers. He speaks: 'It is my earnest hope \u2014 indeed the hope of all mankind \u2014 that from this solemn occasion a better world shall emerge.' The war is over. Total dead: seventy to eighty-five million people.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "other"
+        }
+      ]
+    },
+    {
+      "id": "george_s_patton",
+      "name": "George S. Patton",
+      "role": "Commanding General \u2014 Third Army",
+      "relationship": "ally",
+      "description": "The most aggressive Allied commander and the one the Germans most feared. His Third Army's breakout from Normandy (August 1944) covers ground faster than any army in the history of warfare. He slaps a shell-shocked soldier in a field hospital in Sicily and is nearly relieved of command by Eisenhower \u2014 his value as a threat to German planning exceeds his personal conduct. He dies in December 1945 in a car accident in occupied Germany.",
+      "hidden": false,
+      "factions": [
+        "united_states"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_6f96cb",
+          "session": 7,
+          "note": "Consequence of Bernard Montgomery (ally): The Second Battle of El Alamein (October\u2013November 1942): Montgomery's 8th Army defeats Rommel's Afrika Korps in twelve days of fighting in the Egyptian desert. It is the first major British land victory of the war. Churchill orders church bells rung across Britain for the first time since the invasion threat of 1940. 'Before Alamein we never had a victory. After Alamein we never had a defeat.'",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "bernard_montgomery",
+            "entity_type": "npc",
+            "event_id": "evt_5d9996"
+          },
+          "actor_id": "bernard_montgomery",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_215f66",
+          "session": 8,
+          "note": "Consequence of Dwight D. Eisenhower (ally): Eisenhower commands the Sicily invasion and the subsequent Italian campaign. The Italian front bogs down against the German Gustav Line \u2014 Monte Cassino is besieged for five months. The Italian campaign ties down German divisions but at enormous Allied cost. It is strategically important and operationally agonizing.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "dwight_d_eisenhower",
+            "entity_type": "npc",
+            "event_id": "evt_0b05c5"
+          },
+          "actor_id": "dwight_d_eisenhower",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_3ad1ad",
+          "session": 9,
+          "note": "Consequence of Dwight D. Eisenhower (ally): Operation Overlord, June 6, 1944: the largest amphibious assault in history. 156,000 Allied troops land on five Normandy beaches. Omaha Beach costs 2,000 American casualties in a single morning. By nightfall, the Allies have a foothold in France. The night before, Eisenhower prepares a message for if the operation fails: 'Our landings have failed... If any blame or fault attaches to the attempt, it is mine alone.' He writes it. He does not need to send it.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "dwight_d_eisenhower",
+            "entity_type": "npc",
+            "event_id": "evt_46a178"
+          },
+          "actor_id": "dwight_d_eisenhower",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_9d87d0",
+          "session": 9,
+          "note": "Operation Cobra (July 1944): Patton's Third Army breaks out of Normandy and races across France \u2014 600 miles in two weeks, the fastest advance in the history of armored warfare. Patton outstrips his supply lines and is eventually halted by fuel shortages. He argues \u2014 correctly \u2014 that if given the fuel he could end the war by Christmas. He is not given the fuel. The war does not end by Christmas.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat"
+        }
+      ],
+      "relations": [
+        {
+          "target": "dwight_d_eisenhower",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 0.85
+        },
+        {
+          "target": "bernard_montgomery",
+          "target_type": "npc",
+          "formal_relation": "ally",
+          "personal_relation": "rival",
+          "weight": 0.75
+        }
+      ]
+    },
+    {
+      "id": "bernard_montgomery",
+      "name": "Bernard Montgomery",
+      "role": "Field Marshal \u2014 8th Army and 21st Army Group",
+      "relationship": "friendly",
+      "description": "The British general who defeats Rommel at El Alamein \u2014 the first major Allied land victory of the war. Meticulous, cautious, and convinced of his own genius. His rivalry with Patton is real: they compete for fuel, glory, and Eisenhower's approval throughout the 1944 campaign. His Operation Market Garden (September 1944) \u2014 a bold airdrop into the Netherlands \u2014 fails at Arnhem, the bridge too far. He accepts Germany's surrender at L\u00fcneburg Heath on May 4, 1945.",
+      "hidden": false,
+      "factions": [
+        "great_britain"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_5d9996",
+          "session": 7,
+          "note": "The Second Battle of El Alamein (October\u2013November 1942): Montgomery's 8th Army defeats Rommel's Afrika Korps in twelve days of fighting in the Egyptian desert. It is the first major British land victory of the war. Churchill orders church bells rung across Britain for the first time since the invasion threat of 1940. 'Before Alamein we never had a victory. After Alamein we never had a defeat.'",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat"
+        },
+        {
+          "id": "evt_51fa99",
+          "session": 7,
+          "note": "Consequence of Erwin Rommel (rival): Rommel is beaten at El Alamein \u2014 outmanned, outgunned, and outmaneuvered. The Afrika Korps retreats across North Africa. Operation Torch (US landings in Morocco and Algeria) cuts off retreat. The last Axis forces in North Africa surrender in May 1943. Rommel has already been recalled to Germany on sick leave \u2014 Hitler does not want to be present for the defeat.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "erwin_rommel",
+            "entity_type": "npc",
+            "event_id": "evt_321617"
+          },
+          "actor_id": "erwin_rommel",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_e76005",
+          "session": 8,
+          "note": "Consequence of Dwight D. Eisenhower (ally): Eisenhower commands the Sicily invasion and the subsequent Italian campaign. The Italian front bogs down against the German Gustav Line \u2014 Monte Cassino is besieged for five months. The Italian campaign ties down German divisions but at enormous Allied cost. It is strategically important and operationally agonizing.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "dwight_d_eisenhower",
+            "entity_type": "npc",
+            "event_id": "evt_0b05c5"
+          },
+          "actor_id": "dwight_d_eisenhower",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_bf4374",
+          "session": 9,
+          "note": "Consequence of Dwight D. Eisenhower (ally): Operation Overlord, June 6, 1944: the largest amphibious assault in history. 156,000 Allied troops land on five Normandy beaches. Omaha Beach costs 2,000 American casualties in a single morning. By nightfall, the Allies have a foothold in France. The night before, Eisenhower prepares a message for if the operation fails: 'Our landings have failed... If any blame or fault attaches to the attempt, it is mine alone.' He writes it. He does not need to send it.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "dwight_d_eisenhower",
+            "entity_type": "npc",
+            "event_id": "evt_46a178"
+          },
+          "actor_id": "dwight_d_eisenhower",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_82e7b4",
+          "session": 9,
+          "note": "Consequence of George S. Patton (ally): Operation Cobra (July 1944): Patton's Third Army breaks out of Normandy and races across France \u2014 600 miles in two weeks, the fastest advance in the history of armored warfare. Patton outstrips his supply lines and is eventually halted by fuel shortages. He argues \u2014 correctly \u2014 that if given the fuel he could end the war by Christmas. He is not given the fuel. The war does not end by Christmas.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "george_s_patton",
+            "entity_type": "npc",
+            "event_id": "evt_9d87d0"
+          },
+          "actor_id": "george_s_patton",
+          "actor_type": "npc"
+        }
+      ],
+      "relations": [
+        {
+          "target": "erwin_rommel",
+          "target_type": "npc",
+          "relation": "rival",
+          "weight": 0.9
+        },
+        {
+          "target": "dwight_d_eisenhower",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 0.75
+        },
+        {
+          "target": "george_s_patton",
+          "target_type": "npc",
+          "formal_relation": "ally",
+          "personal_relation": "rival",
+          "weight": 0.75
+        }
+      ]
+    },
+    {
+      "id": "charles_de_gaulle",
+      "name": "Charles de Gaulle",
+      "role": "Leader of Free France",
+      "relationship": "friendly",
+      "description": "A two-star brigadier general who refuses to accept France's armistice and broadcasts from London on June 18, 1940. He has no army, no government, no territory, and no recognition. He builds all of these through sheer will and the force of a single argument: France has not lost, only its government has surrendered. He is difficult to work with \u2014 Churchill calls him the heaviest cross he has to bear \u2014 and he is right about almost everything. He walks down the Champs-\u00c9lys\u00e9es in August 1944 under sniper fire because the scene requires it.",
+      "hidden": false,
+      "factions": [
+        "free_france"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_47e141",
+          "session": 3,
+          "note": "Consequence of Winston Churchill (ally): Churchill becomes Prime Minister on May 10, 1940 \u2014 the day Germany attacks. He tells the House of Commons he has nothing to offer but blood, toil, tears, and sweat. He refuses to consider any armistice or negotiated peace. When the War Cabinet debates terms, he ends it: 'If this long island story of ours is to end at last, let it end only when each one of us lies choking in his own blood upon the ground.' The cabinet stands and cheers.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "dialogue",
+          "ripple_source": {
+            "entity_id": "winston_churchill",
+            "entity_type": "npc",
+            "event_id": "evt_a748aa"
+          },
+          "actor_id": "winston_churchill",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_7a7d05",
+          "session": 3,
+          "note": "De Gaulle is a junior general when France falls. He flies to London and broadcasts on the BBC on June 18, 1940: 'Whatever happens, the flame of French resistance must not and shall not die.' The French government in Vichy considers him a traitor and sentences him to death in absentia. He has no army, no recognition, and no territory. He has the microphone and the argument.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "dialogue"
+        },
+        {
+          "id": "evt_3ca0d3",
+          "session": 5,
+          "note": "Consequence of Winston Churchill (ally): Churchill hears about Pearl Harbor on a radio and goes to bed and slept the sleep of the saved and thankful. He knows that with America in the war, victory is now certain \u2014 it is only a question of time and suffering. He sails immediately to Washington to meet Roosevelt and begin building the Grand Alliance.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "dialogue",
+          "ripple_source": {
+            "entity_id": "winston_churchill",
+            "entity_type": "npc",
+            "event_id": "evt_a41d20"
+          },
+          "actor_id": "winston_churchill",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_00dd71",
+          "session": 9,
+          "note": "Paris is liberated on August 25, 1944. De Gaulle insists that French forces enter the city first. He then walks down the Champs-\u00c9lys\u00e9es on foot, in full uniform, under sniper fire from Vichy holdouts, in front of two million people. The scene is deliberate theater: it establishes that France liberated itself, not that it was liberated. The distinction matters enormously to de Gaulle.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "other"
+        }
+      ],
+      "relations": [
+        {
+          "target": "winston_churchill",
+          "target_type": "npc",
+          "formal_relation": "ally",
+          "personal_relation": "rival",
+          "weight": 0.7
+        }
+      ]
+    },
+    {
+      "id": "joseph_stalin",
+      "name": "Joseph Stalin",
+      "role": "General Secretary \u2014 Soviet Union",
+      "relationship": "neutral",
+      "description": "The man who industrialized the Soviet Union by force and killed millions doing it. His purge of the Red Army's officer corps in 1937\u20131938 removes most of his best military minds \u2014 they are shot, or imprisoned, or broken \u2014 and this is why Barbarossa's early months are catastrophic. He recovers. He learns to let his generals fight. By 1943 the Soviet military machine is the most powerful on earth. He extracts maximum territorial concessions from the Allies at Yalta and leaves the war controlling Eastern Europe.",
+      "hidden": false,
+      "factions": [
+        "soviet_union"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_bb4958",
+          "session": 1,
+          "note": "Consequence of Adolf Hitler (rival): Hitler is appointed Chancellor of Germany on January 30, 1933. Within eighteen months he is F\u00fchrer, having abolished the presidency, merged it with the chancellorship, and purged his own party's rivals in the Night of the Long Knives. The democratic Weimar Republic is dead.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_4e7b95"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_12ab43",
+          "session": 2,
+          "note": "Consequence of Adolf Hitler (rival): The Molotov-Ribbentrop Pact (August 23, 1939) \u2014 a non-aggression agreement with the Soviet Union that also secretly divides Eastern Europe between them. It frees Hitler to move west without a two-front war. Stalin believes he has bought time. Hitler believes he has solved his strategic problem. Both are partially right.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_24ba84"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_d48694",
+          "session": 3,
+          "note": "Consequence of Winston Churchill (ally): Churchill becomes Prime Minister on May 10, 1940 \u2014 the day Germany attacks. He tells the House of Commons he has nothing to offer but blood, toil, tears, and sweat. He refuses to consider any armistice or negotiated peace. When the War Cabinet debates terms, he ends it: 'If this long island story of ours is to end at last, let it end only when each one of us lies choking in his own blood upon the ground.' The cabinet stands and cheers.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "dialogue",
+          "ripple_source": {
+            "entity_id": "winston_churchill",
+            "entity_type": "npc",
+            "event_id": "evt_a748aa"
+          },
+          "actor_id": "winston_churchill",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_20f65f",
+          "session": 4,
+          "note": "Consequence of Adolf Hitler (rival): Hitler launches Operation Barbarossa on June 22, 1941 \u2014 3 million German troops invade the Soviet Union on a front 1,800 miles wide. It is the largest military operation in history. Stalin is warned by multiple intelligence sources. He ignores them all. The initial German advance is catastrophic for the Soviets: the Red Army loses 800,000 men in the first two months.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_81f8da"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_b0c5cc",
+          "session": 4,
+          "note": "Stalin collapses psychologically for approximately ten days after Barbarossa begins \u2014 retreating to his dacha, unreachable. The Politburo comes to him. He recovers. He broadcasts to the Soviet people, calling them 'brothers and sisters' for the first time. He does not leave Moscow when the Germans reach its suburbs. The decision to stay \u2014 visible, symbolic, immovable \u2014 is one of the most consequential of the war.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "dialogue"
+        },
+        {
+          "id": "evt_d6267b",
+          "session": 4,
+          "note": "Consequence of Georgy Zhukov (ally): Zhukov is appointed to defend Moscow in October 1941 when German forces are close enough to see the Kremlin's golden domes through field glasses. He holds. On December 5, 1941, he launches a counteroffensive with fresh Siberian divisions \u2014 troops acclimatized to cold that the Germans, who were never issued winter equipment, are not. The Wehrmacht is stopped forty miles from Moscow.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "georgy_zhukov",
+            "entity_type": "npc",
+            "event_id": "evt_123857"
+          },
+          "actor_id": "georgy_zhukov",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_ae18ad",
+          "session": 5,
+          "note": "Consequence of Franklin D. Roosevelt (ally): Roosevelt addresses Congress on December 8, 1941: 'Yesterday, December 7, 1941 \u2014 a date which will live in infamy.' Congress declares war on Japan in thirty-three minutes. Hitler, in the single most consequential blunder of the war, declares war on the United States four days later. He was not required to do this by the Axis pact. He does it anyway.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "dialogue",
+          "ripple_source": {
+            "entity_id": "franklin_d_roosevelt",
+            "entity_type": "npc",
+            "event_id": "evt_381812"
+          },
+          "actor_id": "franklin_d_roosevelt",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_8ee24a",
+          "session": 5,
+          "note": "Consequence of Winston Churchill (ally): Churchill hears about Pearl Harbor on a radio and goes to bed and slept the sleep of the saved and thankful. He knows that with America in the war, victory is now certain \u2014 it is only a question of time and suffering. He sails immediately to Washington to meet Roosevelt and begin building the Grand Alliance.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "dialogue",
+          "ripple_source": {
+            "entity_id": "winston_churchill",
+            "entity_type": "npc",
+            "event_id": "evt_a41d20"
+          },
+          "actor_id": "winston_churchill",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_72d042",
+          "session": 7,
+          "note": "Consequence of Georgy Zhukov (ally): Operation Uranus (November 1942): Zhukov's encirclement of the German 6th Army at Stalingrad. Three hundred thousand German troops are surrounded. Hitler forbids retreat. Operation Winter Storm \u2014 the relief attempt \u2014 fails. Field Marshal Paulus surrenders with 91,000 survivors on January 31, 1943. The Wehrmacht has never suffered a defeat of this magnitude. The war on the Eastern Front has turned.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "georgy_zhukov",
+            "entity_type": "npc",
+            "event_id": "evt_88009f"
+          },
+          "actor_id": "georgy_zhukov",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_a44bad",
+          "session": 10,
+          "note": "Consequence of Georgy Zhukov (ally): Operation Bagration (June 1944): the Soviet summer offensive destroys Army Group Centre \u2014 17 German divisions annihilated, 350,000 casualties. It is the largest defeat in German military history, larger than Stalingrad, happening at the same time as D-Day. The Red Army advances 400 miles in two months. By early 1945, Zhukov is 40 miles from Berlin.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "georgy_zhukov",
+            "entity_type": "npc",
+            "event_id": "evt_3d3c03"
+          },
+          "actor_id": "georgy_zhukov",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_0f7aba",
+          "session": 10,
+          "note": "Consequence of Adolf Hitler (rival): The Battle of the Bulge (December 1944): Germany's last western offensive. 30 German divisions strike through the Ardennes in the American sector. The Americans are surprised, bent, and do not break. Bastogne holds. Patton turns his entire army ninety degrees in winter and relieves it in seventy-two hours. The Bulge costs Germany its last operational reserves. Hitler retreats to his Berlin bunker and does not emerge again.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_064ea1"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_76e999",
+          "session": 10,
+          "note": "Consequence of Georgy Zhukov (ally): Berlin falls to the Red Army on May 2, 1945. Hitler dies by suicide on April 30 \u2014 a gunshot wound and cyanide, with Eva Braun, in the F\u00fchrerbunker. Their bodies are burned in the garden above. Germany signs unconditional surrender on May 8, 1945. V-E Day. The war in Europe is over.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "georgy_zhukov",
+            "entity_type": "npc",
+            "event_id": "evt_51ea80"
+          },
+          "actor_id": "georgy_zhukov",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_3e33d2",
+          "session": 10,
+          "note": "Consequence of Adolf Hitler (rival): Hitler kills himself in the F\u00fchrerbunker on April 30, 1945, as Soviet forces fight street by street through Berlin. He has governed Germany for twelve years, started a war that kills seventy to eighty-five million people, and presided over the deliberate murder of six million Jews. He dies blaming everyone else.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_a5a6b8"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        }
+      ],
+      "relations": [
+        {
+          "target": "adolf_hitler",
+          "target_type": "npc",
+          "relation": "rival",
+          "weight": 1.0
+        },
+        {
+          "target": "winston_churchill",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 0.7
+        },
+        {
+          "target": "franklin_d_roosevelt",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 0.75
+        },
+        {
+          "target": "georgy_zhukov",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 0.9
+        }
+      ]
+    },
+    {
+      "id": "georgy_zhukov",
+      "name": "Georgy Zhukov",
+      "role": "Marshal of the Soviet Union \u2014 Defender of Moscow, Berlin",
+      "relationship": "friendly",
+      "description": "The greatest general of World War II by almost any measure. He is recalled to defend Moscow in October 1941 when German forces are within sight of the Kremlin's spires \u2014 and he holds. He commands at Stalingrad, Kursk, the destruction of Army Group Centre, the Vistula-Oder Offensive, and the final assault on Berlin. He accepts Germany's unconditional surrender in Berlin on May 8, 1945. Stalin, jealous of his reputation, sidelines him after the war.",
+      "hidden": false,
+      "factions": [
+        "soviet_union"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_0d38c4",
+          "session": 1,
+          "note": "Consequence of Adolf Hitler (rival): Hitler is appointed Chancellor of Germany on January 30, 1933. Within eighteen months he is F\u00fchrer, having abolished the presidency, merged it with the chancellorship, and purged his own party's rivals in the Night of the Long Knives. The democratic Weimar Republic is dead.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_4e7b95"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_ea53e7",
+          "session": 2,
+          "note": "Consequence of Adolf Hitler (rival): The Molotov-Ribbentrop Pact (August 23, 1939) \u2014 a non-aggression agreement with the Soviet Union that also secretly divides Eastern Europe between them. It frees Hitler to move west without a two-front war. Stalin believes he has bought time. Hitler believes he has solved his strategic problem. Both are partially right.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_24ba84"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_d4a2f0",
+          "session": 4,
+          "note": "Consequence of Adolf Hitler (rival): Hitler launches Operation Barbarossa on June 22, 1941 \u2014 3 million German troops invade the Soviet Union on a front 1,800 miles wide. It is the largest military operation in history. Stalin is warned by multiple intelligence sources. He ignores them all. The initial German advance is catastrophic for the Soviets: the Red Army loses 800,000 men in the first two months.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_81f8da"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_4213f0",
+          "session": 4,
+          "note": "Consequence of Joseph Stalin (ally): Stalin collapses psychologically for approximately ten days after Barbarossa begins \u2014 retreating to his dacha, unreachable. The Politburo comes to him. He recovers. He broadcasts to the Soviet people, calling them 'brothers and sisters' for the first time. He does not leave Moscow when the Germans reach its suburbs. The decision to stay \u2014 visible, symbolic, immovable \u2014 is one of the most consequential of the war.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "dialogue",
+          "ripple_source": {
+            "entity_id": "joseph_stalin",
+            "entity_type": "npc",
+            "event_id": "evt_b0c5cc"
+          },
+          "actor_id": "joseph_stalin",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_123857",
+          "session": 4,
+          "note": "Zhukov is appointed to defend Moscow in October 1941 when German forces are close enough to see the Kremlin's golden domes through field glasses. He holds. On December 5, 1941, he launches a counteroffensive with fresh Siberian divisions \u2014 troops acclimatized to cold that the Germans, who were never issued winter equipment, are not. The Wehrmacht is stopped forty miles from Moscow.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat"
+        },
+        {
+          "id": "evt_88009f",
+          "session": 7,
+          "note": "Operation Uranus (November 1942): Zhukov's encirclement of the German 6th Army at Stalingrad. Three hundred thousand German troops are surrounded. Hitler forbids retreat. Operation Winter Storm \u2014 the relief attempt \u2014 fails. Field Marshal Paulus surrenders with 91,000 survivors on January 31, 1943. The Wehrmacht has never suffered a defeat of this magnitude. The war on the Eastern Front has turned.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat"
+        },
+        {
+          "id": "evt_3d3c03",
+          "session": 10,
+          "note": "Operation Bagration (June 1944): the Soviet summer offensive destroys Army Group Centre \u2014 17 German divisions annihilated, 350,000 casualties. It is the largest defeat in German military history, larger than Stalingrad, happening at the same time as D-Day. The Red Army advances 400 miles in two months. By early 1945, Zhukov is 40 miles from Berlin.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat"
+        },
+        {
+          "id": "evt_afc9f2",
+          "session": 10,
+          "note": "Consequence of Adolf Hitler (rival): The Battle of the Bulge (December 1944): Germany's last western offensive. 30 German divisions strike through the Ardennes in the American sector. The Americans are surprised, bent, and do not break. Bastogne holds. Patton turns his entire army ninety degrees in winter and relieves it in seventy-two hours. The Bulge costs Germany its last operational reserves. Hitler retreats to his Berlin bunker and does not emerge again.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_064ea1"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_51ea80",
+          "session": 10,
+          "note": "Berlin falls to the Red Army on May 2, 1945. Hitler dies by suicide on April 30 \u2014 a gunshot wound and cyanide, with Eva Braun, in the F\u00fchrerbunker. Their bodies are burned in the garden above. Germany signs unconditional surrender on May 8, 1945. V-E Day. The war in Europe is over.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat"
+        },
+        {
+          "id": "evt_98cee1",
+          "session": 10,
+          "note": "Consequence of Adolf Hitler (rival): Hitler kills himself in the F\u00fchrerbunker on April 30, 1945, as Soviet forces fight street by street through Berlin. He has governed Germany for twelve years, started a war that kills seventy to eighty-five million people, and presided over the deliberate murder of six million Jews. He dies blaming everyone else.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "adolf_hitler",
+            "entity_type": "npc",
+            "event_id": "evt_a5a6b8"
+          },
+          "actor_id": "adolf_hitler",
+          "actor_type": "npc"
+        }
+      ],
+      "relations": [
+        {
+          "target": "adolf_hitler",
+          "target_type": "npc",
+          "relation": "rival",
+          "weight": 1.0
+        },
+        {
+          "target": "joseph_stalin",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 0.9
+        }
+      ]
+    },
+    {
+      "id": "isoroku_yamamoto",
+      "name": "Isoroku Yamamoto",
+      "role": "Fleet Admiral \u2014 Architect of Pearl Harbor",
+      "relationship": "hostile",
+      "description": "The most sophisticated Japanese strategic thinker. He has lived in America, studied at Harvard, and knows that Japan cannot win a long war with the US. He proposes Pearl Harbor as a way to buy time \u2014 not as a path to victory. 'I fear we have awakened a sleeping giant,' he allegedly says afterward. He plans the Midway operation, which fails catastrophically when US code-breakers read the Japanese naval codes. He is killed on April 18, 1943, when US fighters intercept his transport over Bougainville \u2014 his flight schedule decoded from an intercepted message.",
+      "hidden": false,
+      "factions": [
+        "imperial_japan"
+      ],
+      "hidden_factions": [],
+      "log": [
+        {
+          "id": "evt_e5c629",
+          "session": 5,
+          "note": "Yamamoto's strike force attacks Pearl Harbor at dawn on December 7, 1941. Eighteen US warships are sunk or damaged; 2,403 Americans are killed. Four battleships go to the bottom. Crucially, three US aircraft carriers are not in port \u2014 they are at sea \u2014 and survive. Yamamoto knows this. He knows the carriers are what matter.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "combat"
+        },
+        {
+          "id": "evt_7bf555",
+          "session": 5,
+          "note": "Consequence of Franklin D. Roosevelt (rival): Roosevelt addresses Congress on December 8, 1941: 'Yesterday, December 7, 1941 \u2014 a date which will live in infamy.' Congress declares war on Japan in thirty-three minutes. Hitler, in the single most consequential blunder of the war, declares war on the United States four days later. He was not required to do this by the Axis pact. He does it anyway.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "dialogue",
+          "ripple_source": {
+            "entity_id": "franklin_d_roosevelt",
+            "entity_type": "npc",
+            "event_id": "evt_381812"
+          },
+          "actor_id": "franklin_d_roosevelt",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_eec217",
+          "session": 6,
+          "note": "Yamamoto plans the Midway operation: lure the US carriers into a trap at Midway Atoll and destroy them. US code-breakers read the Japanese naval codes and know the plan. Admiral Nimitz sets his own trap. June 4\u20137, 1942: in five minutes of divebombing, the US sinks four Japanese fleet carriers \u2014 the same carriers that attacked Pearl Harbor. Japan loses its offensive capability in the Pacific. The war's direction changes.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "combat"
+        }
+      ],
+      "relations": [
+        {
+          "target": "hideki_tojo",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 0.9
+        },
+        {
+          "target": "franklin_d_roosevelt",
+          "target_type": "npc",
+          "relation": "rival",
+          "weight": 0.9
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,383 @@
+{% extends "base.html" %}
+{% block title %}Knowledge Base — RippleForge{% endblock %}
+{% block content %}
+
+<div style="max-width:720px; margin:40px auto 80px;">
+
+  <div style="margin-bottom:28px;">
+    <h1 style="font-size:1.8rem; font-weight:800; color:var(--text); letter-spacing:-0.02em; margin:0 0 8px 0;">Knowledge Base</h1>
+    <p style="color:var(--muted); font-size:0.95rem; margin:0 0 6px 0;">Edge cases, scenarios, and how-tos for getting the most out of RippleForge.</p>
+    <a href="/guide" style="color:var(--gold); font-size:0.82rem;">New here? Start with the Quick Start guide instead →</a>
+  </div>
+
+  <!-- TOC -->
+  <div class="card" style="margin-bottom:28px; padding:16px 20px;">
+    <p style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin:0 0 10px 0;">Jump to</p>
+    <div style="display:flex; flex-direction:column; gap:6px; font-size:0.88rem;">
+      <a href="#interaction-rule" style="color:var(--gold); text-decoration:none;">Logging an interaction — who goes in which field</a>
+      <a href="#polarity" style="color:var(--gold); text-decoration:none;">Polarity — what it actually means</a>
+      <a href="#rel-score" style="color:var(--gold); text-decoration:none;">Reading the relationship score</a>
+      <a href="#dm-only" style="color:var(--gold); text-decoration:none;">Revealing a secret (narrator-only → public)</a>
+      <a href="#relation-suggestions" style="color:var(--gold); text-decoration:none;">Relation suggestions and backfilling</a>
+      <a href="#projections" style="color:var(--gold); text-decoration:none;">Confirm vs. Dismiss a Pending Projection</a>
+      <a href="#npc-to-pc" style="color:var(--gold); text-decoration:none;">A character joins the protagonist group</a>
+      <a href="#mid-scene" style="color:var(--gold); text-decoration:none;">Stopped mid-scene — don't log what hasn't happened yet</a>
+      <a href="#character-death" style="color:var(--gold); text-decoration:none;">A character dies</a>
+      <a href="#undo" style="color:var(--gold); text-decoration:none;">Undoing a mistake</a>
+      <a href="#sharing" style="color:var(--gold); text-decoration:none;">Sharing a read-only link with collaborators</a>
+      <a href="#fog-of-war" style="color:var(--gold); text-decoration:none;">Per-character fog of war</a>
+      <a href="#parse-tips" style="color:var(--gold); text-decoration:none;">Parse Notes — tips and gotchas</a>
+    </div>
+  </div>
+
+  <!-- Logging & Ripples -->
+  <div id="interaction-rule" style="margin-bottom:8px;">
+    <h2 style="font-size:0.72rem; font-weight:700; color:var(--purple); text-transform:uppercase; letter-spacing:0.08em; margin:0 0 10px 0;">Logging &amp; Ripples</h2>
+  </div>
+  <div class="card" style="margin-bottom:16px;">
+    <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 10px 0;">Logging an interaction — who goes in which field</h3>
+    <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0 0 12px 0;">
+      The two fields that confuse everyone most are <strong style="color:var(--text);">Who this affects</strong> and <strong style="color:var(--text);">Caused by</strong>. Here's the rule:
+    </p>
+
+    <div style="background:var(--surface2); border-left:3px solid var(--purple); border-radius:0 6px 6px 0; padding:12px 14px; margin:0 0 14px 0;">
+      <p style="color:var(--text); font-size:0.87rem; font-weight:700; margin:0 0 4px 0;">Think subject → object</p>
+      <p style="color:var(--muted); font-size:0.85rem; line-height:1.5; margin:0;"><strong style="color:var(--text);">Caused by</strong> = who did it. &nbsp;<strong style="color:var(--text);">Who this affects</strong> = who it landed on.<br>
+      Memory hook: <em>"[Caused by] did it. It happened to [Who this affects]."</em></p>
+    </div>
+
+    <p style="color:var(--muted); font-size:0.84rem; font-weight:700; margin:0 0 8px 0; text-transform:uppercase; letter-spacing:0.04em;">Worked example — Steve &amp; Cheryl (neighborhood drama)</p>
+    <div style="display:flex; flex-direction:column; gap:6px; margin:0 0 14px 0; font-size:0.83rem;">
+      <div style="background:var(--surface2); border-radius:6px; padding:10px 12px;">
+        <span style="color:var(--text); font-weight:700;">Beat 1 — Steve moves in</span><br>
+        <span style="color:var(--muted);">No actor. <strong>Who this affects:</strong> Steve. <strong>Caused by:</strong> nobody. Tone: neutral.<br>
+        A world event — no relationship score yet.</span>
+      </div>
+      <div style="background:var(--surface2); border-radius:6px; padding:10px 12px;">
+        <span style="color:var(--text); font-weight:700;">Beat 2 — Cheryl brings cookies; Steve refuses to chat</span><br>
+        <span style="color:var(--muted);">Log this as <strong>two entries</strong> — one per side of the interaction:<br>
+        &bull; <strong>Who this affects:</strong> Cheryl / <strong>Caused by:</strong> Steve / tone: negative — the snub landed on Cheryl.<br>
+        &bull; <strong>Who this affects:</strong> Steve / <strong>Caused by:</strong> Cheryl / tone: neutral — Cheryl made a gesture Steve didn't want.</span>
+      </div>
+      <div style="background:var(--surface2); border-radius:6px; padding:10px 12px;">
+        <span style="color:var(--text); font-weight:700;">Beat 3 — Cheryl anonymously files a complaint against Steve</span><br>
+        <span style="color:var(--muted);"><strong>Who this affects:</strong> Steve / <strong>Caused by:</strong> Cheryl / tone: negative.<br>
+        Mark <strong>Narrator-only</strong> if Steve doesn't know who filed it — the event exists and Cheryl caused it, but Steve only sees the consequence.</span>
+      </div>
+    </div>
+
+    <div style="border-left:3px solid var(--gold); padding-left:12px;">
+      <p style="color:var(--muted); font-size:0.85rem; line-height:1.6; margin:0 0 6px 0;">
+        <strong style="color:var(--text);">Two entries per interaction, not one.</strong> Real interactions have two sides — what Cheryl did lands on Steve, and Steve's response lands on Cheryl. Each is a separate entry with its own tone. This is how the system builds an accurate relationship score from both directions.
+      </p>
+      <p style="color:var(--muted); font-size:0.85rem; line-height:1.6; margin:0;">
+        After a few interactions you'll see a computed relationship score appear on each character's page. When it's stable enough to be meaningful, RippleForge will prompt you to <strong>Formalize</strong> it as a graph edge — that's what wires them into the ripple propagation network.
+      </p>
+    </div>
+  </div>
+
+  <!-- Polarity -->
+  <div id="polarity" class="card" style="margin-bottom:16px;">
+    <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 10px 0;">Polarity — what it actually means</h3>
+    <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0 0 12px 0;">
+      Polarity does <strong style="color:var(--text);">not</strong> describe what happened to the character. It describes how the <strong style="color:var(--text);">observer's relationship with that character changed</strong> because of the event. The observer is whatever POV you defined for your world — the party, the reader, posterity.
+    </p>
+    <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px;">
+      <div style="background:var(--surface2); border-radius:6px; padding:10px 14px; border-left:3px solid #7ec87e;">
+        <p style="color:var(--text); font-size:0.88rem; margin:0 0 4px 0;"><strong>Positive</strong> — the observer's relationship with this character improved.</p>
+        <p style="color:var(--muted); font-size:0.82rem; margin:0;">Example: "Finch helped the protagonists escape." The observer's regard for Finch went up → positive.</p>
+      </div>
+      <div style="background:var(--surface2); border-radius:6px; padding:10px 14px; border-left:3px solid #888;">
+        <p style="color:var(--text); font-size:0.88rem; margin:0 0 4px 0;"><strong>Neutral</strong> — something happened, but the observer relationship didn't meaningfully shift.</p>
+        <p style="color:var(--muted); font-size:0.82rem; margin:0;">Example: "The Merchant Guild announced a new policy." Big world event, but the observer is watching, not involved.</p>
+      </div>
+      <div style="background:var(--surface2); border-radius:6px; padding:10px 14px; border-left:3px solid #e05c5c;">
+        <p style="color:var(--text); font-size:0.88rem; margin:0 0 4px 0;"><strong>Negative</strong> — trust or rapport between the observer and this character dropped.</p>
+        <p style="color:var(--muted); font-size:0.82rem; margin:0;">Example: "The protagonists burned the Guild's warehouse." The Guild's relationship with the observer deteriorated → negative.</p>
+      </div>
+    </div>
+    <div style="border-left:3px solid var(--gold); padding-left:12px;">
+      <p style="color:var(--muted); font-size:0.85rem; line-height:1.6; margin:0;">
+        <strong style="color:var(--text);">Common mistake:</strong> "The bandits attacked the village" → logging negative on the bandits because something bad happened. But if the observer/protagonists didn't cause it, it's neutral. Negative means the observer did something that hurt the relationship — not that the character had a bad day.
+      </p>
+    </div>
+  </div>
+
+  <!-- Relationship score -->
+  <div id="rel-score" class="card" style="margin-bottom:16px;">
+    <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 10px 0;">Reading the relationship score</h3>
+    <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0 0 12px 0;">
+      Relationship scores are computed from your event history with time decay — recent events matter more. You can't manually set a score once events exist.
+    </p>
+    <table style="width:100%; border-collapse:collapse; font-size:0.85rem; margin-bottom:12px;">
+      <thead>
+        <tr>
+          <th style="text-align:left; padding:6px 10px; border-bottom:1px solid var(--border); color:var(--muted); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em;">Label</th>
+          <th style="text-align:left; padding:6px 10px; border-bottom:1px solid var(--border); color:var(--muted); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em;">Score range</th>
+          <th style="text-align:left; padding:6px 10px; border-bottom:1px solid var(--border); color:var(--muted); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em;">What it means</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--surface2);">
+          <td style="padding:7px 10px; color:#7ec87e; font-weight:700;">Allied</td>
+          <td style="padding:7px 10px; color:var(--muted);">75+</td>
+          <td style="padding:7px 10px; color:var(--text);">Strong sustained positive history. Would take significant risk for the observer.</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--surface2);">
+          <td style="padding:7px 10px; color:#5ba87e; font-weight:700;">Friendly</td>
+          <td style="padding:7px 10px; color:var(--muted);">40-74</td>
+          <td style="padding:7px 10px; color:var(--text);">Warm relationship. Cooperative, no active conflict.</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--surface2);">
+          <td style="padding:7px 10px; color:#888; font-weight:700;">Neutral</td>
+          <td style="padding:7px 10px; color:var(--muted);">-39 to 39</td>
+          <td style="padding:7px 10px; color:var(--text);">No strong history either way, or history that has decayed.</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--surface2);">
+          <td style="padding:7px 10px; color:#e08c5c; font-weight:700;">Hostile</td>
+          <td style="padding:7px 10px; color:var(--muted);">-40 to -74</td>
+          <td style="padding:7px 10px; color:var(--text);">Active negative history. Distrustful, uncooperative.</td>
+        </tr>
+        <tr>
+          <td style="padding:7px 10px; color:#e05c5c; font-weight:700;">At War</td>
+          <td style="padding:7px 10px; color:var(--muted);">-75 or lower</td>
+          <td style="padding:7px 10px; color:var(--text);">Sustained antagonism. Would act against the observer given opportunity.</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="color:var(--muted); font-size:0.85rem; line-height:1.6; margin:0;">
+      A score that was "Hostile" several sessions ago can drift back to "Neutral" if nothing negative has been logged recently — decay is intentional. Use it as a measure of <em>active</em> relationship temperature, not permanent reputation.
+    </p>
+  </div>
+
+  <!-- DM-only / Revealing secrets -->
+  <div id="dm-only" class="card" style="margin-bottom:16px;">
+    <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 10px 0;">Revealing a secret (narrator-only → public)</h3>
+    <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0 0 10px 0;">
+      When you log an event as <strong>Narrator-only</strong>, it's hidden from collaborators but visible to you everywhere — on character pages, in ripple traces, in the World State intel. Use it for secrets, hidden motives, and plot threads not yet revealed.
+    </p>
+    <div style="background:var(--surface2); border-radius:6px; padding:14px 16px; margin-bottom:12px;">
+      <p style="font-size:0.78rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:0.06em; margin:0 0 8px 0;">When the secret comes out</p>
+      <p style="color:var(--text); font-size:0.88rem; line-height:1.6; margin:0 0 6px 0;">There's no one-click "reveal" — the original narrator-only event stays as-is (it's historical truth). Instead, log a <strong>new public event</strong> that represents the moment of revelation:</p>
+      <p style="color:var(--muted); font-size:0.85rem; font-style:italic; margin:0;">"The protagonists discover that Finch has been feeding information to the Merchant Guild all along."</p>
+    </div>
+    <p style="color:var(--muted); font-size:0.85rem; line-height:1.6; margin:0;">
+      This keeps the historical record clean (the original event was always true) while giving collaborators a logged moment of discovery they can see in the timeline.
+    </p>
+  </div>
+
+  <!-- Relation suggestions -->
+  <div id="relation-suggestions" class="card" style="margin-bottom:16px;">
+    <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 10px 0;">Relation suggestions and backfilling</h3>
+    <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0 0 10px 0;">
+      After parsing notes, the AI may suggest relationship edges your notes imply — e.g., "Finch and the Guild are connected." These appear below the Proposed Events section for you to accept or dismiss.
+    </p>
+    <div style="border-left:3px solid var(--purple); padding-left:12px; margin-bottom:12px;">
+      <p style="color:var(--muted); font-size:0.85rem; line-height:1.6; margin:0;">
+        <strong style="color:var(--text);">Accepting a suggestion</strong> adds the graph edge <em>and</em> backfills ripples — it retroactively fires ripple events to the newly connected character for every relevant polarity event in their history. This is intentional: if they were always connected, they would have always felt those ripples.
+      </p>
+    </div>
+    <p style="color:var(--muted); font-size:0.85rem; line-height:1.6; margin:0;">
+      <strong style="color:var(--text);">When to dismiss:</strong> if the suggestion is wrong or the connection is too weak to matter, dismiss it. Accepting a weak edge creates ripple noise for every future event. Fewer, meaningful connections are better.
+    </p>
+  </div>
+
+  <!-- Projections -->
+  <div id="projections" class="card" style="margin-bottom:28px;">
+    <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 10px 0;">Confirm vs. Dismiss a Pending Projection</h3>
+    <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0 0 10px 0;">
+      Projections are committed "What happens next?" entries. They sit in the Pending Projections section of your dashboard, waiting for resolution.
+    </p>
+    <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px;">
+      <div style="background:var(--surface2); border-radius:6px; padding:10px 14px; border-left:3px solid #7ec87e;">
+        <p style="color:var(--text); font-size:0.88rem; font-weight:700; margin:0 0 4px 0;">Confirm</p>
+        <p style="color:var(--muted); font-size:0.85rem; margin:0;">The event played out as projected. Confirming converts it to a real log entry and fires ripples to connected characters. Use this when the consequence happened — whether or not the protagonists were involved.</p>
+      </div>
+      <div style="background:var(--surface2); border-radius:6px; padding:10px 14px; border-left:3px solid #e05c5c;">
+        <p style="color:var(--text); font-size:0.88rem; font-weight:700; margin:0 0 4px 0;">Dismiss</p>
+        <p style="color:var(--muted); font-size:0.85rem; margin:0;">The protagonists intervened, or the situation resolved differently. Dismissing marks it as an intervention — no ripples fire. The projection is cleared from pending without becoming canon.</p>
+      </div>
+    </div>
+    <p style="color:var(--muted); font-size:0.85rem; line-height:1.6; margin:0;">
+      If neither applies yet — the projection is still in play — leave it pending. It stays visible in your intel layer as an active pressure.
+    </p>
+  </div>
+
+  <!-- Mid-Story Situations -->
+  <div id="npc-to-pc" style="margin-bottom:8px;">
+    <h2 style="font-size:0.72rem; font-weight:700; color:var(--purple); text-transform:uppercase; letter-spacing:0.08em; margin:0 0 10px 0;">Mid-Story Situations</h2>
+  </div>
+  <div class="card" style="margin-bottom:16px;">
+    <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 10px 0;">A character joins the protagonist group</h3>
+    <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0 0 10px 0;">
+      A supporting character who already has a log history and graph connections is joining the protagonist group. You want them in that role without losing any of their existing context.
+    </p>
+    <div style="background:var(--surface2); border-radius:6px; padding:14px 16px; margin-bottom:12px;">
+      <p style="font-size:0.78rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:0.06em; margin:0 0 8px 0;">Steps</p>
+      <ol style="color:var(--text); font-size:0.88rem; line-height:1.8; margin:0; padding-left:20px;">
+        <li>Dashboard → scroll to World section → <strong>Add New Character</strong> → fill in their name and any relevant details. Add.</li>
+        <li>Expand the new protagonist character card → <strong>Relations</strong> section → manually add the same connections the supporting character had (each character or group they were linked to, with the same relation type).</li>
+        <li>Find the original character card → <strong>Narrator Controls</strong> → toggle <strong>Hidden</strong>. This removes them from the public world view but preserves their full event log as historical record.</li>
+        <li>Log a brief narrator-only event on the original character: <em>"Finch formally joins the protagonists."</em> This bookmarks when the handoff happened in the timeline.</li>
+        <li>From this point forward, log everything about this character against the <strong>protagonist character entry</strong>, not the supporting character entry.</li>
+      </ol>
+    </div>
+    <div style="border-left:3px solid var(--purple); padding-left:12px;">
+      <p style="color:var(--muted); font-size:0.85rem; line-height:1.6; margin:0 0 6px 0;">
+        <strong style="color:var(--text);">Why not just delete the original entry?</strong> Their event log is historical record — ripples that fired from their events still reference that entity. Deleting it severs those traces. Hidden is safer.
+      </p>
+      <p style="color:var(--muted); font-size:0.85rem; line-height:1.6; margin:0;">
+        <strong style="color:var(--text);">Relations aren't auto-transferred.</strong> The original entry's graph edges live on that entry. You need to manually recreate the important ones on the protagonist character so their connections show up on the world graph going forward.
+      </p>
+    </div>
+  </div>
+
+  <!-- Mid-scene -->
+  <div id="mid-scene" class="card" style="margin-bottom:16px;">
+    <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 10px 0;">Stopped mid-scene — don't log what hasn't happened yet</h3>
+    <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0 0 10px 0;">
+      You stopped in the middle of an unresolved scene. Nobody's fate is sealed yet. Don't log the scene as a conclusion — it hasn't concluded.
+    </p>
+    <div style="background:var(--surface2); border-radius:6px; padding:14px 16px; margin-bottom:12px;">
+      <p style="font-size:0.78rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:0.06em; margin:0 0 8px 0;">What to do</p>
+      <ul style="color:var(--text); font-size:0.88rem; line-height:1.8; margin:0; padding-left:20px;">
+        <li>Paste a note into the <strong>Session Plan</strong> field on the dashboard capturing state: who's where, what's unresolved, any key details you need next session. This is your cheat sheet, not a parsed event.</li>
+        <li>Don't run Parse into Events yet — wait until the scene resolves so the AI sees the full arc in one pass.</li>
+        <li>When you resume, your notes can span both sessions. The parser handles multi-event blocks fine.</li>
+      </ul>
+    </div>
+    <p style="color:var(--muted); font-size:0.85rem; line-height:1.6; margin:0;">
+      <strong style="color:var(--text);">One exception:</strong> if something significant happened <em>before</em> the scene broke off (a betrayal, a revelation, a faction shift), Quick Log that now — you don't want it lost if context fades before next session.
+    </p>
+  </div>
+
+  <!-- Character death -->
+  <div id="character-death" class="card" style="margin-bottom:28px;">
+    <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 10px 0;">A character dies</h3>
+    <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0 0 10px 0;">
+      Whether it's a protagonist or a supporting character, death should be logged deliberately.
+    </p>
+    <div style="background:var(--surface2); border-radius:6px; padding:14px 16px; margin-bottom:12px;">
+      <p style="font-size:0.78rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:0.06em; margin:0 0 8px 0;">For a protagonist</p>
+      <ol style="color:var(--text); font-size:0.88rem; line-height:1.8; margin:0; padding-left:20px;">
+        <li>Quick Log a <strong>negative</strong> event on the character: <em>"Ka-Ree dies."</em> Set visibility to public if other characters witnessed it.</li>
+        <li>Dashboard → expand the character card → <strong>Narrator Controls</strong> → toggle <strong>Hidden</strong> to retire them from the active protagonist display.</li>
+        <li>Their log history and relations stay intact — ripples they received still trace back through their entity.</li>
+      </ol>
+    </div>
+    <div style="background:var(--surface2); border-radius:6px; padding:14px 16px;">
+      <p style="font-size:0.78rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:0.06em; margin:0 0 8px 0;">For a supporting character</p>
+      <ol style="color:var(--text); font-size:0.88rem; line-height:1.8; margin:0; padding-left:20px;">
+        <li>Log a negative event on the character: <em>"[Name] is killed."</em></li>
+        <li>Dashboard → character card → <strong>Narrator Controls</strong> → toggle <strong>Dead</strong>. This flags them in the UI and stops ripples from propagating to them automatically, without removing their history.</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- Undo -->
+  <div id="undo" style="margin-bottom:8px;">
+    <h2 style="font-size:0.72rem; font-weight:700; color:var(--purple); text-transform:uppercase; letter-spacing:0.08em; margin:0 0 10px 0;">Mistakes &amp; Corrections</h2>
+  </div>
+  <div class="card" style="margin-bottom:28px;">
+    <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 10px 0;">Undoing a mistake</h3>
+    <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0 0 12px 0;">
+      Logged something wrong? Two paths depending on whether it fired ripples.
+    </p>
+    <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px;">
+      <div style="background:var(--surface2); border-radius:6px; padding:10px 14px;">
+        <p style="color:var(--text); font-size:0.88rem; font-weight:700; margin:0 0 4px 0;">No ripples involved (Quick Log, manual entry)</p>
+        <p style="color:var(--muted); font-size:0.85rem; margin:0;">Find the entry on the character's page or in the dashboard log. Use the <strong>Delete Entry</strong> button (trash icon). Entry is removed, no ripple cleanup needed.</p>
+      </div>
+      <div style="background:var(--surface2); border-radius:6px; padding:10px 14px;">
+        <p style="color:var(--text); font-size:0.88rem; font-weight:700; margin:0 0 4px 0;">Entry fired ripples to other characters</p>
+        <p style="color:var(--muted); font-size:0.85rem; margin:0;">Use <strong>Undo Ripple Chain</strong> on the source event. This removes all downstream ripple events that were generated from it, then you can delete the source entry. Find the option next to the event in the Ripples view or on the character's event log.</p>
+      </div>
+    </div>
+    <p style="color:var(--muted); font-size:0.85rem; line-height:1.6; margin:0;">
+      <strong style="color:var(--text);">AI-parsed events committed by mistake:</strong> a commit just creates normal log entries — undo them the same way as above. There's no special AI-commit undo; entries are entries once committed.
+    </p>
+  </div>
+
+  <!-- Sharing -->
+  <div id="sharing" style="margin-bottom:8px;">
+    <h2 style="font-size:0.72rem; font-weight:700; color:var(--purple); text-transform:uppercase; letter-spacing:0.08em; margin:0 0 10px 0;">Access &amp; Collaborators</h2>
+  </div>
+  <div class="card" style="margin-bottom:16px;">
+    <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 10px 0;">Sharing a read-only link with collaborators</h3>
+    <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0 0 10px 0;">
+      Collaborators — co-authors, players, readers, research partners — don't need a RippleForge account to view a world. From the dashboard → <strong>Share</strong> section → copy the share link. Anyone with that link can see the public-facing world: public characters, groups, quests, journal entries.
+    </p>
+    <div style="border-left:3px solid var(--gold); padding-left:12px;">
+      <p style="color:var(--muted); font-size:0.85rem; line-height:1.6; margin:0 0 6px 0;">
+        <strong style="color:var(--text);">What they can't see:</strong> anything logged as <strong>narrator-only</strong>, hidden entities, and anything marked <strong>restricted</strong>. The narrator PIN is never part of the share link.
+      </p>
+      <p style="color:var(--muted); font-size:0.85rem; line-height:1.6; margin:0;">
+        <strong style="color:var(--text);">Want collaborators to see only their character's perspective?</strong> Use the fog of war system instead — see below.
+      </p>
+    </div>
+  </div>
+
+  <!-- Fog of war -->
+  <div id="fog-of-war" class="card" style="margin-bottom:28px;">
+    <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 10px 0;">Per-character fog of war</h3>
+    <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0 0 10px 0;">
+      Each protagonist character has a <strong>Known Events</strong> list. A collaborator assigned to that character only sees: (1) all public events, plus (2) any events you've explicitly added to their known list.
+    </p>
+    <div style="background:var(--surface2); border-radius:6px; padding:14px 16px; margin-bottom:12px;">
+      <p style="font-size:0.78rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:0.06em; margin:0 0 8px 0;">Setup</p>
+      <ol style="color:var(--text); font-size:0.88rem; line-height:1.8; margin:0; padding-left:20px;">
+        <li>Collaborators create a RippleForge account and log into the world with the share link.</li>
+        <li>Dashboard → protagonist section → expand the character card → <strong>Assign User</strong> → type their username.</li>
+        <li>When you log a restricted event and want a specific character to see it, add it to their Known Events list from the character card.</li>
+      </ol>
+    </div>
+    <p style="color:var(--muted); font-size:0.85rem; line-height:1.6; margin:0;">
+      Use <strong>?preview=CharacterName</strong> on any world URL to see it exactly as that character sees it — useful for checking before you share.
+    </p>
+  </div>
+
+  <!-- Parse tips -->
+  <div id="parse-tips" style="margin-bottom:8px;">
+    <h2 style="font-size:0.72rem; font-weight:700; color:var(--purple); text-transform:uppercase; letter-spacing:0.08em; margin:0 0 10px 0;">AI Features</h2>
+  </div>
+  <div class="card" style="margin-bottom:28px;">
+    <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 10px 0;">Parse Notes — tips and gotchas</h3>
+    <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0 0 12px 0;">
+      The parser reads raw notes and proposes discrete world events. It works best when you give it the full story, not just outcomes.
+    </p>
+    <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px;">
+      <div style="background:var(--surface2); border-radius:6px; padding:10px 14px;">
+        <p style="color:var(--text); font-size:0.88rem; font-weight:700; margin:0 0 4px 0;">Notes can be rough</p>
+        <p style="color:var(--muted); font-size:0.85rem; margin:0;">Bullet points, fragments, shorthand — all fine. The AI is extracting events, not grading prose. "Finch betrayed the group, ran to the Guild, protagonists chased, escaped through sewers" works.</p>
+      </div>
+      <div style="background:var(--surface2); border-radius:6px; padding:10px 14px;">
+        <p style="color:var(--text); font-size:0.88rem; font-weight:700; margin:0 0 4px 0;">New characters are auto-created as hidden</p>
+        <p style="color:var(--muted); font-size:0.85rem; margin:0;">If your notes mention a name that isn't in your world, the parser will propose a new hidden character. Review and un-hide them from the dashboard if they're going to be recurring.</p>
+      </div>
+      <div style="background:var(--surface2); border-radius:6px; padding:10px 14px;">
+        <p style="color:var(--text); font-size:0.88rem; font-weight:700; margin:0 0 4px 0;">Polarity is about the observer, not the world</p>
+        <p style="color:var(--muted); font-size:0.85rem; margin:0;">The AI uses polarity to mean "did the observer's relationship with this character improve or worsen?" — not "was this a good or bad event." Review polarity on each proposed entry before committing.</p>
+      </div>
+      <div style="background:var(--surface2); border-radius:6px; padding:10px 14px;">
+        <p style="color:var(--text); font-size:0.88rem; font-weight:700; margin:0 0 4px 0;">Uncheck before committing</p>
+        <p style="color:var(--muted); font-size:0.85rem; margin:0;">Deselect any proposed event that doesn't belong before hitting Commit Selected. Committing is not undoable in bulk — you'd have to delete entries one by one.</p>
+      </div>
+    </div>
+    <div style="border-left:3px solid var(--gold); padding-left:12px;">
+      <p style="color:var(--muted); font-size:0.85rem; line-height:1.6; margin:0;">
+        <strong style="color:var(--text);">Didn't like the parse?</strong> Don't commit — run it again with more context in your notes, or use Quick Log to manually record the events you care about.
+      </p>
+    </div>
+  </div>
+
+  <div style="text-align:center; color:var(--muted); font-size:0.85rem;">
+    <a href="/guide" style="color:var(--gold); font-weight:700;">Quick Start Guide</a>
+    {% if session.get('user') %}
+    &nbsp;&nbsp;·&nbsp;&nbsp;
+    <a href="/" style="color:var(--muted);">← My worlds</a>
+    {% endif %}
+  </div>
+
+</div>
+
+{% endblock %}

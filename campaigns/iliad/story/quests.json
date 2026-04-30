@@ -1,0 +1,31 @@
+{
+  "quests": [
+    {
+      "id": "the_wrath_of_achilles",
+      "title": "The Wrath of Achilles",
+      "status": "active",
+      "description": "Agamemnon seizes Briseis. Achilles withdraws. The Achaeans, robbed of their champion, begin to lose. Thetis persuades Zeus to let them suffer. Everything that follows flows from one king's pride and one hero's rage.",
+      "hidden": false,
+      "objectives": [],
+      "log": []
+    },
+    {
+      "id": "the_death_of_patroclus",
+      "title": "The Death of Patroclus",
+      "status": "active",
+      "description": "Patroclus cannot watch his friends die. He borrows Achilles' armor and leads the Myrmidons back to battle. He drives the Trojans from the ships \u2014 and then, ignoring his friend's command, presses too far. Apollo stuns him. Hector kills him. The armor is stripped. Achilles' rage turns inside out.",
+      "hidden": false,
+      "objectives": [],
+      "log": []
+    },
+    {
+      "id": "the_ransom_of_hector",
+      "title": "The Ransom of Hector",
+      "status": "active",
+      "description": "Achilles kills Hector. He drags the body behind his chariot for twelve days. Priam, guided by Hermes, walks alone into the enemy camp at night to beg for his son. Achilles weeps with the old man. He returns the body. The poem ends with Hector's funeral \u2014 not Troy's fall. That is the point.",
+      "hidden": false,
+      "objectives": [],
+      "log": []
+    }
+  ]
+}

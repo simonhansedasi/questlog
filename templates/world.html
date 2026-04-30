@@ -4,29 +4,360 @@
 
 <div style="display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:8px;">
   <h1 class="page-title" style="margin:0;">World</h1>
-  <a href="/{{ slug }}/world/ripples" style="font-size:0.82rem; color:var(--purple); text-decoration:none; font-weight:700; letter-spacing:0.03em;">Ripple Chains →</a>
+  <div style="display:flex; gap:12px; align-items:center;">
+    <a href="/{{ slug }}/world/ripples" style="font-size:0.82rem; color:var(--purple); text-decoration:none; font-weight:700; letter-spacing:0.03em;">Ripple Chains →</a>
+  </div>
 </div>
 <p class="subtitle">{{ meta.name }}</p>
 
+{# ── Active branch banner ────────────────────────────────────────── #}
+{% if active_branch %}
+<div style="display:flex; align-items:center; gap:12px; margin-bottom:12px; background:rgba(140,100,220,0.12); border:1px solid var(--purple); border-radius:6px; padding:8px 14px; flex-wrap:wrap;">
+  <span style="font-size:0.72rem; color:var(--purple); text-transform:uppercase; letter-spacing:0.05em; font-weight:700; white-space:nowrap;">Branch</span>
+  <span style="font-size:0.88rem; font-weight:700; color:var(--text);">{{ active_branch.name }}</span>
+  <span style="font-size:0.75rem; color:var(--muted);">forked at Session {{ active_branch.fork_point }}</span>
+  <form method="post" action="/{{ slug }}/branch/switch" style="margin-left:auto;">
+    <input type="hidden" name="branch_id" value="">
+    <button type="submit" style="background:none; border:1px solid var(--border); color:var(--muted); border-radius:4px; padding:2px 10px; font-size:0.75rem; cursor:pointer;">Return to main timeline</button>
+  </form>
+</div>
+{% endif %}
+
+{# ── Session scrubber ────────────────────────────────────────────── #}
+{% if max_session and max_session > 1 and not active_branch %}
+<div style="display:flex; align-items:center; gap:10px; margin-bottom:18px; background:var(--surface2); border:1px solid var(--border); border-radius:6px; padding:8px 14px; flex-wrap:wrap;">
+  <span style="font-size:0.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em; white-space:nowrap;">Time Travel</span>
+  <button onclick="(function(){var v=Math.max(1,{{ as_of or max_session }}-1);window.location='?as_of='+v;})()"
+          style="background:var(--surface); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:2px 10px; font-size:0.82rem; cursor:pointer; line-height:1.6;">‹</button>
+  <input type="range" min="1" max="{{ max_session }}" value="{{ as_of or max_session }}"
+         id="session-scrubber"
+         oninput="document.getElementById('session-label').textContent='{{ terms.session }} '+this.value"
+         onchange="window.location='?as_of='+this.value"
+         style="flex:1; min-width:80px; accent-color:var(--purple); cursor:pointer;">
+  <span id="session-label" style="font-size:0.82rem; color:var(--text); font-weight:700; white-space:nowrap; min-width:80px; text-align:center;">
+    {% if as_of %}{{ terms.session }} {{ as_of }}{% else %}{{ terms.session }} {{ max_session }} (current){% endif %}
+  </span>
+  <button onclick="(function(){var v=Math.min({{ max_session }},{{ as_of or max_session }}+1);window.location='?as_of='+v;})()"
+          style="background:var(--surface); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:2px 10px; font-size:0.82rem; cursor:pointer; line-height:1.6;">›</button>
+  {% if as_of and as_of < max_session %}
+  <a href="?" style="font-size:0.75rem; color:var(--purple); text-decoration:none; white-space:nowrap; font-weight:700;">Now →</a>
+  {% endif %}
+</div>
+{% endif %}
+
+{# ── Branch switcher / creator (DM only) ─────────────────────────── #}
+{% if (is_dm or is_demo) and max_session and max_session > 1 %}
+<div id="branch-panel" style="margin-bottom:18px;">
+  {% if branches %}
+  <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px; flex-wrap:wrap;">
+    <span style="font-size:0.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em;">Timelines</span>
+    <form method="post" action="/{{ slug }}/branch/switch" style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+      <select name="branch_id" style="background:var(--surface); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:3px 8px; font-size:0.78rem;">
+        <option value="">Main timeline</option>
+        {% for b in branches %}
+        <option value="{{ b.id }}" {% if active_branch and active_branch.id == b.id %}selected{% endif %}>{{ b.name }} (fork S{{ b.fork_point }})</option>
+        {% endfor %}
+      </select>
+      <button type="submit" style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:3px 10px; font-size:0.78rem; cursor:pointer;">Switch</button>
+    </form>
+    {% if active_branch %}
+    <form method="post" action="/{{ slug }}/branch/delete" onsubmit="return confirm('Delete branch &quot;{{ active_branch.name }}&quot; and all its events?')">
+      <input type="hidden" name="branch_id" value="{{ active_branch.id }}">
+      <button type="submit" style="background:none; border:1px solid var(--border); color:var(--muted); border-radius:4px; padding:3px 10px; font-size:0.75rem; cursor:pointer;">Delete branch</button>
+    </form>
+    {% endif %}
+  </div>
+  {% endif %}
+  <div style="font-size:0.78rem;">
+    <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px;">
+      <span style="color:var(--gold); font-size:0.9em;">⎇</span>
+      <span style="color:var(--text); font-weight:700; font-size:0.8rem;">Fork a new alternate timeline</span>
+    </div>
+    <form method="post" action="/{{ slug }}/branch/create" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; padding:10px; background:var(--surface2); border:1px solid var(--gold)44; border-radius:6px;">
+      <input type="hidden" name="parent_branch" value="{{ active_branch.id if active_branch else '' }}">
+      <input type="text" name="name" placeholder="What if… (e.g. Japan never bombs Pearl Harbor)" required
+             style="flex:1; min-width:180px; background:var(--surface); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:4px 8px; font-size:0.82rem;">
+      <label style="display:flex; align-items:center; gap:4px; font-size:0.78rem; color:var(--muted); white-space:nowrap;">
+        Fork at {{ terms.session | lower }}
+        <input type="number" name="fork_point" min="1" max="{{ max_session }}" value="{{ as_of or max_session }}" required
+               style="width:60px; background:var(--surface); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:3px 6px; font-size:0.82rem;">
+      </label>
+      <button type="submit" style="background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:4px 14px; font-size:0.82rem; cursor:pointer; font-weight:700;">Create</button>
+    </form>
+  </div>
+</div>
+{% endif %}
+
+{# ── Embedded world graph ────────────────────────────────────────── #}
+<div style="margin-bottom:28px;">
+  <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px; align-items:center;">
+    <button onclick="resetLayout()" style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:3px 10px; font-size:0.75rem; cursor:pointer;">Reset</button>
+    <button onclick="fitGraph()" style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:3px 10px; font-size:0.75rem; cursor:pointer;">Fit</button>
+    <span style="width:1px; height:14px; background:var(--border); display:inline-block;"></span>
+    <label style="display:flex; align-items:center; gap:4px; font-size:0.75rem; color:var(--muted); cursor:pointer;"><input type="checkbox" id="toggle-factions" checked onchange="applyFilters()" style="accent-color:var(--gold);"> {{ terms.factions }}</label>
+    <label style="display:flex; align-items:center; gap:4px; font-size:0.75rem; color:var(--muted); cursor:pointer;"><input type="checkbox" id="toggle-npcs" checked onchange="applyFilters()" style="accent-color:var(--gold);"> {{ terms.npcs }}</label>
+    {% if session.get('dm_' ~ slug) %}
+    <label style="display:flex; align-items:center; gap:4px; font-size:0.75rem; color:var(--muted); cursor:pointer;"><input type="checkbox" id="toggle-hidden" checked onchange="applyFilters()" style="accent-color:var(--gold);"> Hidden</label>
+    {% endif %}
+    <label style="display:flex; align-items:center; gap:4px; font-size:0.75rem; color:var(--muted); cursor:pointer;"><input type="checkbox" id="toggle-dead" checked onchange="applyFilters()" style="accent-color:var(--gold);"> Dead</label>
+    <label style="display:flex; align-items:center; gap:4px; font-size:0.75rem; color:var(--muted); cursor:pointer;"><input type="checkbox" id="toggle-interactions" checked onchange="applyFilters()" style="accent-color:var(--gold);"> Interactions</label>
+    <a href="/{{ slug }}/world/graph" style="margin-left:auto; font-size:0.75rem; color:var(--muted); text-decoration:none;">Fullscreen →</a>
+  </div>
+
+  <div style="position:relative;">
+    <div id="cy" style="height:50vh; background:var(--surface2); border:1px solid var(--border); border-radius:6px; position:relative;">
+      <div id="cy-loading" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:0.85rem;">Loading graph…</div>
+    </div>
+
+    <div id="info-panel" style="position:absolute; top:8px; right:8px; width:210px; display:none; flex-direction:column; gap:6px; pointer-events:auto;">
+      <div class="card" style="padding:12px; background:var(--surface); backdrop-filter:blur(4px);">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px;">
+          <div>
+            <p id="info-name" style="font-weight:700; font-size:0.9rem; margin:0;"></p>
+            <p id="info-type" style="color:var(--muted); font-size:0.68rem; margin:2px 0 0; text-transform:uppercase; letter-spacing:0.04em;"></p>
+          </div>
+          <span id="info-rel-badge" style="font-size:0.68rem; font-weight:700; padding:2px 6px; border-radius:3px; flex-shrink:0; margin-left:6px;"></span>
+        </div>
+        <p id="info-role" style="color:var(--muted); font-size:0.75rem; margin:0 0 4px; font-style:italic;"></p>
+        <p id="info-last-note" style="color:var(--muted); font-size:0.75rem; margin:0 0 8px; line-height:1.4;"></p>
+        <div id="info-links"></div>
+      </div>
+      <div class="card" style="padding:10px; background:var(--surface);">
+        <p style="color:var(--muted); font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; margin:0 0 6px;">Ripple radius</p>
+        <div id="ripple-depth-list" style="display:flex; flex-direction:column; gap:4px;"></div>
+        <button onclick="clearSelection()" style="margin-top:8px; background:none; border:1px solid var(--border); color:var(--muted); border-radius:4px; padding:2px 8px; font-size:0.72rem; cursor:pointer; width:100%;">Clear</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.29.0/cytoscape.min.js"></script>
+<script>
+(function() {
+const slug = {{ slug | tojson }};
+const REL_COLOR = { allied:'#7ec87e', friendly:'#5ba87e', neutral:'#888888', hostile:'#e05c5c', unknown:'#555555' };
+const REL_COLOR_ALPHA = { allied:'rgba(126,200,126,0.53)', friendly:'rgba(91,168,126,0.53)', neutral:'rgba(136,136,136,0.53)', hostile:'rgba(224,92,92,0.53)', unknown:'rgba(85,85,85,0.53)' };
+let cy;
+
+fetch(`/${slug}/world/graph-data{% if as_of %}?as_of={{ as_of }}{% endif %}`)
+  .then(r => r.json())
+  .then(data => {
+    document.getElementById('cy-loading').style.display = 'none';
+    cy = cytoscape({
+      container: document.getElementById('cy'),
+      elements: [...data.nodes, ...data.edges],
+      style: [
+        { selector: 'node', style: { label:'data(label)', 'font-size':5, 'font-family':'monospace', color:'#c8cfe8', 'text-valign':'bottom', 'text-margin-y':1, width:'mapData(log_count,0,20,3,6)', height:'mapData(log_count,0,20,3,6)', 'background-color': ele => REL_COLOR[ele.data('relationship')]||'#555', 'border-width': ele => ele.data('hidden')?2:0, 'border-style': ele => ele.data('hidden')?'dashed':'solid', 'border-color':'#888', 'transition-property':'opacity,border-width,border-color,background-color', 'transition-duration':'150ms' }},
+        { selector: 'node[type="faction"]', style: { shape:'round-rectangle' }},
+        { selector: 'node[type="npc"]',     style: { shape:'ellipse' }},
+        { selector: 'node[type="party"]',   style: { shape:'star', 'background-color':'#c9a227', width:14, height:14, 'font-size':6, color:'#c9a227', 'font-weight':'bold', 'z-index':20 }},
+        { selector: 'node[type="character"]', style: { shape:'diamond', 'background-color':'#d4a82a', width:6, height:6, color:'#d4b84a' }},
+        { selector: 'edge', style: { width:'mapData(weight,0.25,1,0.3,1.2)', 'line-color': 'rgba(224,92,92,0.4)', 'target-arrow-shape':'none', 'curve-style':'bezier', opacity:0.7, 'transition-property':'opacity,line-color,width', 'transition-duration':'150ms' }},
+        { selector: 'edge[relation="ally"]', style: { 'line-color': 'rgba(126,200,126,0.4)' }},
+        { selector: 'edge[relation="party_contact"]', style: { 'line-color': ele => REL_COLOR_ALPHA[ele.data('relationship')]||'rgba(136,136,136,0.27)', width:'mapData(weight,0.2,1,0.4,1.5)' }},
+        { selector: 'edge[relation="member"]',        style: { 'line-color':'rgba(201,162,39,0.4)', width:0.8 }},
+        { selector: 'edge[relation="party_affiliate"]', style: { 'line-color':'rgba(201,162,39,0.75)', 'line-style':'dashed', width:1.4 }},
+        { selector: 'edge[relation="knows"]',         style: { 'line-color':'rgba(201,162,39,0.27)', width:0.4, 'line-style':'dashed' }},
+        { selector: 'edge[relation="bond"]',          style: { 'line-color':'rgba(224,92,92,0.6)', width:1.2, 'line-style':'dashed' }},
+        { selector: 'edge[relation="char_relation"]', style: { 'line-color': ele => ele.data('relationship')==='hostile'?'rgba(224,92,92,0.7)':'rgba(126,200,126,0.7)', width:'mapData(weight,0.25,1,0.8,2.5)', 'line-style':'dashed' }},
+        { selector: 'edge[relation="conflict_formal"], edge[relation="conflict_personal"]', style: { 'line-style':'dashed', 'line-dash-pattern':[6,4], 'line-color':'data(rel_color)', width:2, opacity:0.9, 'target-arrow-shape':'none' }},
+        { selector: 'edge[relation="conflict_formal"]',  style: { 'curve-style':'unbundled-bezier', 'control-point-distances': 30 }},
+        { selector: 'edge[relation="conflict_personal"]', style: { 'curve-style':'unbundled-bezier', 'control-point-distances':-30 }},
+        { selector: 'edge[?dm_only]',                 style: { 'line-style':'dotted', 'line-color':'rgba(180,120,220,0.55)', width:1.2, opacity:0.7 }},
+        { selector: 'edge[relation="inter_faction"]', style: { 'line-style':'dashed', width:'mapData(weight,0,1,0.8,2.5)', opacity:0.75, 'line-color':'#888888' }},
+        { selector: 'edge[relation="inter_faction"][dynamic_relationship="hostile"]', style: { 'line-color':'rgba(224,92,92,0.75)' }},
+        { selector: 'edge[relation="inter_faction"][dynamic_relationship="war"]',     style: { 'line-color':'rgba(180,30,30,0.85)', width:2.5 }},
+        { selector: 'edge[relation="inter_faction"][dynamic_relationship="friendly"]',style: { 'line-color':'rgba(91,168,126,0.75)' }},
+        { selector: 'edge[relation="inter_faction"][dynamic_relationship="allied"]',  style: { 'line-color':'rgba(126,200,126,0.85)' }},
+        { selector: '.source',    style: { 'border-width':1, 'border-color':'#c9a227', 'border-style':'solid', 'z-index':10 }},
+        { selector: '.depth-1',   style: { 'border-width':0.6, 'border-color':'rgba(201,162,39,0.6)', 'border-style':'solid' }},
+        { selector: '.depth-2',   style: { opacity:0.65 }},
+        { selector: '.dimmed',    style: { opacity:0.12 }},
+        { selector: 'node[?dead]',style: { opacity:0.45, 'border-style':'dashed', 'border-color':'#e05c5c', 'border-width':1 }},
+        { selector: '.active-edge', style: { 'line-color': ele => { const r=ele.data('relation'); if(r==='conflict_formal'||r==='conflict_personal') return ele.data('rel_color')||'#888888'; return r==='ally'?'#7ec87e':'#e05c5c'; }, opacity:0.9, width:'mapData(weight,0.25,1,2,5)' }},
+      ],
+      layout: { name:'cose', animate:false, fit:true, padding:40, nodeRepulsion:18000, nodeOverlap:6, idealEdgeLength:80, edgeElasticity:70, gravity:45, numIter:1000, randomize:true }
+    });
+
+    cy.edges('[relation="conflict_formal"],[relation="conflict_personal"]').forEach(e => {
+      e.style('line-color', e.data('rel_color') || '#888888');
+    });
+
+    cy.on('tap', 'node', e => selectNode(e.target));
+    cy.on('tap', e => { if (e.target === cy) clearSelection(); });
+    applyFilters();
+  })
+  .catch(() => {
+    const el = document.getElementById('cy-loading');
+    el.style.display = 'flex';
+    el.textContent = 'Failed to load graph data.';
+  });
+
+function selectNode(node) {
+  cy.elements().removeClass('dimmed source depth-1 depth-2 active-edge');
+  const d1 = node.neighborhood('node');
+  const d2 = d1.neighborhood('node').not(node).not(d1);
+  cy.elements().addClass('dimmed');
+  node.removeClass('dimmed').addClass('source');
+  d1.removeClass('dimmed').addClass('depth-1');
+  d2.removeClass('dimmed').addClass('depth-2');
+  node.connectedEdges().removeClass('dimmed').addClass('active-edge');
+
+  const data = node.data();
+  const panel = document.getElementById('info-panel');
+  panel.style.display = 'flex';
+  document.getElementById('info-name').textContent = data.label;
+  document.getElementById('info-type').textContent = data.type + (data.hidden ? ' · hidden' : '');
+  document.getElementById('info-role').textContent = data.role || '';
+  document.getElementById('info-last-note').textContent = data.last_note ? `"${data.last_note}"` : '';
+  const badge = document.getElementById('info-rel-badge');
+  badge.textContent = data.relationship;
+  const c = REL_COLOR[data.relationship] || '#888';
+  badge.style.cssText = `font-size:0.68rem;font-weight:700;padding:2px 6px;border-radius:3px;flex-shrink:0;margin-left:6px;background:${c}22;color:${c};border:1px solid ${c}44;`;
+
+  let worldPath = null;
+  if (data.type === 'npc') worldPath = `/${slug}/world/npc/${data.id}`;
+  else if (data.type === 'faction') worldPath = `/${slug}/world/faction/${data.id}`;
+  document.getElementById('info-links').innerHTML = worldPath
+    ? `<a href="${worldPath}" style="color:var(--gold);font-size:0.78rem;text-decoration:none;">View full profile →</a>`
+    : '';
+
+  const d1ids = d1.map(n => n.data('label'));
+  const d2ids = d2.map(n => n.data('label'));
+  const dl = document.getElementById('ripple-depth-list');
+  dl.innerHTML = '';
+  if (d1ids.length) dl.innerHTML += `<div style="font-size:0.72rem;"><span style="color:#c9a227;font-weight:700;">Depth 1</span> <span style="color:var(--muted);">(inner circle)</span></div><div style="color:var(--muted);font-size:0.7rem;line-height:1.5;">${d1ids.join(', ')}</div>`;
+  if (d2ids.length) dl.innerHTML += `<div style="font-size:0.72rem;margin-top:4px;"><span style="color:#c9a22799;font-weight:700;">Depth 2</span> <span style="color:var(--muted);">(word spreads)</span></div><div style="color:var(--muted);font-size:0.7rem;line-height:1.5;opacity:0.65;">${d2ids.join(', ')}</div>`;
+  if (!d1ids.length && !d2ids.length) dl.innerHTML = '<p style="color:var(--muted);font-size:0.72rem;margin:0;">No connections yet.</p>';
+}
+
+window.clearSelection = function() {
+  if (!cy) return;
+  cy.elements().removeClass('dimmed source depth-1 depth-2 active-edge');
+  document.getElementById('info-panel').style.display = 'none';
+};
+window.resetLayout = function() {
+  if (!cy) return;
+  cy.layout({ name:'cose', animate:true, animationDuration:400, fit:true, padding:40, nodeRepulsion:18000, nodeOverlap:6, idealEdgeLength:80, edgeElasticity:70, gravity:45, numIter:1000, randomize:true }).run();
+};
+window.fitGraph = function() { if (cy) cy.fit(undefined, 30); };
+window.applyFilters = function() {
+  if (!cy) return;
+  const showFactions = document.getElementById('toggle-factions')?.checked ?? true;
+  const showNpcs = document.getElementById('toggle-npcs')?.checked ?? true;
+  const showHidden = document.getElementById('toggle-hidden')?.checked ?? true;
+  const showDead = document.getElementById('toggle-dead')?.checked ?? true;
+  const showInteractions = document.getElementById('toggle-interactions')?.checked ?? true;
+  cy.nodes().forEach(n => {
+    const t = n.data('type'), h = n.data('hidden'), d = n.data('dead');
+    let v = true;
+    if (t === 'faction' && !showFactions) v = false;
+    if (t === 'npc' && !showNpcs) v = false;
+    if (h && !showHidden) v = false;
+    if (d && !showDead) v = false;
+    n.style('display', v ? 'element' : 'none');
+  });
+  cy.edges().forEach(e => {
+    const nodesVisible = e.source().style('display') !== 'none' && e.target().style('display') !== 'none';
+    const isInteraction = !!e.data('interaction');
+    e.style('display', nodesVisible && (!isInteraction || showInteractions) ? 'element' : 'none');
+  });
+};
+})();
+</script>
+
+{% if conditions %}
+<h2 class="section-title">Active Conditions</h2>
+<div class="card-grid mb-4">
+  {% for c in conditions %}
+  {% set sev = c._severity %}
+  <div class="card" style="{% if is_dm and c.hidden %}opacity:0.6;{% endif %}">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+      <div style="flex:1; min-width:0;">
+        <h3 style="margin-bottom:4px;">{{ c.name }}</h3>
+        {% if c.region %}<div class="role">{{ c.region }}</div>{% endif %}
+        <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center; margin-top:6px;">
+          <span class="badge badge-{{ sev.severity if sev.computed else 'unknown' }}">{{ sev.severity if sev.computed else 'unknown' }}</span>
+          {% if sev.trend == 'worsening' %}<span style="color:#e05c5c; font-size:0.82rem;" title="worsening">↑</span>
+          {% elif sev.trend == 'improving' %}<span style="color:#7ec87e; font-size:0.82rem;" title="improving">↓</span>{% endif %}
+          {% if c.magnitude %}
+            {% if c.magnitude is mapping %}
+              {% set _mag = c.magnitude.get('label') or (c.magnitude.get('value')|string + '%' if c.magnitude.get('type') == 'percent' else '') %}
+            {% else %}{% set _mag = c.magnitude %}{% endif %}
+            {% if _mag %}<span style="color:var(--gold); font-size:0.78rem; font-weight:600;">{{ _mag }}</span>{% endif %}
+          {% endif %}
+          {% if is_dm and c.hidden %}<span class="badge" style="background:var(--surface2); color:var(--muted); font-size:0.7rem;">Hidden</span>{% endif %}
+        </div>
+      </div>
+      <span style="color:var(--muted); font-size:0.72rem; padding-top:2px; white-space:nowrap;">{{ c.effect_type }}</span>
+    </div>
+    {% if c.description %}
+    <p style="font-size:0.88rem; color:var(--text); margin-top:10px; margin-bottom:0;">{{ c.description }}</p>
+    {% endif %}
+    {% if c.log %}
+    <hr class="divider" style="margin:10px 0;">
+    <ul class="log-list">
+      {% for entry in c.log | reverse %}{% if loop.index0 < 3 %}
+      <li style="font-size:0.82rem;">
+        <span class="log-session">{{ terms.session }} {{ entry.session }}</span>
+        {% if entry.event_type %}<span style="color:var(--purple); font-size:0.72rem; font-weight:700; margin-right:4px; text-transform:uppercase; letter-spacing:0.04em;">{{ entry.event_type }}</span>{% endif %}
+        {% if entry.polarity %}
+        <span style="color:{% if entry.polarity == 'negative' %}#e05c5c{% elif entry.polarity == 'positive' %}#7ec87e{% else %}var(--muted){% endif %}; font-size:0.72rem; margin-right:4px;">
+          {% if entry.polarity == 'negative' %}↑{% elif entry.polarity == 'positive' %}↓{% endif %}{{ entry.intensity }}
+        </span>
+        {% endif %}
+        {{ entry.note }}
+      </li>
+      {% endif %}{% endfor %}
+    </ul>
+    {% endif %}
+    {% if is_dm %}
+    <div style="display:flex; gap:6px; margin-top:10px; flex-wrap:wrap;">
+      <form method="POST" action="/{{ slug }}/dm/condition/{{ c.id }}/status">
+        <input type="hidden" name="next" value="/{{ slug }}/world">
+        <button type="submit" style="background:var(--surface2); border:1px solid var(--border); color:var(--muted); border-radius:4px; padding:3px 10px; font-size:0.75rem; cursor:pointer;">Resolve</button>
+      </form>
+      <form method="POST" action="/{{ slug }}/dm/condition/{{ c.id }}/toggle_hidden">
+        <input type="hidden" name="next" value="/{{ slug }}/world">
+        <button type="submit" style="background:{% if c.hidden %}var(--gold){% else %}var(--surface2){% endif %}; color:{% if c.hidden %}#080a18{% else %}var(--muted){% endif %}; border:1px solid {% if c.hidden %}var(--gold){% else %}var(--border){% endif %}; border-radius:4px; padding:3px 10px; font-size:0.75rem; font-weight:600; cursor:pointer;">
+          {% if c.hidden %}Reveal{% else %}Hide{% endif %}
+        </button>
+      </form>
+    </div>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
 {% if npcs %}
-<h2 class="section-title">NPCs</h2>
+<h2 class="section-title">{{ terms.npcs }}</h2>
 <div class="card-grid mb-4">
   {% for npc in npcs %}
-  {% set rel = npc | compute_rel %}
-  <details class="card" style="{% if session.get('dm_' ~ slug) and npc.hidden %}opacity:0.6;{% endif %}">
+  {% set rel = npc._rel %}
+  <details class="card" style="{% if npc.dead %}opacity:0.55;{% elif session.get('dm_' ~ slug) and npc.hidden %}opacity:0.6;{% endif %}">
     <summary style="list-style:none; cursor:pointer;">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-        <div>
-          <h3 style="margin-bottom:4px;">{{ npc.name }}</h3>
-          <div class="role">{{ npc.role }}</div>
-          <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center; margin-top:6px;">
-            <span class="badge badge-{{ rel.relationship }}">{{ rel.relationship }}</span>
-            {% if rel.trend == 'up' %}<span style="color:#7ec87e; font-size:0.8rem;">↑</span>
-            {% elif rel.trend == 'down' %}<span style="color:#e05c5c; font-size:0.8rem;">↓</span>{% endif %}
-            {% if session.get('dm_' ~ slug) and npc.hidden %}<span class="badge" style="background:var(--surface2); color:var(--muted); font-size:0.7rem;">Hidden</span>{% endif %}
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
+        <div style="display:flex; gap:10px; align-items:flex-start; min-width:0;">
+          {% if npc.image_url %}
+          <img src="{{ npc.image_url }}" alt="{{ npc.name }}"
+               referrerpolicy="no-referrer"
+               onerror="this.style.display='none'"
+               style="width:44px; height:44px; object-fit:cover; border-radius:4px; border:1px solid var(--border); flex-shrink:0;">
+          {% endif %}
+          <div>
+            <h3 style="margin-bottom:4px; {% if npc.dead %}text-decoration:line-through;{% endif %}">{{ npc.name }}</h3>
+            <div class="role">{{ npc.role }}</div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center; margin-top:6px;">
+              <span class="badge badge-{{ rel.relationship }}">{{ rel.relationship }}</span>
+              {% if rel.trend == 'up' %}<span style="color:#7ec87e; font-size:0.8rem;">↑</span>
+              {% elif rel.trend == 'down' %}<span style="color:#e05c5c; font-size:0.8rem;">↓</span>{% endif %}
+              {% if npc.dead %}<span class="badge" style="background:#e05c5c; color:#fff; font-size:0.7rem;">deceased</span>{% endif %}
+              {% if session.get('dm_' ~ slug) and npc.hidden %}<span class="badge" style="background:var(--surface2); color:var(--muted); font-size:0.7rem;">Hidden</span>{% endif %}
+            </div>
           </div>
         </div>
-        <span style="color:var(--muted); font-size:0.8rem; padding-top:4px;">{% if npc.log %}{{ npc.log | length }}{% endif %}</span>
+        <span style="color:var(--muted); font-size:0.8rem; padding-top:4px; flex-shrink:0;">{% if npc.log %}{{ npc.log | length }}{% endif %}</span>
       </div>
     </summary>
 
@@ -36,11 +367,41 @@
     <p style="font-size:0.88rem; color:var(--text); margin-bottom:10px;">{{ npc.description }}</p>
     {% endif %}
 
+    {% if npc.relations %}
+    <div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;">
+      {% for r in npc.relations %}
+      {%- set ns = namespace(tname=r.target) -%}
+      {%- for n in npcs %}{% if n.id == r.target %}{%- set ns.tname = n.name -%}{% endif %}{% endfor -%}
+      {%- for f in factions %}{% if f.id == r.target %}{%- set ns.tname = f.name -%}{% endif %}{% endfor -%}
+      {%- set _formal = r.get('formal_relation') -%}
+      {%- set _personal = r.get('personal_relation') -%}
+      {%- set _single = r.get('relation') -%}
+      <span style="display:inline-flex; align-items:center; gap:4px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; padding:2px 8px; font-size:0.75rem;">
+        <span style="color:var(--text); font-weight:600;">{{ ns.tname }}</span>
+        {% if _formal %}
+          <span style="color:{% if _formal in ('rival','hostile') %}#e05c5c{% else %}#7ec87e{% endif %}; font-size:0.65rem;">{{ _formal }}</span>
+          {% if _personal and _personal != _formal %}
+          <span style="color:var(--muted); font-size:0.6rem;">/</span>
+          <span style="color:{% if _personal in ('rival','hostile') %}#e05c5c{% else %}#7ec87e{% endif %}; font-size:0.65rem;">{{ _personal }}</span>
+          {% endif %}
+        {% elif _single %}
+          <span style="color:{% if _single in ('rival','hostile') %}#e05c5c{% else %}#7ec87e{% endif %}; font-size:0.65rem;">{{ _single }}</span>
+        {% endif %}
+      </span>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <a href="/{{ slug }}/world/npc/{{ npc.id }}"
+       style="font-size:0.78rem; color:var(--gold-dim); text-decoration:none; display:inline-block; margin-bottom:8px;">
+      Full page {% if session.get('dm_' ~ slug) %}+ {{ terms.dm_controls | lower }}{% endif %} →
+    </a>
+
     {% if npc.log %}
-    <ul class="log-list" style="margin-bottom:10px;">
-      {% for entry in npc.log | reverse %}
+    <ul class="log-list" style="margin-bottom:0;">
+      {% for entry in npc.log | sort(attribute='session', reverse=true) %}{% if loop.index0 < 4 %}
       <li style="font-size:0.82rem;">
-        <span class="log-session">Session {{ entry.session }}</span>
+        <span class="log-session">{{ terms.session }} {{ entry.session }}</span>
         {% if entry.event_type %}<span style="color:var(--purple); font-size:0.72rem; font-weight:700; margin-right:5px; text-transform:uppercase; letter-spacing:0.04em;">{{ entry.event_type }}</span>{% endif %}
         {% if entry.polarity %}
         <span style="color:{% if entry.polarity == 'positive' %}#7ec87e{% elif entry.polarity == 'negative' %}#e05c5c{% else %}var(--muted){% endif %}; font-size:0.72rem; margin-right:4px;">
@@ -49,37 +410,43 @@
         {% endif %}
         {{ entry.note }}
       </li>
-      {% endfor %}
+      {% endif %}{% endfor %}
     </ul>
-    {% else %}
-    <p class="text-muted text-sm" style="margin-bottom:10px;">No interactions logged yet.</p>
+    {% if npc.log | length > 4 %}
+    <p style="font-size:0.72rem; color:var(--muted); margin:4px 0 0 0;">+{{ npc.log | length - 4 }} more — <a href="/{{ slug }}/world/npc/{{ npc.id }}" style="color:var(--muted);">full page</a></p>
     {% endif %}
-
-    <a href="/{{ slug }}/world/npc/{{ npc.id }}"
-       style="font-size:0.78rem; color:var(--gold-dim); text-decoration:none;">
-      Full page {% if session.get('dm_' ~ slug) %}+ DM controls{% endif %} →
-    </a>
+    {% else %}
+    <p class="text-muted text-sm" style="margin-bottom:0;">No interactions logged yet.</p>
+    {% endif %}
   </details>
   {% endfor %}
 </div>
 {% endif %}
 
 {% if factions %}
-<h2 class="section-title mt-8">Factions</h2>
+<h2 class="section-title mt-8">{{ terms.factions }}</h2>
 <div class="card-grid">
   {% for faction in factions %}
   <details class="card" style="{% if session.get('dm_' ~ slug) and faction.hidden %}opacity:0.6;{% endif %}">
     <summary style="list-style:none; cursor:pointer;">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-        <div>
-          <h3 style="margin-bottom:4px;">{{ faction.name }}</h3>
-          {% if faction.role %}<div class="role">{{ faction.role }}</div>{% endif %}
-          <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center; margin-top:6px;">
-            <span class="badge badge-{{ faction._rel.relationship }}">{{ faction._rel.relationship }}</span>
-            {% if session.get('dm_' ~ slug) and faction.hidden %}<span class="badge" style="background:var(--surface2); color:var(--muted); font-size:0.7rem;">Hidden</span>{% endif %}
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
+        <div style="display:flex; gap:10px; align-items:flex-start; min-width:0;">
+          {% if faction.image_url %}
+          <img src="{{ faction.image_url }}" alt="{{ faction.name }}"
+               referrerpolicy="no-referrer"
+               onerror="this.style.display='none'"
+               style="width:44px; height:44px; object-fit:cover; border-radius:4px; border:1px solid var(--border); flex-shrink:0;">
+          {% endif %}
+          <div>
+            <h3 style="margin-bottom:4px;">{{ faction.name }}</h3>
+            {% if faction.role %}<div class="role">{{ faction.role }}</div>{% endif %}
+            <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center; margin-top:6px;">
+              <span class="badge badge-{{ faction._rel.relationship }}">{{ faction._rel.relationship }}</span>
+              {% if session.get('dm_' ~ slug) and faction.hidden %}<span class="badge" style="background:var(--surface2); color:var(--muted); font-size:0.7rem;">Hidden</span>{% endif %}
+            </div>
           </div>
         </div>
-        <span style="color:var(--muted); font-size:0.8rem; padding-top:4px;">{% if faction.log %}{{ faction.log | length }}{% endif %}</span>
+        <span style="color:var(--muted); font-size:0.8rem; padding-top:4px; flex-shrink:0;">{% if faction.log %}{{ faction.log | length }}{% endif %}</span>
       </div>
     </summary>
 
@@ -89,32 +456,35 @@
     <p style="font-size:0.88rem; color:var(--text); margin-bottom:10px;">{{ faction.description }}</p>
     {% endif %}
 
+    <a href="/{{ slug }}/world/faction/{{ faction.id }}"
+       style="font-size:0.78rem; color:var(--gold-dim); text-decoration:none; display:inline-block; margin-bottom:8px;">
+      Full page {% if session.get('dm_' ~ slug) %}+ {{ terms.dm_controls | lower }}{% endif %} →
+    </a>
+
     {% if faction.log %}
-    <ul class="log-list" style="margin-bottom:10px;">
-      {% for entry in faction.log | reverse %}
+    <ul class="log-list" style="margin-bottom:0;">
+      {% for entry in faction.log | sort(attribute='session', reverse=true) %}{% if loop.index0 < 4 %}
       <li style="font-size:0.82rem;">
-        <span class="log-session">Session {{ entry.session }}</span>
+        <span class="log-session">{{ terms.session }} {{ entry.session }}</span>
         {{ entry.note }}
       </li>
-      {% endfor %}
+      {% endif %}{% endfor %}
     </ul>
-    {% else %}
-    <p class="text-muted text-sm" style="margin-bottom:10px;">No interactions logged yet.</p>
+    {% if faction.log | length > 4 %}
+    <p style="font-size:0.72rem; color:var(--muted); margin:4px 0 0 0;">+{{ faction.log | length - 4 }} more — <a href="/{{ slug }}/world/faction/{{ faction.id }}" style="color:var(--muted);">full page</a></p>
     {% endif %}
-
-    <a href="/{{ slug }}/world/faction/{{ faction.id }}"
-       style="font-size:0.78rem; color:var(--gold-dim); text-decoration:none;">
-      Full page {% if session.get('dm_' ~ slug) %}+ DM controls{% endif %} →
-    </a>
+    {% else %}
+    <p class="text-muted text-sm" style="margin-bottom:0;">No interactions logged yet.</p>
+    {% endif %}
   </details>
   {% endfor %}
 </div>
 {% endif %}
 
-{% if not npcs and not factions %}
+{% if not npcs and not factions and not conditions %}
 <div class="card" style="padding:40px 24px; text-align:center;">
   {% if session.get('dm_' ~ slug) %}
-  <p class="text-muted">Nothing here yet. Add an <a href="/{{ slug }}/dm/npcs/add">NPC</a> or <a href="/{{ slug }}/dm/factions/add">faction</a> from the DM dashboard.</p>
+  <p class="text-muted">Nothing here yet. Add a <a href="/{{ slug }}/dm/npcs/add">{{ terms.npc }}</a> or <a href="/{{ slug }}/dm/factions/add">faction</a> from the DM dashboard.</p>
   {% else %}
   <p class="text-muted">The world is uncharted. Check back as the story unfolds.</p>
   {% endif %}

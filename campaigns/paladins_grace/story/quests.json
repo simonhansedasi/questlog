@@ -1,0 +1,31 @@
+{
+  "quests": [
+    {
+      "id": "authenticate_the_heir",
+      "title": "Authenticate the Heir",
+      "status": "active",
+      "description": "House Vespar's two claimants both have documentation. One is forged \u2014 possibly both. The Grace-Sworn's founding compact requires them to recognize the legitimate ruler of Hartstone's treaty partners. Authenticate the wrong heir and the compact breaks. The records are in the city archive. So is Petra Wynn.",
+      "hidden": false,
+      "objectives": [],
+      "log": []
+    },
+    {
+      "id": "the_guild_s_price",
+      "title": "The Guild's Price",
+      "status": "active",
+      "description": "Sena Cord has indicated \u2014 obliquely \u2014 that the Guild's financial support for the Grace-Sworn has a condition attached. She hasn't named it. Whatever it is, it's either something Aldric cannot give or something he should not. Find out before the Guild decides not to wait.",
+      "hidden": false,
+      "objectives": [],
+      "log": []
+    },
+    {
+      "id": "root_out_the_underbrick",
+      "title": "Root Out the Underbrick",
+      "status": "active",
+      "description": "Someone is arming the Underbrick at scale. The quantities are military. Find The Loom, trace the supply line, and determine whether this is a third faction moving against both delegations \u2014 or one of the delegations moving against the compact itself.",
+      "hidden": false,
+      "objectives": [],
+      "log": []
+    }
+  ]
+}

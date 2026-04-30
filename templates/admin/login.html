@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Admin Login — RippleForge{% endblock %}
+{% block content %}
+
+<div style="max-width:360px; margin:80px auto 0;">
+  <h1 class="page-title">Admin</h1>
+  <p class="subtitle">RippleForge internal access</p>
+
+  <div class="card">
+    {% if error %}
+    <p style="color:#e05c5c; font-size:0.85rem; margin-bottom:16px;">{{ error }}</p>
+    {% endif %}
+    <form method="POST" action="/admin/login" style="display:flex; flex-direction:column; gap:14px;">
+      <div style="display:flex; flex-direction:column; gap:4px;">
+        <label style="color:var(--muted); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Admin PIN</label>
+        <input type="password" name="pin" required autofocus
+               style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:8px 12px; font-size:0.95rem; width:100%; box-sizing:border-box;">
+      </div>
+      <button type="submit"
+              style="background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:9px 0; font-size:0.95rem; font-weight:700; cursor:pointer;">
+        Enter
+      </button>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

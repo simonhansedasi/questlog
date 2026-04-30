@@ -1,13 +1,1 @@
-{
-  "characters": [
-    {
-      "name": "Aldric",
-      "race": "Human",
-      "class": "Fighter",
-      "level": 1,
-      "status": "active",
-      "hidden": false,
-      "notes": ""
-    }
-  ]
-}
+{"characters": []}

@@ -1,0 +1,68 @@
+{
+  "conditions": [
+    {
+      "id": "the_siege_of_troy_year_ten",
+      "name": "The Siege of Troy \u2014 Year Ten",
+      "region": "All of Troy",
+      "effect_type": "danger",
+      "effect_scope": "all",
+      "magnitude": {
+        "label": "decade-long stalemate"
+      },
+      "status": "active",
+      "description": "Ten years of war. The walls of Troy remain unbroken. Supply lines on both sides strain. Men have grown old, had sons, buried fathers while camped on this plain. Every day costs lives. Neither side can end it.",
+      "hidden": false,
+      "relations": [],
+      "log": []
+    },
+    {
+      "id": "apollo_s_plague",
+      "name": "Apollo's Plague",
+      "region": "Achaean Camp",
+      "effect_type": "danger",
+      "effect_scope": "military",
+      "magnitude": {
+        "type": "percent",
+        "value": -30
+      },
+      "status": "active",
+      "description": "Apollo looses plague arrows into the Achaean camp for nine days after Agamemnon dishonors his priest Chryses. Men and mules die. The fires of cremation never go out. The camp smells of death.",
+      "hidden": false,
+      "relations": [],
+      "log": [
+        {
+          "id": "evt_631194",
+          "session": 1,
+          "note": "Apollo's plague ends when Agamemnon returns Chryseis. The pyres stop burning.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3
+        }
+      ]
+    },
+    {
+      "id": "achilles_withdraws",
+      "name": "Achilles Withdraws",
+      "region": "Achaean Camp",
+      "effect_type": "access",
+      "effect_scope": "military",
+      "magnitude": {
+        "type": "blocked"
+      },
+      "status": "active",
+      "description": "After Agamemnon strips him of Briseis, Achilles refuses to fight. The greatest warrior of the age sits idle on the beach. Without him the Achaeans lose ground with every engagement. The Trojans can feel it.",
+      "hidden": false,
+      "relations": [],
+      "log": [
+        {
+          "id": "evt_e4fdb7",
+          "session": 7,
+          "note": "Achilles returns to battle after Patroclus's death. The condition ends.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3
+        }
+      ]
+    }
+  ]
+}

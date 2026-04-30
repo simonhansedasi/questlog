@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+{% block title %}Quick Start — RippleForge{% endblock %}
+{% block content %}
+
+<div style="max-width:660px; margin:40px auto 60px;">
+
+  <div style="margin-bottom:32px;">
+    <h1 style="font-size:1.8rem; font-weight:800; color:var(--text); letter-spacing:-0.02em; margin:0 0 8px 0;">Quick Start Guide</h1>
+    <p style="color:var(--muted); font-size:0.95rem; margin:0;">From account to living world — five steps.</p>
+  </div>
+
+  <!-- What is this -->
+  <div class="card" style="margin-bottom:20px;">
+    <h2 style="font-size:0.8rem; font-weight:700; color:var(--gold); margin:0 0 10px 0; letter-spacing:0.03em; text-transform:uppercase;">What RippleForge does</h2>
+    <p style="color:var(--text); font-size:0.92rem; line-height:1.6; margin:0 0 10px 0;">
+      RippleForge tracks your story world as a graph of events and relationships. When something happens to a character, every connected group and person feels it automatically — that's the <strong style="color:var(--purple);">ripple system</strong>.
+    </p>
+    <p style="color:var(--text); font-size:0.92rem; line-height:1.6; margin:0 0 10px 0;">
+      After a scene or session, paste your notes into the AI parser. It extracts discrete world events, lets you review them, then commits them — firing ripples to every connected character in one go.
+    </p>
+    <p style="color:var(--text); font-size:0.92rem; line-height:1.6; margin:0;">
+      The <strong style="color:var(--purple);">Narrator dashboard</strong> is your intel layer: hot characters under pressure, active tensions, stale threads, and a "What happens next?" projection based purely on your world state — no hallucination, just consequence.
+    </p>
+  </div>
+
+  <!-- Step 1 -->
+  <div class="card" style="margin-bottom:16px;">
+    <div style="display:flex; gap:14px; align-items:flex-start;">
+      <span style="background:var(--purple); color:#fff; border-radius:50%; width:26px; height:26px; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:800; flex-shrink:0; margin-top:1px;">1</span>
+      <div>
+        <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 8px 0;">Create your world</h3>
+        <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0 0 8px 0;">
+          From your home screen, choose <strong>Start from Scratch</strong> (blank world) or a starter template. Give it a name and set a Narrator PIN — you'll need the PIN every time you access the Narrator dashboard.
+        </p>
+        <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0;">
+          The Narrator PIN is separate from your account password. It's what you type at the Narrator login screen inside a world. Write it down somewhere.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="card" style="margin-bottom:16px;">
+    <div style="display:flex; gap:14px; align-items:flex-start;">
+      <span style="background:var(--purple); color:#fff; border-radius:50%; width:26px; height:26px; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:800; flex-shrink:0; margin-top:1px;">2</span>
+      <div>
+        <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 8px 0;">Add your characters and groups</h3>
+        <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0 0 8px 0;">
+          Go to <strong>World</strong> and add the key players — the characters your story revolves around and the factions or groups pulling the strings. Names and a brief role are enough to start.
+        </p>
+        <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0;">
+          <strong style="color:var(--gold);">Don't declare relationships yet.</strong> Relationships emerge from events you log. Add Steve, add Cheryl — RippleForge will figure out what they are to each other once they start interacting.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="card" style="margin-bottom:16px;">
+    <div style="display:flex; gap:14px; align-items:flex-start;">
+      <span style="background:var(--purple); color:#fff; border-radius:50%; width:26px; height:26px; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:800; flex-shrink:0; margin-top:1px;">3</span>
+      <div>
+        <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 8px 0;">Log their first interaction — watch a relationship form</h3>
+        <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0 0 8px 0;">
+          From the Narrator dashboard, use the <strong>Quick Log</strong>. Pick <em>Who this affects</em>, then set <em>Caused by</em>. Add a note and a tone — positive, negative, or neutral. Log it.
+        </p>
+
+        <!-- Grammar rule callout -->
+        <div style="background:var(--surface2); border-left:3px solid var(--purple); border-radius:0 6px 6px 0; padding:12px 14px; margin:0 0 12px 0;">
+          <p style="color:var(--text); font-size:0.85rem; font-weight:700; margin:0 0 4px 0;">The rule: think subject → object</p>
+          <p style="color:var(--muted); font-size:0.84rem; line-height:1.5; margin:0;"><strong style="color:var(--text);">Caused by</strong> = who did it. &nbsp;<strong style="color:var(--text);">Who this affects</strong> = who it landed on.<br>
+          Memory hook: <em>"[Caused by] did it. It happened to [Who this affects]."</em></p>
+        </div>
+
+        <!-- Worked example -->
+        <p style="color:var(--muted); font-size:0.84rem; font-weight:700; margin:0 0 6px 0; text-transform:uppercase; letter-spacing:0.04em;">Worked example — Steve &amp; Cheryl (neighborhood drama)</p>
+        <div style="display:flex; flex-direction:column; gap:6px; margin:0 0 12px 0; font-size:0.83rem;">
+          <div style="background:var(--surface2); border-radius:6px; padding:10px 12px;">
+            <span style="color:var(--text); font-weight:700;">Beat 1 — Steve moves in</span><br>
+            <span style="color:var(--muted);">No actor. <strong>Who this affects:</strong> Steve. <strong>Caused by:</strong> nobody. Tone: neutral. A world event — no score yet.</span>
+          </div>
+          <div style="background:var(--surface2); border-radius:6px; padding:10px 12px;">
+            <span style="color:var(--text); font-weight:700;">Beat 2 — Cheryl brings cookies; Steve refuses to chat</span><br>
+            <span style="color:var(--muted);">Log this as <strong>two entries</strong> — one per side of the interaction:<br>
+            &bull; <strong>Who this affects:</strong> Cheryl / <strong>Caused by:</strong> Steve / tone: negative — the snub landed on Cheryl.<br>
+            &bull; <strong>Who this affects:</strong> Steve / <strong>Caused by:</strong> Cheryl / tone: neutral — Cheryl made a gesture Steve didn't want.</span>
+          </div>
+          <div style="background:var(--surface2); border-radius:6px; padding:10px 12px;">
+            <span style="color:var(--text); font-weight:700;">Beat 3 — Cheryl anonymously files a complaint</span><br>
+            <span style="color:var(--muted);"><strong>Who this affects:</strong> Steve / <strong>Caused by:</strong> Cheryl / tone: negative. Mark <strong>Narrator-only</strong> if Steve doesn't know who filed it — the event exists and Cheryl caused it, but Steve only sees the consequence.</span>
+          </div>
+        </div>
+
+        <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0 0 8px 0;">
+          After a few interactions RippleForge starts computing a relationship score between them. A pattern solidifies: <em>ally</em>, <em>hostile</em>, <em>friendly</em>. Open Steve's character page and you'll see it.
+        </p>
+        <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0 0 8px 0;">
+          When the relationship is clear, you'll see a <strong>Formalize</strong> prompt on the character page. Accepting it adds a structural graph edge — this is what enables the ripple system to automatically propagate events between them. Until then, the score is still there, just not yet wired into the propagation network.
+        </p>
+        <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0;">
+          <strong style="color:var(--gold);">Tip:</strong> Go to <strong>World → Ripples</strong> after formalizing to see the full propagation trace — every downstream effect from a single logged event.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="card" style="margin-bottom:16px;">
+    <div style="display:flex; gap:14px; align-items:flex-start;">
+      <span style="background:var(--purple); color:#fff; border-radius:50%; width:26px; height:26px; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:800; flex-shrink:0; margin-top:1px;">4</span>
+      <div>
+        <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 8px 0;">After a scene or session: parse your notes</h3>
+        <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0 0 8px 0;">
+          On the Narrator dashboard, paste your raw notes into the <strong>Notes</strong> field and hit <strong>Parse into Events ✦</strong>. The AI extracts discrete world events — one per character or group — and presents them for your review.
+        </p>
+        <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0 0 8px 0;">
+          Your notes can be rough. Bullet points, sentence fragments, shorthand — it handles all of it. You're reviewing the output, not the input.
+        </p>
+        <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0 0 8px 0;">
+          Review the proposed entries. Edit any you want to change. Uncheck anything that doesn't belong. Then hit <strong>Commit Selected</strong> — events log and ripples fire in one step.
+        </p>
+        <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0;">
+          <strong style="color:var(--gold);">Tip:</strong> The parser also suggests relationship edges implied by your notes. Accept them to backfill ripples across the full event history for that connection.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 5 -->
+  <div class="card" style="margin-bottom:28px;">
+    <div style="display:flex; gap:14px; align-items:flex-start;">
+      <span style="background:var(--purple); color:#fff; border-radius:50%; width:26px; height:26px; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:800; flex-shrink:0; margin-top:1px;">5</span>
+      <div>
+        <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 8px 0;">Before your next scene: check the intel layer</h3>
+        <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0 0 8px 0;">
+          The top of your Narrator dashboard is the <strong>World State</strong> panel — hot characters under pressure, active risks, stale threads that haven't moved in a while. This is computed from your event history, not manually curated.
+        </p>
+        <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0 0 8px 0;">
+          Hit <strong>What happens next? ✦</strong> to generate consequence projections — what the world does if left unchecked. Review them, commit the ones you plan to run with, and they'll appear in your world as <em>Pending Projections</em> until they play out.
+        </p>
+        <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0;">
+          Hit <strong>Brief me ✦</strong> in the Session Plan card to auto-generate a pre-session brief from your world state — pending futures, active threads, hot characters, protagonist stakes. Use it as a starting point for your notes.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Concepts reference -->
+  <div class="card" style="margin-bottom:28px; border-color:var(--purple);">
+    <h2 style="font-size:0.8rem; font-weight:700; color:var(--purple); margin:0 0 14px 0; text-transform:uppercase; letter-spacing:0.05em;">Key concepts</h2>
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <div style="display:grid; grid-template-columns:140px 1fr; gap:10px; font-size:0.87rem;">
+        <span style="color:var(--text); font-weight:700;">Ripple</span>
+        <span style="color:var(--muted);">An automatic event fired to a related character when you log something to their ally or rival. Strength decays with relational distance and weight.</span>
+      </div>
+      <div style="display:grid; grid-template-columns:140px 1fr; gap:10px; font-size:0.87rem;">
+        <span style="color:var(--text); font-weight:700;">Relationship score</span>
+        <span style="color:var(--muted);">Computed from event history, not manually set. Any two characters who interact via the "Caused by" field accumulate a score automatically. Decays over time if nothing is logged.</span>
+      </div>
+      <div style="display:grid; grid-template-columns:140px 1fr; gap:10px; font-size:0.87rem;">
+        <span style="color:var(--text); font-weight:700;">Relationship edge</span>
+        <span style="color:var(--muted);">A formal connection between two characters that enables ripple propagation. Emerges naturally from interactions — when the pattern is clear, RippleForge prompts you to formalize it.</span>
+      </div>
+      <div style="display:grid; grid-template-columns:140px 1fr; gap:10px; font-size:0.87rem;">
+        <span style="color:var(--text); font-weight:700;">Narrator-only</span>
+        <span style="color:var(--muted);">Events marked narrator-only are hidden from collaborators even if they have access to the world. Use for secrets, hidden motives, and plot threads not yet revealed.</span>
+      </div>
+      <div style="display:grid; grid-template-columns:140px 1fr; gap:10px; font-size:0.87rem;">
+        <span style="color:var(--text); font-weight:700;">Pending Projection</span>
+        <span style="color:var(--muted);">A committed "What happens next" entry. Confirm it when it plays out (fires ripples), or dismiss it (marks protagonist intervention).</span>
+      </div>
+      <div style="display:grid; grid-template-columns:140px 1fr; gap:10px; font-size:0.87rem;">
+        <span style="color:var(--text); font-weight:700;">Narrator PIN</span>
+        <span style="color:var(--muted);">Separate from your account password. Required to access the Narrator dashboard within a world. Share the world URL without the PIN to give collaborators read-only access.</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center; color:var(--muted); font-size:0.85rem;">
+    {% if session.get('user') %}
+    <a href="/" style="color:var(--gold); font-weight:700;">← Back to my worlds</a>
+    {% else %}
+    <a href="/demo/" style="color:var(--gold); font-weight:700;">Try the demo first →</a>
+    &nbsp;&nbsp;·&nbsp;&nbsp;
+    <a href="/login" style="color:var(--muted);">Log in</a>
+    {% endif %}
+  </div>
+
+</div>
+
+{% endblock %}

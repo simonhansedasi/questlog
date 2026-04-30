@@ -1,0 +1,66 @@
+{
+  "conditions": [
+    {
+      "id": "the_blitz",
+      "name": "The Blitz",
+      "region": "Great Britain",
+      "effect_type": "danger",
+      "effect_scope": "all",
+      "magnitude": {
+        "type": "percent",
+        "value": -40
+      },
+      "status": "active",
+      "description": "The Luftwaffe begins systematic bombing of British cities on September 7, 1940. London burns for 57 consecutive nights. Over 43,000 civilians are killed. Churchill refuses to negotiate. The RAF holds. The invasion never comes \u2014 but the damage to civilian infrastructure and morale is staggering.",
+      "hidden": false,
+      "relations": [],
+      "log": []
+    },
+    {
+      "id": "u_boat_blockade",
+      "name": "U-boat Blockade",
+      "region": "Atlantic Ocean",
+      "effect_type": "supply",
+      "effect_scope": "all",
+      "magnitude": {
+        "type": "percent",
+        "value": -35
+      },
+      "status": "active",
+      "description": "German submarines operate in 'wolf packs' across the Atlantic, sinking millions of tons of Allied shipping. Britain's food, fuel, and materiel depend on convoys. At the height of the Battle of the Atlantic in 1942-43, Allied losses threaten to strangle Britain before the US buildup can arrive.",
+      "hidden": false,
+      "relations": [],
+      "log": []
+    },
+    {
+      "id": "soviet_winter",
+      "name": "Soviet Winter",
+      "region": "Eastern Front",
+      "effect_type": "danger",
+      "effect_scope": "military",
+      "magnitude": {
+        "label": "catastrophic attrition"
+      },
+      "status": "active",
+      "description": "Operation Barbarossa freezes before Moscow in December 1941 as temperatures drop to -40\u00b0C. German troops have no winter equipment; oil freezes in engines; frostbite takes more men than bullets. The Wehrmacht that entered the Soviet Union in June will never be the same force again.",
+      "hidden": false,
+      "relations": [],
+      "log": []
+    },
+    {
+      "id": "the_holocaust",
+      "name": "The Holocaust",
+      "region": "Occupied Europe",
+      "effect_type": "danger",
+      "effect_scope": "all",
+      "magnitude": {
+        "label": "systematic extermination"
+      },
+      "status": "active",
+      "description": "The Wannsee Conference of January 1942 coordinates the 'Final Solution': the systematic murder of European Jews. Six million Jews are killed by war's end, along with Roma, disabled persons, political prisoners, and Soviet POWs. The full scale is not known to Allied commanders until the camps are liberated in 1944-45.",
+      "hidden": true,
+      "relations": [],
+      "log": []
+    }
+  ]
+}

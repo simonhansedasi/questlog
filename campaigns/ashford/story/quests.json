@@ -1,0 +1,49 @@
+{
+  "quests": [
+    {
+      "id": "rescue_bram_ketterly",
+      "title": "Rescue Bram Ketterly",
+      "status": "active",
+      "description": "Bram Ketterly refused to pay the toll and ended up in an Ironmask cell in Greystone Keep. He's been there three months. His family thinks he's dead. The Stonebreaker Clan controls the Keep's outer walls. Getting to Bram without starting a war with Durnak's clan requires either diplomacy or creativity.",
+      "hidden": false,
+      "objectives": [],
+      "log": []
+    },
+    {
+      "id": "secure_the_old_vein",
+      "title": "Secure the Old Vein",
+      "status": "active",
+      "description": "The lower Ashcroft shafts are unsafe and the Ironmasks are forcing miners into them anyway. Stopping this requires either breaking the Ironmasks' grip on the Registry or getting the unsafe-shaft report to someone who can act on it \u2014 which means finding someone in the Trade Compact who isn't compromised.",
+      "hidden": false,
+      "objectives": [],
+      "log": []
+    },
+    {
+      "id": "drive_out_the_ironmasks",
+      "title": "Drive Out the Ironmasks",
+      "status": "active",
+      "description": "Maren Vosk runs a tight operation. The Ironmasks are entrenched, connected, and violent enough to deter individual resistance. Breaking them requires evidence that implicates whoever is protecting them at the Compact level \u2014 without which any victory against the street operation just creates a vacancy.",
+      "hidden": false,
+      "objectives": [],
+      "log": []
+    },
+    {
+      "id": "the_warden_s_archive",
+      "title": "The Warden's Archive",
+      "status": "active",
+      "description": "The Coldwater ruins were once a garrison post. The Pale Widow guards the archive. Someone sent a Shadow Wing operative to the ruins recently \u2014 they didn't come back. The archive may contain records about the tunnels below the Vein. Approaching the Pale Widow requires respect, not force.",
+      "hidden": false,
+      "objectives": [],
+      "log": []
+    },
+    {
+      "id": "the_factor",
+      "title": "The Factor",
+      "status": "active",
+      "description": "Maren Vosk answers to someone. Edda Sorn's shipping discrepancy records point to a warehouse near the Vein entrance that moves more weight than its declared cargo accounts for. Find the Factor. Find the tunnel. Find out who the Shadow Wing is selling to. This is the real problem.",
+      "hidden": true,
+      "objectives": [],
+      "log": []
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "quests": [
+    {
+      "id": "the_primordial_history",
+      "title": "The Primordial History",
+      "status": "active",
+      "description": "Creation, the garden, the fall, Cain's murder of Abel, the flood, and the tower of Babel. In eleven chapters Genesis runs through the whole disaster of human history \u2014 each generation worse than the last \u2014 until God chooses one man and starts over with a family.",
+      "hidden": false,
+      "objectives": [],
+      "log": []
+    },
+    {
+      "id": "the_abraham_covenant",
+      "title": "The Abraham Covenant",
+      "status": "active",
+      "description": "God calls Abram out of Ur with a promise: land, descendants, blessing to all nations. Abram follows without knowing where he is going. For twenty-five years the promise waits. Then Isaac is born. Then God asks for him back. The binding on Moriah is the hinge of the covenant: God provides.",
+      "hidden": false,
+      "objectives": [],
+      "log": []
+    },
+    {
+      "id": "jacob_and_the_twelve_tribes",
+      "title": "Jacob and the Twelve Tribes",
+      "status": "active",
+      "description": "Jacob steals the blessing, flees, works for Laban, wrestles God, and becomes Israel. Twelve sons from four women become twelve tribes. The family is held together by conflict, favoritism, and a God who refuses to let any of them go.",
+      "hidden": false,
+      "objectives": [],
+      "log": []
+    },
+    {
+      "id": "joseph_in_egypt",
+      "title": "Joseph in Egypt",
+      "status": "active",
+      "description": "Sold by his brothers for twenty silver coins. Enslaved. Falsely accused. Imprisoned. Then elevated to second-in-command of Egypt by Pharaoh's dream. When famine drives his brothers to Egypt and they bow before the vizier, Joseph's first dream comes true. He weeps. He forgives them. What they meant for evil, God meant for good.",
+      "hidden": false,
+      "objectives": [],
+      "log": []
+    }
+  ]
+}

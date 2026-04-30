@@ -11,7 +11,7 @@
   <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
     <div>
       <span style="color:var(--gold); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em;">
-        Session {{ entry.session }}
+        {{ terms.session }} {{ entry.session }}
       </span>
       {% if entry.date %}
       <span style="color:var(--muted); font-size:0.75rem; margin-left:10px;">{{ entry.date }}</span>
@@ -75,6 +75,26 @@
 {% else %}
 <div class="card">
   <p class="text-muted text-sm">No entries yet. Generate a session recap from the DM dashboard and post it here.</p>
+</div>
+{% endif %}
+
+{% if is_dm and deleted %}
+<div style="margin-top:32px;">
+  <p style="color:var(--muted); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:10px;">Deleted entries</p>
+  {% for entry in deleted %}
+  <div class="card mb-4" style="opacity:0.5; border-style:dashed;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+      <div>
+        <span style="color:var(--gold); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em;">{{ terms.session }} {{ entry.session }}</span>
+        {% if entry.date %}<span style="color:var(--muted); font-size:0.75rem; margin-left:10px;">{{ entry.date }}</span>{% endif %}
+      </div>
+      <form method="POST" action="/{{ slug }}/dm/journal/{{ entry.idx }}/restore">
+        <button type="submit" style="background:none; border:1px solid var(--border); color:var(--muted); border-radius:4px; padding:2px 10px; font-size:0.75rem; cursor:pointer;">Restore</button>
+      </form>
+    </div>
+    <p style="color:var(--muted); font-size:0.8rem; margin:8px 0 0; font-style:italic; white-space:pre-wrap;">{{ entry.recap[:200] }}{% if entry.recap|length > 200 %}…{% endif %}</p>
+  </div>
+  {% endfor %}
 </div>
 {% endif %}
 

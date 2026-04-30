@@ -1,0 +1,24 @@
+{
+  "entries": [
+    {
+      "session": 1,
+      "date": "Session 1 \u2014 Ashford",
+      "recap": "First night. Orvyn at the store gave us everything: the toll, Bram, the Registry, the silence from the Governor's office. Then Edda Sorn found us at the inn with her ledgers. She's been sitting on this for four months waiting for someone who could do something with it. The Compact toll discrepancy alone is worth pursuing. The question is how far up it goes."
+    },
+    {
+      "session": 3,
+      "date": "Session 3 \u2014 Greystone Keep",
+      "recap": "Bram is out. Durnak kept his word the moment we cleared the courtyard \u2014 no ceremony, no renegotiation, just opened the cellar. Bram's in decent shape for three months in a root cellar. He saw a courier twice with Shadow Wing markings. He didn't know what they were but he described the route. That matches nothing we've seen on any road map. It goes underground."
+    },
+    {
+      "session": 4,
+      "date": "Session 4 \u2014 Coldwater",
+      "recap": "The Pale Widow showed us the garrison maps. Nobody's been in that archive since the garrison was decommissioned \u2014 you can tell by the dust on everything except the tunnel entrance records, which are clean. Someone was here recently. The tunnel exits under Corvin Ashale's warehouse. He's not moving cargo. He's moving the mine's output before it ever reaches the Compact scales. This is the real operation. The Ironmasks were always just the noise."
+    },
+    {
+      "session": 5,
+      "date": "Session 5 \u2014 The Ledger",
+      "recap": "The toll is done. The roads are open. Maren Vosk's in custody with her own ledgers as evidence and 'CA' in seventeen entries. She won't say his name out loud. Corvin Ashale is locked in his warehouse waiting for extraction. Serev got a message out \u2014 we don't know to who. The Ironmasks are broken but the Factor is still breathing and the Shadow Wing knows we're here. Greystone Keep is next."
+    }
+  ]
+}

@@ -6,7 +6,7 @@
 <p class="subtitle">Welcome back, {{ session.get('display_name', session.get('user')) }}</p>
 
 {% if my_campaigns %}
-<h2 class="section-title">My Campaigns</h2>
+<h2 class="section-title">My Worlds</h2>
 <div class="card-grid mb-8">
   {% for c in my_campaigns %}
   <a href="/{{ c.slug }}/" style="text-decoration:none;">
@@ -19,7 +19,42 @@
   {% endfor %}
 </div>
 {% else %}
-<p class="text-muted" style="margin-bottom:32px;">No campaigns yet. Start one below.</p>
+<div style="background:var(--surface2); border:1px solid var(--purple); border-radius:8px; padding:20px 24px; margin-bottom:32px; max-width:560px;">
+  <p style="color:var(--text); font-size:0.95rem; font-weight:700; margin:0 0 6px 0;">Welcome to RippleForge.</p>
+  <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0 0 14px 0;">
+    Start by creating a world below, then add your NPCs and factions. The <strong>Quick Start Guide</strong> walks you through the first session in five steps.
+  </p>
+  <a href="/guide" style="color:var(--gold); font-size:0.88rem; font-weight:700; text-decoration:none;">Read the Quick Start Guide →</a>
+</div>
+{% endif %}
+
+{% if member_campaigns %}
+<h2 class="section-title mt-8">My Games</h2>
+<div class="card-grid mb-8">
+  {% for c in member_campaigns %}
+  <a href="/{{ c.slug }}/" style="text-decoration:none;">
+    <div class="campaign-card">
+      <h2>{{ c.name }}</h2>
+      <div class="system">{{ c.system }}</div>
+      {% if c.description %}<p class="text-sm text-muted">{{ c.description }}</p>{% endif %}
+    </div>
+  </a>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% if session.get('user') %}
+<div style="display:flex; align-items:center; gap:12px; margin-top:32px; margin-bottom:28px; padding:10px 16px; background:var(--surface2); border:1px solid var(--border); border-radius:6px; font-size:0.82rem; color:var(--muted);">
+  {% if user_pro %}
+  <span style="background:var(--purple); color:#fff; border-radius:4px; padding:1px 8px; font-size:0.72rem; font-weight:700; letter-spacing:0.05em;">PRO</span>
+  <span>{{ worlds_used }} / {{ worlds_limit }} worlds used</span>
+  {% else %}
+  <span style="background:var(--surface3,var(--border)); color:var(--muted); border-radius:4px; padding:1px 8px; font-size:0.72rem; font-weight:700; letter-spacing:0.05em;">FREE</span>
+  <span>{{ worlds_used }} / {{ worlds_limit }} worlds used</span>
+  <a href="/billing" style="color:var(--purple); font-weight:700; text-decoration:none; margin-left:auto;">Try Pro free for 14 days &rarr;</a>
+  {% endif %}
+  {% if user_pro %}<a href="/billing" style="color:var(--muted); text-decoration:none; margin-left:auto; opacity:0.6;">Manage</a>{% endif %}
+</div>
 {% endif %}
 
 {% set blank = demo_campaigns | selectattr('slug', 'eq', 'example') | list %}
@@ -36,14 +71,31 @@
     {% if c.description %}<p class="text-sm text-muted" style="margin-bottom:14px;">{{ c.description }}</p>{% endif %}
     <details style="margin-top:auto;">
       <summary style="list-style:none; cursor:pointer; background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:6px 14px; font-size:0.82rem; font-weight:700; display:inline-block;">
-        Start Campaign
+        Start World
       </summary>
-      <form method="POST" action="/demo/{{ c.slug }}/clone" style="margin-top:12px; display:flex; flex-direction:column; gap:8px;">
-        <input type="text" name="dm_pin" placeholder="Set a DM PIN (or leave blank for random)"
+      <form method="POST" action="/demo/{{ c.slug }}/clone" style="margin-top:12px; display:flex; flex-direction:column; gap:10px;">
+        <div>
+          <p style="color:var(--muted); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; margin:0 0 6px 0;">Template</p>
+          <div style="display:flex; flex-direction:column; gap:4px;">
+            {% for tmpl in [
+              ('ttrpg',      'TTRPG',      'NPC · Session · DM'),
+              ('fiction',    'Fiction',    'Character · Chapter · Author'),
+              ('historical', 'Historical', 'Figure · Chapter · Historian'),
+            ] %}
+            <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.82rem; color:var(--text);">
+              <input type="radio" name="template" value="{{ tmpl[0] }}" {% if tmpl[0] == 'ttrpg' %}checked{% endif %}
+                     style="accent-color:var(--gold);">
+              <span style="font-weight:700;">{{ tmpl[1] }}</span>
+              <span style="color:var(--muted); font-size:0.75rem;">{{ tmpl[2] }}</span>
+            </label>
+            {% endfor %}
+          </div>
+        </div>
+        <input type="text" name="dm_pin" placeholder="Set a Narrator PIN (or leave blank for random)"
                style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:5px 9px; font-size:0.82rem; width:100%; box-sizing:border-box;">
         <button type="submit"
                 style="background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:6px 14px; font-size:0.82rem; font-weight:700; cursor:pointer;">
-          Create My Copy
+          Create My World
         </button>
       </form>
     </details>
@@ -53,8 +105,8 @@
 {% endif %}
 
 {% if starter_campaigns %}
-<h2 class="section-title mt-8">Starter Campaigns</h2>
-<p class="text-muted text-sm" style="margin-bottom:20px;">Pre-loaded content for popular systems. Your copy is private and fully editable.</p>
+<h2 class="section-title mt-8">Starter Content</h2>
+<p class="text-muted text-sm" style="margin-bottom:20px;">Pre-loaded content. Your copy is private and fully editable.</p>
 <div class="card-grid">
   {% for c in starter_campaigns %}
   <div class="campaign-card" style="opacity:0.9;">
@@ -63,10 +115,10 @@
     {% if c.description %}<p class="text-sm text-muted" style="margin-bottom:14px;">{{ c.description }}</p>{% endif %}
     <details style="margin-top:auto;">
       <summary style="list-style:none; cursor:pointer; background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:6px 14px; font-size:0.82rem; font-weight:700; display:inline-block;">
-        Start Campaign
+        Start World
       </summary>
       <form method="POST" action="/demo/{{ c.slug }}/clone" style="margin-top:12px; display:flex; flex-direction:column; gap:8px;">
-        <input type="text" name="dm_pin" placeholder="Set a DM PIN (or leave blank for random)"
+        <input type="text" name="dm_pin" placeholder="Set a Narrator PIN (or leave blank for random)"
                style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:5px 9px; font-size:0.82rem; width:100%; box-sizing:border-box;">
         <button type="submit"
                 style="background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:6px 14px; font-size:0.82rem; font-weight:700; cursor:pointer;">

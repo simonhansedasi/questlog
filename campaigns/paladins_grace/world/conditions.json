@@ -1,0 +1,59 @@
+{
+  "conditions": [
+    {
+      "id": "the_succession_vacuum",
+      "name": "The Succession Vacuum",
+      "region": "Hartstone",
+      "effect_type": "danger",
+      "effect_scope": "all",
+      "magnitude": {
+        "label": "political instability"
+      },
+      "status": "active",
+      "description": "House Vespar's lord died six weeks ago without a clear named heir. Both claimants and Kelrath agents are in Hartstone simultaneously. Every faction is in a holding pattern that could collapse into action at any moment.",
+      "hidden": false,
+      "relations": [],
+      "log": []
+    },
+    {
+      "id": "armed_envoys",
+      "name": "Armed Envoys",
+      "region": "Hartstone",
+      "effect_type": "danger",
+      "effect_scope": "all",
+      "magnitude": {
+        "type": "percent",
+        "value": -20
+      },
+      "status": "active",
+      "description": "House Vespar arrived with forty armed guards; Kelrath matched them. The compact limits armed retinues to twelve. Both sides are in technical violation. Aldric has not yet enforced the limit. One incident in the market triggers the clause.",
+      "hidden": false,
+      "relations": [],
+      "log": [
+        {
+          "id": "evt_ad99a1",
+          "session": 4,
+          "note": "Kelrath reduces guard count immediately; Vespar has 48 hours. Enforcement of the clause partially eases tension.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 1
+        }
+      ]
+    },
+    {
+      "id": "the_underbrick_cache",
+      "name": "The Underbrick Cache",
+      "region": "East Quarter tunnels",
+      "effect_type": "supply",
+      "effect_scope": "military",
+      "magnitude": {
+        "label": "unknown weapons stockpile"
+      },
+      "status": "active",
+      "description": "City watch found evidence of large weapon shipments moving through the tunnel network under the east quarter. Origin and destination unknown. Too many for street crime \u2014 consistent with equipping a small private force.",
+      "hidden": true,
+      "relations": [],
+      "log": []
+    }
+  ]
+}

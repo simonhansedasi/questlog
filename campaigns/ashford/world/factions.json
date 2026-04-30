@@ -1,0 +1,383 @@
+{
+  "factions": [
+    {
+      "id": "the_ironmasks",
+      "name": "The Ironmasks",
+      "relationship": "hostile",
+      "description": "A bandit gang turned extortion syndicate controlling Ashford's trade roads. They tax every merchant entering town, take a cut of mine payroll, and have beaten three citizens badly enough to be examples. Their boss is known as The Ledger. Their muscle comes from somewhere further up the chain.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_586db4",
+          "session": 1,
+          "note": "The Ironmasks have expanded their toll operations to cover the northern road as well as the eastern approach. Farlan Dusk counted thirty-two collectors working the roads in the past week \u2014 up from eighteen a month ago.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "other"
+        },
+        {
+          "id": "evt_1dcb6a",
+          "session": 3,
+          "note": "The party drives the Ironmask holding operation out of the Keep's outer courtyard. Six Ironmasks subdued. Two escaped toward Ashford. Durnak watches from the wall without interfering.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "combat"
+        },
+        {
+          "id": "evt_9f6789",
+          "session": 4,
+          "note": "Consequence of The Shadow Wing (ally): The Shadow Wing moves refined ore samples through the tunnel system twice a week. The operation has been running for eight months \u2014 exactly as long as the shipping discrepancy in Edda's records.",
+          "visibility": "dm_only",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "the_shadow_wing",
+            "entity_type": "faction",
+            "event_id": null
+          },
+          "actor_id": "the_shadow_wing",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_e9b709",
+          "session": 5,
+          "note": "The Ironmask street operation in Ashford is broken. The toll is ended. Remaining Ironmasks have scattered into the Greywood. Corvin Ashale's warehouse is locked from the inside.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "other"
+        }
+      ],
+      "relations": [
+        {
+          "target": "the_trade_compact",
+          "target_type": "faction",
+          "relation": "ally",
+          "weight": 0.7
+        },
+        {
+          "target": "greywood_rangers",
+          "target_type": "faction",
+          "relation": "rival",
+          "weight": 0.9
+        },
+        {
+          "target": "stonebreaker_clan",
+          "target_type": "faction",
+          "relation": "neutral",
+          "weight": 0.5
+        }
+      ]
+    },
+    {
+      "id": "the_trade_compact",
+      "name": "The Trade Compact",
+      "relationship": "neutral",
+      "description": "The regional commercial authority that officially regulates trade in and out of Ashford. They have been paying the Ironmask toll rather than escalating. Someone in the Compact is more deeply entangled than they've admitted. Edda Sorn is their local agent \u2014 she suspects the entanglement too.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_8a2325",
+          "session": 1,
+          "note": "Consequence of The Ironmasks (ally): The Ironmasks have expanded their toll operations to cover the northern road as well as the eastern approach. Farlan Dusk counted thirty-two collectors working the roads in the past week \u2014 up from eighteen a month ago.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 1,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "the_ironmasks",
+            "entity_type": "faction",
+            "event_id": null
+          },
+          "actor_id": "the_ironmasks",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_f89f61",
+          "session": 3,
+          "note": "Consequence of The Ironmasks (ally): The party drives the Ironmask holding operation out of the Keep's outer courtyard. Six Ironmasks subdued. Two escaped toward Ashford. Durnak watches from the wall without interfering.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "the_ironmasks",
+            "entity_type": "faction",
+            "event_id": null
+          },
+          "actor_id": "the_ironmasks",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_7ea253",
+          "session": 4,
+          "note": "Consequence of The Shadow Wing (ally): The Shadow Wing moves refined ore samples through the tunnel system twice a week. The operation has been running for eight months \u2014 exactly as long as the shipping discrepancy in Edda's records.",
+          "visibility": "dm_only",
+          "polarity": "negative",
+          "intensity": 1,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "the_shadow_wing",
+            "entity_type": "faction",
+            "event_id": null
+          },
+          "actor_id": "the_shadow_wing",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_cc645c",
+          "session": 5,
+          "note": "Consequence of The Ironmasks (ally): The Ironmask street operation in Ashford is broken. The toll is ended. Remaining Ironmasks have scattered into the Greywood. Corvin Ashale's warehouse is locked from the inside.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "the_ironmasks",
+            "entity_type": "faction",
+            "event_id": null
+          },
+          "actor_id": "the_ironmasks",
+          "actor_type": "faction"
+        }
+      ],
+      "relations": [
+        {
+          "target": "the_ironmasks",
+          "target_type": "faction",
+          "relation": "ally",
+          "weight": 0.5
+        }
+      ]
+    },
+    {
+      "id": "greywood_rangers",
+      "name": "Greywood Rangers",
+      "relationship": "ally",
+      "description": "The regional militia patrolling the Greywood and the roads to and from Ashford. They are stretched thin \u2014 three rangers for thirty miles of road. Farlan Dusk (retired) and Sister Veyne (active) represent what they can spare.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_806329",
+          "session": 1,
+          "note": "Consequence of The Ironmasks (rival): The Ironmasks have expanded their toll operations to cover the northern road as well as the eastern approach. Farlan Dusk counted thirty-two collectors working the roads in the past week \u2014 up from eighteen a month ago.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "the_ironmasks",
+            "entity_type": "faction",
+            "event_id": null
+          },
+          "actor_id": "the_ironmasks",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_0d6c5d",
+          "session": 3,
+          "note": "Consequence of The Ironmasks (rival): The party drives the Ironmask holding operation out of the Keep's outer courtyard. Six Ironmasks subdued. Two escaped toward Ashford. Durnak watches from the wall without interfering.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "the_ironmasks",
+            "entity_type": "faction",
+            "event_id": null
+          },
+          "actor_id": "the_ironmasks",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_8ec25e",
+          "session": 5,
+          "note": "Consequence of The Ironmasks (rival): The Ironmask street operation in Ashford is broken. The toll is ended. Remaining Ironmasks have scattered into the Greywood. Corvin Ashale's warehouse is locked from the inside.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "the_ironmasks",
+            "entity_type": "faction",
+            "event_id": null
+          },
+          "actor_id": "the_ironmasks",
+          "actor_type": "faction"
+        }
+      ],
+      "relations": [
+        {
+          "target": "the_ironmasks",
+          "target_type": "faction",
+          "relation": "rival",
+          "weight": 0.9
+        },
+        {
+          "target": "emerald_circle",
+          "target_type": "faction",
+          "relation": "ally",
+          "weight": 0.75
+        }
+      ]
+    },
+    {
+      "id": "stonebreaker_clan",
+      "name": "Stonebreaker Clan",
+      "relationship": "neutral",
+      "description": "Orc clan occupying Greystone Keep in the hills north of Ashford. The keep controls the upper vein entrance. Warchief Durnak has no love for the Ironmasks but also no reason to help outsiders unless properly approached.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_3ea04d",
+          "session": 1,
+          "note": "Consequence of The Ironmasks (rival): The Ironmasks have expanded their toll operations to cover the northern road as well as the eastern approach. Farlan Dusk counted thirty-two collectors working the roads in the past week \u2014 up from eighteen a month ago.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 1,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "the_ironmasks",
+            "entity_type": "faction",
+            "event_id": null
+          },
+          "actor_id": "the_ironmasks",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_fc2f6a",
+          "session": 3,
+          "note": "Consequence of The Ironmasks (rival): The party drives the Ironmask holding operation out of the Keep's outer courtyard. Six Ironmasks subdued. Two escaped toward Ashford. Durnak watches from the wall without interfering.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "the_ironmasks",
+            "entity_type": "faction",
+            "event_id": null
+          },
+          "actor_id": "the_ironmasks",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_7cdc49",
+          "session": 5,
+          "note": "Consequence of The Ironmasks (rival): The Ironmask street operation in Ashford is broken. The toll is ended. Remaining Ironmasks have scattered into the Greywood. Corvin Ashale's warehouse is locked from the inside.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "the_ironmasks",
+            "entity_type": "faction",
+            "event_id": null
+          },
+          "actor_id": "the_ironmasks",
+          "actor_type": "faction"
+        }
+      ]
+    },
+    {
+      "id": "emerald_circle",
+      "name": "Emerald Circle",
+      "relationship": "neutral",
+      "description": "A druidic order with ancient claim to the Greywood. They tolerate the mine because the Ashcroft Vein is below the root line. They will not tolerate the expansion the Ironmasks have been forcing on the miners.",
+      "hidden": false,
+      "log": [],
+      "relations": [
+        {
+          "target": "greywood_rangers",
+          "target_type": "faction",
+          "relation": "ally",
+          "weight": 0.75
+        }
+      ]
+    },
+    {
+      "id": "the_shadow_wing",
+      "name": "The Shadow Wing",
+      "relationship": "hostile",
+      "description": "The organization above the Ironmasks. They move rare materials out of the Vein through an unofficial channel \u2014 bypassing the Trade Compact entirely. The Factor (Corvin Ashale) coordinates them. (DM-only)",
+      "hidden": true,
+      "log": [
+        {
+          "id": "evt_9d609a",
+          "session": 1,
+          "note": "Consequence of The Ironmasks (ally): The Ironmasks have expanded their toll operations to cover the northern road as well as the eastern approach. Farlan Dusk counted thirty-two collectors working the roads in the past week \u2014 up from eighteen a month ago.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "the_ironmasks",
+            "entity_type": "faction",
+            "event_id": null
+          },
+          "actor_id": "the_ironmasks",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_c151b0",
+          "session": 3,
+          "note": "Consequence of The Ironmasks (ally): The party drives the Ironmask holding operation out of the Keep's outer courtyard. Six Ironmasks subdued. Two escaped toward Ashford. Durnak watches from the wall without interfering.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "the_ironmasks",
+            "entity_type": "faction",
+            "event_id": null
+          },
+          "actor_id": "the_ironmasks",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_2dd816",
+          "session": 4,
+          "note": "The Shadow Wing moves refined ore samples through the tunnel system twice a week. The operation has been running for eight months \u2014 exactly as long as the shipping discrepancy in Edda's records.",
+          "visibility": "dm_only",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "other"
+        },
+        {
+          "id": "evt_022b2d",
+          "session": 5,
+          "note": "Consequence of The Ironmasks (ally): The Ironmask street operation in Ashford is broken. The toll is ended. Remaining Ironmasks have scattered into the Greywood. Corvin Ashale's warehouse is locked from the inside.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "the_ironmasks",
+            "entity_type": "faction",
+            "event_id": null
+          },
+          "actor_id": "the_ironmasks",
+          "actor_type": "faction"
+        }
+      ],
+      "relations": [
+        {
+          "target": "the_ironmasks",
+          "target_type": "faction",
+          "relation": "ally",
+          "weight": 1.0,
+          "dm_only": true
+        },
+        {
+          "target": "the_trade_compact",
+          "target_type": "faction",
+          "relation": "ally",
+          "weight": 0.6,
+          "dm_only": true
+        }
+      ]
+    }
+  ]
+}

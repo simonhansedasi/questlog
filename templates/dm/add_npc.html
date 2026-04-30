@@ -1,15 +1,16 @@
 {% extends "base.html" %}
-{% block title %}Add NPC — {{ meta.name }}{% endblock %}
+{% block title %}Add {{ terms.npc }} — {{ meta.name }}{% endblock %}
 {% block content %}
 
 <p class="text-muted text-sm"><a href="/{{ slug }}/dm">← DM Dashboard</a></p>
-<h1 class="page-title" style="margin-top:12px;">Add NPC</h1>
+<h1 class="page-title" style="margin-top:12px;">Add {{ terms.npc }}</h1>
 
 <form method="POST" class="card mt-8" style="max-width:600px; display:flex; flex-direction:column; gap:16px;">
   {% set fields = [
     ('name', 'Name', 'text', '', True),
     ('role', 'Role', 'text', 'e.g. Innkeeper, Guard Captain', False),
     ('description', 'Description', 'textarea', '', False),
+    ('image_url', 'Portrait URL', 'url', 'https://...', False),
   ] %}
   {% for name, label, ftype, placeholder, required in fields %}
   <div style="display:flex; flex-direction:column; gap:4px;">
@@ -40,9 +41,21 @@
 
   <div style="display:flex; flex-direction:column; gap:4px;">
     <label style="color:var(--gold); font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Faction Affiliation</label>
-    <select name="faction"
-            style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:8px 12px; font-size:0.9rem;">
-      <option value="">— none —</option>
+    <select name="factions" multiple
+            style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:8px 12px; font-size:0.9rem; min-height:80px;">
+      {% for f in factions %}
+      <option value="{{ f.id }}">{{ f.name }}</option>
+      {% endfor %}
+    </select>
+    <span style="font-size:0.75rem; color:var(--muted);">Hold Ctrl/Cmd to select multiple. Leave blank for none.</span>
+  </div>
+
+  <div style="display:flex; flex-direction:column; gap:4px;">
+    <label style="color:var(--gold); font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">
+      Hidden Faction Loyalty <span style="font-weight:400; font-size:0.7rem;">(DM only — players see no affiliation)</span>
+    </label>
+    <select name="hidden_factions" multiple
+            style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:8px 12px; font-size:0.9rem; min-height:80px;">
       {% for f in factions %}
       <option value="{{ f.id }}">{{ f.name }}</option>
       {% endfor %}

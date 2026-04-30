@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Admin — RippleForge{% endblock %}
+{% block content %}
+
+<div style="display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+  <h1 class="page-title" style="margin:0;">Admin</h1>
+  <form method="POST" action="/admin/logout">
+    <button type="submit" style="background:var(--surface2); border:1px solid var(--border); color:var(--muted); border-radius:4px; padding:4px 12px; font-size:0.8rem; cursor:pointer;">Log out</button>
+  </form>
+</div>
+<p class="subtitle">User accounts &amp; campaign PINs</p>
+
+<h2 class="section-title">Users</h2>
+<div style="display:flex; flex-direction:column; gap:12px; margin-bottom:32px;">
+  {% for username, user in users.items() %}
+  <div class="card" style="padding:14px 18px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+      <div>
+        <span style="font-weight:700; color:var(--text);">{{ user.display_name or username }}</span>
+        <span style="color:var(--muted); font-size:0.8rem; margin-left:8px;">{{ username }}</span>
+      </div>
+      <form method="POST" action="/admin/user/{{ username }}/password"
+            style="display:flex; gap:8px; align-items:center;">
+        <input type="password" name="new_password" placeholder="New password" minlength="6" required
+               style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:5px 10px; font-size:0.85rem; width:160px;">
+        <button type="submit"
+                style="background:var(--purple); color:#fff; border:none; border-radius:4px; padding:5px 12px; font-size:0.82rem; font-weight:700; cursor:pointer;">
+          Reset
+        </button>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<h2 class="section-title">Campaigns</h2>
+<div style="display:flex; flex-direction:column; gap:12px;">
+  {% for c in campaigns %}
+  <div class="card" style="padding:14px 18px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+      <div>
+        <span style="font-weight:700; color:var(--text);">{{ c.name }}</span>
+        <span style="color:var(--muted); font-size:0.8rem; margin-left:8px;">{{ c.slug }}</span>
+        {% if c.owner %}<span style="color:var(--muted); font-size:0.78rem; margin-left:6px;">owner: {{ c.owner }}</span>{% endif %}
+        {% if not c.has_pin %}<span class="badge" style="background:var(--surface2); color:var(--muted); font-size:0.7rem; margin-left:6px;">no PIN</span>{% endif %}
+      </div>
+      <form method="POST" action="/admin/campaign/{{ c.slug }}/pin"
+            style="display:flex; gap:8px; align-items:center;">
+        <input type="text" name="new_pin" placeholder="New DM PIN" required
+               style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:5px 10px; font-size:0.85rem; width:120px;">
+        <button type="submit"
+                style="background:var(--purple); color:#fff; border:none; border-radius:4px; padding:5px 12px; font-size:0.82rem; font-weight:700; cursor:pointer;">
+          Reset
+        </button>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% endblock %}

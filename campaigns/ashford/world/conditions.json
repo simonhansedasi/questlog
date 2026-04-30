@@ -1,0 +1,68 @@
+{
+  "conditions": [
+    {
+      "id": "the_ironmask_toll",
+      "name": "The Ironmask Toll",
+      "region": "Ashford trade roads",
+      "effect_type": "supply",
+      "effect_scope": "all",
+      "magnitude": {
+        "type": "percent",
+        "value": -25
+      },
+      "status": "active",
+      "description": "Every merchant entering Ashford pays the Ironmask toll \u2014 a flat percentage on declared cargo value. Merchants underreport. The Ironmasks know it and raise the rate. Three merchants have stopped making the Ashford run entirely. The town's supply margins are thin and getting thinner.",
+      "hidden": false,
+      "relations": [],
+      "log": [
+        {
+          "id": "evt_fffcc4",
+          "session": 5,
+          "note": "Ironmask street operation broken; toll collection ended. Roads are open. Supply margins will recover in 2-3 weeks.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3
+        }
+      ]
+    },
+    {
+      "id": "vein_instability",
+      "name": "Vein Instability",
+      "region": "Ashcroft Vein (lower shafts)",
+      "effect_type": "danger",
+      "effect_scope": "military",
+      "magnitude": {
+        "label": "structural risk"
+      },
+      "status": "active",
+      "description": "The Ironmasks have been forcing miners to work lower shafts without adequate timbering to maximize output. The Guild engineer's report from six weeks ago flagged three sections as unsafe. The report was suppressed. Miners are refusing the lower shaft shifts. The Ironmasks are threatening them.",
+      "hidden": false,
+      "relations": [],
+      "log": [
+        {
+          "id": "evt_d93ad4",
+          "session": 4,
+          "note": "Three shafts confirmed as critical per Emerald Circle survey. 60-day window before structural failure in lower sections.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2
+        }
+      ]
+    },
+    {
+      "id": "the_factor_s_net",
+      "name": "The Factor's Net",
+      "region": "Ashford (concealed)",
+      "effect_type": "access",
+      "effect_scope": "all",
+      "magnitude": {
+        "label": "covert control"
+      },
+      "status": "active",
+      "description": "Someone above Maren Vosk is coordinating the Ironmask operation as cover for a parallel extraction racket \u2014 skimming refined ore from the Vein before it reaches the Trade Compact's scales. The skim is invisible in the Registry because it leaves through a tunnel the Compact doesn't know about. (DM-only)",
+      "hidden": true,
+      "relations": [],
+      "log": []
+    }
+  ]
+}

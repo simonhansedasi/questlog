@@ -1,0 +1,59 @@
+{
+  "conditions": [
+    {
+      "id": "east_of_eden",
+      "name": "East of Eden",
+      "region": "The World",
+      "effect_type": "access",
+      "effect_scope": "all",
+      "magnitude": {
+        "type": "blocked"
+      },
+      "status": "active",
+      "description": "The garden is closed. Cherubim with a flaming sword guard the way back. Adam and Eve work the ground by the sweat of their faces. Cain kills Abel. The world outside Eden is a world of consequence without mercy \u2014 until the flood, until the covenant, until something changes.",
+      "hidden": false,
+      "relations": [],
+      "log": []
+    },
+    {
+      "id": "the_flood",
+      "name": "The Flood",
+      "region": "The World",
+      "effect_type": "danger",
+      "effect_scope": "all",
+      "magnitude": {
+        "label": "total catastrophe"
+      },
+      "status": "active",
+      "description": "God sees that every inclination of the human heart is only evil continually and regrets making humanity. The rain falls for forty days. Every high mountain is covered. Only what is in the ark survives. After, God sets a rainbow in the clouds: never again. The covenant of the rainbow.",
+      "hidden": false,
+      "relations": [],
+      "log": []
+    },
+    {
+      "id": "the_great_famine",
+      "name": "The Great Famine",
+      "region": "All the known world",
+      "effect_type": "supply",
+      "effect_scope": "all",
+      "magnitude": {
+        "type": "percent",
+        "value": -70
+      },
+      "status": "active",
+      "description": "Seven years of plenty have ended. The famine covers all the earth \u2014 Egypt, Canaan, everywhere. People come to Egypt from surrounding lands because Joseph has stored grain during the years of plenty. The famine that nearly destroys Jacob's family will reunite it.",
+      "hidden": false,
+      "relations": [],
+      "log": [
+        {
+          "id": "evt_a07495",
+          "session": 10,
+          "note": "Joseph's grain stores sustain Egypt and Canaan through the seven lean years; the family of Jacob survives. What was meant for evil was meant for good.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3
+        }
+      ]
+    }
+  ]
+}

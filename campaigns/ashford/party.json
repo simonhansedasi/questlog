@@ -1,0 +1,54 @@
+{
+  "characters": [
+    {
+      "name": "Calder Voss",
+      "race": "Human",
+      "class": "Fighter",
+      "level": 4,
+      "status": "active",
+      "hidden": false,
+      "notes": "Former Greywood Ranger scout. Knows the Greywood better than anyone. Carries a grudge against the Ironmasks that predates the party.",
+      "known_events": []
+    },
+    {
+      "name": "Wren Ashvale",
+      "race": "Half-Elf",
+      "class": "Rogue",
+      "level": 4,
+      "status": "active",
+      "hidden": false,
+      "notes": "Grew up in Ashford. Her father worked the Vein. The Ironmask toll drove him out. She came back to finish it.",
+      "known_events": []
+    },
+    {
+      "name": "Sable",
+      "race": "Tiefling",
+      "class": "Warlock",
+      "level": 4,
+      "status": "active",
+      "hidden": false,
+      "notes": "Wandering contractor. Does not explain who her patron is. Deeply effective in a crisis.",
+      "known_events": []
+    },
+    {
+      "name": "Lira of the Dawn",
+      "race": "Human",
+      "class": "Cleric",
+      "level": 4,
+      "status": "active",
+      "hidden": false,
+      "notes": "Travelling healer who stopped in Ashford for one night and hasn't left. She knows what 'the Factor' means but hasn't said how.",
+      "known_events": []
+    },
+    {
+      "name": "Osric Fynt",
+      "race": "Gnome",
+      "class": "Artificer",
+      "level": 4,
+      "status": "active",
+      "hidden": false,
+      "notes": "Trade Compact assessor who went rogue after discovering what the Compact actually knew about the Ironmasks.",
+      "known_events": []
+    }
+  ]
+}

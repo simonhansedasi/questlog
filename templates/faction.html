@@ -4,10 +4,38 @@
 
 <p class="text-muted text-sm"><a href="/{{ slug }}/world">← World</a></p>
 
-<h1 class="page-title" style="margin-top:12px;">{{ faction.name }}</h1>
+{% if active_branch %}
+<div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px; padding:8px 14px; background:var(--surface2); border:1px solid var(--gold)44; border-radius:6px; font-size:0.8rem;">
+  <span style="color:var(--gold);">⎇</span>
+  <span style="font-weight:700; color:var(--text);">{{ active_branch.name }}</span>
+  <span style="color:var(--muted);">forked at {{ terms.session }} {{ active_branch.fork_point }}</span>
+  <form method="post" action="/{{ slug }}/branch/switch" style="margin-left:auto;">
+    <input type="hidden" name="branch_id" value="">
+    <button type="submit" style="background:none; border:1px solid var(--border); color:var(--muted); border-radius:4px; padding:2px 10px; font-size:0.75rem; cursor:pointer;">Return to main timeline</button>
+  </form>
+</div>
+{% endif %}
+
+<div style="display:flex; align-items:flex-start; gap:16px; margin-top:12px;">
+  {% if faction.image_url %}
+  <img src="{{ faction.image_url }}" alt="{{ faction.name }}"
+       referrerpolicy="no-referrer"
+       onerror="this.style.display='none'"
+       style="width:80px; height:80px; object-fit:cover; border-radius:6px; border:1px solid var(--border); flex-shrink:0;">
+  {% endif %}
+  <div>
+    <h1 class="page-title" style="margin-top:0;">{{ faction.name }}</h1>
+  </div>
+</div>
 
 <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:6px;">
+  {% if rel_data.has_conflict %}
+  <span class="badge badge-{{ rel_data.formal_relationship }}" title="Formal / structural relationship">formal: {{ rel_data.formal_relationship }}</span>
+  <span class="badge badge-{{ rel_data.personal_relationship }}" title="Personal / emotional relationship">personal: {{ rel_data.personal_relationship }}</span>
+  <span style="color:var(--muted); font-size:0.7rem; font-style:italic; letter-spacing:0.03em;">conflicted</span>
+  {% else %}
   <span class="badge badge-{{ rel_data.relationship }}">{{ rel_data.relationship }}</span>
+  {% endif %}
   {% if rel_data.trend == 'up' %}
   <span style="color:#7ec87e; font-size:0.85rem; font-weight:700;" title="Relationship improving">↑</span>
   {% elif rel_data.trend == 'down' %}
@@ -16,29 +44,32 @@
   <span style="color:var(--muted); font-size:0.85rem;" title="Stable">→</span>
   {% endif %}
   {% if rel_data.computed %}
-  <span style="color:var(--muted); font-size:0.72rem; font-style:italic;">derived from interactions</span>
+  <span style="color:var(--muted); font-size:0.72rem; font-style:italic;">event-weighted</span>
   {% endif %}
   {% if session.get('dm_' ~ slug) and faction.hidden %}
   <span class="badge" style="background:var(--surface2); color:var(--muted);">Hidden from players</span>
   {% endif %}
 </div>
 
-{% if rel_data.contributors %}
+{% if rel_data.timeline %}
 <details style="margin-top:8px;">
   <summary style="list-style:none; cursor:pointer; color:var(--muted); font-size:0.75rem; letter-spacing:0.04em;">
     Why this relationship?
   </summary>
-  <ul style="margin:8px 0 0 0; padding:0; list-style:none; display:flex; flex-direction:column; gap:4px;">
-    {% for c in rel_data.contributors %}
-    <li style="font-size:0.82rem; color:var(--text-dim);">
-      <span class="log-session">Session {{ c.session }}</span>
-      <span style="color:{% if c.polarity == 'positive' %}#7ec87e{% elif c.polarity == 'negative' %}#e05c5c{% else %}var(--muted){% endif %}; font-size:0.72rem; margin-right:6px;">
+  <div style="margin:8px 0 0 0; display:flex; flex-direction:column; gap:3px;">
+    {% for c in rel_data.timeline | reverse %}
+    <div style="display:flex; align-items:baseline; gap:6px; font-size:0.82rem; color:var(--text-dim);">
+      <span class="log-session" style="flex-shrink:0;">{{ terms.session }} {{ c.session }}</span>
+      <span style="color:{% if c.polarity == 'positive' %}#7ec87e{% elif c.polarity == 'negative' %}#e05c5c{% else %}var(--muted){% endif %}; font-size:0.72rem; flex-shrink:0; min-width:22px;">
         {% if c.polarity == 'positive' %}+{% elif c.polarity == 'negative' %}−{% endif %}{{ c.intensity }}
       </span>
-      {{ c.note }}
-    </li>
+      <span style="flex:1;">{{ c.note }}</span>
+      <span style="font-size:0.68rem; font-family:monospace; color:{% if c._cumulative > 0 %}#7ec87e{% elif c._cumulative < 0 %}#e05c5c{% else %}var(--muted){% endif %}; opacity:0.7; flex-shrink:0; margin-left:4px;" title="running total">
+        {% if c._cumulative > 0 %}+{% endif %}{{ c._cumulative }}
+      </span>
+    </div>
     {% endfor %}
-  </ul>
+  </div>
 </details>
 {% endif %}
 
@@ -46,28 +77,98 @@
 <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:10px;">
   <span style="color:var(--muted); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em;">Members:</span>
   {% for n in affiliated_npcs %}
+  {% set is_hidden_member = faction.id in n.hidden_factions %}
   <a href="/{{ slug }}/world/npc/{{ n.id }}"
      style="background:var(--surface2); border:1px solid var(--border); border-radius:4px; padding:2px 8px;
-            font-size:0.78rem; color:var(--text); text-decoration:none;">{{ n.name }}</a>
+            font-size:0.78rem; color:var(--text); text-decoration:none;
+            {% if is_hidden_member %}opacity:0.6; border-style:dashed;{% endif %}">
+    {{ n.name }}{% if is_hidden_member %} <span style="font-size:0.65rem; color:var(--muted);">(DM)</span>{% endif %}
+  </a>
   {% endfor %}
+</div>
+{% endif %}
+
+{% if inter_entity %}
+<div style="margin-top:10px; display:flex; flex-direction:column; gap:4px;">
+  <div style="color:var(--muted); font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:2px;">Relationships with other entities</div>
+  <div style="display:flex; flex-wrap:wrap; gap:6px;">
+    {% for rel in inter_entity %}
+    <a href="/{{ slug }}/world/{% if rel.entity_type == 'npc' %}npc{% else %}faction{% endif %}/{{ rel.entity_id }}"
+       style="display:flex; align-items:center; gap:6px; background:var(--surface2); border:1px solid var(--border);
+              border-radius:5px; padding:4px 10px; text-decoration:none; color:var(--text); font-size:0.8rem;">
+      <span style="font-weight:600;">{{ rel.entity_name }}</span>
+      <span class="badge badge-{{ rel.relationship }}" style="font-size:0.65rem; padding:2px 6px;">{{ rel.relationship }}</span>
+      {% if rel.trend == 'improving' %}<span style="color:#7ec87e; font-size:0.8rem;">↑</span>
+      {% elif rel.trend == 'deteriorating' %}<span style="color:#e05c5c; font-size:0.8rem;">↓</span>{% endif %}
+      {% if rel.entity_type == 'npc' %}<span style="color:var(--muted); font-size:0.65rem;">[npc]</span>{% endif %}
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+{% if is_dm and not faction.log and not faction.relations %}
+<div style="background:rgba(140,100,220,0.07); border:1px solid rgba(140,100,220,0.35); border-radius:6px; padding:12px 16px; margin-top:14px; font-size:0.85rem; line-height:1.5;">
+  <strong style="color:var(--purple);">No connections yet.</strong>
+  <span style="color:var(--muted);"> Expand <strong>{{ terms.dm_controls }} → Advanced → Relations</strong> below to link this {{ terms.faction | lower }} to {{ terms.npcs | lower }} or other {{ terms.factions | lower }}. Once connected, events ripple automatically across allies and rivals.</span>
 </div>
 {% endif %}
 
 {% if faction.description %}
 <div class="card mt-8">
-  <p>{{ faction.description }}</p>
+  <p>{{ faction.description | wikilinks(slug, link_npcs, link_factions) }}</p>
+</div>
+{% endif %}
+
+{% if session.get('dm_' ~ slug) and faction.dm_notes %}
+<div class="card mt-8" style="border-color:rgba(140,100,220,0.4); background:rgba(140,100,220,0.05);">
+  <div style="color:var(--purple); font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:6px;">DM Secret</div>
+  <p style="margin:0; white-space:pre-wrap;">{{ faction.dm_notes }}</p>
+</div>
+{% endif %}
+
+{% if backlinks %}
+<div style="margin-top:8px; display:flex; align-items:center; gap:6px; flex-wrap:wrap; font-size:0.78rem;">
+  <span style="color:var(--muted); flex-shrink:0;">Mentioned in:</span>
+  {% for b in backlinks %}
+  <a href="/{{ slug }}/world/{{ b.type }}/{{ b.id }}"
+     style="background:var(--surface2); border:1px solid var(--border); border-radius:4px; padding:2px 8px; color:var(--muted); text-decoration:none;">{{ b.name }}</a>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% if char_bonds %}
+<h2 class="section-title mt-8">Party Bonds</h2>
+<div style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px;">
+  {% for char_name, cond in char_bonds %}
+  {% set cat_colors = {'wound': '#e05c5c', 'bond': '#7ec87e', 'rival': '#e05c5c', 'debt': 'var(--gold)', 'affliction': 'var(--purple)', 'other': 'var(--muted)'} %}
+  {% set cat_color = cat_colors.get(cond.category, 'var(--muted)') %}
+  <div style="padding:10px 14px; background:var(--surface2); border-radius:6px; border-left:3px solid {{ cat_color }};">
+    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="font-weight:700; color:var(--text); font-size:0.9rem;">{{ char_name }}</span>
+      <span style="color:{{ cat_color }}; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em;">{{ cond.category }}</span>
+      <span style="color:var(--text); font-size:0.85rem;">{{ cond.name }}</span>
+      <span style="color:var(--muted); font-size:0.72rem; margin-left:auto;">Session {{ cond.acquired_session }}</span>
+    </div>
+    {% if cond.description %}
+    <p style="margin:4px 0 0 0; font-size:0.82rem; color:var(--text-dim);">{{ cond.description }}</p>
+    {% endif %}
+  </div>
+  {% endfor %}
 </div>
 {% endif %}
 
 {% if faction.log %}
 <h2 class="section-title mt-8">Interaction Log</h2>
 <div class="card">
-  <ul class="log-list">
+<ul class="log-list">
     {% for entry in faction.log | reverse %}
     {% set vis = entry.visibility if entry.visibility is defined else ('dm_only' if entry.get('dm_only') else 'public') %}
     {% set is_ripple = entry.get('ripple_source') is not none %}
-    {% if is_dm or vis == 'public' %}
-    <li style="display:flex; flex-direction:column; gap:4px; {% if is_ripple %}border-left:2px solid var(--border); padding-left:8px; margin-left:6px;{% endif %}">
+    {% set is_deleted = entry.get('deleted') %}
+    {% set show_deleted_ripple = is_dm and is_ripple and is_deleted %}
+    {% if ((is_dm or vis == 'public') and not is_deleted) or show_deleted_ripple %}
+    <li style="display:flex; flex-direction:column; gap:4px; {% if is_ripple %}border-left:2px solid var(--border); padding-left:8px; margin-left:6px;{% endif %}{% if is_deleted %}opacity:0.45;{% endif %}">
       <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
         <span>
           {% if is_ripple %}
@@ -81,16 +182,33 @@
             <a href="/{{ slug }}/world/faction/{{ rsrc.entity_id }}" style="color:var(--muted); font-size:0.7rem; font-style:italic; text-decoration:none; margin-right:4px;">from {{ src_fac.name if src_fac else rsrc.entity_id }}</a>
           {% endif %}
           {% endif %}
-          <span class="log-session">Session {{ entry.session }}</span>
+          <span class="log-session">{{ terms.session }} {{ entry.session }}</span>
+          {% if entry.actor_id and (is_dm or not entry.get('actor_dm_only')) %}
+            {% if is_dm and entry.get('actor_dm_only') %}<span style="color:var(--purple); font-size:0.65rem; margin-left:4px; opacity:0.6;" title="Actor hidden from players">🔒</span>{% endif %}
+            {% set _anpc = world_npcs | selectattr('id','equalto',entry.actor_id) | first if world_npcs else none %}
+            {% set _afac = all_factions | selectattr('id','equalto',entry.actor_id) | first if all_factions else none %}
+            <span style="color:var(--purple); font-size:0.68rem; font-weight:700; margin-right:4px;">by {{ (_anpc.name if _anpc else (_afac.name if _afac else entry.actor_id)) }}</span>
+          {% endif %}
           {% if entry.event_type %}<span style="color:var(--purple); font-size:0.72rem; font-weight:700; margin-right:5px; text-transform:uppercase; letter-spacing:0.04em;">{{ entry.event_type }}</span>{% endif %}
           {% if entry.polarity %}
           <span style="color:{% if entry.polarity == 'positive' %}#7ec87e{% elif entry.polarity == 'negative' %}#e05c5c{% else %}var(--muted){% endif %}; font-size:0.72rem; margin-right:4px;">
             {% if entry.polarity == 'positive' %}+{% elif entry.polarity == 'negative' %}−{% endif %}{{ entry.intensity }}
           </span>
           {% endif %}
-          {{ entry.note }}
+          <span class="log-entry-note">{{ entry.note }}</span>
           {% if is_dm and vis == 'dm_only' %}<span style="color:var(--muted); font-size:0.7rem; margin-left:6px; font-style:italic;">DM only</span>{% endif %}
           {% if is_dm and vis == 'restricted' %}<span style="color:var(--purple); font-size:0.7rem; margin-left:6px; font-style:italic;">restricted</span>{% endif %}
+          {% if is_dm and entry.actor_id %}
+            {% if entry.actor_type == 'npc' %}
+              {% set _actor = world_npcs | selectattr('id','equalto',entry.actor_id) | first if world_npcs else none %}
+              <a href="/{{ slug }}/world/npc/{{ entry.actor_id }}" style="color:var(--purple); font-size:0.7rem; margin-left:6px; font-style:italic; text-decoration:none;" title="Caused by">⤷ {{ _actor.name if _actor else entry.actor_id }}</a>
+            {% elif entry.actor_type == 'faction' %}
+              {% set _actor = all_factions | selectattr('id','equalto',entry.actor_id) | first if all_factions else none %}
+              <a href="/{{ slug }}/world/faction/{{ entry.actor_id }}" style="color:var(--purple); font-size:0.7rem; margin-left:6px; font-style:italic; text-decoration:none;" title="Caused by">⤷ {{ _actor.name if _actor else entry.actor_id }}</a>
+            {% else %}
+              <span style="color:var(--purple); font-size:0.7rem; margin-left:6px; font-style:italic;" title="Caused by">⤷ {{ entry.actor_id }}</span>
+            {% endif %}
+          {% endif %}
         </span>
         <div style="display:flex; gap:4px; align-items:flex-start; flex-shrink:0;">
           {% if is_dm and entry.get('id') %}
@@ -98,7 +216,8 @@
             <summary style="list-style:none; cursor:pointer; color:var(--muted); font-size:0.75rem; padding:0 4px;" title="Edit">✎</summary>
             <div style="background:var(--surface2); border:1px solid var(--border); border-radius:6px; padding:8px; margin-top:4px;">
               <form method="POST" action="/{{ slug }}/dm/faction/{{ faction.id }}/log/{{ entry.id }}/edit"
-                    style="display:flex; flex-direction:column; gap:6px;">
+                    class="log-entry-edit" style="display:flex; flex-direction:column; gap:6px;">
+                <input type="hidden" name="ajax" value="1">
                 <input type="text" name="note" value="{{ entry.note }}"
                        style="background:var(--surface); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:4px 8px; font-size:0.8rem; width:100%; box-sizing:border-box;">
                 <div style="display:flex; gap:6px; flex-wrap:wrap;">
@@ -118,13 +237,38 @@
                     <option value="{{ v }}" {% if vis == v %}selected{% endif %}>{{ v }}</option>
                     {% endfor %}
                   </select>
-                  <button type="submit" style="background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:3px 10px; font-size:0.78rem; font-weight:700; cursor:pointer;">Save</button>
+                  <button type="submit" class="log-edit-save" style="background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:3px 10px; font-size:0.78rem; font-weight:700; cursor:pointer;">Save</button>
+                  <span class="log-edit-status" style="font-size:0.75rem; color:#7ec87e; display:none;"></span>
                 </div>
               </form>
             </div>
           </details>
           {% endif %}
-          {% if is_dm %}
+          {% if is_dm and entry.get('id') and party %}
+          <div style="display:flex; gap:3px; flex-wrap:wrap; align-items:center;">
+            {% for char in party %}
+            {% set is_witness = char.get('known_events') and entry.get('id') in char.known_events %}
+            <button type="button" class="witness-chip"
+                    data-event-id="{{ entry.id }}"
+                    data-char-name="{{ char.name }}"
+                    data-entity-type="faction"
+                    data-entity-id="{{ faction.id }}"
+                    data-slug="{{ slug }}"
+                    style="background:{% if is_witness %}var(--gold){% else %}none{% endif %};
+                           color:{% if is_witness %}#080a18{% else %}var(--muted){% endif %};
+                           border:1px solid {% if is_witness %}var(--gold){% else %}var(--border){% endif %};
+                           border-radius:3px; padding:1px 6px; font-size:0.65rem; cursor:pointer; font-family:inherit;">{{ char.name }}</button>
+            {% endfor %}
+          </div>
+          {% endif %}
+          {% if is_dm and is_deleted and is_ripple %}
+          <form method="POST" action="/{{ slug }}/dm/event/{{ entry.id }}/restore_ripple" style="flex-shrink:0;">
+            <input type="hidden" name="entity_type" value="faction">
+            <input type="hidden" name="entity_id" value="{{ faction.id }}">
+            <input type="hidden" name="next" value="/{{ slug }}/world/faction/{{ faction.id }}">
+            <button type="submit" style="background:none; border:1px solid var(--border); color:var(--muted); font-size:0.68rem; border-radius:3px; cursor:pointer; padding:1px 5px;" title="Restore this ripple">↺</button>
+          </form>
+          {% elif is_dm %}
           <form method="POST" action="/{{ slug }}/dm/faction/{{ faction.id }}/log/{{ (faction.log | length) - 1 - loop.index0 }}/delete" style="flex-shrink:0;">
             <button type="submit" style="background:none; border:none; color:var(--muted); font-size:0.8rem; cursor:pointer; padding:0 4px;">×</button>
           </form>
@@ -132,15 +276,57 @@
         </div>
       </div>
       {% if is_dm and not is_ripple and entry.get('polarity') and entry.get('id') %}
-      <form method="POST" action="/{{ slug }}/dm/event/{{ entry.id }}/undo_ripple" style="margin-left:2px;">
+      {% set chain = ripple_chains.get(entry.id, []) %}
+      {% if chain %}
+      <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-left:2px;">
+        <span style="color:var(--muted); font-size:0.68rem;">rippled to:</span>
+        {% for r in chain %}
+        <span style="display:inline-flex; align-items:center; gap:2px; background:var(--surface2); border:1px solid var(--border); border-radius:3px; padding:1px 5px; font-size:0.68rem; color:var(--muted);{% if r.deleted %}opacity:0.5; text-decoration:line-through;{% endif %}">
+          <a href="/{{ slug }}/world/{{ r.entity_type }}/{{ r.entity_id }}" style="color:var(--muted); text-decoration:none;">{{ r.entity_name }}</a>
+          {% if r.deleted %}
+          <form method="POST" action="/{{ slug }}/dm/event/{{ r.event_id }}/restore_ripple" style="display:inline;">
+            <input type="hidden" name="entity_type" value="{{ r.entity_type }}">
+            <input type="hidden" name="entity_id" value="{{ r.entity_id }}">
+            <input type="hidden" name="next" value="/{{ slug }}/world/faction/{{ faction.id }}">
+            <button type="submit" style="background:none; border:none; color:var(--muted); font-size:0.75rem; cursor:pointer; padding:0 0 0 2px; line-height:1;" title="Restore this ripple">↺</button>
+          </form>
+          {% else %}
+          <form method="POST" action="/{{ slug }}/dm/event/{{ r.event_id }}/delete_entry" style="display:inline;">
+            <input type="hidden" name="entity_type" value="{{ r.entity_type }}">
+            <input type="hidden" name="entity_id" value="{{ r.entity_id }}">
+            <input type="hidden" name="next" value="/{{ slug }}/world/faction/{{ faction.id }}">
+            <button type="submit" style="background:none; border:none; color:var(--muted); font-size:0.75rem; cursor:pointer; padding:0 0 0 2px; line-height:1;" title="Remove this ripple">×</button>
+          </form>
+          {% endif %}
+        </span>
+        {% endfor %}
+        {% set any_active = chain | rejectattr('deleted') | list %}
+        {% if any_active %}
+        <form method="POST" action="/{{ slug }}/dm/event/{{ entry.id }}/undo_ripple" style="display:inline;">
+          <input type="hidden" name="next" value="/{{ slug }}/world/faction/{{ faction.id }}">
+          <button type="submit" style="background:none; border:none; color:var(--muted); font-size:0.68rem; cursor:pointer; padding:0; text-decoration:underline dotted;" title="Remove all active ripples">undo all</button>
+        </form>
+        {% endif %}
+      </div>
+      {% endif %}
+      {% endif %}
+      {% if is_dm and is_ripple and entry.get('id') %}
+      <form method="POST" action="/{{ slug }}/dm/event/{{ entry.id }}/move" style="display:flex; align-items:center; gap:6px; margin-left:2px; flex-wrap:wrap;">
+        <input type="hidden" name="source_type" value="faction">
+        <input type="hidden" name="source_id" value="{{ faction.id }}">
         <input type="hidden" name="next" value="/{{ slug }}/world/faction/{{ faction.id }}">
-        <button type="submit" style="background:none; border:none; color:var(--muted); font-size:0.68rem; cursor:pointer; padding:0; text-decoration:underline dotted;" title="Delete all ripple events caused by this entry">undo ripple</button>
+        <span style="color:var(--muted); font-size:0.68rem; flex-shrink:0;">move to →</span>
+        <select name="target" style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:3px; padding:1px 4px; font-size:0.68rem;">
+          {% if world_npcs %}<optgroup label="NPCs">{% for n in world_npcs %}<option value="npc:{{ n.id }}">{{ n.name }}</option>{% endfor %}</optgroup>{% endif %}
+          {% if all_factions %}<optgroup label="Factions">{% for f in all_factions %}<option value="faction:{{ f.id }}">{{ f.name }}</option>{% endfor %}</optgroup>{% endif %}
+        </select>
+        <button type="submit" style="background:none; border:1px solid var(--border); color:var(--muted); border-radius:3px; padding:1px 6px; font-size:0.68rem; cursor:pointer;">Move</button>
       </form>
       {% endif %}
     </li>
     {% endif %}
     {% endfor %}
-  </ul>
+</ul>
 </div>
 {% endif %}
 
@@ -149,9 +335,9 @@
 {% set label_style = "color:var(--gold); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;" %}
 {% set btn_style = "background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:6px 16px; font-size:0.85rem; font-weight:700; cursor:pointer;" %}
 
-<details class="card mt-8" style="border-color:var(--gold-dim);">
+<details id="dm-controls" class="card mt-8" style="border-color:var(--gold-dim);"{% if not faction.log and not faction.relations %} open{% endif %}>
   <summary style="list-style:none; cursor:pointer; color:var(--gold); font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em;">
-    DM Controls
+    {{ terms.dm_controls }}
   </summary>
 
   <hr class="divider">
@@ -164,7 +350,32 @@
 
   <hr class="divider">
 
-  <h3 style="color:var(--muted); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:12px;">Log Interaction</h3>
+  <form method="POST" action="/{{ slug }}/dm/faction/{{ faction.id }}/notes" class="faction-notes-form" style="display:flex; flex-direction:column; gap:10px;">
+    <input type="hidden" name="ajax" value="1">
+    <div style="display:flex; flex-direction:column; gap:4px;">
+      <label style="{{ label_style }}">Description <span style="font-weight:400; font-size:0.7rem; text-transform:none; color:var(--muted);">— shown to players</span></label>
+      <textarea name="description" rows="3" placeholder="Public-facing description, supports [[wiki links]]"
+                style="{{ input_style }} resize:vertical; font-family:inherit;">{{ faction.description or '' }}</textarea>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:4px;">
+      <label style="color:var(--purple); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">DM Secret <span style="font-weight:400; font-size:0.7rem; text-transform:none; color:var(--muted);">— never shown to players</span></label>
+      <textarea name="dm_notes" rows="3" placeholder="True agenda, hidden members, plot hooks..."
+                style="{{ input_style }} resize:vertical; font-family:inherit; border-color:rgba(140,100,220,0.4);">{{ faction.dm_notes or '' }}</textarea>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:4px;">
+      <label style="{{ label_style }}">Portrait URL <span style="font-weight:400; font-size:0.7rem; text-transform:none; color:var(--muted);">— https://... image link</span></label>
+      <input type="url" name="image_url" value="{{ faction.image_url or '' }}" placeholder="https://..."
+             style="{{ input_style }}">
+    </div>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <button type="submit" style="{{ btn_style }} padding:5px 16px; font-size:0.82rem;">Save Notes</button>
+      <span class="notes-save-status" style="font-size:0.75rem; color:#7ec87e; display:none;">Saved</span>
+    </div>
+  </form>
+
+  <hr class="divider">
+
+  <h3 style="color:var(--muted); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:12px;">{{ terms.log_verb }} Interaction</h3>
   <form method="POST" action="/{{ slug }}/dm/faction/{{ faction.id }}/log" style="display:flex; flex-direction:column; gap:8px;">
     <div style="display:flex; gap:8px; flex-wrap:wrap;">
       <input type="number" name="session" placeholder="Session #" min="1" value="{{ current_session }}"
@@ -183,23 +394,52 @@
       <input type="text" name="event_type" placeholder="type (combat, politics…)"
              style="{{ input_style }} width:180px; flex-shrink:0;">
     </div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+      <select name="actor_id"
+              onchange="this.form.actor_type.value = this.options[this.selectedIndex].dataset.type || ''"
+              style="{{ input_style }} width:auto; flex-shrink:0; flex-grow:1; max-width:200px;">
+        <option value="">— actor (optional) —</option>
+        {% if world_npcs %}<optgroup label="NPCs">
+          {% for n in world_npcs %}<option value="{{ n.id }}" data-type="npc">{{ n.name }}</option>{% endfor %}
+        </optgroup>{% endif %}
+        {% if all_factions %}<optgroup label="Factions">
+          {% for f in all_factions %}{% if f.id != faction.id %}<option value="{{ f.id }}" data-type="faction">{{ f.name }}</option>{% endif %}{% endfor %}
+        </optgroup>{% endif %}
+      </select>
+      <input type="hidden" name="actor_type" value="">
+      <label style="display:flex; align-items:center; gap:4px; font-size:0.7rem; color:var(--muted); cursor:pointer; white-space:nowrap;">
+        <input type="checkbox" name="actor_dm_only" value="1" style="accent-color:var(--purple);"> Secret actor
+      </label>
+    </div>
     <div style="display:flex; gap:8px;">
       <input type="text" name="note" placeholder="What happened?" required style="{{ input_style }} flex:1;">
       <button type="submit" style="{{ btn_style }}">Log</button>
     </div>
-    <div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
       <select name="visibility" style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:4px 8px; font-size:0.8rem;">
         <option value="public">Public — all players</option>
         <option value="restricted">Restricted — reveal individually</option>
         <option value="dm_only">DM only — never shown</option>
       </select>
+      {% if party %}
+      <span style="color:var(--muted); font-size:0.75rem;">Witnessed by:</span>
+      {% for char in party %}
+      <label style="display:flex; align-items:center; gap:3px; font-size:0.75rem; color:var(--muted); cursor:pointer;">
+        <input type="checkbox" name="witnesses" value="{{ char.name }}" style="accent-color:var(--gold);">
+        {{ char.name }}
+      </label>
+      {% endfor %}
+      {% endif %}
     </div>
   </form>
 
-  <hr class="divider">
+  <details style="margin-top:16px; border-top:1px solid var(--border); padding-top:14px;"{% if not faction.log and not faction.relations %} open{% endif %}>
+    <summary style="list-style:none; cursor:pointer; color:var(--muted); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">Advanced ▾</summary>
 
-  <h3 style="color:var(--muted); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;">Relations</h3>
-  <p style="color:var(--muted); font-size:0.72rem; margin:0 0 10px 0;">Events ripple automatically — ally gets same polarity, rival gets opposite.</p>
+    <div style="margin-top:12px;">
+
+      <h3 style="color:var(--muted); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;">Relations</h3>
+      <p style="color:var(--muted); font-size:0.72rem; margin:0 0 10px 0;">Events ripple automatically — ally gets same polarity, rival gets opposite.</p>
   {% if faction.relations %}
   <div style="display:flex; flex-direction:column; gap:6px; margin-bottom:10px;">
     {% for rel in faction.relations %}
@@ -257,37 +497,130 @@
 
   <hr class="divider">
 
-  <h3 style="color:var(--muted); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">Edit Faction</h3>
+  <h3 style="color:var(--muted); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">Edit {{ terms.faction }}</h3>
   <form method="POST" action="/{{ slug }}/dm/faction/{{ faction.id }}/edit" style="display:flex; flex-direction:column; gap:12px;">
-    {% if not rel_data.computed %}
     <div style="display:flex; flex-direction:column; gap:4px;">
-      <label style="{{ label_style }}">Starting Relationship</label>
+      <label style="{{ label_style }}">{% if rel_data.computed %}Force Tier{% else %}Starting Relationship{% endif %}</label>
+      {% if rel_data.computed %}
+      <p style="color:var(--muted); font-size:0.72rem; margin:0 0 4px 0;">
+        Current score: {{ rel_data.score }}{% if rel_data.score_offset %} ({{ '+' if rel_data.score_offset > 0 else '' }}{{ rel_data.score_offset }} offset){% endif %}.
+        Selecting a tier below its current score adds an offset to pull it up.
+      </p>
+      {% else %}
       <p style="color:var(--muted); font-size:0.72rem; margin:0 0 4px 0;">Overridden automatically once interactions are logged.</p>
+      {% endif %}
       <select name="relationship" style="{{ input_style }}">
         {% for rel in ['friendly','neutral','hostile','allied','unknown'] %}
-        <option value="{{ rel }}" {% if rel == faction.relationship %}selected{% endif %}>{{ rel }}</option>
+        <option value="{{ rel }}" {% if rel == rel_data.relationship %}selected{% endif %}>{{ rel }}</option>
         {% endfor %}
       </select>
-    </div>
-    {% else %}
-    <input type="hidden" name="relationship" value="{{ faction.relationship }}">
-    {% endif %}
-    <div style="display:flex; flex-direction:column; gap:4px;">
-      <label style="{{ label_style }}">Description</label>
-      <textarea name="description" rows="3"
-                style="{{ input_style }} resize:vertical; font-family:inherit;">{{ faction.description }}</textarea>
     </div>
     <div><button type="submit" style="{{ btn_style }}">Save Changes</button></div>
   </form>
 
-  <hr class="divider">
+      <hr class="divider">
 
-  <form method="POST" action="/{{ slug }}/dm/faction/{{ faction.id }}/delete">
-    <button type="submit" style="background:none; border:1px solid #e05c5c; color:#e05c5c; border-radius:4px; padding:4px 12px; font-size:0.78rem; cursor:pointer;">
-      Delete Faction
-    </button>
-  </form>
+      <form method="POST" action="/{{ slug }}/dm/faction/{{ faction.id }}/delete">
+        <button type="submit" style="background:none; border:1px solid #e05c5c; color:#e05c5c; border-radius:4px; padding:4px 12px; font-size:0.78rem; cursor:pointer;">
+          Delete {{ terms.faction }}
+        </button>
+      </form>
+
+    </div>
+  </details>
+
 </details>
+{% endif %}
+
+{% if is_dm %}
+<script>
+(function() {
+  const dm = document.getElementById('dm-controls');
+  const log = document.querySelector('h2.section-title');
+  if (dm && log) log.parentNode.insertBefore(dm, log);
+})();
+
+document.addEventListener('submit', function(e) {
+  const form = e.target.closest('form.faction-notes-form');
+  if (!form) return;
+  e.preventDefault();
+  const btn = form.querySelector('button[type=submit]');
+  const status = form.querySelector('.notes-save-status');
+  btn.disabled = true;
+  status.style.display = 'none';
+  fetch(form.action, {method: 'POST', body: new FormData(form)})
+    .then(r => r.json())
+    .then(d => {
+      btn.disabled = false;
+      status.style.display = 'inline';
+      if (d.ok) {
+        status.textContent = 'Saved';
+        status.style.color = '#7ec87e';
+        setTimeout(() => { status.style.display = 'none'; }, 2000);
+      } else {
+        status.textContent = d.error || 'Error';
+        status.style.color = '#e05c5c';
+      }
+    })
+    .catch(() => { btn.disabled = false; });
+}, true);
+document.addEventListener('submit', function(e) {
+  const form = e.target.closest('form.log-entry-edit');
+  if (!form) return;
+  e.preventDefault();
+  const btn = form.querySelector('.log-edit-save');
+  const status = form.querySelector('.log-edit-status');
+  const details = form.closest('details');
+  const noteEl = details.closest('li').querySelector('.log-entry-note');
+  btn.disabled = true;
+  fetch(form.action, {method: 'POST', body: new FormData(form)})
+    .then(r => r.json())
+    .then(d => {
+      btn.disabled = false;
+      if (d.ok) {
+        if (noteEl) noteEl.textContent = form.querySelector('[name=note]').value;
+        status.textContent = 'Saved';
+        status.style.display = 'inline';
+        setTimeout(() => { status.style.display = 'none'; details.open = false; }, 1500);
+      } else {
+        status.textContent = 'Error';
+        status.style.color = '#e05c5c';
+        status.style.display = 'inline';
+      }
+    })
+    .catch(() => { btn.disabled = false; status.textContent = 'Error'; status.style.color = '#e05c5c'; status.style.display = 'inline'; });
+});
+
+document.addEventListener('click', function(e) {
+  const btn = e.target.closest('.witness-chip');
+  if (!btn) return;
+  const eventId = btn.dataset.eventId;
+  const charName = btn.dataset.charName;
+  const entityType = btn.dataset.entityType;
+  const entityId = btn.dataset.entityId;
+  const slug = btn.dataset.slug;
+  btn.disabled = true;
+  fetch(`/${slug}/dm/${entityType}/${entityId}/event/${eventId}/witness`, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({char_name: charName})
+  })
+  .then(r => r.json())
+  .then(data => {
+    btn.disabled = false;
+    if (data.known) {
+      btn.style.background = 'var(--gold)';
+      btn.style.color = '#080a18';
+      btn.style.borderColor = 'var(--gold)';
+    } else {
+      btn.style.background = 'none';
+      btn.style.color = 'var(--muted)';
+      btn.style.borderColor = 'var(--border)';
+    }
+  })
+  .catch(() => { btn.disabled = false; });
+});
+</script>
 {% endif %}
 
 {% endblock %}

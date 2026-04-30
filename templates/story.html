@@ -1,9 +1,9 @@
 {% extends "base.html" %}
-{% block title %}Story — {{ meta.name }}{% endblock %}
+{% block title %}{{ terms.story_label }} — {{ meta.name }}{% endblock %}
 {% block content %}
 
-<h1 class="page-title">Story</h1>
-<p class="subtitle">{{ meta.name }}{% if session.get('dm_' ~ slug) %} &mdash; <a href="/{{ slug }}/dm/quests/add">+ Add Quest</a>{% endif %}</p>
+<h1 class="page-title">{{ terms.story_label }}</h1>
+<p class="subtitle">{{ meta.name }}{% if session.get('dm_' ~ slug) %} &mdash; <a href="/{{ slug }}/dm/quests/add">+ Add {{ terms.quest_label }}</a>{% endif %}</p>
 
 {% set input_style = "background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:5px 9px; font-size:0.82rem;" %}
 {% set btn_style = "background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:5px 14px; font-size:0.82rem; font-weight:700; cursor:pointer;" %}
@@ -88,7 +88,7 @@
   {% if session.get('dm_' ~ slug) %}
   <details style="margin-top:8px;">
     <summary style="list-style:none; cursor:pointer; color:var(--gold-dim); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">
-      DM Controls
+      {{ terms.dm_controls }}
     </summary>
     <div style="margin-top:12px; display:flex; flex-direction:column; gap:12px;">
 
@@ -129,13 +129,13 @@
 
       <form method="POST" action="/{{ slug }}/dm/quest/{{ quest.id }}/toggle_hidden">
         <button type="submit" style="background:{% if quest.hidden %}var(--gold){% else %}var(--surface2){% endif %}; color:{% if quest.hidden %}#080a18{% else %}var(--muted){% endif %}; border:1px solid {% if quest.hidden %}var(--gold){% else %}var(--border){% endif %}; border-radius:4px; padding:5px 14px; font-size:0.82rem; font-weight:700; cursor:pointer;">
-          {% if quest.hidden %}Reveal to Players{% else %}Hide from Players{% endif %}
+          {% if quest.hidden %}Reveal to {{ terms.players_label or 'Players' }}{% else %}Hide from {{ terms.players_label or 'Players' }}{% endif %}
         </button>
       </form>
 
       <form method="POST" action="/{{ slug }}/dm/quest/{{ quest.id }}/delete">
         <button type="submit" style="background:none; border:1px solid #e05c5c; color:#e05c5c; border-radius:4px; padding:4px 12px; font-size:0.78rem; cursor:pointer;">
-          Delete Quest
+          Delete {{ terms.quest_label or 'Quest' }}
         </button>
       </form>
 
@@ -150,9 +150,9 @@
 {% if not quests %}
 <div class="card" style="padding:40px 24px; text-align:center;">
   {% if session.get('dm_' ~ slug) %}
-  <p class="text-muted">No quests yet. <a href="/{{ slug }}/dm/quests/add">Add one.</a></p>
+  <p class="text-muted">No {{ terms.quests_label or 'quests' | lower }} yet. <a href="/{{ slug }}/dm/quests/add">Add one.</a></p>
   {% else %}
-  <p class="text-muted">No quests have been revealed yet.</p>
+  <p class="text-muted">No {{ terms.quests_label or 'quests' | lower }} have been revealed yet.</p>
   {% endif %}
 </div>
 {% endif %}

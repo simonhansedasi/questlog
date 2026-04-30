@@ -110,6 +110,7 @@ nav a:hover, nav a.active {
 }
 
 .card + .card { margin-top: 12px; }
+
 .card-grid .card + .card { margin-top: 0; }
 
 .card h3 { color: var(--gold); font-size: 1.05rem; margin-bottom: 6px; }
@@ -120,6 +121,11 @@ nav a:hover, nav a.active {
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 16px;
 }
+
+/* ── Wikilinks ───────────────────────────────────────── */
+.wikilink { color: var(--gold); text-decoration: none; border-bottom: 1px dotted var(--gold-dim); }
+.wikilink:hover { border-bottom-style: solid; }
+.wikilink-missing { color: var(--muted); font-style: italic; }
 
 /* ── Badges ──────────────────────────────────────────── */
 .badge {
@@ -137,6 +143,12 @@ nav a:hover, nav a.active {
 .badge-friendly { background: #153020; color: var(--green);  border: 1px solid #204530; }
 .badge-allied   { background: #153020; color: var(--green);  border: 1px solid #204530; }
 .badge-unknown  { background: #1f1a30; color: var(--purple); border: 1px solid #352a50; }
+
+/* ── Condition severity ──────────────────────────────── */
+.badge-critical    { background: #3a1515; color: var(--red);    border: 1px solid #5a2020; }
+.badge-significant { background: #2a1a0a; color: var(--gold);   border: 1px solid #4a3010; }
+.badge-moderate    { background: #1a1f30; color: var(--blue);   border: 1px solid #2a3050; }
+.badge-subsiding   { background: #153020; color: var(--green);  border: 1px solid #204530; }
 
 /* ── Quest status ────────────────────────────────────── */
 .badge-active   { background: #1a2030; color: var(--blue);   border: 1px solid #2a3050; }
@@ -177,6 +189,7 @@ nav a:hover, nav a.active {
 .mt-4  { margin-top: 16px; }
 .mt-8  { margin-top: 32px; }
 .mb-4  { margin-bottom: 16px; }
+.mb-8  { margin-bottom: 32px; }
 .text-muted { color: var(--muted); }
 .text-gold  { color: var(--gold); }
 .text-sm    { font-size: 0.85rem; }
@@ -263,8 +276,9 @@ nav a:hover, nav a.active {
   color: var(--text);
   box-shadow: 0 2px 8px rgba(0,0,0,0.4);
 }
-.flash-success { border-color: var(--green); color: var(--green); }
-.flash-error   { border-color: var(--red);   color: var(--red);   }
+.flash-success         { border-color: var(--green); color: var(--green); }
+.flash-error           { border-color: var(--red);   color: var(--red);   }
+.flash-condition_alert { border-color: var(--gold);  color: var(--gold);  }
 
 /* ── DM jump nav ────────────────────────────────────────── */
 .dm-jumpnav {
@@ -273,10 +287,10 @@ nav a:hover, nav a.active {
   z-index: 100;
   background: var(--bg);
   border-bottom: 1px solid var(--border);
-  padding: 6px 0 7px;
+  padding: 6px 24px 7px;
   margin: 0 -24px 20px;
-  padding-left: 24px;
   display: flex;
+  justify-content: center;
   gap: 0;
   overflow-x: auto;
   scrollbar-width: none;
@@ -295,3 +309,4 @@ nav a:hover, nav a.active {
   flex-shrink: 0;
 }
 .dm-jumpnav a:hover { color: var(--gold); }
+.dm-jumpnav a:last-child { border-right: none; }

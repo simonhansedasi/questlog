@@ -1,1 +1,8 @@
 flask
+flask-limiter
+authlib
+anthropic
+markdown
+python-dotenv
+stripe
+werkzeug

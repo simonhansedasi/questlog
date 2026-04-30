@@ -1,0 +1,1158 @@
+{
+  "factions": [
+    {
+      "id": "nazi_germany",
+      "name": "Nazi Germany",
+      "relationship": "hostile",
+      "description": "The Third Reich under Adolf Hitler. The dominant European aggressor: it remilitarizes, annexes Austria and Czechoslovakia, invades Poland, conquers France, and launches the largest land invasion in history against the Soviet Union. Its industrial and military capacity is matched only by its ideological machinery of racial extermination. Peak territorial control in 1942. Defeated May 1945.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_10b7fe",
+          "session": 1,
+          "note": "Germany remilitarizes the Rhineland in 1936, violating the Treaty of Versailles. France and Britain protest and do nothing. Germany annexes Austria in the Anschluss of March 1938. The Munich Agreement of September 1938 gives Hitler the Sudetenland in exchange for his promise that he has no further territorial ambitions. 'Peace for our time,' Chamberlain announces. Hitler has contempt for men who can be bought with appeasement.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "politics"
+        },
+        {
+          "id": "evt_a73b69",
+          "session": 1,
+          "note": "Consequence of Occupied Europe (rival): The Nuremberg Laws of 1935 strip German Jews of citizenship and forbid marriage between Jews and Germans. Kristallnacht (November 9, 1938) \u2014 the Night of Broken Glass \u2014 sees Jewish synagogues, businesses, and homes destroyed across Germany and Austria. Ninety-one Jews are killed; thirty thousand are arrested and sent to concentration camps. This is the visible surface of what is being built beneath.",
+          "visibility": "dm_only",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "occupied_europe",
+            "entity_type": "faction",
+            "event_id": "evt_a621ec"
+          },
+          "actor_id": "occupied_europe",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_24d75b",
+          "session": 2,
+          "note": "Consequence of Poland (rival): Germany invades Poland from the west on September 1, 1939. The Soviet Union invades from the east on September 17. Britain and France declare war on Germany on September 3 \u2014 and then do almost nothing. Poland falls in five weeks. The Polish government escapes to London. A hundred thousand Polish soldiers eventually fight in British uniform.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "poland",
+            "entity_type": "faction",
+            "event_id": "evt_eb859d"
+          },
+          "actor_id": "poland",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_121573",
+          "session": 3,
+          "note": "Germany invades France through the Ardennes on May 10, 1940 \u2014 the one direction the French do not expect. The Allied line breaks. Three hundred and thirty thousand British and French troops are evacuated from Dunkirk's beaches by an armada of warships and civilian boats in nine days. France signs an armistice on June 22. The Wehrmacht has conquered Western Europe in six weeks.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "combat"
+        },
+        {
+          "id": "evt_535cfd",
+          "session": 3,
+          "note": "Consequence of Great Britain (rival): The Battle of Britain (July\u2013September 1940): the Luftwaffe attempts to destroy the RAF and establish air superiority for invasion. The RAF holds \u2014 by a narrow margin, exhausting its pilots, but holding. Hitler postpones Operation Sea Lion indefinitely. Britain will not be invaded. Churchill: 'Never in the field of human conflict was so much owed by so many to so few.'",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "great_britain",
+            "entity_type": "faction",
+            "event_id": "evt_fc31c5"
+          },
+          "actor_id": "great_britain",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_920708",
+          "session": 5,
+          "note": "Consequence of United States (rival): America's industrial conversion is immediate and total. Car factories become tank factories. Shipyards work around the clock. The US produces more weapons in 1942 than Germany, Japan, and Italy combined. Lend-Lease ships supplies to Britain and the Soviet Union on a scale that neither could sustain their war effort without.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "united_states",
+            "entity_type": "faction",
+            "event_id": "evt_9376c5"
+          },
+          "actor_id": "united_states",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_c8cc41",
+          "session": 6,
+          "note": "Consequence of Imperial Japan (ally): Japan's early 1942 conquests stretch from Burma to Guadalcanal, from Manchuria to the Dutch East Indies. The 'Greater East Asia Co-Prosperity Sphere' is a colonial empire built in six months. After Midway, the defensive perimeter begins to contract. The US island-hopping campaign \u2014 taking key islands, bypassing others to 'wither on the vine' \u2014 begins to compress Japan's supply lines and air cover.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "imperial_japan",
+            "entity_type": "faction",
+            "event_id": "evt_df0053"
+          },
+          "actor_id": "imperial_japan",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_129f3a",
+          "session": 7,
+          "note": "Stalingrad kills the myth of German invincibility. The German public is told for the first time that something has gone wrong. Goebbels declares 'total war' in February 1943. Germany's manpower and material reserves, already strained, begin an irreversible decline. The Kursk offensive in July 1943 \u2014 the last major German offensive on the Eastern Front \u2014 fails. After Kursk, Germany never attacks in the East again.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "other"
+        },
+        {
+          "id": "evt_00b079",
+          "session": 8,
+          "note": "Consequence of Fascist Italy (ally): Operation Husky (July 1943): Allied forces invade Sicily. On July 25, Mussolini is voted out by his own Grand Council, arrested by King Victor Emmanuel III, and imprisoned. Italy's new government opens secret armistice negotiations. Italy surrenders on September 8, 1943. Germany occupies northern Italy and installs Mussolini as puppet ruler of the Italian Social Republic after a German commando raid rescues him from mountain imprisonment.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "fascist_italy",
+            "entity_type": "faction",
+            "event_id": "evt_7715dc"
+          },
+          "actor_id": "fascist_italy",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_107dcb",
+          "session": 9,
+          "note": "July 20, 1944: German officers plant a bomb in Hitler's conference room. It explodes. Hitler survives \u2014 the briefcase was moved, deflecting the blast behind a table leg. The conspirators are arrested, tortured, and executed. Rommel, implicated, is given the choice of a people's court or private suicide. He takes the poison on October 14. Germany buries him with full military honors.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "betrayal"
+        },
+        {
+          "id": "evt_f9de52",
+          "session": 11,
+          "note": "Consequence of Occupied Europe (rival): Allied forces liberate the concentration camps in spring 1945: Buchenwald (April 11), Bergen-Belsen (April 15), Dachau (April 29). Eisenhower orders every available soldier and nearby German civilian to tour the camps. He cables Washington: the evidence is 'beyond the American mind to comprehend.' He wants witnesses. He is afraid that someday someone will say this did not happen.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "discovery",
+          "ripple_source": {
+            "entity_id": "occupied_europe",
+            "entity_type": "faction",
+            "event_id": "evt_ff6897"
+          },
+          "actor_id": "occupied_europe",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_077391",
+          "session": 12,
+          "note": "Consequence of Imperial Japan (ally): Japan surrenders unconditionally. The Empire of Japan is dissolved. MacArthur oversees the occupation and reconstruction of Japan with pragmatic brilliance: Hirohito is retained as symbolic figurehead, the military is abolished, a democratic constitution is written. Japan becomes a US ally within a decade.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "imperial_japan",
+            "entity_type": "faction",
+            "event_id": "evt_bffcd6"
+          },
+          "actor_id": "imperial_japan",
+          "actor_type": "faction"
+        }
+      ],
+      "relations": [
+        {
+          "target": "fascist_italy",
+          "target_type": "faction",
+          "relation": "ally",
+          "weight": 0.85
+        },
+        {
+          "target": "imperial_japan",
+          "target_type": "faction",
+          "relation": "ally",
+          "weight": 0.7
+        },
+        {
+          "target": "great_britain",
+          "target_type": "faction",
+          "relation": "rival",
+          "weight": 1.0
+        },
+        {
+          "target": "soviet_union",
+          "target_type": "faction",
+          "relation": "rival",
+          "weight": 1.0
+        },
+        {
+          "target": "united_states",
+          "target_type": "faction",
+          "relation": "rival",
+          "weight": 1.0
+        },
+        {
+          "target": "poland",
+          "target_type": "faction",
+          "relation": "rival",
+          "weight": 1.0
+        },
+        {
+          "target": "occupied_europe",
+          "target_type": "faction",
+          "relation": "rival",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "imperial_japan",
+      "name": "Imperial Japan",
+      "relationship": "hostile",
+      "description": "The Empire of Japan under Emperor Hirohito and the militarist government. At war with China since 1937, it expands into Southeast Asia and the Pacific in 1941\u20131942, seizing an empire from Burma to Guadalcanal. The attack on Pearl Harbor brings the United States fully into the war. Japan's industrial capacity cannot sustain the war of attrition that follows. Surrenders September 2, 1945.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_91a648",
+          "session": 1,
+          "note": "Consequence of Nazi Germany (ally): Germany remilitarizes the Rhineland in 1936, violating the Treaty of Versailles. France and Britain protest and do nothing. Germany annexes Austria in the Anschluss of March 1938. The Munich Agreement of September 1938 gives Hitler the Sudetenland in exchange for his promise that he has no further territorial ambitions. 'Peace for our time,' Chamberlain announces. Hitler has contempt for men who can be bought with appeasement.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "nazi_germany",
+            "entity_type": "faction",
+            "event_id": "evt_10b7fe"
+          },
+          "actor_id": "nazi_germany",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_923cb6",
+          "session": 3,
+          "note": "Consequence of Nazi Germany (ally): Germany invades France through the Ardennes on May 10, 1940 \u2014 the one direction the French do not expect. The Allied line breaks. Three hundred and thirty thousand British and French troops are evacuated from Dunkirk's beaches by an armada of warships and civilian boats in nine days. France signs an armistice on June 22. The Wehrmacht has conquered Western Europe in six weeks.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "nazi_germany",
+            "entity_type": "faction",
+            "event_id": "evt_121573"
+          },
+          "actor_id": "nazi_germany",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_a43378",
+          "session": 5,
+          "note": "Consequence of United States (rival): America's industrial conversion is immediate and total. Car factories become tank factories. Shipyards work around the clock. The US produces more weapons in 1942 than Germany, Japan, and Italy combined. Lend-Lease ships supplies to Britain and the Soviet Union on a scale that neither could sustain their war effort without.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "united_states",
+            "entity_type": "faction",
+            "event_id": "evt_9376c5"
+          },
+          "actor_id": "united_states",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_df0053",
+          "session": 6,
+          "note": "Japan's early 1942 conquests stretch from Burma to Guadalcanal, from Manchuria to the Dutch East Indies. The 'Greater East Asia Co-Prosperity Sphere' is a colonial empire built in six months. After Midway, the defensive perimeter begins to contract. The US island-hopping campaign \u2014 taking key islands, bypassing others to 'wither on the vine' \u2014 begins to compress Japan's supply lines and air cover.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "other"
+        },
+        {
+          "id": "evt_3bd06e",
+          "session": 7,
+          "note": "Consequence of Nazi Germany (ally): Stalingrad kills the myth of German invincibility. The German public is told for the first time that something has gone wrong. Goebbels declares 'total war' in February 1943. Germany's manpower and material reserves, already strained, begin an irreversible decline. The Kursk offensive in July 1943 \u2014 the last major German offensive on the Eastern Front \u2014 fails. After Kursk, Germany never attacks in the East again.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "nazi_germany",
+            "entity_type": "faction",
+            "event_id": "evt_129f3a"
+          },
+          "actor_id": "nazi_germany",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_d4ccdd",
+          "session": 9,
+          "note": "Consequence of Nazi Germany (ally): July 20, 1944: German officers plant a bomb in Hitler's conference room. It explodes. Hitler survives \u2014 the briefcase was moved, deflecting the blast behind a table leg. The conspirators are arrested, tortured, and executed. Rommel, implicated, is given the choice of a people's court or private suicide. He takes the poison on October 14. Germany buries him with full military honors.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "betrayal",
+          "ripple_source": {
+            "entity_id": "nazi_germany",
+            "entity_type": "faction",
+            "event_id": "evt_107dcb"
+          },
+          "actor_id": "nazi_germany",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_bffcd6",
+          "session": 12,
+          "note": "Japan surrenders unconditionally. The Empire of Japan is dissolved. MacArthur oversees the occupation and reconstruction of Japan with pragmatic brilliance: Hirohito is retained as symbolic figurehead, the military is abolished, a democratic constitution is written. Japan becomes a US ally within a decade.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "politics"
+        }
+      ],
+      "relations": [
+        {
+          "target": "nazi_germany",
+          "target_type": "faction",
+          "relation": "ally",
+          "weight": 0.7
+        },
+        {
+          "target": "united_states",
+          "target_type": "faction",
+          "relation": "rival",
+          "weight": 1.0
+        },
+        {
+          "target": "nationalist_china",
+          "target_type": "faction",
+          "relation": "rival",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "fascist_italy",
+      "name": "Fascist Italy",
+      "relationship": "hostile",
+      "description": "Mussolini's Italy \u2014 the original fascist state, ally to Germany via the Pact of Steel. Italy's military performance disappoints: failures in Greece force German intervention, and North Africa is lost by 1943. Mussolini is deposed by his own Grand Council in July 1943. Italy surrenders in September. A German-backed puppet state holds northern Italy until April 1945.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_7ed34d",
+          "session": 1,
+          "note": "Consequence of Nazi Germany (ally): Germany remilitarizes the Rhineland in 1936, violating the Treaty of Versailles. France and Britain protest and do nothing. Germany annexes Austria in the Anschluss of March 1938. The Munich Agreement of September 1938 gives Hitler the Sudetenland in exchange for his promise that he has no further territorial ambitions. 'Peace for our time,' Chamberlain announces. Hitler has contempt for men who can be bought with appeasement.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "nazi_germany",
+            "entity_type": "faction",
+            "event_id": "evt_10b7fe"
+          },
+          "actor_id": "nazi_germany",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_3a2619",
+          "session": 3,
+          "note": "Consequence of Nazi Germany (ally): Germany invades France through the Ardennes on May 10, 1940 \u2014 the one direction the French do not expect. The Allied line breaks. Three hundred and thirty thousand British and French troops are evacuated from Dunkirk's beaches by an armada of warships and civilian boats in nine days. France signs an armistice on June 22. The Wehrmacht has conquered Western Europe in six weeks.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "nazi_germany",
+            "entity_type": "faction",
+            "event_id": "evt_121573"
+          },
+          "actor_id": "nazi_germany",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_4616d4",
+          "session": 7,
+          "note": "Consequence of Nazi Germany (ally): Stalingrad kills the myth of German invincibility. The German public is told for the first time that something has gone wrong. Goebbels declares 'total war' in February 1943. Germany's manpower and material reserves, already strained, begin an irreversible decline. The Kursk offensive in July 1943 \u2014 the last major German offensive on the Eastern Front \u2014 fails. After Kursk, Germany never attacks in the East again.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "nazi_germany",
+            "entity_type": "faction",
+            "event_id": "evt_129f3a"
+          },
+          "actor_id": "nazi_germany",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_7715dc",
+          "session": 8,
+          "note": "Operation Husky (July 1943): Allied forces invade Sicily. On July 25, Mussolini is voted out by his own Grand Council, arrested by King Victor Emmanuel III, and imprisoned. Italy's new government opens secret armistice negotiations. Italy surrenders on September 8, 1943. Germany occupies northern Italy and installs Mussolini as puppet ruler of the Italian Social Republic after a German commando raid rescues him from mountain imprisonment.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat"
+        },
+        {
+          "id": "evt_7d4d94",
+          "session": 9,
+          "note": "Consequence of Nazi Germany (ally): July 20, 1944: German officers plant a bomb in Hitler's conference room. It explodes. Hitler survives \u2014 the briefcase was moved, deflecting the blast behind a table leg. The conspirators are arrested, tortured, and executed. Rommel, implicated, is given the choice of a people's court or private suicide. He takes the poison on October 14. Germany buries him with full military honors.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "betrayal",
+          "ripple_source": {
+            "entity_id": "nazi_germany",
+            "entity_type": "faction",
+            "event_id": "evt_107dcb"
+          },
+          "actor_id": "nazi_germany",
+          "actor_type": "faction"
+        }
+      ],
+      "relations": [
+        {
+          "target": "nazi_germany",
+          "target_type": "faction",
+          "relation": "ally",
+          "weight": 0.85
+        }
+      ]
+    },
+    {
+      "id": "soviet_union",
+      "name": "Soviet Union",
+      "relationship": "neutral",
+      "description": "The USSR under Stalin. Signs the Molotov\u2013Ribbentrop non-aggression pact with Germany in 1939, enabling the invasion of Poland. Germany's Operation Barbarossa in June 1941 reverses this completely: the Soviets suffer catastrophic early losses, then stabilize, then push back. Stalingrad is the turning point. The Red Army drives west from 1943, taking Berlin in April 1945. The Soviet contribution to defeating Germany is larger than all other Allied contributions combined.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_690cb4",
+          "session": 1,
+          "note": "Consequence of Nazi Germany (rival): Germany remilitarizes the Rhineland in 1936, violating the Treaty of Versailles. France and Britain protest and do nothing. Germany annexes Austria in the Anschluss of March 1938. The Munich Agreement of September 1938 gives Hitler the Sudetenland in exchange for his promise that he has no further territorial ambitions. 'Peace for our time,' Chamberlain announces. Hitler has contempt for men who can be bought with appeasement.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "nazi_germany",
+            "entity_type": "faction",
+            "event_id": "evt_10b7fe"
+          },
+          "actor_id": "nazi_germany",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_0dd941",
+          "session": 3,
+          "note": "Consequence of Nazi Germany (rival): Germany invades France through the Ardennes on May 10, 1940 \u2014 the one direction the French do not expect. The Allied line breaks. Three hundred and thirty thousand British and French troops are evacuated from Dunkirk's beaches by an armada of warships and civilian boats in nine days. France signs an armistice on June 22. The Wehrmacht has conquered Western Europe in six weeks.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "nazi_germany",
+            "entity_type": "faction",
+            "event_id": "evt_121573"
+          },
+          "actor_id": "nazi_germany",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_331a03",
+          "session": 3,
+          "note": "Consequence of Great Britain (ally): The Battle of Britain (July\u2013September 1940): the Luftwaffe attempts to destroy the RAF and establish air superiority for invasion. The RAF holds \u2014 by a narrow margin, exhausting its pilots, but holding. Hitler postpones Operation Sea Lion indefinitely. Britain will not be invaded. Churchill: 'Never in the field of human conflict was so much owed by so many to so few.'",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "great_britain",
+            "entity_type": "faction",
+            "event_id": "evt_fc31c5"
+          },
+          "actor_id": "great_britain",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_3b338f",
+          "session": 5,
+          "note": "Consequence of United States (ally): America's industrial conversion is immediate and total. Car factories become tank factories. Shipyards work around the clock. The US produces more weapons in 1942 than Germany, Japan, and Italy combined. Lend-Lease ships supplies to Britain and the Soviet Union on a scale that neither could sustain their war effort without.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "united_states",
+            "entity_type": "faction",
+            "event_id": "evt_9376c5"
+          },
+          "actor_id": "united_states",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_6789ee",
+          "session": 7,
+          "note": "Consequence of Nazi Germany (rival): Stalingrad kills the myth of German invincibility. The German public is told for the first time that something has gone wrong. Goebbels declares 'total war' in February 1943. Germany's manpower and material reserves, already strained, begin an irreversible decline. The Kursk offensive in July 1943 \u2014 the last major German offensive on the Eastern Front \u2014 fails. After Kursk, Germany never attacks in the East again.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "nazi_germany",
+            "entity_type": "faction",
+            "event_id": "evt_129f3a"
+          },
+          "actor_id": "nazi_germany",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_1cb11d",
+          "session": 9,
+          "note": "Consequence of Nazi Germany (rival): July 20, 1944: German officers plant a bomb in Hitler's conference room. It explodes. Hitler survives \u2014 the briefcase was moved, deflecting the blast behind a table leg. The conspirators are arrested, tortured, and executed. Rommel, implicated, is given the choice of a people's court or private suicide. He takes the poison on October 14. Germany buries him with full military honors.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "betrayal",
+          "ripple_source": {
+            "entity_id": "nazi_germany",
+            "entity_type": "faction",
+            "event_id": "evt_107dcb"
+          },
+          "actor_id": "nazi_germany",
+          "actor_type": "faction"
+        }
+      ],
+      "relations": [
+        {
+          "target": "nazi_germany",
+          "target_type": "faction",
+          "relation": "rival",
+          "weight": 1.0
+        },
+        {
+          "target": "great_britain",
+          "target_type": "faction",
+          "relation": "ally",
+          "weight": 0.75
+        },
+        {
+          "target": "united_states",
+          "target_type": "faction",
+          "relation": "ally",
+          "weight": 0.75
+        }
+      ]
+    },
+    {
+      "id": "united_states",
+      "name": "United States",
+      "relationship": "ally",
+      "description": "The Arsenal of Democracy. Formally neutral until Pearl Harbor (December 7, 1941), though Lend-Lease arms Britain and the USSR from 1941. American industrial capacity \u2014 untouched by bombing \u2014 is the decisive material factor in Allied victory. Fights in North Africa (1942), Italy (1943), Western Europe (1944\u201345), and the Pacific throughout. The Manhattan Project produces the atomic bombs that end the Pacific War.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_8b2f1b",
+          "session": 1,
+          "note": "Consequence of Nazi Germany (rival): Germany remilitarizes the Rhineland in 1936, violating the Treaty of Versailles. France and Britain protest and do nothing. Germany annexes Austria in the Anschluss of March 1938. The Munich Agreement of September 1938 gives Hitler the Sudetenland in exchange for his promise that he has no further territorial ambitions. 'Peace for our time,' Chamberlain announces. Hitler has contempt for men who can be bought with appeasement.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "nazi_germany",
+            "entity_type": "faction",
+            "event_id": "evt_10b7fe"
+          },
+          "actor_id": "nazi_germany",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_e5cd6c",
+          "session": 3,
+          "note": "Consequence of Nazi Germany (rival): Germany invades France through the Ardennes on May 10, 1940 \u2014 the one direction the French do not expect. The Allied line breaks. Three hundred and thirty thousand British and French troops are evacuated from Dunkirk's beaches by an armada of warships and civilian boats in nine days. France signs an armistice on June 22. The Wehrmacht has conquered Western Europe in six weeks.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "nazi_germany",
+            "entity_type": "faction",
+            "event_id": "evt_121573"
+          },
+          "actor_id": "nazi_germany",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_ca11ae",
+          "session": 3,
+          "note": "Consequence of Great Britain (ally): The Battle of Britain (July\u2013September 1940): the Luftwaffe attempts to destroy the RAF and establish air superiority for invasion. The RAF holds \u2014 by a narrow margin, exhausting its pilots, but holding. Hitler postpones Operation Sea Lion indefinitely. Britain will not be invaded. Churchill: 'Never in the field of human conflict was so much owed by so many to so few.'",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "great_britain",
+            "entity_type": "faction",
+            "event_id": "evt_fc31c5"
+          },
+          "actor_id": "great_britain",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_9376c5",
+          "session": 5,
+          "note": "America's industrial conversion is immediate and total. Car factories become tank factories. Shipyards work around the clock. The US produces more weapons in 1942 than Germany, Japan, and Italy combined. Lend-Lease ships supplies to Britain and the Soviet Union on a scale that neither could sustain their war effort without.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "other"
+        },
+        {
+          "id": "evt_0cffdc",
+          "session": 6,
+          "note": "Consequence of Imperial Japan (rival): Japan's early 1942 conquests stretch from Burma to Guadalcanal, from Manchuria to the Dutch East Indies. The 'Greater East Asia Co-Prosperity Sphere' is a colonial empire built in six months. After Midway, the defensive perimeter begins to contract. The US island-hopping campaign \u2014 taking key islands, bypassing others to 'wither on the vine' \u2014 begins to compress Japan's supply lines and air cover.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "imperial_japan",
+            "entity_type": "faction",
+            "event_id": "evt_df0053"
+          },
+          "actor_id": "imperial_japan",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_88262e",
+          "session": 7,
+          "note": "Consequence of Nazi Germany (rival): Stalingrad kills the myth of German invincibility. The German public is told for the first time that something has gone wrong. Goebbels declares 'total war' in February 1943. Germany's manpower and material reserves, already strained, begin an irreversible decline. The Kursk offensive in July 1943 \u2014 the last major German offensive on the Eastern Front \u2014 fails. After Kursk, Germany never attacks in the East again.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "nazi_germany",
+            "entity_type": "faction",
+            "event_id": "evt_129f3a"
+          },
+          "actor_id": "nazi_germany",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_522cc6",
+          "session": 9,
+          "note": "Consequence of Nazi Germany (rival): July 20, 1944: German officers plant a bomb in Hitler's conference room. It explodes. Hitler survives \u2014 the briefcase was moved, deflecting the blast behind a table leg. The conspirators are arrested, tortured, and executed. Rommel, implicated, is given the choice of a people's court or private suicide. He takes the poison on October 14. Germany buries him with full military honors.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "betrayal",
+          "ripple_source": {
+            "entity_id": "nazi_germany",
+            "entity_type": "faction",
+            "event_id": "evt_107dcb"
+          },
+          "actor_id": "nazi_germany",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_e810ea",
+          "session": 12,
+          "note": "Consequence of Imperial Japan (rival): Japan surrenders unconditionally. The Empire of Japan is dissolved. MacArthur oversees the occupation and reconstruction of Japan with pragmatic brilliance: Hirohito is retained as symbolic figurehead, the military is abolished, a democratic constitution is written. Japan becomes a US ally within a decade.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "imperial_japan",
+            "entity_type": "faction",
+            "event_id": "evt_bffcd6"
+          },
+          "actor_id": "imperial_japan",
+          "actor_type": "faction"
+        }
+      ],
+      "relations": [
+        {
+          "target": "nazi_germany",
+          "target_type": "faction",
+          "relation": "rival",
+          "weight": 1.0
+        },
+        {
+          "target": "imperial_japan",
+          "target_type": "faction",
+          "relation": "rival",
+          "weight": 1.0
+        },
+        {
+          "target": "great_britain",
+          "target_type": "faction",
+          "relation": "ally",
+          "weight": 1.0
+        },
+        {
+          "target": "soviet_union",
+          "target_type": "faction",
+          "relation": "ally",
+          "weight": 0.75
+        },
+        {
+          "target": "free_france",
+          "target_type": "faction",
+          "relation": "ally",
+          "weight": 0.8
+        }
+      ]
+    },
+    {
+      "id": "great_britain",
+      "name": "Great Britain",
+      "relationship": "ally",
+      "description": "The island that held. Churchill becomes Prime Minister in May 1940, the same week Germany begins its western offensive. Britain stands alone from June 1940 through December 1941, surviving the Blitz and winning the Battle of Britain. The British Empire's global resources, combined with Churchill's alliance management, make Britain the indispensable link between American power and the Soviet eastern front.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_321613",
+          "session": 1,
+          "note": "Consequence of Nazi Germany (rival): Germany remilitarizes the Rhineland in 1936, violating the Treaty of Versailles. France and Britain protest and do nothing. Germany annexes Austria in the Anschluss of March 1938. The Munich Agreement of September 1938 gives Hitler the Sudetenland in exchange for his promise that he has no further territorial ambitions. 'Peace for our time,' Chamberlain announces. Hitler has contempt for men who can be bought with appeasement.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "nazi_germany",
+            "entity_type": "faction",
+            "event_id": "evt_10b7fe"
+          },
+          "actor_id": "nazi_germany",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_9cc236",
+          "session": 2,
+          "note": "Consequence of Poland (ally): Germany invades Poland from the west on September 1, 1939. The Soviet Union invades from the east on September 17. Britain and France declare war on Germany on September 3 \u2014 and then do almost nothing. Poland falls in five weeks. The Polish government escapes to London. A hundred thousand Polish soldiers eventually fight in British uniform.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "poland",
+            "entity_type": "faction",
+            "event_id": "evt_eb859d"
+          },
+          "actor_id": "poland",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_9ce535",
+          "session": 3,
+          "note": "Consequence of Nazi Germany (rival): Germany invades France through the Ardennes on May 10, 1940 \u2014 the one direction the French do not expect. The Allied line breaks. Three hundred and thirty thousand British and French troops are evacuated from Dunkirk's beaches by an armada of warships and civilian boats in nine days. France signs an armistice on June 22. The Wehrmacht has conquered Western Europe in six weeks.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "nazi_germany",
+            "entity_type": "faction",
+            "event_id": "evt_121573"
+          },
+          "actor_id": "nazi_germany",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_fc31c5",
+          "session": 3,
+          "note": "The Battle of Britain (July\u2013September 1940): the Luftwaffe attempts to destroy the RAF and establish air superiority for invasion. The RAF holds \u2014 by a narrow margin, exhausting its pilots, but holding. Hitler postpones Operation Sea Lion indefinitely. Britain will not be invaded. Churchill: 'Never in the field of human conflict was so much owed by so many to so few.'",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat"
+        },
+        {
+          "id": "evt_7d1818",
+          "session": 5,
+          "note": "Consequence of United States (ally): America's industrial conversion is immediate and total. Car factories become tank factories. Shipyards work around the clock. The US produces more weapons in 1942 than Germany, Japan, and Italy combined. Lend-Lease ships supplies to Britain and the Soviet Union on a scale that neither could sustain their war effort without.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "united_states",
+            "entity_type": "faction",
+            "event_id": "evt_9376c5"
+          },
+          "actor_id": "united_states",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_b414ac",
+          "session": 7,
+          "note": "Consequence of Nazi Germany (rival): Stalingrad kills the myth of German invincibility. The German public is told for the first time that something has gone wrong. Goebbels declares 'total war' in February 1943. Germany's manpower and material reserves, already strained, begin an irreversible decline. The Kursk offensive in July 1943 \u2014 the last major German offensive on the Eastern Front \u2014 fails. After Kursk, Germany never attacks in the East again.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "nazi_germany",
+            "entity_type": "faction",
+            "event_id": "evt_129f3a"
+          },
+          "actor_id": "nazi_germany",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_6ccfb6",
+          "session": 9,
+          "note": "Consequence of Nazi Germany (rival): July 20, 1944: German officers plant a bomb in Hitler's conference room. It explodes. Hitler survives \u2014 the briefcase was moved, deflecting the blast behind a table leg. The conspirators are arrested, tortured, and executed. Rommel, implicated, is given the choice of a people's court or private suicide. He takes the poison on October 14. Germany buries him with full military honors.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "betrayal",
+          "ripple_source": {
+            "entity_id": "nazi_germany",
+            "entity_type": "faction",
+            "event_id": "evt_107dcb"
+          },
+          "actor_id": "nazi_germany",
+          "actor_type": "faction"
+        }
+      ],
+      "relations": [
+        {
+          "target": "nazi_germany",
+          "target_type": "faction",
+          "relation": "rival",
+          "weight": 1.0
+        },
+        {
+          "target": "united_states",
+          "target_type": "faction",
+          "relation": "ally",
+          "weight": 1.0
+        },
+        {
+          "target": "soviet_union",
+          "target_type": "faction",
+          "relation": "ally",
+          "weight": 0.75
+        },
+        {
+          "target": "free_france",
+          "target_type": "faction",
+          "relation": "ally",
+          "weight": 0.9
+        },
+        {
+          "target": "poland",
+          "target_type": "faction",
+          "relation": "ally",
+          "weight": 0.9
+        }
+      ]
+    },
+    {
+      "id": "free_france",
+      "name": "Free France",
+      "relationship": "ally",
+      "description": "Charles de Gaulle's government-in-exile, operating from London. After France's armistice, de Gaulle broadcasts from the BBC on June 18, 1940: 'Whatever happens, the flame of French resistance must not and shall not die.' The Free French forces fight in North Africa, Italy, and eventually liberate Paris alongside the Allies in August 1944. De Gaulle enters Paris on foot. The legitimacy of Free France is contested by both Vichy and, at times, by Allied leadership who find de Gaulle difficult.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_623dc4",
+          "session": 3,
+          "note": "Consequence of Great Britain (ally): The Battle of Britain (July\u2013September 1940): the Luftwaffe attempts to destroy the RAF and establish air superiority for invasion. The RAF holds \u2014 by a narrow margin, exhausting its pilots, but holding. Hitler postpones Operation Sea Lion indefinitely. Britain will not be invaded. Churchill: 'Never in the field of human conflict was so much owed by so many to so few.'",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "great_britain",
+            "entity_type": "faction",
+            "event_id": "evt_fc31c5"
+          },
+          "actor_id": "great_britain",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_39085d",
+          "session": 5,
+          "note": "Consequence of United States (ally): America's industrial conversion is immediate and total. Car factories become tank factories. Shipyards work around the clock. The US produces more weapons in 1942 than Germany, Japan, and Italy combined. Lend-Lease ships supplies to Britain and the Soviet Union on a scale that neither could sustain their war effort without.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "united_states",
+            "entity_type": "faction",
+            "event_id": "evt_9376c5"
+          },
+          "actor_id": "united_states",
+          "actor_type": "faction"
+        }
+      ],
+      "relations": [
+        {
+          "target": "great_britain",
+          "target_type": "faction",
+          "relation": "ally",
+          "weight": 0.9
+        }
+      ]
+    },
+    {
+      "id": "nationalist_china",
+      "name": "Nationalist China",
+      "relationship": "ally",
+      "description": "The Republic of China under Chiang Kai-shek, at war with Japan since 1937. China absorbs enormous Japanese manpower throughout the war \u2014 the China theater ties down more Japanese troops than any other front. Chiang's government is plagued by corruption and a parallel civil war with Mao's Communists. The Allies send aid via the Hump airlift over the Himalayas. China's war is the longest and most costly of any Allied nation.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_e74e98",
+          "session": 6,
+          "note": "Consequence of Imperial Japan (rival): Japan's early 1942 conquests stretch from Burma to Guadalcanal, from Manchuria to the Dutch East Indies. The 'Greater East Asia Co-Prosperity Sphere' is a colonial empire built in six months. After Midway, the defensive perimeter begins to contract. The US island-hopping campaign \u2014 taking key islands, bypassing others to 'wither on the vine' \u2014 begins to compress Japan's supply lines and air cover.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "imperial_japan",
+            "entity_type": "faction",
+            "event_id": "evt_df0053"
+          },
+          "actor_id": "imperial_japan",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_5e7879",
+          "session": 12,
+          "note": "Consequence of Imperial Japan (rival): Japan surrenders unconditionally. The Empire of Japan is dissolved. MacArthur oversees the occupation and reconstruction of Japan with pragmatic brilliance: Hirohito is retained as symbolic figurehead, the military is abolished, a democratic constitution is written. Japan becomes a US ally within a decade.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "imperial_japan",
+            "entity_type": "faction",
+            "event_id": "evt_bffcd6"
+          },
+          "actor_id": "imperial_japan",
+          "actor_type": "faction"
+        }
+      ],
+      "relations": [
+        {
+          "target": "imperial_japan",
+          "target_type": "faction",
+          "relation": "rival",
+          "weight": 1.0
+        }
+      ]
+    },
+    {
+      "id": "occupied_europe",
+      "name": "Occupied Europe",
+      "relationship": "hostile",
+      "description": "The peoples living under Nazi occupation: France, Poland, Netherlands, Belgium, Norway, Denmark, Yugoslavia, Greece, and the conquered Soviet territories. The occupied populations range from collaboration to resistance. The Jews of Europe, along with Roma, disabled people, political prisoners, and others targeted by Nazi racial ideology, are systematically murdered in what becomes the Holocaust \u2014 six million Jews killed. This is the largest criminal enterprise in recorded history, conducted bureaucratically, industrially, and in deliberate secrecy.",
+      "hidden": true,
+      "log": [
+        {
+          "id": "evt_c10052",
+          "session": 1,
+          "note": "Consequence of Nazi Germany (rival): Germany remilitarizes the Rhineland in 1936, violating the Treaty of Versailles. France and Britain protest and do nothing. Germany annexes Austria in the Anschluss of March 1938. The Munich Agreement of September 1938 gives Hitler the Sudetenland in exchange for his promise that he has no further territorial ambitions. 'Peace for our time,' Chamberlain announces. Hitler has contempt for men who can be bought with appeasement.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "nazi_germany",
+            "entity_type": "faction",
+            "event_id": "evt_10b7fe"
+          },
+          "actor_id": "nazi_germany",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_a621ec",
+          "session": 1,
+          "note": "The Nuremberg Laws of 1935 strip German Jews of citizenship and forbid marriage between Jews and Germans. Kristallnacht (November 9, 1938) \u2014 the Night of Broken Glass \u2014 sees Jewish synagogues, businesses, and homes destroyed across Germany and Austria. Ninety-one Jews are killed; thirty thousand are arrested and sent to concentration camps. This is the visible surface of what is being built beneath.",
+          "visibility": "dm_only",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "other"
+        },
+        {
+          "id": "evt_65d575",
+          "session": 3,
+          "note": "Consequence of Nazi Germany (rival): Germany invades France through the Ardennes on May 10, 1940 \u2014 the one direction the French do not expect. The Allied line breaks. Three hundred and thirty thousand British and French troops are evacuated from Dunkirk's beaches by an armada of warships and civilian boats in nine days. France signs an armistice on June 22. The Wehrmacht has conquered Western Europe in six weeks.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "nazi_germany",
+            "entity_type": "faction",
+            "event_id": "evt_121573"
+          },
+          "actor_id": "nazi_germany",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_896d1c",
+          "session": 7,
+          "note": "Consequence of Nazi Germany (rival): Stalingrad kills the myth of German invincibility. The German public is told for the first time that something has gone wrong. Goebbels declares 'total war' in February 1943. Germany's manpower and material reserves, already strained, begin an irreversible decline. The Kursk offensive in July 1943 \u2014 the last major German offensive on the Eastern Front \u2014 fails. After Kursk, Germany never attacks in the East again.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "nazi_germany",
+            "entity_type": "faction",
+            "event_id": "evt_129f3a"
+          },
+          "actor_id": "nazi_germany",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_d4bb61",
+          "session": 9,
+          "note": "Consequence of Nazi Germany (rival): July 20, 1944: German officers plant a bomb in Hitler's conference room. It explodes. Hitler survives \u2014 the briefcase was moved, deflecting the blast behind a table leg. The conspirators are arrested, tortured, and executed. Rommel, implicated, is given the choice of a people's court or private suicide. He takes the poison on October 14. Germany buries him with full military honors.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "betrayal",
+          "ripple_source": {
+            "entity_id": "nazi_germany",
+            "entity_type": "faction",
+            "event_id": "evt_107dcb"
+          },
+          "actor_id": "nazi_germany",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_ff6897",
+          "session": 11,
+          "note": "Allied forces liberate the concentration camps in spring 1945: Buchenwald (April 11), Bergen-Belsen (April 15), Dachau (April 29). Eisenhower orders every available soldier and nearby German civilian to tour the camps. He cables Washington: the evidence is 'beyond the American mind to comprehend.' He wants witnesses. He is afraid that someday someone will say this did not happen.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "discovery"
+        }
+      ]
+    },
+    {
+      "id": "poland",
+      "name": "Poland",
+      "relationship": "ally",
+      "description": "The first nation to fight back: Poland resists the German invasion from September 1, 1939, and when the Soviets invade from the east on September 17, Polish resistance collapses within weeks. The Polish government-in-exile operates from London throughout the war. The Polish armed forces \u2014 reconstituted in Britain \u2014 fight at Narvik, Tobruk, Monte Cassino, and Arnhem. Poland is liberated in 1945 by Soviet forces \u2014 and then remains under Soviet domination. The country that started the war ends it having lost more than a fifth of its population.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_139243",
+          "session": 1,
+          "note": "Consequence of Nazi Germany (rival): Germany remilitarizes the Rhineland in 1936, violating the Treaty of Versailles. France and Britain protest and do nothing. Germany annexes Austria in the Anschluss of March 1938. The Munich Agreement of September 1938 gives Hitler the Sudetenland in exchange for his promise that he has no further territorial ambitions. 'Peace for our time,' Chamberlain announces. Hitler has contempt for men who can be bought with appeasement.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "nazi_germany",
+            "entity_type": "faction",
+            "event_id": "evt_10b7fe"
+          },
+          "actor_id": "nazi_germany",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_eb859d",
+          "session": 2,
+          "note": "Germany invades Poland from the west on September 1, 1939. The Soviet Union invades from the east on September 17. Britain and France declare war on Germany on September 3 \u2014 and then do almost nothing. Poland falls in five weeks. The Polish government escapes to London. A hundred thousand Polish soldiers eventually fight in British uniform.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "combat"
+        },
+        {
+          "id": "evt_d175db",
+          "session": 3,
+          "note": "Consequence of Nazi Germany (rival): Germany invades France through the Ardennes on May 10, 1940 \u2014 the one direction the French do not expect. The Allied line breaks. Three hundred and thirty thousand British and French troops are evacuated from Dunkirk's beaches by an armada of warships and civilian boats in nine days. France signs an armistice on June 22. The Wehrmacht has conquered Western Europe in six weeks.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "nazi_germany",
+            "entity_type": "faction",
+            "event_id": "evt_121573"
+          },
+          "actor_id": "nazi_germany",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_9165a3",
+          "session": 3,
+          "note": "Consequence of Great Britain (ally): The Battle of Britain (July\u2013September 1940): the Luftwaffe attempts to destroy the RAF and establish air superiority for invasion. The RAF holds \u2014 by a narrow margin, exhausting its pilots, but holding. Hitler postpones Operation Sea Lion indefinitely. Britain will not be invaded. Churchill: 'Never in the field of human conflict was so much owed by so many to so few.'",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "great_britain",
+            "entity_type": "faction",
+            "event_id": "evt_fc31c5"
+          },
+          "actor_id": "great_britain",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_429018",
+          "session": 7,
+          "note": "Consequence of Nazi Germany (rival): Stalingrad kills the myth of German invincibility. The German public is told for the first time that something has gone wrong. Goebbels declares 'total war' in February 1943. Germany's manpower and material reserves, already strained, begin an irreversible decline. The Kursk offensive in July 1943 \u2014 the last major German offensive on the Eastern Front \u2014 fails. After Kursk, Germany never attacks in the East again.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "nazi_germany",
+            "entity_type": "faction",
+            "event_id": "evt_129f3a"
+          },
+          "actor_id": "nazi_germany",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_8a7e6c",
+          "session": 9,
+          "note": "Consequence of Nazi Germany (rival): July 20, 1944: German officers plant a bomb in Hitler's conference room. It explodes. Hitler survives \u2014 the briefcase was moved, deflecting the blast behind a table leg. The conspirators are arrested, tortured, and executed. Rommel, implicated, is given the choice of a people's court or private suicide. He takes the poison on October 14. Germany buries him with full military honors.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "betrayal",
+          "ripple_source": {
+            "entity_id": "nazi_germany",
+            "entity_type": "faction",
+            "event_id": "evt_107dcb"
+          },
+          "actor_id": "nazi_germany",
+          "actor_type": "faction"
+        }
+      ]
+    }
+  ]
+}

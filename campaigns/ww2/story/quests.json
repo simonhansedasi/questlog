@@ -1,0 +1,40 @@
+{
+  "quests": [
+    {
+      "id": "the_fall_and_recovery_of_france",
+      "title": "The Fall and Recovery of France",
+      "status": "active",
+      "description": "France falls in six weeks in May-June 1940. De Gaulle escapes to London and declares Free France on the BBC. The collaborationist Vichy government controls the south. Three years later, French forces fight at Cassino, in North Africa, and land at Normandy. The question of what France was during the occupation will haunt it for generations.",
+      "hidden": false,
+      "objectives": [],
+      "log": []
+    },
+    {
+      "id": "the_eastern_front",
+      "title": "The Eastern Front",
+      "status": "active",
+      "description": "Operation Barbarossa is the largest military operation in history: three million German troops invade the Soviet Union on June 22, 1941, Hitler's most consequential decision. The Eastern Front kills twenty-seven million Soviet citizens. It is where the war is won \u2014 and at a cost that dwarfs everything else. Zhukov holds Moscow, Stalingrad, and finally Berlin.",
+      "hidden": false,
+      "objectives": [],
+      "log": []
+    },
+    {
+      "id": "the_pacific_war",
+      "title": "The Pacific War",
+      "status": "active",
+      "description": "Pearl Harbor on December 7, 1941 brings the United States into the war. Japan dominates the Pacific for six months. Midway in June 1942 destroys the IJN's carrier fleet and turns the tide. Island-hopping to Iwo Jima and Okinawa; then Hiroshima and Nagasaki. The Pacific war ends on the deck of the Missouri.",
+      "hidden": false,
+      "objectives": [],
+      "log": []
+    },
+    {
+      "id": "the_road_to_d_day",
+      "title": "The Road to D-Day",
+      "status": "active",
+      "description": "Churchill and Roosevelt debate a second front throughout 1942-43. North Africa first. Then Sicily and Italy \u2014 'the soft underbelly of Europe.' On June 6, 1944, 156,000 Allied troops land on five beaches in Normandy. Eisenhower holds the coalition together; the Allies liberate Paris by August. Hitler's Europe is crumbling from all directions.",
+      "hidden": false,
+      "objectives": [],
+      "log": []
+    }
+  ]
+}

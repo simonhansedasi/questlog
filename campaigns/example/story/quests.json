@@ -1,18 +1,1 @@
-{
-  "quests": [
-    {
-      "id": "missing_merchant",
-      "title": "The Missing Merchant",
-      "status": "active",
-      "description": "A merchant named Torvald vanished on the road to Millhaven three days ago. His guild wants answers.",
-      "hidden": false,
-      "objectives": [
-        { "text": "Find out what happened to Torvald", "done": false },
-        { "text": "Report back to the Merchants Guild", "done": false }
-      ],
-      "log": [
-        { "session": 1, "note": "Quest picked up from Mara at the inn." }
-      ]
-    }
-  ]
-}
+{"quests": []}

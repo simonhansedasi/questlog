@@ -1,0 +1,581 @@
+{% extends "base.html" %}
+{% block title %}World Graph — {{ meta.name }}{% endblock %}
+{% block content %}
+
+<div style="display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:8px; margin-bottom:4px;">
+  <h1 class="page-title">World Graph</h1>
+  <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+    <a href="/{{ slug }}/world" style="color:var(--muted); font-size:0.8rem; text-decoration:none;">← World</a>
+    <a href="/{{ slug }}/world/ripples" style="color:var(--muted); font-size:0.8rem; text-decoration:none;">Ripple chains →</a>
+  </div>
+</div>
+<p class="subtitle" style="margin-bottom:12px;">Click any entity to see how a ripple would propagate from it.</p>
+
+{# Controls #}
+<div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; align-items:center;">
+  <button onclick="resetLayout()" style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:4px 12px; font-size:0.78rem; cursor:pointer;">Reset layout</button>
+  <button onclick="fitGraph()" style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:4px 12px; font-size:0.78rem; cursor:pointer;">Fit view</button>
+  <span style="width:1px; height:16px; background:var(--border); display:inline-block;"></span>
+  <label style="display:flex; align-items:center; gap:5px; font-size:0.78rem; color:var(--muted); cursor:pointer;">
+    <input type="checkbox" id="toggle-factions" checked onchange="applyFilters()" style="accent-color:var(--gold);"> Factions
+  </label>
+  <label style="display:flex; align-items:center; gap:5px; font-size:0.78rem; color:var(--muted); cursor:pointer;">
+    <input type="checkbox" id="toggle-npcs" checked onchange="applyFilters()" style="accent-color:var(--gold);"> NPCs
+  </label>
+  {% if is_dm %}
+  <label style="display:flex; align-items:center; gap:5px; font-size:0.78rem; color:var(--muted); cursor:pointer;">
+    <input type="checkbox" id="toggle-hidden" checked onchange="applyFilters()" style="accent-color:var(--gold);"> Hidden
+  </label>
+  {% endif %}
+  <label style="display:flex; align-items:center; gap:5px; font-size:0.78rem; color:var(--muted); cursor:pointer;">
+    <input type="checkbox" id="toggle-dead" checked onchange="applyFilters()" style="accent-color:var(--gold);"> Dead
+  </label>
+  <label style="display:flex; align-items:center; gap:5px; font-size:0.78rem; color:var(--muted); cursor:pointer;">
+    <input type="checkbox" id="toggle-interactions" checked onchange="applyFilters()" style="accent-color:var(--gold);"> Interactions
+  </label>
+  <span style="width:1px; height:16px; background:var(--border); display:inline-block;"></span>
+  <span style="width:1px; height:16px; background:var(--border); display:inline-block;"></span>
+  <label style="display:flex; align-items:center; gap:5px; font-size:0.78rem; color:var(--muted);">
+    Perspective
+    <select id="perspective-select" onchange="applyPerspective(this.value)"
+            style="background:var(--surface2); border:1px solid var(--border); color:var(--text);
+                   border-radius:4px; padding:2px 6px; font-size:0.75rem; cursor:pointer;">
+      <option value="party">Party / Narrator</option>
+    </select>
+  </label>
+  <span style="font-size:0.72rem; color:var(--muted);">
+    <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#7ec87e; margin-right:3px;"></span>Friendly
+    <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#e05c5c; margin-left:8px; margin-right:3px;"></span>Hostile
+    <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#666; margin-left:8px; margin-right:3px;"></span>Neutral
+    <span style="display:inline-block; width:18px; height:0; border-top:2px dashed #888; margin-left:10px; margin-right:3px; vertical-align:middle;"></span>Inter-faction (event-driven)
+    <span style="display:inline-flex; align-items:center; margin-left:10px; gap:0;">
+      <span style="display:inline-block; width:9px; height:0; border-top:2px dashed #e05c5c; vertical-align:middle;"></span><span style="display:inline-block; width:9px; height:0; border-top:2px dashed #7ec87e; vertical-align:middle; margin-right:3px;"></span>
+    </span>Conflicted (formal ≠ personal)
+  </span>
+</div>
+
+<div style="display:flex; gap:12px; align-items:flex-start;">
+  {# Graph canvas #}
+  <div id="cy" style="flex:1; min-width:0; height:68vh; background:var(--surface2);
+       border:1px solid var(--border); border-radius:6px; position:relative;">
+    <div id="cy-loading" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+         color:var(--muted); font-size:0.85rem;">Loading graph…</div>
+  </div>
+
+  {# Info panel #}
+  <div id="info-panel" style="width:240px; flex-shrink:0; display:none; flex-direction:column; gap:8px;">
+    <div class="card" style="padding:14px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+        <div>
+          <p id="info-name" style="font-weight:700; font-size:0.95rem; margin:0;"></p>
+          <p id="info-type" style="color:var(--muted); font-size:0.72rem; margin:2px 0 0; text-transform:uppercase; letter-spacing:0.04em;"></p>
+        </div>
+        <span id="info-rel-badge" style="font-size:0.7rem; font-weight:700; padding:2px 7px; border-radius:3px;"></span>
+      </div>
+      <p id="info-role" style="color:var(--muted); font-size:0.78rem; margin:0 0 6px; font-style:italic;"></p>
+      <p id="info-last-note" style="color:var(--muted); font-size:0.78rem; margin:0 0 10px; line-height:1.4;"></p>
+      <div id="info-links" style="display:flex; flex-direction:column; gap:4px;"></div>
+    </div>
+
+    <div class="card" style="padding:14px;">
+      <p style="color:var(--muted); font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; margin:0 0 8px;">Ripple radius</p>
+      <div style="display:flex; flex-direction:column; gap:4px;" id="ripple-depth-list"></div>
+      <button onclick="clearSelection()" style="margin-top:10px; background:none; border:1px solid var(--border); color:var(--muted); border-radius:4px; padding:3px 10px; font-size:0.75rem; cursor:pointer; width:100%;">Clear</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.29.0/cytoscape.min.js"></script>
+<script>
+const slug = {{ slug | tojson }};
+const REL_COLOR = {
+  allied:   '#7ec87e',
+  friendly: '#5ba87e',
+  neutral:  '#888888',
+  hostile:  '#e05c5c',
+  unknown:  '#555555',
+  _self_:   '#c9a227',
+};
+const REL_COLOR_ALPHA = {
+  allied:   'rgba(126, 200, 126, 0.53)',
+  friendly: 'rgba(91, 168, 126, 0.53)',
+  neutral:  'rgba(136, 136, 136, 0.53)',
+  hostile:  'rgba(224, 92, 92, 0.53)',
+  unknown:  'rgba(85, 85, 85, 0.53)',
+};
+
+let cy;
+const origRels = {};
+
+fetch(`/${slug}/world/graph-data`)
+  .then(r => r.json())
+  .then(data => {
+    document.getElementById('cy-loading').style.display = 'none';
+    cy = cytoscape({
+      container: document.getElementById('cy'),
+      elements: [...data.nodes, ...data.edges],
+      style: [
+        {
+          selector: 'node',
+          style: {
+            'label': 'data(label)',
+            'font-size': 5,
+            'font-family': 'monospace',
+            'color': '#c8cfe8',
+            'text-valign': 'bottom',
+            'text-margin-y': 1,
+            'text-outline-width': 0,
+            'width':  'mapData(log_count, 0, 20, 3, 6)',
+            'height': 'mapData(log_count, 0, 20, 3, 6)',
+            'background-color': ele => REL_COLOR[ele.data('relationship')] || '#555',
+            'border-width': ele => ele.data('hidden') ? 2 : 0,
+            'border-style': ele => ele.data('hidden') ? 'dashed' : 'solid',
+            'border-color': '#888',
+            'opacity': 1,
+            'transition-property': 'opacity, border-width, border-color, background-color',
+            'transition-duration': '150ms',
+          }
+        },
+        {
+          selector: 'node[type="faction"]',
+          style: { 'shape': 'round-rectangle' }
+        },
+        {
+          selector: 'node[type="npc"]',
+          style: { 'shape': 'ellipse' }
+        },
+        {
+          selector: 'node[type="party"]',
+          style: {
+            'shape': 'star',
+            'background-color': '#c9a227',
+            'width': 14,
+            'height': 14,
+            'font-size': 6,
+            'color': '#c9a227',
+            'font-weight': 'bold',
+            'z-index': 20,
+          }
+        },
+        {
+          selector: 'node[type="character"]',
+          style: {
+            'shape': 'diamond',
+            'background-color': '#d4a82a',
+            'width': 6,
+            'height': 6,
+            'color': '#d4b84a',
+          }
+        },
+        {
+          selector: 'edge',
+          style: {
+            'width': 'mapData(weight, 0.25, 1, 0.3, 1.2)',
+            'line-color': 'rgba(224, 92, 92, 0.4)',
+            'target-arrow-shape': 'none',
+            'curve-style': 'bezier',
+            'opacity': 0.7,
+            'transition-property': 'opacity, line-color, width',
+            'transition-duration': '150ms',
+          }
+        },
+        {
+          selector: 'edge[relation="ally"]',
+          style: { 'line-color': 'rgba(126, 200, 126, 0.4)' }
+        },
+        {
+          selector: 'edge[relation="party_contact"]',
+          style: {
+            'line-color': ele => REL_COLOR_ALPHA[ele.data('relationship')] || 'rgba(136, 136, 136, 0.27)',
+            'width': 'mapData(weight, 0.2, 1, 0.4, 1.5)',
+          }
+        },
+        {
+          selector: 'edge[relation="member"]',
+          style: { 'line-color': 'rgba(201, 162, 39, 0.4)', 'width': 0.8 }
+        },
+        {
+          selector: 'edge[relation="party_affiliate"]',
+          style: {
+            'line-color': 'rgba(201, 162, 39, 0.75)',
+            'line-style': 'dashed',
+            'width': 1.4,
+          }
+        },
+        {
+          selector: 'edge[relation="knows"]',
+          style: { 'line-color': 'rgba(201, 162, 39, 0.27)', 'width': 0.4, 'line-style': 'dashed' }
+        },
+        {
+          selector: 'edge[relation="bond"]',
+          style: { 'line-color': 'rgba(224, 92, 92, 0.6)', 'width': 1.2, 'line-style': 'dashed' }
+        },
+        {
+          selector: 'edge[relation="char_relation"]',
+          style: {
+            'line-color': 'rgba(136, 136, 136, 0.5)',
+            'width': 'mapData(weight, 0.25, 1, 0.8, 2.5)',
+            'line-style': 'dashed',
+          }
+        },
+        { selector: 'edge[relation="char_relation"][relationship="allied"]',
+          style: { 'line-color': 'rgba(126, 200, 126, 0.7)' } },
+        { selector: 'edge[relation="char_relation"][relationship="friendly"]',
+          style: { 'line-color': 'rgba(91, 168, 126, 0.7)' } },
+        { selector: 'edge[relation="char_relation"][relationship="hostile"]',
+          style: { 'line-color': 'rgba(224, 92, 92, 0.7)' } },
+        {
+          selector: 'edge[?dm_only]',
+          style: {
+            'line-style': 'dotted',
+            'line-color': 'rgba(180, 120, 220, 0.55)',
+            'width': 1.2,
+            'opacity': 0.7,
+          }
+        },
+        // Conflicted relationships — two bezier arcs, color read directly from edge data
+        {
+          selector: 'edge[relation="conflict_formal"], edge[relation="conflict_personal"]',
+          style: {
+            'line-style': 'dashed',
+            'line-dash-pattern': [6, 4],
+            'line-color': 'data(rel_color)',
+            'width': 2,
+            'opacity': 0.9,
+            'target-arrow-shape': 'none',
+          }
+        },
+        { selector: 'edge[relation="conflict_formal"]',
+          style: { 'curve-style': 'unbundled-bezier', 'control-point-distances': 30 } },
+        { selector: 'edge[relation="conflict_personal"]',
+          style: { 'curve-style': 'unbundled-bezier', 'control-point-distances': -30 } },
+        // Node with conflicted formal/personal relationship — border shows personal color
+        {
+          selector: 'node[?has_conflict]',
+          style: {
+            'border-width': 2.5,
+            'border-style': 'dashed',
+            'border-color': ele => REL_COLOR[ele.data('personal_relationship')] || '#888',
+            'background-color': ele => REL_COLOR[ele.data('formal_relationship')] || '#555',
+          }
+        },
+        // Dynamic inter-faction edges from event actor history
+        {
+          selector: 'edge[relation="inter_faction"]',
+          style: {
+            'line-style': 'dashed',
+            'width': 'mapData(weight, 0, 1, 0.8, 2.5)',
+            'opacity': 0.75,
+            'line-color': '#888888',
+          }
+        },
+        {
+          selector: 'edge[relation="inter_faction"][dynamic_relationship="hostile"]',
+          style: { 'line-color': 'rgba(224, 92, 92, 0.75)' }
+        },
+        {
+          selector: 'edge[relation="inter_faction"][dynamic_relationship="war"]',
+          style: { 'line-color': 'rgba(180, 30, 30, 0.85)', 'width': 2.5 }
+        },
+        {
+          selector: 'edge[relation="inter_faction"][dynamic_relationship="friendly"]',
+          style: { 'line-color': 'rgba(91, 168, 126, 0.75)' }
+        },
+        {
+          selector: 'edge[relation="inter_faction"][dynamic_relationship="allied"]',
+          style: { 'line-color': 'rgba(126, 200, 126, 0.85)' }
+        },
+        // Selected source node
+        {
+          selector: '.source',
+          style: {
+            'border-width': 1,
+            'border-color': '#c9a227',
+            'border-style': 'solid',
+            'z-index': 10,
+          }
+        },
+        // Depth-1 neighbours
+        {
+          selector: '.depth-1',
+          style: { 'border-width': 0.6, 'border-color': 'rgba(201, 162, 39, 0.6)', 'border-style': 'solid' }
+        },
+        // Depth-2 neighbours
+        {
+          selector: '.depth-2',
+          style: { 'opacity': 0.65 }
+        },
+        // Dimmed (not in neighbourhood)
+        {
+          selector: '.dimmed',
+          style: { 'opacity': 0.12 }
+        },
+        // Dead NPCs
+        {
+          selector: 'node[?dead]',
+          style: {
+            'opacity': 0.45,
+            'text-decoration': 'line-through',
+            'border-style': 'dashed',
+            'border-color': '#e05c5c',
+            'border-width': 1,
+          }
+        },
+        // Active edge
+        {
+          selector: '.active-edge',
+          style: {
+            'line-color': '#e05c5c',
+            'opacity': 0.9,
+            'width': 'mapData(weight, 0.25, 1, 2, 5)',
+          }
+        },
+        { selector: '.active-edge[relation="ally"]', style: { 'line-color': '#7ec87e' } },
+        { selector: '.active-edge[relation="conflict_formal"], .active-edge[relation="conflict_personal"]',
+          style: { 'line-color': 'data(rel_color)', 'opacity': 1.0 } },
+      ],
+      layout: {
+        name: 'cose',
+        animate: false,
+        fit: true,
+        padding: 50,
+        nodeRepulsion: 18000,
+        nodeOverlap: 6,
+        idealEdgeLength: 80,
+        edgeElasticity: 70,
+        gravity: 45,
+        numIter: 1000,
+        randomize: true,
+      }
+    });
+
+    cy.edges('[relation="conflict_formal"],[relation="conflict_personal"]').forEach(e => {
+      e.style('line-color', e.data('rel_color') || '#888888');
+    });
+
+    // Store original relationship values before any perspective override
+    cy.nodes().forEach(n => { origRels[n.id()] = n.data('relationship'); });
+
+    // Populate perspective selector with all NPC/faction/character nodes
+    const select = document.getElementById('perspective-select');
+    cy.nodes()
+      .filter(n => ['npc', 'faction', 'character'].includes(n.data('type')))
+      .sort((a, b) => a.data('label').localeCompare(b.data('label')))
+      .forEach(n => {
+        const opt = document.createElement('option');
+        opt.value = n.id();
+        opt.textContent = n.data('label') + (n.data('type') === 'faction' ? ' ◻' : '');
+        select.appendChild(opt);
+      });
+
+    cy.on('tap', 'node', function(e) { selectNode(e.target); });
+    cy.on('tap', function(e) { if (e.target === cy) clearSelection(); });
+    applyFilters();
+  })
+  .catch(err => {
+    const el = document.getElementById('cy-loading');
+    el.style.display = 'flex';
+    el.textContent = 'Failed to load graph data.';
+    console.error(err);
+  });
+
+function selectNode(node) {
+  clearClasses();
+
+  const d1 = node.neighborhood('node');
+  const d2 = d1.neighborhood('node').not(node).not(d1);
+  const activeEdges = node.connectedEdges().add(d1.connectedEdges().filter(e =>
+    d1.has(e.source()) && d1.has(e.target())
+  ));
+
+  cy.elements().addClass('dimmed');
+  node.removeClass('dimmed').addClass('source');
+  d1.removeClass('dimmed').addClass('depth-1');
+  d2.removeClass('dimmed').addClass('depth-2');
+  node.connectedEdges().removeClass('dimmed').addClass('active-edge');
+
+  // Show info panel
+  const data = node.data();
+  const panel = document.getElementById('info-panel');
+  panel.style.display = 'flex';
+
+  document.getElementById('info-name').textContent = data.label;
+  document.getElementById('info-type').textContent = data.type + (data.hidden ? ' · hidden' : '');
+  document.getElementById('info-role').textContent = data.role || '';
+  document.getElementById('info-last-note').textContent = data.last_note ? `"${data.last_note}"` : '';
+
+  const badge = document.getElementById('info-rel-badge');
+  if (data.has_conflict) {
+    const fc = REL_COLOR[data.formal_relationship] || '#888';
+    const pc = REL_COLOR[data.personal_relationship] || '#888';
+    badge.innerHTML = `<span style="background:${fc}22;color:${fc};border:1px solid ${fc}44;border-radius:3px;padding:1px 5px;font-size:0.68rem;font-weight:700;">formal: ${data.formal_relationship}</span> <span style="background:${pc}22;color:${pc};border:1px solid ${pc}44;border-radius:3px;padding:1px 5px;font-size:0.68rem;font-weight:700;">personal: ${data.personal_relationship}</span>`;
+    badge.style.background = 'transparent';
+    badge.style.color = '';
+    badge.style.border = 'none';
+  } else {
+    badge.textContent = data.relationship;
+    badge.innerHTML = data.relationship;
+    const c = REL_COLOR[data.relationship] || '#888';
+    badge.style.background = c + '22';
+    badge.style.color = c;
+    badge.style.border = `1px solid ${c}44`;
+  }
+
+  // Links
+  const linksEl = document.getElementById('info-links');
+  let worldPath = null;
+  if (data.type === 'npc') worldPath = `/${slug}/world/npc/${data.id}`;
+  else if (data.type === 'faction') worldPath = `/${slug}/world/faction/${data.id}`;
+  linksEl.innerHTML = worldPath
+    ? `<a href="${worldPath}" style="color:var(--gold); font-size:0.78rem; text-decoration:none;">View full profile →</a>`
+    : '';
+
+  // Ripple depth list
+  const depthList = document.getElementById('ripple-depth-list');
+  const d1ids = d1.map(n => n.data('label'));
+  const d2ids = d2.map(n => n.data('label'));
+  depthList.innerHTML = '';
+
+  if (d1ids.length) {
+    depthList.innerHTML += `
+      <div style="font-size:0.75rem;">
+        <span style="color:#c9a227; font-weight:700;">Depth 1</span>
+        <span style="color:var(--muted); margin-left:4px;">(inner circle)</span>
+      </div>
+      <div style="color:var(--muted); font-size:0.72rem; line-height:1.5;">${d1ids.join(', ')}</div>`;
+  }
+  if (d2ids.length) {
+    depthList.innerHTML += `
+      <div style="font-size:0.75rem; margin-top:6px;">
+        <span style="color:#c9a22799; font-weight:700;">Depth 2</span>
+        <span style="color:var(--muted); margin-left:4px;">(word spreads)</span>
+      </div>
+      <div style="color:var(--muted); font-size:0.72rem; line-height:1.5; opacity:0.65;">${d2ids.join(', ')}</div>`;
+  }
+  if (!d1ids.length && !d2ids.length) {
+    depthList.innerHTML = '<p style="color:var(--muted); font-size:0.75rem; margin:0;">No connections yet.</p>';
+  }
+}
+
+function clearClasses() {
+  if (!cy) return;
+  cy.elements().removeClass('dimmed source depth-1 depth-2 active-edge');
+}
+
+function clearSelection() {
+  clearClasses();
+  document.getElementById('info-panel').style.display = 'none';
+}
+
+function resetLayout() {
+  if (!cy) return;
+  cy.layout({
+    name: 'cose',
+    animate: true,
+    animationDuration: 500,
+    fit: true,
+    padding: 50,
+    nodeRepulsion: 80000,
+    nodeOverlap: 10,
+    idealEdgeLength: 150,
+    edgeElasticity: 45,
+    gravity: 20,
+    numIter: 1000,
+    randomize: true,
+  }).run();
+}
+
+function fitGraph() {
+  if (!cy) return;
+  cy.fit(undefined, 40);
+}
+
+function edgeToRel(edge) {
+  const rel = edge.data('relation');
+  if (rel === 'inter_faction') return edge.data('dynamic_relationship') || 'neutral';
+  if (rel === 'party_contact' || rel === 'char_relation') return edge.data('relationship') || 'neutral';
+  if (rel === 'conflict_formal' || rel === 'conflict_personal') return edge.data('relationship') || 'neutral';
+  const MAP = {
+    ally: 'allied', rival: 'hostile',
+    family: 'friendly', friendly: 'friendly',
+    other: 'neutral', member: 'allied',
+    knows: 'neutral', party_affiliate: 'friendly',
+  };
+  return MAP[rel] || 'neutral';
+}
+
+function applyPerspective(entityId) {
+  if (!cy) return;
+
+  if (entityId === 'party') {
+    cy.nodes().forEach(n => {
+      const orig = origRels[n.id()] || 'unknown';
+      n.data('relationship', orig);
+      n.style('background-color', n.data('type') === 'party' ? '#c9a227' : (REL_COLOR[orig] || '#555'));
+    });
+    return;
+  }
+
+  const perspNode = cy.getElementById(entityId);
+  if (!perspNode.length) return;
+
+  cy.nodes().forEach(n => {
+    if (n.data('type') === 'party') return; // keep party hub gold
+
+    if (n.id() === entityId) {
+      n.data('relationship', '_self_');
+      n.style('background-color', REL_COLOR['_self_']);
+      return;
+    }
+
+    const edges = n.edgesWith(perspNode);
+    if (!edges.length) {
+      n.data('relationship', 'unknown');
+      n.style('background-color', REL_COLOR['unknown']);
+      return;
+    }
+
+    // Hostile beats everything (conflict dominates); then allied > friendly > neutral
+    let hasHostile = false, hasAllied = false, hasFriendly = false, hasNeutral = false;
+    edges.forEach(e => {
+      const r = edgeToRel(e);
+      if (r === 'hostile')  hasHostile  = true;
+      else if (r === 'allied')   hasAllied   = true;
+      else if (r === 'friendly') hasFriendly = true;
+      else                       hasNeutral  = true;
+    });
+
+    const rel = hasHostile ? 'hostile' : hasAllied ? 'allied' : hasFriendly ? 'friendly' : 'neutral';
+    n.data('relationship', rel);
+    n.style('background-color', REL_COLOR[rel]);
+  });
+}
+
+function applyFilters() {
+  if (!cy) return;
+  const showFactions = document.getElementById('toggle-factions')?.checked ?? true;
+  const showNpcs = document.getElementById('toggle-npcs')?.checked ?? true;
+  const showHidden = document.getElementById('toggle-hidden')?.checked ?? true;
+  const showDead = document.getElementById('toggle-dead')?.checked ?? true;
+  const showInteractions = document.getElementById('toggle-interactions')?.checked ?? true;
+
+  cy.nodes().forEach(n => {
+    const type = n.data('type');
+    const hidden = n.data('hidden');
+    const dead = n.data('dead');
+    let visible = true;
+    if (type === 'faction' && !showFactions) visible = false;
+    if (type === 'npc' && !showNpcs) visible = false;
+    if (hidden && !showHidden) visible = false;
+    if (dead && !showDead) visible = false;
+    n.style('display', visible ? 'element' : 'none');
+  });
+  cy.edges().forEach(e => {
+    const srcVisible = e.source().style('display') !== 'none';
+    const tgtVisible = e.target().style('display') !== 'none';
+    const isInteraction = !!e.data('interaction');
+    e.style('display', (srcVisible && tgtVisible) && (!isInteraction || showInteractions) ? 'element' : 'none');
+  });
+}
+</script>
+{% endblock %}

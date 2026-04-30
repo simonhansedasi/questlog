@@ -1,8 +1,8 @@
 {% extends "base.html" %}
-{% block title %}Assets — {{ meta.name }}{% endblock %}
+{% block title %}{{ terms.assets_label }} — {{ meta.name }}{% endblock %}
 {% block content %}
 
-<h1 class="page-title">Assets</h1>
+<h1 class="page-title">{{ terms.assets_label }}</h1>
 <p class="subtitle">{{ meta.name }}</p>
 
 {% set input_style = "background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:5px 9px; font-size:0.82rem;" %}
@@ -20,31 +20,50 @@
     </div>
     {% endfor %}
   </div>
+  {% if can_write %}
   <form method="POST" action="/{{ slug }}/assets/currency"
         style="margin-top:12px; display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap;">
     <input type="text" name="key" placeholder="Currency name" value="gold" style="{{ input_style }} width:120px;">
     <input type="number" name="amount" placeholder="Amount" style="{{ input_style }} width:100px;">
     <button type="submit" style="{{ btn_style }}">Set</button>
   </form>
+  {% endif %}
 </div>
 
 <!-- Items -->
 <h2 class="section-title mt-8">Items</h2>
 <div class="card mb-4">
   {% if assets.get('items') %}
-  <ul class="log-list" style="margin-bottom:12px;">
+  <div style="margin-bottom:12px;">
     {% for item in assets['items'] %}
-    <li style="display:flex; justify-content:space-between; align-items:center; gap:1rem;">
-      <span>{{ item.name }}{% if item.notes %} <span class="text-muted">— {{ item.notes }}</span>{% endif %}</span>
-      <form method="POST" action="/{{ slug }}/assets/item/{{ loop.index0 }}/remove" style="display:inline;">
-        <button type="submit" style="{{ btn_del }}">remove</button>
-      </form>
-    </li>
+    {% set idx = loop.index0 %}
+    <div style="border-bottom:1px solid var(--surface2); padding:6px 0;">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:1rem;">
+        <span>{{ item.name }}{% if item.notes %} <span class="text-muted">— {{ item.notes }}</span>{% endif %}</span>
+        {% if can_write %}
+        <form method="POST" action="/{{ slug }}/assets/item/{{ idx }}/remove" style="display:inline;">
+          <button type="submit" style="{{ btn_del }}">remove</button>
+        </form>
+        {% endif %}
+      </div>
+      {% if can_write %}
+      <details style="margin-top:4px;">
+        <summary style="list-style:none; cursor:pointer; color:var(--gold-dim); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">Edit</summary>
+        <form method="POST" action="/{{ slug }}/assets/item/{{ idx }}/edit"
+              style="margin-top:8px; display:flex; gap:6px; align-items:flex-end; flex-wrap:wrap;">
+          <input type="text" name="name" value="{{ item.name }}" required style="{{ input_style }} flex:1; min-width:120px;">
+          <input type="text" name="notes" value="{{ item.notes|default('') }}" placeholder="Notes" style="{{ input_style }} flex:1; min-width:120px;">
+          <button type="submit" style="{{ btn_style }}">Save</button>
+        </form>
+      </details>
+      {% endif %}
+    </div>
     {% endfor %}
-  </ul>
+  </div>
   {% else %}
   <p class="text-muted text-sm" style="margin-bottom:12px;">No items.</p>
   {% endif %}
+  {% if can_write %}
   <details>
     <summary style="list-style:none; cursor:pointer; color:var(--gold-dim); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">Add Item</summary>
     <form method="POST" action="/{{ slug }}/assets/item"
@@ -54,6 +73,7 @@
       <button type="submit" style="{{ btn_style }}">Add</button>
     </form>
   </details>
+  {% endif %}
 </div>
 
 <!-- Ships -->
@@ -78,6 +98,7 @@
           <li style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
             {% if w is mapping %}
             <span class="text-sm" style="min-width:110px;">{{ w.name }}</span>
+            {% if can_write %}
             <form method="POST" action="/{{ slug }}/assets/ship/{{ ship_idx }}/weapon/{{ loop.index0 }}/hp"
                   style="display:flex; align-items:center; gap:4px;">
               <input type="number" name="hp" value="{{ w.hp }}" min="0" max="{{ w.max_hp }}"
@@ -85,6 +106,9 @@
               <span class="text-muted text-sm">/ {{ w.max_hp }}</span>
               <button type="submit" style="background:none; border:1px solid var(--border); color:var(--muted); border-radius:4px; padding:2px 8px; font-size:0.75rem; cursor:pointer;">set</button>
             </form>
+            {% else %}
+            <span style="color:var(--muted); font-size:0.82rem;">{{ w.hp }} / {{ w.max_hp }}</span>
+            {% endif %}
             {% if session.get('dm_' ~ slug) %}
             <form method="POST" action="/{{ slug }}/dm/assets/ship/{{ ship_idx }}/weapon/{{ loop.index0 }}/delete" style="display:inline;">
               <button type="submit" style="{{ btn_del }}">×</button>
@@ -147,7 +171,7 @@
 
     {% if session.get('dm_' ~ slug) %}
     <details style="margin-top:10px;">
-      <summary style="list-style:none; cursor:pointer; color:var(--gold-dim); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">DM Controls</summary>
+      <summary style="list-style:none; cursor:pointer; color:var(--gold-dim); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">{{ terms.dm_controls }}</summary>
       <div style="margin-top:10px; display:flex; flex-direction:column; gap:10px;">
 
         <form method="POST" action="/{{ slug }}/dm/assets/ship/{{ ship_idx }}/edit"

@@ -1,0 +1,64 @@
+{
+  "entries": [
+    {
+      "session": 1,
+      "date": "2024-01-01",
+      "recap": "**Session 1 \u2014 The Axis Rises (1933\u20131938)**\n\nThe precondition for everything. Hitler's rise is not inevitable: it requires the specific failure of Weimar's democracy, the specific humiliation of Versailles, and the specific cowardice of appeasement. Each of these is a choice made by real people.\n\n**Causal chain:** The League of Nations fails over Ethiopia \u2014 this tells Hitler the international order is decorative. Munich tells him it will pay ransom. Kristallnacht tells the world what is being built. The world mostly looks away. Churchill alone says clearly what this is. No one listens yet."
+    },
+    {
+      "session": 2,
+      "date": "2024-01-01",
+      "recap": "**Session 2 \u2014 The World Goes to War (1939)**\n\nThe Molotov-Ribbentrop Pact is the most consequential diplomatic event of the war's opening. It enables the Polish invasion, enables Dunkirk, enables the Fall of France. Stalin believes he has bought time. He has bought less than two years.\n\n**Causal chain:** Poland's destruction is swift and total. The Allied declaration of war produces no military action \u2014 the 'Phoney War' is eight months of waiting while Germany consolidates. The engine scores Poland hostile immediately. The rival edges between Germany and its neighbors are now active."
+    },
+    {
+      "session": 3,
+      "date": "2024-01-01",
+      "recap": "**Session 3 \u2014 The Fall of France (1940)**\n\nThe engine's most complex session: simultaneous catastrophe and resistance. France falls (massive negative for the Allied cause) while Churchill and de Gaulle perform acts of pure will that keep the resistance alive.\n\n**Causal chain:** Dunkirk saves the army but not the territory. Churchill's refusal to negotiate is the decision that makes Allied victory possible \u2014 without it, Britain makes a deal and the US never enters. The Battle of Britain is the RAF's finest hour and the Luftwaffe's first defeat. The rival edge between Germany and Britain is now the defining relationship of the European war."
+    },
+    {
+      "session": 4,
+      "date": "2024-01-01",
+      "recap": "**Session 4 \u2014 Operation Barbarossa (1941)**\n\nThe war's largest single event. Barbarossa breaks the Nazi-Soviet Pact and transforms the war's geometry: the Soviet Union is now fighting for survival, and survival requires the destruction of the Wehrmacht.\n\n**Causal chain:** The rival edge between Hitler and Stalin activates fully. Soviet losses in the opening months are almost incomprehensible \u2014 but the Soviets have manpower depth Germany does not. Zhukov's Moscow defense is the first crack in German invincibility. The engine scores Germany's relationship with the Soviets as war from this point forward. It will never recover."
+    },
+    {
+      "session": 5,
+      "date": "2024-01-01",
+      "recap": "**Session 5 \u2014 Pearl Harbor: America Enters (December 1941)**\n\nThe war's pivot. Pearl Harbor is a tactical success and a strategic catastrophe for Japan: it brings the one nation whose industrial capacity can simply outbuild the Axis into the war at full commitment.\n\n**Causal chain:** Hitler's declaration of war on the US is the most unforced error of the war \u2014 he was not required to do it. It completes the Grand Alliance. Churchill goes to bed satisfied. The rival edge between Yamamoto and Roosevelt is now at its sharpest. The engine reflects American entry as a strong positive ripple through every Allied entity in the graph."
+    },
+    {
+      "session": 6,
+      "date": "2024-01-01",
+      "recap": "**Session 6 \u2014 Midway: The Pacific Turns (1942)**\n\nMidway is decided in five minutes but prepared over months. The decisive factor is not bravery or numbers but intelligence: US code-breakers know the Japanese plan. Yamamoto's fatal flaw is that he does not know they know.\n\n**Causal chain:** Four Japanese carriers gone means no offensive air cover for future operations. The rival edge between Yamamoto and Roosevelt inverts after Midway \u2014 Japan goes defensive. MacArthur and Nimitz begin competing for resources and credit, a rivalry the engine captures in their inter-commander scores."
+    },
+    {
+      "session": 7,
+      "date": "2024-01-01",
+      "recap": "**Session 7 \u2014 El Alamein and Stalingrad (1942\u20131943)**\n\nThe twin turning points. El Alamein ends the North African threat to the Suez Canal; Stalingrad ends the German offensive capacity in the East. Both happen within three months of each other.\n\n**Causal chain:** Montgomery's score peaks; Rommel's collapses. The rival edge between them delivers the cleanest payoff in the war's first half. Zhukov's Stalingrad encirclement is the Eastern Front's decisive moment \u2014 300,000 Germans surrounded is a wound Germany cannot heal. The engine correctly scores both as the war's major inflection point."
+    },
+    {
+      "session": 8,
+      "date": "2024-01-01",
+      "recap": "**Session 8 \u2014 Sicily, Italy, Mussolini Falls (1943)**\n\nThe first Axis partner collapses. Italy's defection is strategically significant (it opens the Mediterranean and forces German redeployment) but tactically costly \u2014 fighting up the Italian boot is some of the most grueling combat of the war.\n\n**Causal chain:** Mussolini's fall ripples through the Axis alliance. The ally edge between Hitler and Mussolini, already strained by Italy's military failures, reaches its lowest point. The engine records this correctly: Mussolini's scores collapse as Allied scores in the Mediterranean improve."
+    },
+    {
+      "session": 9,
+      "date": "2024-01-01",
+      "recap": "**Session 9 \u2014 D-Day and Liberation (1944)**\n\nThe war's climactic Allied operation. D-Day is the result of two years of argument \u2014 Churchill wanted to fight in the Mediterranean; the Americans wanted to cross the Channel. The Americans were right.\n\n**Causal chain:** Patton's breakout delivers what Eisenhower's coalition building makes possible. De Gaulle's Paris entry is the political payoff. The July 20 plot reveals the Wehrmacht's own crisis of faith \u2014 senior officers try to kill their F\u00fchrer. Rommel's death is the engine's most complex inter-NPC event: the ally edge between Rommel and Hitler terminates with the poison capsule."
+    },
+    {
+      "session": 10,
+      "date": "2024-01-01",
+      "recap": "**Session 10 \u2014 The Eastern Colossus and V-E Day (1945)**\n\nThe war in Europe ends where it was decided \u2014 on the Eastern Front. Operation Bagration is larger than D-Day, less photographed, and more decisive. The Soviet contribution to defeating Germany is proportionally the largest of any Allied nation.\n\n**Causal chain:** Hitler's score reaches its floor. The rival edge between Zhukov and Hitler terminates in the ruins of Berlin. Germany's surrender on May 8 closes all open rivalries in the European theater. The engine's European map reaches its final state: every Axis entity at war or hostile; every Allied entity improved."
+    },
+    {
+      "session": 11,
+      "date": "2024-01-01",
+      "recap": "**Session 11 \u2014 The Holocaust and Liberation of the Camps**\n\nThe Holocaust is not a sidebar. It is the war's central crime and its most important fact. Six million Jews murdered, alongside Roma, disabled people, political prisoners, Soviet POWs, and others. The machinery of killing runs until the camps are physically liberated.\n\n**Causal chain:** Himmler's score reaches its absolute floor. The ripple from the camp liberations reaches every Allied entity \u2014 Eisenhower's insistence on witness is the right instinct. Himmler's attempted escape and surrender offers are the final record of a man who built an extermination apparatus and then tried to trade it for his life. The engine records it as it was: cowardice after atrocity."
+    },
+    {
+      "session": 12,
+      "date": "2024-01-01",
+      "recap": "**Session 12 \u2014 Pacific Endgame: VJ Day (September 2, 1945)**\n\nThe war ends where it began in the Pacific \u2014 with a decision made by one man and delivered from the air. Whether the atomic bombs were necessary is the most argued question of the twentieth century. What is not argued: they ended the war.\n\n**Causal chain:** Truman inherits a war he did not start and makes a decision no one else would have to make. Hirohito's radio address is the moment the engine has been building toward: the hostile faction surrenders. The rival edges between Imperial Japan and every Allied entity go quiet. MacArthur on the deck of the Missouri is the final positive ripple in the Pacific map.\n\nTotal dead: seventy to eighty-five million people. The engine cannot hold that number. Neither can we."
+    }
+  ]
+}
