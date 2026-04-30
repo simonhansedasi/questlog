@@ -11,3 +11,14 @@ users.json
 campaigns/spelljammer/
 campaigns/dotmm/
 campaigns/*/dm/
+campaigns/example/
+
+# Secrets directory
+secrets/
+
+# Project instructions — keep off GitHub
+CLAUDE.md
+
+# Jupyter artifacts
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
