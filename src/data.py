@@ -377,7 +377,7 @@ def get_factions(slug, include_hidden=True):
     return factions
 
 
-def add_faction(slug, name, relationship, description, hidden=True, image_url=None, dm_notes=None):
+def add_faction(slug, name, relationship, description, hidden=True, image_url=None, dm_notes=None, role=None):
     data = _load(slug, "world/factions.json")
     entry = {
         "id": slugify(name),
@@ -387,6 +387,8 @@ def add_faction(slug, name, relationship, description, hidden=True, image_url=No
         "hidden": hidden,
         "log": [],
     }
+    if role:
+        entry["role"] = role
     if image_url:
         entry["image_url"] = image_url
     if dm_notes:
@@ -395,10 +397,15 @@ def add_faction(slug, name, relationship, description, hidden=True, image_url=No
     _save(slug, data, "world/factions.json")
 
 
-def update_faction(slug, faction_id, relationship=None, description=None, score_offset=None, dm_notes=None, image_url=None):
+def update_faction(slug, faction_id, relationship=None, description=None, score_offset=None, dm_notes=None, image_url=None, role=None):
     data = _load(slug, "world/factions.json")
     for f in data.get("factions", []):
         if f["id"] == faction_id:
+            if role is not None:
+                if role:
+                    f["role"] = role
+                else:
+                    f.pop("role", None)
             if relationship is not None:
                 f["relationship"] = relationship
             if description is not None:

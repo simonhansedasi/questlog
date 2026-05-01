@@ -27,8 +27,7 @@
   <p style="color:var(--muted); font-size:0.85rem; margin-bottom:16px; line-height:1.5;">
     Upload a <code>.txt</code> or <code>.md</code> file containing your full campaign notes.
     Sessions are auto-detected from headers like <code>## Session 3</code> or <code>Session 3:</code>.
-    Each session's notes will be parsed by AI and committed automatically — no review step.
-    You can edit individual entries from the DM dashboard afterward.
+    Events are proposed for review before anything is committed to the world.
   </p>
 
   <div id="upload-section">
@@ -49,7 +48,7 @@
     </div>
     <div id="session-list" style="display:flex; flex-direction:column; gap:6px; margin-bottom:16px; max-height:300px; overflow-y:auto;"></div>
     <button id="start-import" style="background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:8px 20px; font-size:0.88rem; font-weight:700; cursor:pointer;">
-      Import All Sessions
+      Parse Sessions
     </button>
     <button id="cancel-import" style="background:none; border:1px solid var(--border); color:var(--muted); border-radius:4px; padding:8px 16px; font-size:0.88rem; cursor:pointer; margin-left:8px;">
       Choose Different File
@@ -57,11 +56,32 @@
   </div>
 
   <div id="progress-section" style="display:none; margin-top:20px;">
-    <h3 style="margin:0 0 12px; font-size:0.95rem; color:var(--text);">Importing…</h3>
+    <h3 style="margin:0 0 12px; font-size:0.95rem; color:var(--text);">Parsing…</h3>
     <div id="progress-bar-track" style="background:var(--surface2); border-radius:4px; height:6px; margin-bottom:16px;">
       <div id="progress-bar" style="background:var(--gold); height:6px; border-radius:4px; width:0%; transition:width 0.3s;"></div>
     </div>
     <div id="session-results" style="display:flex; flex-direction:column; gap:4px; max-height:320px; overflow-y:auto;"></div>
+  </div>
+
+  <div id="review-section" style="display:none; margin-top:20px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+      <h3 id="review-title" style="margin:0; font-size:0.95rem; color:var(--text);"></h3>
+      <button id="commit-btn" onclick="runCommit()"
+              style="background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:8px 20px; font-size:0.88rem; font-weight:700; cursor:pointer;">
+        Commit Selected (0)
+      </button>
+    </div>
+    <div id="review-list" style="display:flex; flex-direction:column; gap:16px; margin-bottom:16px; max-height:600px; overflow-y:auto;"></div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <button id="commit-btn-2" onclick="runCommit()"
+              style="background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:8px 20px; font-size:0.88rem; font-weight:700; cursor:pointer;">
+        Commit Selected (0)
+      </button>
+      <button onclick="resetToUpload()"
+              style="background:none; border:1px solid var(--border); color:var(--muted); border-radius:4px; padding:8px 14px; font-size:0.88rem; cursor:pointer;">
+        Cancel
+      </button>
+    </div>
   </div>
 
   <div id="done-section" style="display:none; margin-top:20px;">
@@ -161,6 +181,7 @@
 <script>
 const slug = {{ slug | tojson }};
 let fullSessions = [];
+let allProposals = [];
 let obsData = null;
 
 // ── Tab switching ───────────────────────────────────────────────────────────
@@ -181,18 +202,22 @@ const dropLabel = document.getElementById("drop-label");
 const uploadSection = document.getElementById("upload-section");
 const previewSection = document.getElementById("preview-section");
 const progressSection = document.getElementById("progress-section");
+const reviewSection = document.getElementById("review-section");
 const doneSection = document.getElementById("done-section");
 
 function resetToUpload() {
   fullSessions = [];
+  allProposals = [];
   fileInput.value = "";
   dropLabel.innerHTML = 'Click to choose a file or drag and drop here<br><span style="font-size:0.78rem;opacity:0.6;">.txt or .md — up to 500 KB</span>';
   uploadSection.style.display = "";
   previewSection.style.display = "none";
   progressSection.style.display = "none";
+  reviewSection.style.display = "none";
   doneSection.style.display = "none";
   document.getElementById("session-list").innerHTML = "";
   document.getElementById("session-results").innerHTML = "";
+  document.getElementById("review-list").innerHTML = "";
   document.getElementById("progress-bar").style.width = "0%";
 }
 
@@ -232,16 +257,17 @@ function showPreview(sessions, filename) {
   ).join("");
 }
 
-document.getElementById("start-import").addEventListener("click", runImport);
+document.getElementById("start-import").addEventListener("click", runParse);
 document.getElementById("cancel-import").addEventListener("click", resetToUpload);
 document.getElementById("import-another").addEventListener("click", resetToUpload);
 
-async function runImport() {
+async function runParse() {
   previewSection.style.display = "none";
   progressSection.style.display = "";
   const results = document.getElementById("session-results");
   const bar = document.getElementById("progress-bar");
-  let totalCommitted = 0, totalCreated = 0, errors = 0;
+  allProposals = [];
+  let errors = 0;
 
   for (let i = 0; i < fullSessions.length; i++) {
     const s = fullSessions[i];
@@ -253,7 +279,7 @@ async function runImport() {
     results.scrollTop = results.scrollHeight;
 
     try {
-      const resp = await fetch(`/${slug}/dm/import/session`, {
+      const resp = await fetch(`/${slug}/dm/import/session/propose`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ session_n: s.n, notes: s.text })
@@ -261,10 +287,9 @@ async function runImport() {
       if (!resp.ok) throw new Error(resp.statusText);
       const d = await resp.json();
       if (d.error) throw new Error(d.error);
-      totalCommitted += d.committed || 0;
-      totalCreated += (d.created || []).length;
-      const newEntities = (d.created || []).length > 0 ? ` — ${d.created.length} new entities` : "";
-      row.innerHTML = `<span style="color:var(--gold);">✓</span> Session ${s.n}: ${d.committed} event${d.committed !== 1 ? "s" : ""}${newEntities}`;
+      allProposals.push(...(d.proposals || []));
+      const n = (d.proposals || []).length;
+      row.innerHTML = `<span style="color:var(--gold);">✓</span> Session ${s.n}: ${n} event${n !== 1 ? "s" : ""} proposed`;
     } catch (err) {
       errors++;
       row.innerHTML = `<span style="color:#e05c5c;">✗</span> Session ${s.n}: ${err.message}`;
@@ -273,9 +298,140 @@ async function runImport() {
 
   bar.style.width = "100%";
   progressSection.style.display = "none";
-  doneSection.style.display = "";
-  document.getElementById("done-summary").textContent =
-    `${totalCommitted} events committed across ${fullSessions.length} sessions. ${totalCreated} new entities created.${errors > 0 ? ` ${errors} session(s) failed.` : ""}`;
+
+  if (allProposals.length === 0) {
+    doneSection.style.display = "";
+    document.getElementById("done-summary").textContent =
+      `No events found.${errors > 0 ? ` ${errors} session(s) failed to parse.` : ""}`;
+    return;
+  }
+
+  renderReview();
+}
+
+function renderReview() {
+  const bySession = {};
+  allProposals.forEach((p, i) => {
+    p._idx = i;
+    const sn = p.session || 1;
+    if (!bySession[sn]) bySession[sn] = [];
+    bySession[sn].push(p);
+  });
+
+  const sessionNums = Object.keys(bySession).map(Number).sort((a, b) => a - b);
+  const total = allProposals.length;
+  document.getElementById("review-title").textContent =
+    `${total} event${total !== 1 ? "s" : ""} across ${sessionNums.length} session${sessionNums.length !== 1 ? "s" : ""} — review before committing`;
+
+  const list = document.getElementById("review-list");
+  list.innerHTML = sessionNums.map(sn => {
+    const proposals = bySession[sn];
+    const cards = proposals.map(p => proposalCard(p)).join("");
+    return `<div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+        <span style="color:var(--gold); font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">
+          Session ${sn} — ${proposals.length} event${proposals.length !== 1 ? "s" : ""}
+        </span>
+        <div style="display:flex; gap:6px;">
+          <button onclick="sessionSelectAll(${sn}, true)" style="background:none; border:1px solid var(--border); color:var(--muted); border-radius:4px; padding:2px 8px; font-size:0.75rem; cursor:pointer;">All</button>
+          <button onclick="sessionSelectAll(${sn}, false)" style="background:none; border:1px solid var(--border); color:var(--muted); border-radius:4px; padding:2px 8px; font-size:0.75rem; cursor:pointer;">None</button>
+        </div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:4px;">${cards}</div>
+    </div>`;
+  }).join("");
+
+  updateCommitCount();
+  reviewSection.style.display = "";
+}
+
+function proposalCard(p) {
+  const typeBadge = {
+    npc: `<span style="color:var(--blue); font-size:0.7rem; font-weight:700;">NPC</span>`,
+    faction: `<span style="color:var(--purple); font-size:0.7rem; font-weight:700;">FACTION</span>`,
+    ship: `<span style="color:var(--muted); font-size:0.7rem; font-weight:700;">SHIP</span>`,
+    condition: `<span style="color:#8bc6a0; font-size:0.7rem; font-weight:700;">CONDITION</span>`,
+  }[p.entity_type] || `<span style="color:var(--muted); font-size:0.7rem; font-weight:700;">${(p.entity_type || "").toUpperCase()}</span>`;
+
+  const polColor = p.polarity === "positive" ? "var(--gold)" : p.polarity === "negative" ? "#e05c5c" : "var(--muted)";
+  const polSym = p.polarity === "positive" ? "+" : p.polarity === "negative" ? "−" : "○";
+  const polBadge = `<span style="color:${polColor}; font-size:0.82rem; font-weight:700;">${polSym}</span>`;
+  const dmTag = p.visibility === "dm_only"
+    ? `<span style="color:var(--muted); font-size:0.7rem; font-style:italic;">DM only</span>` : "";
+
+  const name = (p.entity_name || "").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const note = (p.note || "").replace(/"/g, "&quot;");
+
+  return `<label style="display:flex; align-items:flex-start; gap:10px; padding:8px 10px; background:var(--surface2); border-radius:5px; cursor:pointer;">
+    <input type="checkbox" data-proposal-idx="${p._idx}" checked onchange="updateCommitCount()"
+           style="margin-top:4px; accent-color:var(--gold); flex-shrink:0;">
+    <div style="flex:1; min-width:0;">
+      <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-bottom:5px;">
+        ${typeBadge}
+        <span style="font-weight:600; font-size:0.88rem;">${name}</span>
+        ${polBadge}${dmTag}
+      </div>
+      <input type="text" data-note-idx="${p._idx}" value="${note}"
+             style="width:100%; box-sizing:border-box; background:var(--surface); border:1px solid var(--border); border-radius:3px; padding:4px 8px; font-size:0.82rem; color:var(--text); line-height:1.4;">
+    </div>
+  </label>`;
+}
+
+function sessionSelectAll(sn, checked) {
+  allProposals.forEach(p => {
+    if ((p.session || 1) === sn) {
+      const cb = document.querySelector(`input[data-proposal-idx="${p._idx}"]`);
+      if (cb) cb.checked = checked;
+    }
+  });
+  updateCommitCount();
+}
+
+function updateCommitCount() {
+  const n = document.querySelectorAll('#review-list input[type=checkbox]:checked').length;
+  const label = `Commit Selected (${n})`;
+  document.getElementById("commit-btn").textContent = label;
+  document.getElementById("commit-btn-2").textContent = label;
+}
+
+async function runCommit() {
+  const checkboxes = document.querySelectorAll('#review-list input[type=checkbox]:checked');
+  if (!checkboxes.length) return;
+
+  const entries = [];
+  checkboxes.forEach(cb => {
+    const idx = parseInt(cb.dataset.proposalIdx);
+    const p = Object.assign({}, allProposals[idx]);
+    const noteInput = document.querySelector(`input[data-note-idx="${idx}"]`);
+    if (noteInput) p.note = noteInput.value.trim();
+    entries.push(p);
+  });
+
+  const btn1 = document.getElementById("commit-btn");
+  const btn2 = document.getElementById("commit-btn-2");
+  btn1.disabled = btn2.disabled = true;
+  btn1.textContent = btn2.textContent = "Committing…";
+
+  try {
+    const resp = await fetch(`/${slug}/dm/import/session/commit`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ entries })
+    });
+    if (!resp.ok) throw new Error(resp.statusText);
+    const d = await resp.json();
+    if (d.error) throw new Error(d.error);
+
+    reviewSection.style.display = "none";
+    doneSection.style.display = "";
+    const newEntities = d.created && d.created.length > 0 ? ` ${d.created.length} new entities created.` : "";
+    document.getElementById("done-summary").textContent =
+      `${d.committed} event${d.committed !== 1 ? "s" : ""} committed.${newEntities}`;
+  } catch (err) {
+    btn1.disabled = btn2.disabled = false;
+    updateCommitCount();
+    alert("Commit failed: " + err.message);
+  }
 }
 
 // ── Obsidian Vault ──────────────────────────────────────────────────────────

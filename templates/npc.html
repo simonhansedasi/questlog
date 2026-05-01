@@ -31,7 +31,7 @@
 
 <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:6px;">
   {% for fid in npc.factions %}
-  {% set npc_faction = factions | selectattr('id', 'equalto', fid) | first if factions else none %}
+  {% set npc_faction = link_factions | selectattr('id', 'equalto', fid) | first %}
   <a href="/{{ slug }}/world/faction/{{ fid }}"
      style="background:var(--surface2); border:1px solid var(--border); border-radius:4px; padding:2px 8px;
             font-size:0.75rem; color:var(--muted); text-decoration:none;">
@@ -99,8 +99,8 @@
   {%- set _formal = r.get('formal_relation') -%}
   {%- set _personal = r.get('personal_relation') -%}
   {%- set _single = r.get('relation') -%}
-  {%- set _target_npc = (world_npcs | selectattr('id','equalto',r.target) | first) if world_npcs else none -%}
-  {%- set _target_fac = (all_factions | selectattr('id','equalto',r.target) | first) if all_factions else none -%}
+  {%- set _target_npc = link_npcs | selectattr('id','equalto',r.target) | first -%}
+  {%- set _target_fac = link_factions | selectattr('id','equalto',r.target) | first -%}
   {%- set _ns = namespace(char=none) -%}
   {%- if r.target.startswith('_char_') and party -%}
     {%- for c in party -%}

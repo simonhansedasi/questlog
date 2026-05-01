@@ -154,12 +154,16 @@ def wikilinks_filter(text, slug, npcs, factions):
     escaped = str(Markup.escape(text))
 
     def replace(m):
-        name = m.group(1)
-        key = name.lower()
+        inner = m.group(1)
+        if '|' in inner:
+            entity, display = inner.split('|', 1)
+        else:
+            entity = display = inner
+        key = entity.lower()
         if key in lookup:
             etype, eid = lookup[key]
-            return f'<a href="/{slug}/world/{etype}/{eid}" class="wikilink">{Markup.escape(name)}</a>'
-        return f'<span class="wikilink-missing">[[{Markup.escape(name)}]]</span>'
+            return f'<a href="/{slug}/world/{etype}/{eid}" class="wikilink">{Markup.escape(display)}</a>'
+        return f'<span class="wikilink-missing">[[{Markup.escape(inner)}]]</span>'
 
     return Markup(re.sub(r'\[\[([^\]\[]+)\]\]', replace, escaped))
 
@@ -685,7 +689,7 @@ def clone_campaign(slug):
     return redirect(url_for("dm", slug=new_slug))
 
 
-@app.route("/demo/reset", methods=["POST"])
+@app.route("/demo/reset", methods=["GET", "POST"])
 def demo_reset():
     reset_demo(force=True)
     return redirect("/demo/")
@@ -2606,6 +2610,176 @@ def dm_commit_proposals(slug):
     return jsonify({"committed": committed, "created": created, "condition_alerts": cond_alerts})
 
 
+@app.route("/<slug>/dm/import/session/propose", methods=["POST"])
+@dm_required
+@limiter.limit("300 per hour")
+def dm_import_session_propose(slug):
+    meta = load(slug, "campaign.json")
+    data = request.get_json()
+    session_n = int(data.get("session_n", 1))
+    notes = data.get("notes", "").strip()[:10_000]
+    if not notes:
+        return jsonify({"proposals": [], "session_n": session_n})
+
+    npcs = db.get_npcs(slug, include_hidden=True)
+    factions = db.get_factions(slug, include_hidden=True)
+    party = db.get_party(slug)
+    causal_context = db.build_causal_context(slug, session_n)
+
+    try:
+        proposals = ai.propose_log_entries(
+            notes, meta.get("name", ""), session_n,
+            npcs, factions, party=party,
+            causal_context=causal_context
+        )
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+    for p in proposals:
+        p["session"] = session_n
+
+    return jsonify({"proposals": proposals, "session_n": session_n})
+
+
+@app.route("/<slug>/dm/import/session/commit", methods=["POST"])
+@dm_required
+@limiter.limit("30 per hour")
+def dm_import_session_commit(slug):
+    data = request.get_json()
+    if not data or "entries" not in data:
+        return jsonify({"error": "No entries"}), 400
+
+    current_session = db.get_current_session(slug)
+    active_branch_id = session.get(f"branch_{slug}") or None
+
+    npc_by_name = {n["name"].lower(): n["id"] for n in db.get_npcs(slug, include_hidden=True)}
+    faction_by_name = {f["name"].lower(): f["id"] for f in db.get_factions(slug, include_hidden=True)}
+    condition_by_name = {c["name"].lower(): c["id"] for c in db.get_conditions(slug, include_hidden=True, include_resolved=True)}
+    party_names = {c["name"].lower() for c in db.get_party(slug)}
+
+    committed = 0
+    created = []
+
+    # Pre-pass: create new NPC/faction entities first so actor references resolve
+    for entry in data["entries"]:
+        if (entry.get("entity_name") or "").strip().lower() in party_names:
+            continue
+        etype = entry.get("entity_type", "npc")
+        if entry.get("entity_id") or etype in ("ship", "condition"):
+            continue
+        name = (entry.get("entity_name") or "").strip()
+        if not name:
+            continue
+        name_lower = name.lower()
+        if etype == "faction":
+            if name_lower not in faction_by_name:
+                rel = "friendly" if entry.get("polarity") == "positive" else "hostile" if entry.get("polarity") == "negative" else "neutral"
+                db.add_faction(slug, name, rel, description="", hidden=True)
+                faction_by_name[name_lower] = db.slugify(name)
+                created.append({"name": name, "type": "faction", "id": db.slugify(name)})
+        else:
+            if name_lower not in npc_by_name and name_lower not in faction_by_name:
+                rel = "friendly" if entry.get("polarity") == "positive" else "hostile" if entry.get("polarity") == "negative" else "neutral"
+                faction_ref = _resolve_faction(slug, entry.get("faction_name"), faction_by_name, created)
+                db.add_npc(slug, name, role="", relationship=rel, description="", hidden=True,
+                           factions=[faction_ref] if faction_ref else [])
+                npc_by_name[name_lower] = db.slugify(name)
+                created.append({"name": name, "type": "npc", "id": db.slugify(name)})
+
+    for entry in data["entries"]:
+        if (entry.get("entity_name") or "").strip().lower() in party_names:
+            continue
+        entity_id = entry.get("entity_id")
+        entity_type = entry.get("entity_type", "npc")
+        note = entry.get("note", "").strip()[:500]
+        if not note:
+            continue
+
+        if entity_type == "ship":
+            ship_name = (entry.get("entity_name") or "").strip()
+            session_n = int(entry.get("session") or current_session)
+            if ship_name and db.log_ship(slug, ship_name, session_n, note,
+                                         event_type=entry.get("event_type"),
+                                         visibility=entry.get("visibility", "public")):
+                committed += 1
+            continue
+
+        if entity_type == "condition":
+            if not entity_id:
+                name = (entry.get("entity_name") or "").strip()
+                if not name:
+                    continue
+                entity_id = condition_by_name.get(name.lower())
+                if not entity_id:
+                    meta_c = entry.get("condition_meta") or {}
+                    entity_id = db.slugify(name)
+                    db.add_condition(slug, name, region=meta_c.get("region", ""),
+                                     effect_type=meta_c.get("effect_type", "custom"),
+                                     effect_scope=meta_c.get("effect_scope", ""),
+                                     magnitude=meta_c.get("magnitude", ""), hidden=True)
+                    condition_by_name[name.lower()] = entity_id
+                    created.append({"name": name, "type": "condition", "id": entity_id})
+            polarity = entry.get("polarity") or None
+            intensity = int(entry.get("intensity") or 1)
+            session_n = int(entry.get("session") or current_session)
+            src_evt = db.log_condition(slug, entity_id, session_n, note, polarity=polarity,
+                                       intensity=intensity, event_type=entry.get("event_type"),
+                                       visibility=entry.get("visibility", "public"))
+            if polarity:
+                db.apply_ripple(slug, entity_id, "condition", session_n, note, polarity, intensity,
+                                entry.get("event_type"), visibility=entry.get("visibility", "public"),
+                                source_event_id=src_evt)
+            committed += 1
+            continue
+
+        if not entity_id:
+            name = (entry.get("entity_name") or "").strip()
+            if not name:
+                continue
+            name_lower = name.lower()
+            if entity_type == "faction":
+                entity_id = faction_by_name.get(name_lower) or npc_by_name.get(name_lower)
+            else:
+                entity_id = npc_by_name.get(name_lower) or faction_by_name.get(name_lower)
+            if not entity_id:
+                rel = "friendly" if entry.get("polarity") == "positive" else "hostile" if entry.get("polarity") == "negative" else "neutral"
+                entity_id = db.slugify(name)
+                if entity_type == "faction":
+                    db.add_faction(slug, name, rel, description="", hidden=True)
+                    faction_by_name[name_lower] = entity_id
+                else:
+                    faction_ref = _resolve_faction(slug, entry.get("faction_name"), faction_by_name, created)
+                    db.add_npc(slug, name, role="", relationship=rel, description="", hidden=True,
+                               factions=[faction_ref] if faction_ref else [])
+                    npc_by_name[name_lower] = entity_id
+                created.append({"name": name, "type": entity_type, "id": entity_id})
+
+        polarity = entry.get("polarity") or None
+        intensity = int(entry.get("intensity") or 1)
+        event_type = entry.get("event_type") or None
+        visibility = entry.get("visibility", "public")
+        session_n = int(entry.get("session") or current_session)
+        actor_id = entry.get("actor_id") or None
+        actor_type = entry.get("actor_type") or None
+
+        if entity_type == "faction" or entity_id in faction_by_name.values():
+            src_evt = db.log_faction(slug, entity_id, session_n, note, polarity=polarity,
+                                     intensity=intensity, event_type=event_type, visibility=visibility,
+                                     actor_id=actor_id, actor_type=actor_type,
+                                     branch=active_branch_id)
+        else:
+            src_evt = db.log_npc(slug, entity_id, session_n, note, polarity=polarity,
+                                 intensity=intensity, event_type=event_type, visibility=visibility,
+                                 actor_id=actor_id, actor_type=actor_type,
+                                 branch=active_branch_id)
+        if polarity:
+            db.apply_ripple(slug, entity_id, entity_type, session_n, note, polarity, intensity,
+                            event_type, visibility=visibility, source_event_id=src_evt)
+        committed += 1
+
+    return jsonify({"committed": committed, "created": created})
+
+
 @app.route("/<slug>/dm/ripple/<ripple_id>/reveal", methods=["POST"])
 @dm_required
 def dm_reveal_ripple(slug, ripple_id):
@@ -3742,6 +3916,7 @@ def dm_edit_faction(slug, faction_id):
         relationship=target_rel,
         description=request.form.get("description") or None,
         score_offset=score_offset,
+        role=request.form.get("role", "").strip() or None,
     )
     if request.form.get("ajax"):
         return jsonify({"ok": True})

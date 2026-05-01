@@ -3,9 +3,10 @@
     {
       "id": "edda_sorn",
       "name": "Edda Sorn",
-      "role": "Trade Compact agent \u2014 local liaison, probable whistleblower",
+      "role": "Trade Compact agent — local liaison, probable whistleblower",
       "relationship": "ally",
-      "description": "She was sent to Ashford to oversee Compact interests and immediately started noticing things she wasn't supposed to notice. She has been quietly documenting the discrepancy between declared mine output and actual shipments for four months. She approached the party because she doesn't know who else to trust.",
+      "description": "She was sent to Ashford to oversee [[The Trade Compact|Compact]] interests and immediately started noticing things she wasn't supposed to notice. She has been quietly documenting the discrepancy between declared mine output and actual shipments for four months. She approached the party because she doesn't know who else to trust — not [[Governor Harwick Denn]], not the Compact office, and not [[Bram Ketterly]], though she has started to wonder.",
+      "dm_notes": "She has documented enough to implicate someone senior in the [[The Trade Compact|Trade Compact]] — she doesn't know the name yet, but the trail is there. If threatened, she has a second copy of her records with a courier in the capital. She will not be silenced easily, and she knows it.",
       "hidden": false,
       "factions": [
         "the_trade_compact"
@@ -40,7 +41,7 @@
         {
           "id": "evt_b98cc2",
           "session": 3,
-          "note": "Consequence of Maren Vosk (rival): Ironmask escalation \u2014 doubled patrols, new surcharge on merchants.",
+          "note": "Consequence of Maren Vosk (rival): Ironmask escalation — doubled patrols, new surcharge on merchants.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
@@ -56,7 +57,7 @@
         {
           "id": "evt_b43445",
           "session": 5,
-          "note": "Consequence of Maren Vosk (rival): The Ledger captured \u2014 Ironmask operation collapses.",
+          "note": "Consequence of Maren Vosk (rival): The Ledger captured — Ironmask operation collapses.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
@@ -106,9 +107,10 @@
     {
       "id": "bram_ketterly",
       "name": "Bram Ketterly",
-      "role": "Dwarf freight merchant \u2014 prisoner at Greystone Keep",
+      "role": "Dwarf freight merchant — prisoner at Greystone Keep",
       "relationship": "ally",
-      "description": "He refused to pay the Ironmask toll three months ago on principle. They took his wagon, his cargo, and him. He is currently being held at Greystone Keep as a 'debt collection.' He has information about the Shadow Wing supply route that he doesn't know he has.",
+      "description": "He refused to pay the [[The Ironmasks|Ironmask]] toll three months ago on principle. They took his wagon, his cargo, and him. He is currently being held at Greystone Keep as a 'debt collection.' He has information about the [[The Shadow Wing|Shadow Wing]] supply route that he doesn't know he has — and [[Edda Sorn]] has been waiting for someone to go get him.",
+      "dm_notes": "The [[The Shadow Wing|Shadow Wing]] couriers he saw wore a specific brooch — a wing etched in silver. He can describe it clearly but doesn't know what it means. He would recognize [[Serev]] on sight if given a physical description to compare against.",
       "hidden": false,
       "factions": [
         "the_trade_compact"
@@ -137,9 +139,10 @@
     {
       "id": "governor_harwick_denn",
       "name": "Governor Harwick Denn",
-      "role": "Appointed Governor of Ashford \u2014 compromised",
+      "role": "Appointed Governor of Ashford — compromised",
       "relationship": "neutral",
-      "description": "He was appointed by the Trade Compact to run Ashford. He has been quietly paying the Ironmask toll from civic funds and recording it as road maintenance. He knows exactly what he has done and spends his evenings convincing himself it was the only reasonable option. He is not wrong that he had no other options. He is wrong that it ends there.",
+      "description": "He was appointed by [[The Trade Compact]] to run Ashford. He has been quietly paying the [[The Ironmasks|Ironmask]] toll from civic funds and recording it as road maintenance. He knows exactly what he has done and spends his evenings convincing himself it was the only reasonable option. He is not wrong that he had no other options. He is wrong that it ends there.",
+      "dm_notes": "He has been keeping a personal ledger of every payment — names, dates, amounts. Not as evidence against the Ironmasks. As insurance against the [[The Trade Compact|Trade Compact]] if they ever decide to make him a scapegoat. He hid it behind a false panel in his study. He will not produce it voluntarily, but he will not destroy it either.",
       "hidden": false,
       "factions": [
         "the_trade_compact"
@@ -174,7 +177,7 @@
         {
           "id": "evt_a45658",
           "session": 3,
-          "note": "Consequence of Maren Vosk (ally): Ironmask escalation \u2014 doubled patrols, new surcharge on merchants.",
+          "note": "Consequence of Maren Vosk (ally): Ironmask escalation — doubled patrols, new surcharge on merchants.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
@@ -190,7 +193,7 @@
         {
           "id": "evt_b30c89",
           "session": 5,
-          "note": "Consequence of Maren Vosk (ally): The Ledger captured \u2014 Ironmask operation collapses.",
+          "note": "Consequence of Maren Vosk (ally): The Ledger captured — Ironmask operation collapses.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
@@ -223,9 +226,10 @@
     {
       "id": "nessa_crane",
       "name": "Nessa Crane",
-      "role": "Proprietor \u2014 Ashford Trading Company",
+      "role": "Proprietor — Ashford Trading Company",
       "relationship": "neutral",
-      "description": "She runs the largest trading post in Ashford. She has been paying the toll and passing the cost to her suppliers. Her suppliers are starting to push back. She wants the Ironmasks gone but is not willing to be seen working against them until it is safe to do so. She is watching the party's progress carefully.",
+      "description": "She runs the largest trading post in Ashford. She has been paying the [[The Ironmasks|Ironmask]] toll and passing the cost to her suppliers. Her suppliers are starting to push back. She wants the Ironmasks gone but is not willing to be seen working against them until it is safe to do so. She is watching the party's progress carefully.",
+      "dm_notes": "One of her suppliers is a shell company controlled by [[The Shadow Wing]]. She did not know that when she signed the contract and has been afraid to back out since. If the party helps her dissolve the arrangement quietly, she becomes a reliable and well-connected ally.",
       "hidden": false,
       "factions": [
         "the_trade_compact"
@@ -236,9 +240,10 @@
     {
       "id": "orvyn_thatch",
       "name": "Orvyn Thatch",
-      "role": "Proprietor \u2014 Thatch's General Store",
+      "role": "Proprietor — Thatch's General Store",
       "relationship": "ally",
-      "description": "The town's most reliable gossip. He knows everything that moves through Ashford because he sells everything to everyone. He has been quietly giving discounts to people the Ironmasks have victimized, which has strained his margins. He is the party's best source of local intelligence.",
+      "description": "The town's most reliable gossip. He knows everything that moves through Ashford because he sells everything to everyone. He has been quietly giving discounts to people [[The Ironmasks]] have victimized, which has strained his margins. He is the party's best source of local intelligence.",
+      "dm_notes": "He keeps a hidden list of every person the [[The Ironmasks|Ironmasks]] have victimized and what they took — names, dates, amounts. He calls it his debt ledger. He has been building it for eight months, waiting for someone who could actually use it. He will hand it over immediately if asked.",
       "hidden": false,
       "factions": [],
       "hidden_factions": [],
@@ -257,9 +262,10 @@
     {
       "id": "petra_holt",
       "name": "Petra Holt",
-      "role": "Proprietor \u2014 Ashford Miners' Registry",
+      "role": "Proprietor — Ashford Miners' Registry",
       "relationship": "ally",
-      "description": "She registers every miner, tracks shift schedules, and maintains the payroll ledger for the Vein. She has noticed that payroll deductions for 'safety equipment' don't correspond to any equipment she can see. The Ironmasks are running a payroll skim through the Registry. She has the evidence.",
+      "description": "She registers every miner, tracks shift schedules, and maintains the payroll ledger for the Vein. She has noticed that payroll deductions for 'safety equipment' don't correspond to any equipment she can see. The [[The Ironmasks|Ironmasks]] are running a payroll skim through the Registry. She has the evidence — and [[Sister Veyne]] is the only person in Ashford she fully trusts.",
+      "dm_notes": "She recognized one of the [[The Ironmasks|Ironmask]] collectors as a former Registry clerk she dismissed two years ago. She has not told anyone. She doesn't know if it's relevant, but the coincidence has been bothering her for months. The name is in her employment records.",
       "hidden": false,
       "factions": [],
       "hidden_factions": [],
@@ -288,7 +294,8 @@
       "name": "Farlan Dusk",
       "role": "Retired Greywood Ranger scout",
       "relationship": "ally",
-      "description": "Retired on a hip injury, living in Ashford for three years. He still knows the Greywood better than anyone active. He has been watching the Ironmask supply routes out of old habit and has a very good idea of where they go. He will help if asked directly. He doesn't volunteer.",
+      "description": "Retired on a hip injury, living in Ashford for three years. He still knows the Greywood better than anyone in the active [[Greywood Rangers]]. He has been watching the [[The Ironmasks|Ironmask]] supply routes out of old habit and has a very good idea of where they go. He will help if asked directly. He doesn't volunteer. [[Thane Bergrak]] is the one person in town he's on speaking terms with from before.",
+      "dm_notes": "His hip injury was an [[The Ironmasks|Ironmask]] beating three years ago — before the gang had that name. He has personal history with whoever is running this organization and suspects [[Corvin Ashale]] specifically, based on wagon routes he was tracking at the time. He has no proof and will not say the name unless pushed.",
       "hidden": false,
       "factions": [
         "greywood_rangers"
@@ -314,9 +321,10 @@
     {
       "id": "sister_veyne",
       "name": "Sister Veyne",
-      "role": "Active Greywood Ranger \u2014 cleric attached to the patrol",
+      "role": "Active Greywood Ranger — cleric attached to the patrol",
       "relationship": "ally",
-      "description": "The only active Ranger currently in Ashford. She has been filing incident reports about the Ironmasks for two months. The reports go nowhere because they go to the Governor. She has started filing them with the Trade Compact instead, which is how Edda Sorn found out about the payroll skim.",
+      "description": "The only active [[Greywood Rangers|Ranger]] currently in Ashford. She has been filing incident reports about [[The Ironmasks]] for two months. The reports go nowhere because they go to [[Governor Harwick Denn]]. She has started filing them with [[The Trade Compact]] instead, which is how [[Edda Sorn]] found out about the payroll skim.",
+      "dm_notes": "She has incident reports on every [[The Ironmasks|Ironmask]] action for the past two months, filed in triplicate. One copy went to the Governor's office. One went to the [[The Trade Compact|Trade Compact]]. One she kept. The kept copy has observations that don't appear in the others — she has been more careful about what she writes in official filings.",
       "hidden": false,
       "factions": [
         "greywood_rangers"
@@ -352,9 +360,10 @@
     {
       "id": "maren_vosk",
       "name": "Maren Vosk",
-      "role": "The Ledger \u2014 Ironmask boss",
+      "role": "The Ledger — Ironmask boss",
       "relationship": "hostile",
-      "description": "She runs the Ironmask operation in Ashford with ledger-perfect precision. Every toll, every payroll skim, every protection payment is documented. She does not enjoy violence but authorizes it without hesitation when the numbers require it. She knows exactly who the Factor is and considers herself insulated from any consequences. She is wrong.",
+      "description": "She runs [[The Ironmasks|Ironmask]] operation in Ashford with ledger-perfect precision. Every toll, every payroll skim, every protection payment is documented. She does not enjoy violence but authorizes it without hesitation when the numbers require it. She knows exactly who the Factor is and considers herself insulated from any consequences. She knows [[Governor Harwick Denn]] won't move against her. She is wrong about what happens next.",
+      "dm_notes": "She has her own exit plan — a coded arrangement with a [[The Trade Compact|Trade Compact]] courier to extract her if the operation burns. [[Corvin Ashale]] does not know about it. She would give up his identity before the party finishes the first question, if she genuinely believed it would save her.",
       "hidden": false,
       "factions": [
         "the_ironmasks"
@@ -382,7 +391,7 @@
         {
           "id": "evt_82603c",
           "session": 5,
-          "note": "Maren Vosk is captured in the Registry during the raid. Her ledgers are complete. They name Corvin Ashale by initials \u2014 'CA' \u2014 in seventeen separate entries as the recipient of skim payments. She will not confirm the name but she won't deny it.",
+          "note": "Maren Vosk is captured in the Registry during the raid. Her ledgers are complete. They name Corvin Ashale by initials — 'CA' — in seventeen separate entries as the recipient of skim payments. She will not confirm the name but she won't deny it.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
@@ -418,9 +427,10 @@
     {
       "id": "corvin_ashale",
       "name": "Corvin Ashale",
-      "role": "The Factor \u2014 Shadow Wing coordinator",
+      "role": "The Factor — Shadow Wing coordinator",
       "relationship": "hostile",
-      "description": "He presents as a successful independent merchant with a modest warehouse near the mine entrance. He is the Shadow Wing's operational coordinator for the Ashcroft Vein: he decides what gets skimmed from the mine output, routes it through the Ironmasks, and ships it out via a tunnel entrance the Trade Compact doesn't know exists. (DM-only)",
+      "description": "He presents as a successful independent merchant with a modest warehouse near the mine entrance. He is [[The Shadow Wing]]'s operational coordinator for the Ashcroft Vein: he decides what gets skimmed, routes it through [[Maren Vosk]] and [[The Ironmasks]], and ships it out via a tunnel entrance the [[The Trade Compact|Trade Compact]] doesn't know exists. His courier is [[Serev]]. (DM-only)",
+      "dm_notes": "The warehouse tunnel exit opens into the basement of a ruined mill two hundred yards north. He has a horse and three days of supplies staged there. He knows enough about [[The Shadow Wing]]'s regional structure to bargain his way to a lighter sentence — but only if he believes he is genuinely going to hang without a deal.",
       "hidden": true,
       "factions": [
         "the_shadow_wing"
@@ -446,7 +456,7 @@
         {
           "id": "evt_4dc93a",
           "session": 3,
-          "note": "Consequence of Maren Vosk (ally): Ironmask escalation \u2014 doubled patrols, new surcharge on merchants.",
+          "note": "Consequence of Maren Vosk (ally): Ironmask escalation — doubled patrols, new surcharge on merchants.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
@@ -471,7 +481,7 @@
         {
           "id": "evt_a5f2dc",
           "session": 5,
-          "note": "Consequence of Maren Vosk (ally): The Ledger captured \u2014 Ironmask operation collapses.",
+          "note": "Consequence of Maren Vosk (ally): The Ledger captured — Ironmask operation collapses.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
@@ -514,9 +524,10 @@
     {
       "id": "thane_bergrak",
       "name": "Thane Bergrak",
-      "role": "Woodsman \u2014 Emerald Circle liaison",
+      "role": "Woodsman — Emerald Circle liaison",
       "relationship": "neutral",
-      "description": "He lives in the Greywood and comes to Ashford once a week to sell timber rights and deliver the Circle's opinions on what the miners are doing wrong. His opinions are accurate but his delivery is confrontational. He knows a Circle-maintained passage through the Greywood that avoids the roads.",
+      "description": "He lives in the Greywood and comes to Ashford once a week to sell timber rights and deliver the [[Emerald Circle]]'s opinions on what the miners are doing wrong. His opinions are accurate but his delivery is confrontational. He knows a Circle-maintained passage through the Greywood that avoids the roads. He and [[Farlan Dusk]] have a professional respect built on years of crossing paths in the same forest.",
+      "dm_notes": "The [[Emerald Circle]] has already voted to seal the tunnels. Thane is in Ashford to give the party a chance to act before the Circle does. Their deadline is the next new moon. He will not extend it, and he will not tell the party how close the deadline is unless directly asked.",
       "hidden": false,
       "factions": [
         "emerald_circle"
@@ -545,9 +556,10 @@
     {
       "id": "warchief_durnak",
       "name": "Warchief Durnak",
-      "role": "Stonebreaker Clan \u2014 holds Greystone Keep",
+      "role": "Stonebreaker Clan — holds Greystone Keep",
       "relationship": "neutral",
-      "description": "His clan has held Greystone Keep for three generations. They have no interest in Ashford's problems but the Ironmasks have been using the Keep's outer courtyard as a holding area without asking. He has not acted because they haven't been worth the trouble. That calculation is changing.",
+      "description": "His clan has held Greystone Keep for three generations. They have no interest in Ashford's problems but [[The Ironmasks]] have been using the Keep's outer courtyard as a holding area without asking. He has not acted because they haven't been worth the trouble. That calculation is changing.",
+      "dm_notes": "He knows the name of the [[The Ironmasks|Ironmask]] officer who negotiated use of his outer courtyard — a man called Renn, who claimed to represent a trade security firm. He will share that name if asked directly, but he will not volunteer it. He has his own reasons for wanting that name on a warrant.",
       "hidden": false,
       "factions": [
         "stonebreaker_clan"
@@ -582,7 +594,7 @@
         {
           "id": "evt_c8d2b2",
           "session": 3,
-          "note": "Consequence of Maren Vosk (rival): Ironmask escalation \u2014 doubled patrols, new surcharge on merchants.",
+          "note": "Consequence of Maren Vosk (rival): Ironmask escalation — doubled patrols, new surcharge on merchants.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 1,
@@ -598,7 +610,7 @@
         {
           "id": "evt_06da37",
           "session": 5,
-          "note": "Consequence of Maren Vosk (rival): The Ledger captured \u2014 Ironmask operation collapses.",
+          "note": "Consequence of Maren Vosk (rival): The Ledger captured — Ironmask operation collapses.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 2,
@@ -624,9 +636,10 @@
     {
       "id": "the_pale_widow",
       "name": "The Pale Widow",
-      "role": "Ghost \u2014 Ruins of Coldwater",
+      "role": "Ghost — Ruins of Coldwater",
       "relationship": "neutral",
-      "description": "A spirit haunting the Coldwater ruins two miles from Ashford. The miners avoid her on superstition. The Ironmasks learned to avoid her because three of their scouts went into Coldwater and didn't come back. She has been watching the Vein for longer than the town has existed.",
+      "description": "A spirit haunting the Coldwater ruins two miles from Ashford. The miners avoid her on superstition. [[The Ironmasks]] learned to avoid her because three of their scouts went into Coldwater and didn't come back. She has been watching the Vein for longer than the town has existed.",
+      "dm_notes": "She is bound to Coldwater by an unfinished accounting — a garrison commander buried the payroll before the flood and never paid his soldiers. The coin is still in a sealed vault under the ruins. If the party finds it and distributes it to the soldiers' descendants, she is released. She knows this and will not mention it unprompted.",
       "hidden": false,
       "factions": [],
       "hidden_factions": [],
@@ -645,9 +658,10 @@
     {
       "id": "serev",
       "name": "Serev",
-      "role": "Factor's courier \u2014 Shadow Wing operative",
+      "role": "Factor's courier — Shadow Wing operative",
       "relationship": "hostile",
-      "description": "Corvin Ashale's main courier between the Factor's operation and the Shadow Wing's distribution network. Goes by multiple names. Was seen near the Registry two nights before the payroll skim started. (DM-only)",
+      "description": "[[Corvin Ashale]]'s main courier between the Factor's operation and [[The Shadow Wing]]'s distribution network. Goes by multiple names. Was seen near the Registry two nights before the payroll skim started. (DM-only)",
+      "dm_notes": "Serev is a courier designation, not a name. There are currently three active Serevs in the region. The one in Ashford has a silver wing brooch and prefers to work at dusk. They made contact with [[The Shadow Wing]]'s regional handler within six hours of [[Corvin Ashale]]'s warehouse being locked.",
       "hidden": true,
       "factions": [
         "the_shadow_wing"

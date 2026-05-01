@@ -410,7 +410,7 @@ window.applyFilters = function() {
     <hr class="divider" style="margin:10px 0;">
 
     {% if npc.description %}
-    <p style="font-size:0.88rem; color:var(--text); margin-bottom:10px;">{{ npc.description }}</p>
+    <p style="font-size:0.88rem; color:var(--text); margin-bottom:10px;">{{ npc.description | wikilinks(slug, npcs, factions) }}</p>
     {% endif %}
 
     {% if npc.relations %}
@@ -499,7 +499,7 @@ window.applyFilters = function() {
     <hr class="divider" style="margin:10px 0;">
 
     {% if faction.description %}
-    <p style="font-size:0.88rem; color:var(--text); margin-bottom:10px;">{{ faction.description }}</p>
+    <p style="font-size:0.88rem; color:var(--text); margin-bottom:10px;">{{ faction.description | wikilinks(slug, npcs, factions) }}</p>
     {% endif %}
 
     <a href="/{{ slug }}/world/faction/{{ faction.id }}"
