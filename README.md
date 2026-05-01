@@ -213,16 +213,26 @@ campaigns/<slug>/
   "polarity": "positive",
   "intensity": 2,
   "event_type": "politics",
-  "branch": "br_ef30f2"
+  "axis": "formal",
+  "actor_id": "iarno_albrek",
+  "actor_type": "npc",
+  "ripple_source": { "entity_id": "iarno_albrek", "entity_type": "npc", "event_id": "evt_111" },
+  "branch": "br_ef30f2",
+  "deleted": true
 }
 ```
 
 `event_type` is freeform. Reserved: `projected` (AI-committed consequence projection).
+`axis` = `"formal"` | `"personal"` | absent. Only tagged entries feed the dual-axis conflict display.
+`deleted: true` = soft-deleted. Never shown or counted in scores. Filter in every code path that reads logs.
+`actor_id` / `actor_type` — display context for inter-entity events. Not a scoring exclusion.
 `branch` is only present on entries belonging to an alternate timeline branch.
 
 ### Relationship computation
 
-`compute_npc_relationship(npc)` — decay-weighted score from polarity events. Score thresholds: `allied` (≥6), `friendly` (≥3), `neutral` (≥−3), `hostile` (<−3). Decay: `0.85^age_in_sessions`.
+`compute_npc_relationship(npc)` — decay-weighted score from all polarity events (0.85^age per session). Score thresholds: `allied` (≥6), `friendly` (≥3), `neutral` (≥−3), `hostile` (<−3). Stored `relationship` field acts as score floor. `actor_id` is display context only — all entries count toward scoring regardless.
+
+Dual-axis: entries tagged `axis="formal"` or `axis="personal"` feed separate score buckets. When `formal_rel != personal_rel` and both non-null, `has_conflict=True` → two dashed conflict arcs in the graph.
 
 ### Branch filtering
 

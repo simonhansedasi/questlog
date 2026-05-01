@@ -214,7 +214,7 @@ function rfFormalize(srcId, srcType, tgtId, tgtType, rel, rowId) {
 
 {% if session.get('dm_' ~ slug) and not preview_char and npc.dm_notes %}
 <div class="card mt-8" style="border-color:rgba(140,100,220,0.4); background:rgba(140,100,220,0.05);">
-  <div style="color:var(--purple); font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:6px;">DM Secret</div>
+  <div style="color:var(--purple); font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:6px;">{{ terms.dm }} Secret</div>
   <p style="margin:0; white-space:pre-wrap;">{{ npc.dm_notes }}</p>
 </div>
 {% endif %}
@@ -387,7 +387,7 @@ function rfFormalize(srcId, srcType, tgtId, tgtType, rel, rowId) {
         <input type="hidden" name="next" value="/{{ slug }}/world/npc/{{ npc.id }}">
         <span style="color:var(--muted); font-size:0.68rem; flex-shrink:0;">move to →</span>
         <select name="target" style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:3px; padding:1px 4px; font-size:0.68rem;">
-          {% if world_npcs %}<optgroup label="NPCs">{% for n in world_npcs %}<option value="npc:{{ n.id }}">{{ n.name }}</option>{% endfor %}</optgroup>{% endif %}
+          {% if world_npcs %}<optgroup label="{{ terms.npcs }}">{% for n in world_npcs %}<option value="npc:{{ n.id }}">{{ n.name }}</option>{% endfor %}</optgroup>{% endif %}
           {% if all_factions %}<optgroup label="Factions">{% for f in all_factions %}<option value="faction:{{ f.id }}">{{ f.name }}</option>{% endfor %}</optgroup>{% endif %}
         </select>
         <button type="submit" style="background:none; border:1px solid var(--border); color:var(--muted); border-radius:3px; padding:1px 6px; font-size:0.68rem; cursor:pointer;">Move</button>
@@ -421,6 +421,11 @@ function rfFormalize(srcId, srcType, tgtId, tgtType, rel, rowId) {
     </select>
     <input type="text" name="event_type" placeholder="type (combat, dialogue…)"
            style="{{ input_style }} width:180px; flex-shrink:0;">
+    <select name="axis" style="{{ input_style }} width:110px; flex-shrink:0;">
+      <option value="">— axis —</option>
+      <option value="formal">formal</option>
+      <option value="personal">personal</option>
+    </select>
   </div>
   <div style="display:flex; gap:8px;">
     <input type="text" name="note" placeholder="What happened?" required style="{{ input_style }} flex:1;">
@@ -503,7 +508,7 @@ function rfFormalize(srcId, srcType, tgtId, tgtType, rel, rowId) {
                 style="{{ input_style }} resize:vertical; font-family:inherit;">{{ npc.description or '' }}</textarea>
     </div>
     <div style="display:flex; flex-direction:column; gap:4px;">
-      <label style="color:var(--purple); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">DM Secret <span style="font-weight:400; font-size:0.7rem; text-transform:none; color:var(--muted);">— never shown to players</span></label>
+      <label style="color:var(--purple); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">{{ terms.dm }} Secret <span style="font-weight:400; font-size:0.7rem; text-transform:none; color:var(--muted);">— never shown to {{ 'readers' if world_mode == 'fiction' else ('researchers' if world_mode == 'historical' else 'players') }}</span></label>
       <textarea name="dm_notes" rows="3" placeholder="Hidden motives, true identity, plot hooks..."
                 style="{{ input_style }} resize:vertical; font-family:inherit; border-color:rgba(140,100,220,0.4);">{{ npc.dm_notes or '' }}</textarea>
     </div>
@@ -644,7 +649,7 @@ function rfFormalize(srcId, srcType, tgtId, tgtType, rel, rowId) {
         <label style="color:var(--muted); font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em;">Target</label>
         <select name="target_id" required style="{{ input_style }} min-width:140px;" onchange="this.form.target_type.value=this.options[this.selectedIndex].dataset.type">
           {% if world_npcs %}
-          <optgroup label="NPCs">
+          <optgroup label="{{ terms.npcs }}">
             {% for n in world_npcs %}{% if n.id != npc.id %}<option value="{{ n.id }}" data-type="npc">{{ n.name }}</option>{% endif %}{% endfor %}
           </optgroup>
           {% endif %}
@@ -741,7 +746,7 @@ function rfFormalize(srcId, srcType, tgtId, tgtType, rel, rowId) {
 
   <hr class="divider">
 
-  <h3 style="color:var(--muted); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">Edit NPC</h3>
+  <h3 style="color:var(--muted); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">Edit {{ terms.npc }}</h3>
   <form method="POST" action="/{{ slug }}/dm/npc/{{ npc.id }}/edit" style="display:flex; flex-direction:column; gap:12px;">
     <div style="display:flex; gap:8px; flex-wrap:wrap;">
       <div style="display:flex; flex-direction:column; gap:4px; flex:2; min-width:140px;">
@@ -794,7 +799,7 @@ function rfFormalize(srcId, srcType, tgtId, tgtType, rel, rowId) {
 
       <form method="POST" action="/{{ slug }}/dm/npc/{{ npc.id }}/delete">
         <button type="submit" style="background:none; border:1px solid #e05c5c; color:#e05c5c; border-radius:4px; padding:4px 12px; font-size:0.78rem; cursor:pointer;">
-          Delete NPC
+          Delete {{ terms.npc }}
         </button>
       </form>
 
@@ -828,7 +833,7 @@ document.addEventListener('submit', function(e) {
       if (d.ok) {
         status.textContent = 'Saved';
         status.style.color = '#7ec87e';
-        setTimeout(() => { status.style.display = 'none'; }, 2000);
+        setTimeout(() => { window.location.reload(); }, 800);
       } else {
         status.textContent = d.error || 'Error';
         status.style.color = '#e05c5c';

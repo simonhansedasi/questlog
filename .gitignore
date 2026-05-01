@@ -7,11 +7,15 @@ __pycache__/
 # User accounts — never commit passwords
 users.json
 
-# Campaign data — personal, not for public repo
-campaigns/spelljammer/
-campaigns/dotmm/
+# Campaign data — only seed worlds committed, everything else excluded
+campaigns/*
+!campaigns/ashford/
+!campaigns/genesis/
+!campaigns/iliad/
+!campaigns/paladins_grace/
+!campaigns/roses/
+!campaigns/ww2/
 campaigns/*/dm/
-campaigns/example/
 
 # Secrets directory
 secrets/

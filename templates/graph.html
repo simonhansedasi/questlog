@@ -128,9 +128,12 @@ fetch(`/${slug}/world/graph-data`)
             'width':  'mapData(log_count, 0, 20, 3, 6)',
             'height': 'mapData(log_count, 0, 20, 3, 6)',
             'background-color': ele => REL_COLOR[ele.data('relationship')] || '#555',
-            'border-width': ele => ele.data('hidden') ? 2 : 0,
+            'border-width': ele => ele.data('hidden') ? 0.5 : 0,
             'border-style': ele => ele.data('hidden') ? 'dashed' : 'solid',
-            'border-color': '#888',
+            'border-color': '#aaa',
+            'outline-width': 0,
+            'overlay-opacity': 0,
+            'underlay-opacity': 0,
             'opacity': 1,
             'transition-property': 'opacity, border-width, border-color, background-color',
             'transition-duration': '150ms',
@@ -187,7 +190,9 @@ fetch(`/${slug}/world/graph-data`)
           selector: 'edge[relation="party_contact"]',
           style: {
             'line-color': ele => REL_COLOR_ALPHA[ele.data('relationship')] || 'rgba(136, 136, 136, 0.27)',
-            'width': 'mapData(weight, 0.2, 1, 0.4, 1.5)',
+            'width': 1.2,
+            'line-style': 'dashed',
+            'line-dash-pattern': [4, 3],
           }
         },
         {

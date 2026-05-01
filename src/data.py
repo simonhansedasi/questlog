@@ -80,7 +80,7 @@ def get_npcs(slug, include_hidden=True):
     return npcs
 
 
-def add_npc(slug, name, role, relationship, description, hidden=True, factions=None, hidden_factions=None, image_url=None):
+def add_npc(slug, name, role, relationship, description, hidden=True, factions=None, hidden_factions=None, image_url=None, dm_notes=None):
     data = _load(slug, "world/npcs.json")
     entry = {
         "id": slugify(name),
@@ -95,6 +95,8 @@ def add_npc(slug, name, role, relationship, description, hidden=True, factions=N
     }
     if image_url:
         entry["image_url"] = image_url
+    if dm_notes:
+        entry["dm_notes"] = dm_notes
     data.setdefault("npcs", []).append(entry)
     _save(slug, data, "world/npcs.json")
 
@@ -112,7 +114,10 @@ def update_npc(slug, npc_id, name=None, role=None, relationship=None, descriptio
             if description is not None:
                 npc["description"] = description
             if dm_notes is not None:
-                npc["dm_notes"] = dm_notes
+                if dm_notes:
+                    npc["dm_notes"] = dm_notes
+                else:
+                    npc.pop("dm_notes", None)
             if image_url is not None:
                 npc["image_url"] = image_url
             if factions is not None:
@@ -299,8 +304,7 @@ def compute_npc_relationship(npc, known_events=None, is_dm=False, max_session=No
                    e.get("branch") == branch_id]
     else:
         all_log = [e for e in all_log if not e.get("branch")]
-    typed = [e for e in all_log if e.get("polarity") in ("positive", "negative", "neutral")
-             and not e.get("actor_id")]
+    typed = [e for e in all_log if e.get("polarity") in ("positive", "negative", "neutral")]
     if not typed:
         return {"relationship": npc.get("relationship", "unknown"), "trend": None,
                 "contributors": [], "computed": False, "score": None,
@@ -373,7 +377,7 @@ def get_factions(slug, include_hidden=True):
     return factions
 
 
-def add_faction(slug, name, relationship, description, hidden=True, image_url=None):
+def add_faction(slug, name, relationship, description, hidden=True, image_url=None, dm_notes=None):
     data = _load(slug, "world/factions.json")
     entry = {
         "id": slugify(name),
@@ -385,6 +389,8 @@ def add_faction(slug, name, relationship, description, hidden=True, image_url=No
     }
     if image_url:
         entry["image_url"] = image_url
+    if dm_notes:
+        entry["dm_notes"] = dm_notes
     data.setdefault("factions", []).append(entry)
     _save(slug, data, "world/factions.json")
 
@@ -398,7 +404,10 @@ def update_faction(slug, faction_id, relationship=None, description=None, score_
             if description is not None:
                 f["description"] = description
             if dm_notes is not None:
-                f["dm_notes"] = dm_notes
+                if dm_notes:
+                    f["dm_notes"] = dm_notes
+                else:
+                    f.pop("dm_notes", None)
             if image_url is not None:
                 f["image_url"] = image_url
             if score_offset is not None:
@@ -566,7 +575,7 @@ def get_inter_entity_relations(slug, max_session=None, branch_id=None, fork_poin
     for npc in _load(slug, "world/npcs.json").get("npcs", []):
         entity_types[npc["id"]] = "npc"
         for entry in npc.get("log", []):
-            if not _include(entry):
+            if entry.get("deleted") or not _include(entry):
                 continue
             actor_id = entry.get("actor_id")
             if not actor_id or actor_id == npc["id"]:
@@ -579,7 +588,7 @@ def get_inter_entity_relations(slug, max_session=None, branch_id=None, fork_poin
     for faction in _load(slug, "world/factions.json").get("factions", []):
         entity_types[faction["id"]] = "faction"
         for entry in faction.get("log", []):
-            if not _include(entry):
+            if entry.get("deleted") or not _include(entry):
                 continue
             actor_id = entry.get("actor_id")
             if not actor_id or actor_id == faction["id"]:
@@ -593,7 +602,7 @@ def get_inter_entity_relations(slug, max_session=None, branch_id=None, fork_poin
         char_id = char["name"]
         entity_types[char_id] = "char"
         for entry in char.get("log", []):
-            if not _include(entry):
+            if entry.get("deleted") or not _include(entry):
                 continue
             actor_id = entry.get("actor_id")
             if not actor_id or actor_id == char_id:
@@ -931,6 +940,27 @@ def log_character(slug, char_name, session, note, polarity=None, intensity=None,
                     entry["actor_dm_only"] = True
             char.setdefault("log", []).append(entry)
     _save(slug, data, "party.json")
+    return event_id
+
+
+def log_party_group(slug, session, note, polarity=None, intensity=None, event_type=None,
+                    visibility="public", actor_id=None, actor_type=None, actor_dm_only=False):
+    data = _load(slug, "campaign.json")
+    event_id = "evt_" + secrets.token_hex(3)
+    entry = {"id": event_id, "session": session, "note": note, "visibility": visibility}
+    if polarity in ("positive", "neutral", "negative"):
+        entry["polarity"] = polarity
+        entry["intensity"] = int(intensity) if intensity in (1, 2, 3) else 1
+    if event_type:
+        entry["event_type"] = event_type.strip()
+    if actor_id:
+        entry["actor_id"] = actor_id
+        if actor_type:
+            entry["actor_type"] = actor_type
+        if actor_dm_only:
+            entry["actor_dm_only"] = True
+    data.setdefault("party_group_log", []).append(entry)
+    _save(slug, data, "campaign.json")
     return event_id
 
 
@@ -1347,6 +1377,23 @@ def backfill_relation_ripples(slug, source_id, source_type, target_id, target_ty
 def edit_log_entry(slug, entity_id, entity_type, event_id, note=None, polarity=None,
                    intensity=None, visibility=None):
     """Edit a log entry by its UUID."""
+    if entity_type == "party":
+        data = _load(slug, "campaign.json")
+        for entry in data.get("party_group_log", []):
+            if entry.get("id") == event_id:
+                if note is not None:
+                    entry["note"] = note
+                if polarity in ("positive", "neutral", "negative"):
+                    entry["polarity"] = polarity
+                elif polarity == "":
+                    entry.pop("polarity", None)
+                    entry.pop("intensity", None)
+                if intensity is not None and polarity in ("positive", "neutral", "negative"):
+                    entry["intensity"] = max(1, min(3, int(intensity)))
+                if visibility in ("public", "restricted", "dm_only"):
+                    entry["visibility"] = visibility
+        _save(slug, data, "campaign.json")
+        return
     if entity_type == "character":
         data = _load(slug, "party.json")
         for char in data.get("characters", []):
@@ -1388,6 +1435,14 @@ def edit_log_entry(slug, entity_id, entity_type, event_id, note=None, polarity=N
 
 def delete_log_entry_by_id(slug, entity_id, entity_type, event_id):
     """Soft-delete a log entry by event_id — sets deleted=True so it can be restored."""
+    if entity_type == "party":
+        data = _load(slug, "campaign.json")
+        for entry in data.get("party_group_log", []):
+            if entry.get("id") == event_id:
+                entry["deleted"] = True
+                _save(slug, data, "campaign.json")
+                return True
+        return False
     if entity_type == "character":
         data = _load(slug, "party.json")
         for char in data.get("characters", []):
@@ -2625,20 +2680,29 @@ def get_all_log_entries(slug):
     entries = []
     for npc in _load(slug, "world/npcs.json").get("npcs", []):
         for entry in npc.get("log", []):
-            entries.append({"source": npc["name"], "type": "NPC", "entity_id": npc["id"], **entry})
+            if not entry.get("deleted"):
+                entries.append({"source": npc["name"], "type": "NPC", "entity_id": npc["id"], **entry})
     for faction in _load(slug, "world/factions.json").get("factions", []):
         for entry in faction.get("log", []):
-            entries.append({"source": faction["name"], "type": "Faction", "entity_id": faction["id"], **entry})
+            if not entry.get("deleted"):
+                entries.append({"source": faction["name"], "type": "Faction", "entity_id": faction["id"], **entry})
     for quest in _load(slug, "story/quests.json").get("quests", []):
         for entry in quest.get("log", []):
-            entries.append({"source": quest["title"], "type": "Quest", "entity_id": quest.get("id",""), **entry})
+            if not entry.get("deleted"):
+                entries.append({"source": quest["title"], "type": "Quest", "entity_id": quest.get("id",""), **entry})
     for condition in _load(slug, "world/conditions.json").get("conditions", []):
         for entry in condition.get("log", []):
-            entries.append({"source": condition["name"], "type": "Condition", "entity_id": condition.get("id",""), **entry})
+            if not entry.get("deleted"):
+                entries.append({"source": condition["name"], "type": "Condition", "entity_id": condition.get("id",""), **entry})
     for char in _load(slug, "party.json").get("characters", []):
         for entry in char.get("log", []):
             if not entry.get("deleted"):
                 entries.append({"source": char["name"], "type": "Character", "entity_id": char["name"], **entry})
+    meta = _load(slug, "campaign.json")
+    party_name = meta.get("party_name") or "The Party"
+    for entry in meta.get("party_group_log", []):
+        if not entry.get("deleted"):
+            entries.append({"source": party_name, "type": "Party", "entity_id": "_party", "entity_type": "party_group", **entry})
     entries.sort(key=lambda e: e.get("session", 0), reverse=True)
     return entries
 

@@ -53,11 +53,19 @@
     </div>
     {% endif %}
     {% endif %}
+    {% if not session.get('user') %}
+    <div style="margin-left:auto; display:flex; align-items:center; gap:12px;">
+      <a href="https://forms.gle/ymjsa4WFuTxyQZti7" target="_blank" rel="noopener" style="color:var(--muted); font-size:0.82rem; text-decoration:none;">Feedback</a>
+      <a href="/login" style="color:var(--muted); font-size:0.82rem; text-decoration:none;">Log in</a>
+      <a href="/signup" style="background:var(--purple); color:#fff; font-size:0.82rem; font-weight:700; text-decoration:none; padding:4px 12px; border-radius:4px;">Sign up</a>
+    </div>
+    {% endif %}
     {% if session.get('user') %}
     <div style="margin-left:auto; display:flex; align-items:center; gap:10px;">
       {% if viewer_character is defined and viewer_character %}
       <span style="color:var(--purple); font-size:0.75rem; font-weight:700; letter-spacing:0.03em;" title="Your character">⚔ {{ viewer_character.name }}</span>
       {% endif %}
+      <a href="https://forms.gle/ymjsa4WFuTxyQZti7" target="_blank" rel="noopener" style="color:var(--muted); font-size:0.82rem; text-decoration:none;">Feedback</a>
       <a href="/wiki" style="color:var(--muted); font-size:0.8rem; font-weight:700; text-decoration:none; opacity:0.6;" title="DM Knowledge Base">?</a>
       {% if user_pro is defined %}
       <a href="/billing" style="font-size:0.72rem; font-weight:700; letter-spacing:0.04em; text-decoration:none; padding:2px 7px; border-radius:3px;
@@ -78,7 +86,7 @@
   {% if is_demo %}
   <div style="background:var(--surface2); border-bottom:1px solid var(--border); padding:6px 16px; display:flex; align-items:center; justify-content:space-between; gap:12px; font-size:0.78rem;">
     <span style="color:var(--gold); font-weight:700; letter-spacing:0.05em;">DEMO</span>
-    <span style="color:var(--muted);">World War II — try it out. Changes reset every 30 minutes.</span>
+    <span style="color:var(--muted);">The Ashcroft Vein — try it out. Changes reset every 30 minutes.</span>
     <div style="display:flex; gap:12px; flex-shrink:0;">
       <a href="/demo/ai" style="color:var(--purple); font-size:0.78rem; text-decoration:none; font-weight:700;">AI tools ✦</a>
       <a href="/demo/" onclick="sessionStorage.setItem('rf_tour','0');" style="color:var(--purple); font-size:0.78rem; text-decoration:none; font-weight:700;">take the tour</a>

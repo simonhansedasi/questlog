@@ -8,7 +8,23 @@
       "status": "active",
       "hidden": false,
       "notes": "Former Greywood Ranger scout. Knows the Greywood better than anyone. Carries a grudge against the Ironmasks that predates the party.",
-      "known_events": []
+      "known_events": [
+        "evt_89e7d2",
+        "evt_ee9371",
+        "evt_e25671"
+      ],
+      "conditions": [
+        {
+          "id": "0353c1e4",
+          "name": "Durnak Respects Him",
+          "category": "bond",
+          "description": "Durnak opened the cellar without negotiation the moment Calder cleared the courtyard. A warrior reading another warrior.",
+          "acquired_session": 3,
+          "hidden": false,
+          "resolved": false,
+          "linked_npc_id": "warchief_durnak"
+        }
+      ]
     },
     {
       "name": "Wren Ashvale",
@@ -18,7 +34,34 @@
       "status": "active",
       "hidden": false,
       "notes": "Grew up in Ashford. Her father worked the Vein. The Ironmask toll drove him out. She came back to finish it.",
-      "known_events": []
+      "known_events": [
+        "evt_bd0ad7",
+        "evt_7d0adb",
+        "evt_56a1f8",
+        "evt_e25671"
+      ],
+      "conditions": [
+        {
+          "id": "3e4bce06",
+          "name": "Edda Trusts Her",
+          "category": "bond",
+          "description": "Edda Sorn handed over her ledgers. She is betting on Wren specifically \u2014 not the party.",
+          "acquired_session": 1,
+          "hidden": false,
+          "resolved": false,
+          "linked_npc_id": "edda_sorn"
+        },
+        {
+          "id": "da2a3be3",
+          "name": "Bram Owes Her",
+          "category": "bond",
+          "description": "Bram Ketterly walked out of that cellar because of her. He knows it.",
+          "acquired_session": 3,
+          "hidden": false,
+          "resolved": false,
+          "linked_npc_id": "bram_ketterly"
+        }
+      ]
     },
     {
       "name": "Sable",
@@ -28,7 +71,10 @@
       "status": "active",
       "hidden": false,
       "notes": "Wandering contractor. Does not explain who her patron is. Deeply effective in a crisis.",
-      "known_events": []
+      "known_events": [
+        "evt_4afde1",
+        "evt_d6c6e5"
+      ]
     },
     {
       "name": "Lira of the Dawn",
@@ -38,7 +84,23 @@
       "status": "active",
       "hidden": false,
       "notes": "Travelling healer who stopped in Ashford for one night and hasn't left. She knows what 'the Factor' means but hasn't said how.",
-      "known_events": []
+      "known_events": [
+        "evt_fc4337",
+        "evt_1c523c",
+        "evt_d6c6e5"
+      ],
+      "conditions": [
+        {
+          "id": "fd075699",
+          "name": "Maren Vosk Confided in Her",
+          "category": "bond",
+          "description": "Maren told Lira the truth about the Factor in a private conversation. Lira has not shared what she knows.",
+          "acquired_session": 4,
+          "hidden": false,
+          "resolved": false,
+          "linked_npc_id": "maren_vosk"
+        }
+      ]
     },
     {
       "name": "Osric Fynt",
@@ -48,7 +110,23 @@
       "status": "active",
       "hidden": false,
       "notes": "Trade Compact assessor who went rogue after discovering what the Compact actually knew about the Ironmasks.",
-      "known_events": []
+      "known_events": [
+        "evt_8941f6",
+        "evt_bd0ad7",
+        "evt_1c523c"
+      ],
+      "conditions": [
+        {
+          "id": "79255f8a",
+          "name": "Petra Holt is Watching",
+          "category": "threat",
+          "description": "Petra Holt knows Osric went rogue. She has not reported it yet. She is deciding what to do with that.",
+          "acquired_session": 2,
+          "hidden": false,
+          "resolved": false,
+          "linked_npc_id": "petra_holt"
+        }
+      ]
     }
   ]
 }

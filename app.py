@@ -1,6 +1,7 @@
 from flask import Flask, render_template, abort, redirect, url_for, request, session, Response, jsonify, flash
 from markupsafe import Markup
 from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.middleware.proxy_fix import ProxyFix
 from functools import wraps
 from pathlib import Path
 from flask_limiter import Limiter
@@ -32,8 +33,8 @@ load_dotenv()
 stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
 STRIPE_PUBLISHABLE_KEY = os.environ.get("STRIPE_PUBLISHABLE_KEY", "")
 STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_SIGNING_SECRET", "")
-STRIPE_PRICE_PRO = "price_1TRcqRHRj28gvjpfUTYtRkM1"
-STRIPE_PRICE_WORLD = "price_1TRcprHRj28gvjpfbYRBmksm"
+STRIPE_PRICE_PRO = "price_1TS6sQHVw7SLO5uo3e0vIZZ3"
+STRIPE_PRICE_WORLD = "price_1TS6qIHVw7SLO5uoIpwNWs0n"
 
 
 class PrefixMiddleware:
@@ -51,6 +52,7 @@ app.secret_key = os.environ.get("QUESTBOOK_SECRET", "change-me-in-production")
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 app.config["SESSION_COOKIE_SECURE"] = os.environ.get("QUESTBOOK_HTTPS", "1") != "0"
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
 _prefix = os.environ.get("QUESTBOOK_PREFIX", "")
 if _prefix:
     app.wsgi_app = PrefixMiddleware(app.wsgi_app, _prefix)
@@ -298,7 +300,7 @@ def inject_viewer_character():
     return {"viewer_character": None, "is_public": is_public, "is_demo": is_demo, "terms": terms, "world_mode": world_mode, "user_ai_enabled": user_ai_enabled, "can_write": can_write, "user_pro": user_pro, "worlds_used": worlds_used, "worlds_limit": worlds_limit}
 
 
-DEMO_SOURCE = CAMPAIGNS / "ww2"
+DEMO_SOURCE = CAMPAIGNS / "ashford"
 DEMO_DIR = CAMPAIGNS / "demo"
 DEMO_STAMP = DEMO_DIR / ".reset_stamp"
 DEMO_COUNTS_FILE = CAMPAIGNS / "demo_parse_counts.json"
@@ -668,11 +670,14 @@ def clone_campaign(slug):
     if slug == "example":
         mode = request.form.get("template", "ttrpg")
         new_meta["mode"] = mode
+        new_meta["name"] = ""
+        new_meta["description"] = ""
+        new_meta["system"] = ""
+        new_meta["party_name"] = ""
+        new_meta["observer_name"] = ""
         tmpl = _BLANK_TEMPLATES.get(mode, {})
         if tmpl:
             new_meta["terminology"] = {k: v for k, v in tmpl.items() if k != "observer_default"}
-            if not new_meta.get("observer_name") and "observer_default" in tmpl:
-                new_meta["observer_name"] = tmpl["observer_default"]
         else:
             new_meta.pop("terminology", None)
     (dst / "campaign.json").write_text(json.dumps(new_meta, indent=2))
@@ -979,6 +984,12 @@ def world(slug):
         for f in factions:
             f["log"] = [e for e in f.get("log", []) if e.get("session", 0) <= as_of]
 
+    # Always strip soft-deleted entries before template rendering
+    for n in npcs:
+        n["log"] = [e for e in n.get("log", []) if not e.get("deleted")]
+    for f in factions:
+        f["log"] = [e for e in f.get("log", []) if not e.get("deleted")]
+
     # When time-scrubbing or in a branch, hide entities not yet introduced
     if as_of or active_branch:
         npcs = [n for n in npcs if n.get("log")]
@@ -1209,7 +1220,7 @@ def world_graph_data(slug):
 
     for npc in npcs:
         # When time-scrubbing or in a branch, skip entities not yet introduced
-        time_log = _branch_filter(npc.get("log", []))
+        time_log = [e for e in _branch_filter(npc.get("log", [])) if not e.get("deleted")]
         if (as_of or active_branch) and not time_log:
             continue
         rel = db.compute_npc_relationship(npc, is_dm=is_dm, max_session=as_of,
@@ -1307,7 +1318,7 @@ def world_graph_data(slug):
                     }})
 
     for faction in factions:
-        time_log = _branch_filter(faction.get("log", []))
+        time_log = [e for e in _branch_filter(faction.get("log", [])) if not e.get("deleted")]
         if (as_of or active_branch) and not time_log:
             continue
         visible_log = [e for e in time_log if is_dm or _vis(e) == "public"]
@@ -1585,6 +1596,70 @@ def world_graph_data(slug):
                 "relation": "party_affiliate",
                 "weight": 0.9,
             }})
+
+    _pol_rel = {"positive": "friendly", "negative": "hostile", "neutral": "neutral"}
+
+    def _add_acted_edge(src, tgt, polarity, dm_only=False):
+        if not is_dm and dm_only:
+            return
+        key = frozenset([src, tgt])
+        if key in seen_edges:
+            return
+        seen_edges.add(key)
+        rel = _pol_rel.get(polarity, "neutral")
+        edges.append({"data": {
+            "id": f"{src}__{tgt}__acted",
+            "source": src,
+            "target": tgt,
+            "relation": "party_contact",
+            "relationship": rel,
+            "weight": 0.5,
+            "interaction": True,
+        }})
+
+    # ── NPC/faction actor → character diamond (NPC caused event on char) ──────
+    for char in party:
+        cid = f"_char_{db.slugify(char['name'])}"
+        for entry in char.get("log", []):
+            if entry.get("deleted"):
+                continue
+            aid = entry.get("actor_id")
+            if not aid or aid not in known_ids:
+                continue
+            _add_acted_edge(aid, cid, entry.get("polarity"), entry.get("actor_dm_only", False))
+
+    # ── Character diamond → NPC/faction (char caused event on NPC or faction) ──
+    for npc in npcs:
+        for entry in npc.get("log", []):
+            if entry.get("deleted") or entry.get("actor_type") != "char":
+                continue
+            raw_name = entry.get("actor_id", "")
+            if not raw_name:
+                continue
+            cid = f"_char_{db.slugify(raw_name)}"
+            if cid not in known_ids:
+                continue
+            _add_acted_edge(cid, npc["id"], entry.get("polarity"), entry.get("actor_dm_only", False))
+    for faction in factions:
+        for entry in faction.get("log", []):
+            if entry.get("deleted") or entry.get("actor_type") != "char":
+                continue
+            raw_name = entry.get("actor_id", "")
+            if not raw_name:
+                continue
+            cid = f"_char_{db.slugify(raw_name)}"
+            if cid not in known_ids:
+                continue
+            _add_acted_edge(cid, faction["id"], entry.get("polarity"), entry.get("actor_dm_only", False))
+
+    # ── Actor → party star edges (from party_group_log) ───────────────────────
+    for entry in meta.get("party_group_log", []):
+        if entry.get("deleted"):
+            continue
+        aid = entry.get("actor_id")
+        if not aid or aid not in known_ids:
+            continue
+        _add_acted_edge(aid, "_party", entry.get("polarity"), entry.get("actor_dm_only", False))
 
     return jsonify({"nodes": nodes, "edges": edges})
 
@@ -1943,9 +2018,12 @@ def dm(slug):
     pending_projections = db.get_pending_projections(slug)
     relation_suggestions = db.get_relation_suggestions(slug)
     pending_ripples = db.get_pending_ripples(slug)
+    party = db.get_party(slug)
     all_entities = (
+        [{"id": "_party", "name": "The Party", "type": "party"}] +
         [{"id": n["id"], "name": n["name"], "type": "npc"} for n in db.get_npcs(slug, include_hidden=True)] +
-        [{"id": f["id"], "name": f["name"], "type": "faction"} for f in db.get_factions(slug, include_hidden=True)]
+        [{"id": f["id"], "name": f["name"], "type": "faction"} for f in db.get_factions(slug, include_hidden=True)] +
+        [{"id": db.slugify(c["name"]), "name": c["name"], "type": "char"} for c in party]
     )
     all_users_data = load_users()
     members = meta.get("members", [])
@@ -1953,6 +2031,31 @@ def dm(slug):
     all_log_entries = db.get_all_log_entries(slug)
     if active_branch:
         all_log_entries = db.filter_log_for_branch(all_log_entries, active_branch, branches)
+    # Sort within each session: ripples immediately follow their source event
+    def _order_with_ripples(entries):
+        by_session = {}
+        for e in entries:
+            by_session.setdefault(e.get("session", 0), []).append(e)
+        result = []
+        for sess in sorted(by_session.keys(), reverse=True):
+            grp = by_session[sess]
+            ripple_map = {}
+            sources = []
+            for e in grp:
+                sid = (e.get("ripple_source") or {}).get("event_id")
+                if sid:
+                    ripple_map.setdefault(sid, []).append(e)
+                else:
+                    sources.append(e)
+            for e in sources:
+                result.append(e)
+                for r in ripple_map.pop(e.get("id", ""), []):
+                    result.append(r)
+            for orphans in ripple_map.values():
+                result.extend(orphans)
+        return result
+
+    all_log_entries = _order_with_ripples(all_log_entries)
     _evt_idx = {e["id"]: e["source"] for e in all_log_entries if e.get("id")}
     _eid_name = {ae["id"]: ae["name"] for ae in all_entities}
     for _e in all_log_entries:
@@ -1961,7 +2064,10 @@ def dm(slug):
         if _rs and isinstance(_rs, dict) and _rs.get("event_id"):
             _other = _evt_idx.get(_rs["event_id"])
         elif _e.get("actor_id"):
-            _other = _eid_name.get(_e["actor_id"])
+            if _e.get("actor_type") == "char":
+                _other = _e["actor_id"]
+            else:
+                _other = _eid_name.get(_e["actor_id"])
         _e["_other"] = _other
     return render_template("dm/index.html", meta=meta, slug=slug,
                            session_plan=raw_plan, plan_html=plan_html,
@@ -1970,7 +2076,7 @@ def dm(slug):
                            npcs=db.get_npcs(slug),
                            factions=db.get_factions(slug),
                            conditions=conditions,
-                           party=db.get_party(slug),
+                           party=party,
                            party_relations=meta.get("party_relations", []),
                            current_session=current_session,
                            assets=db.get_assets(slug),
@@ -1997,6 +2103,7 @@ def dm_quick_log(slug):
     polarity = request.form.get("polarity") or None
     intensity = int(request.form.get("intensity") or 1)
     event_type = request.form.get("event_type", "").strip() or None
+    axis = request.form.get("axis") or None
     session_n = int(request.form.get("session") or 0)
     visibility = request.form.get("visibility", "public")
     actor_id = request.form.get("actor_id") or None
@@ -2022,12 +2129,14 @@ def dm_quick_log(slug):
             src_evt = db.log_npc(slug, entity_id, session_n, note, polarity=polarity,
                                  intensity=intensity, event_type=event_type, visibility=visibility,
                                  actor_id=actor_id, actor_type=actor_type,
-                                 actor_dm_only=actor_dm_only, branch=active_branch_id)
+                                 actor_dm_only=actor_dm_only, branch=active_branch_id, axis=axis)
             for fid in also_fids:
                 if fid:
+                    _also_ripple = {"entity_id": entity_id, "entity_type": "npc", "event_id": src_evt}
                     db.log_faction(slug, fid, session_n, note,
                                    polarity=polarity, intensity=intensity,
                                    event_type=event_type, visibility=visibility,
+                                   ripple_source=_also_ripple,
                                    branch=active_branch_id)
             if polarity:
                 db.apply_ripple(slug, entity_id, "npc", session_n, note, polarity, intensity,
@@ -2068,6 +2177,12 @@ def dm_quick_log(slug):
             db.log_character(slug, entity_id, session_n, note, polarity=polarity,
                              intensity=intensity, event_type=event_type, visibility=visibility,
                              actor_id=actor_id, actor_type=actor_type, actor_dm_only=actor_dm_only)
+            if not is_ajax:
+                flash("Logged", "success")
+        elif entity_type == "party_group" and note:
+            db.log_party_group(slug, session_n, note, polarity=polarity,
+                               intensity=intensity, event_type=event_type, visibility=visibility,
+                               actor_id=actor_id, actor_type=actor_type, actor_dm_only=actor_dm_only)
             if not is_ajax:
                 flash("Logged", "success")
         if is_ajax:
@@ -2326,6 +2441,34 @@ def dm_commit_proposals(slug):
     committed = 0
     created = []
     logged_entity_ids = set()
+
+    # Pre-pass: create all new NPC/faction entities first so actor references resolve correctly
+    for entry in data["entries"]:
+        if (entry.get("entity_name") or "").strip().lower() in party_names:
+            continue
+        etype = entry.get("entity_type", "npc")
+        if entry.get("entity_id") or etype in ("ship", "condition"):
+            continue
+        name = (entry.get("entity_name") or "").strip()
+        if not name:
+            continue
+        name_lower = name.lower()
+        entity_hidden = bool(entry.get("entity_hidden", False))
+        if etype == "faction":
+            if name_lower not in faction_by_name:
+                rel = "friendly" if entry.get("polarity") == "positive" else "hostile" if entry.get("polarity") == "negative" else "neutral"
+                db.add_faction(slug, name, rel, description="", hidden=entity_hidden)
+                faction_by_name[name_lower] = db.slugify(name)
+                created.append({"name": name, "type": "faction", "id": db.slugify(name)})
+        else:
+            if name_lower not in npc_by_name and name_lower not in faction_by_name:
+                rel = "friendly" if entry.get("polarity") == "positive" else "hostile" if entry.get("polarity") == "negative" else "neutral"
+                faction_ref = _resolve_faction(slug, entry.get("faction_name"), faction_by_name, created)
+                db.add_npc(slug, name, role="", relationship=rel, description="", hidden=entity_hidden,
+                           factions=[faction_ref] if faction_ref else [])
+                npc_by_name[name_lower] = db.slugify(name)
+                created.append({"name": name, "type": "npc", "id": db.slugify(name)})
+
     for entry in data["entries"]:
         if (entry.get("entity_name") or "").strip().lower() in party_names:
             continue
@@ -2415,18 +2558,26 @@ def dm_commit_proposals(slug):
         discrete = bool(entry.get("discrete"))
         actor_id = entry.get("actor_id") or None
         actor_type = entry.get("actor_type") or None
+        actor_dm_only = bool(entry.get("actor_dm_only"))
+        if actor_id and actor_id.startswith("__proposed__:"):
+            proposed_name = actor_id[13:].lower()
+            actor_id = npc_by_name.get(proposed_name) or faction_by_name.get(proposed_name) or None
         axis = entry.get("axis") or None
         if discrete:
             visibility = "dm_only"
-        if entity_type == "faction" or entity_id in faction_by_name.values():
+        if entity_type == "party" or entity_id == "_party":
+            src_evt = db.log_party_group(slug, session_n, note, polarity=polarity,
+                                         intensity=intensity, event_type=event_type, visibility=visibility,
+                                         actor_id=actor_id, actor_type=actor_type)
+        elif entity_type == "faction" or entity_id in faction_by_name.values():
             src_evt = db.log_faction(slug, entity_id, session_n, note, polarity=polarity,
                                      intensity=intensity, event_type=event_type, visibility=visibility,
-                                     actor_id=actor_id, actor_type=actor_type,
+                                     actor_id=actor_id, actor_type=actor_type, actor_dm_only=actor_dm_only,
                                      branch=active_branch_id, axis=axis)
         else:
             src_evt = db.log_npc(slug, entity_id, session_n, note, polarity=polarity,
                                  intensity=intensity, event_type=event_type, visibility=visibility,
-                                 actor_id=actor_id, actor_type=actor_type,
+                                 actor_id=actor_id, actor_type=actor_type, actor_dm_only=actor_dm_only,
                                  branch=active_branch_id, axis=axis)
         if polarity:
             if discrete:
@@ -2815,6 +2966,7 @@ def dm_add_npc(slug):
             factions=request.form.getlist("factions"),
             hidden_factions=request.form.getlist("hidden_factions"),
             image_url=request.form.get("image_url", "").strip() if _allowed_image_url(request.form.get("image_url", "").strip())[0] else None,
+            dm_notes=request.form.get("dm_notes", "").strip() or None,
         )
         if request.form.get("ajax"):
             return jsonify({"ok": True})
@@ -2835,6 +2987,7 @@ def dm_add_faction(slug):
             description=request.form.get("description", "").strip(),
             hidden="hidden" in request.form,
             image_url=request.form.get("image_url", "").strip() if _allowed_image_url(request.form.get("image_url", "").strip())[0] else None,
+            dm_notes=request.form.get("dm_notes", "").strip() or None,
         )
         if request.form.get("ajax"):
             return jsonify({"ok": True})
@@ -3170,6 +3323,35 @@ def dm_delete_log_entry_by_id(slug, event_id):
     return redirect(next_url)
 
 
+@app.route("/<slug>/dm/log/event/delete", methods=["POST"])
+@dm_required
+def dm_delete_log_event_ajax(slug):
+    data = request.get_json() or {}
+    event_id = data.get("event_id", "")
+    entity_type = data.get("entity_type", "")
+    entity_id = data.get("entity_id", "")
+    if not event_id or not entity_type:
+        return jsonify({"error": "missing fields"}), 400
+    db.delete_log_entry_by_id(slug, entity_id, entity_type, event_id)
+    return jsonify({"ok": True})
+
+
+@app.route("/<slug>/dm/log/event/edit", methods=["POST"])
+@dm_required
+def dm_edit_log_event_ajax(slug):
+    data = request.get_json() or {}
+    event_id = data.get("event_id", "")
+    entity_type = data.get("entity_type", "")
+    entity_id = data.get("entity_id", "")
+    if not event_id or not entity_type:
+        return jsonify({"error": "missing fields"}), 400
+    db.edit_log_entry(slug, entity_id, entity_type, event_id,
+                      note=data.get("note") or None,
+                      polarity=data.get("polarity") or "",
+                      intensity=data.get("intensity"))
+    return jsonify({"ok": True})
+
+
 @app.route("/<slug>/dm/event/<event_id>/restore_ripple", methods=["POST"])
 @dm_required
 def dm_restore_ripple(slug, event_id):
@@ -3487,7 +3669,7 @@ def dm_edit_npc_notes(slug, npc_id):
             return jsonify({"ok": False, "error": err})
         flash(err, "error")
         return redirect(url_for("npc", slug=slug, npc_id=npc_id))
-    db.update_npc(slug, npc_id, description=description or None, dm_notes=dm_notes or None, image_url=image_url or None)
+    db.update_npc(slug, npc_id, description=description or None, dm_notes=dm_notes if "dm_notes" in request.form else None, image_url=image_url or None)
     if request.form.get("ajax"):
         return jsonify({"ok": True})
     return redirect(url_for("npc", slug=slug, npc_id=npc_id))
@@ -3508,10 +3690,12 @@ def dm_log_npc(slug, npc_id):
     actor_id = request.form.get("actor_id") or None
     actor_type = request.form.get("actor_type") or None
     actor_dm_only = bool(request.form.get("actor_dm_only"))
+    axis = request.form.get("axis") or None
     if note:
         src_evt = db.log_npc(slug, npc_id, session_n, note, polarity=polarity, intensity=intensity,
                              event_type=event_type, visibility=visibility,
-                             actor_id=actor_id, actor_type=actor_type, actor_dm_only=actor_dm_only)
+                             actor_id=actor_id, actor_type=actor_type, actor_dm_only=actor_dm_only,
+                             axis=axis)
         for fid in request.form.getlist("also_faction_ids"):
             if fid:
                 db.log_faction(slug, fid, session_n, note,
@@ -3579,7 +3763,7 @@ def dm_edit_faction_notes(slug, faction_id):
             return jsonify({"ok": False, "error": err})
         flash(err, "error")
         return redirect(url_for("faction", slug=slug, faction_id=faction_id))
-    db.update_faction(slug, faction_id, description=description or None, dm_notes=dm_notes or None, image_url=image_url or None)
+    db.update_faction(slug, faction_id, description=description or None, dm_notes=dm_notes if "dm_notes" in request.form else None, image_url=image_url or None)
     if request.form.get("ajax"):
         return jsonify({"ok": True})
     return redirect(url_for("faction", slug=slug, faction_id=faction_id))
@@ -4037,7 +4221,7 @@ def dm_settings(slug):
     meta["name"] = request.form.get("name", "").strip() or meta["name"]
     meta["system"] = request.form.get("system", "").strip()
     meta["description"] = request.form.get("description", "").strip()
-    meta["party_name"] = request.form.get("party_name", "").strip() or "Party"
+    meta["party_name"] = request.form.get("party_name", "").strip()
     meta["observer_name"] = request.form.get("observer_name", "").strip()
     new_pin = request.form.get("dm_pin", "").strip()
     if new_pin and new_pin.isdigit() and 4 <= len(new_pin) <= 8:

@@ -147,14 +147,14 @@ fetch(`/${slug}/world/graph-data{% if as_of %}?as_of={{ as_of }}{% endif %}`)
       container: document.getElementById('cy'),
       elements: [...data.nodes, ...data.edges],
       style: [
-        { selector: 'node', style: { label:'data(label)', 'font-size':5, 'font-family':'monospace', color:'#c8cfe8', 'text-valign':'bottom', 'text-margin-y':1, width:'mapData(log_count,0,20,3,6)', height:'mapData(log_count,0,20,3,6)', 'background-color': ele => REL_COLOR[ele.data('relationship')]||'#555', 'border-width': ele => ele.data('hidden')?2:0, 'border-style': ele => ele.data('hidden')?'dashed':'solid', 'border-color':'#888', 'transition-property':'opacity,border-width,border-color,background-color', 'transition-duration':'150ms' }},
+        { selector: 'node', style: { label:'data(label)', 'font-size':5, 'font-family':'monospace', color:'#c8cfe8', 'text-valign':'bottom', 'text-margin-y':1, width:'mapData(log_count,0,20,3,6)', height:'mapData(log_count,0,20,3,6)', 'background-color': ele => REL_COLOR[ele.data('relationship')]||'#555', 'border-width': ele => ele.data('hidden')?0.5:0, 'border-style': ele => ele.data('hidden')?'dashed':'solid', 'border-color':'#aaa', 'outline-width':0, 'overlay-opacity':0, 'underlay-opacity':0, 'transition-property':'opacity,border-width,border-color,background-color', 'transition-duration':'150ms' }},
         { selector: 'node[type="faction"]', style: { shape:'round-rectangle' }},
         { selector: 'node[type="npc"]',     style: { shape:'ellipse' }},
         { selector: 'node[type="party"]',   style: { shape:'star', 'background-color':'#c9a227', width:14, height:14, 'font-size':6, color:'#c9a227', 'font-weight':'bold', 'z-index':20 }},
         { selector: 'node[type="character"]', style: { shape:'diamond', 'background-color':'#d4a82a', width:6, height:6, color:'#d4b84a' }},
         { selector: 'edge', style: { width:'mapData(weight,0.25,1,0.3,1.2)', 'line-color': 'rgba(224,92,92,0.4)', 'target-arrow-shape':'none', 'curve-style':'bezier', opacity:0.7, 'transition-property':'opacity,line-color,width', 'transition-duration':'150ms' }},
         { selector: 'edge[relation="ally"]', style: { 'line-color': 'rgba(126,200,126,0.4)' }},
-        { selector: 'edge[relation="party_contact"]', style: { 'line-color': ele => REL_COLOR_ALPHA[ele.data('relationship')]||'rgba(136,136,136,0.27)', width:'mapData(weight,0.2,1,0.4,1.5)' }},
+        { selector: 'edge[relation="party_contact"]', style: { 'line-color': ele => REL_COLOR_ALPHA[ele.data('relationship')]||'rgba(136,136,136,0.4)', width:1.2, 'line-style':'dashed', 'line-dash-pattern':[4,3] }},
         { selector: 'edge[relation="member"]',        style: { 'line-color':'rgba(201,162,39,0.4)', width:0.8 }},
         { selector: 'edge[relation="party_affiliate"]', style: { 'line-color':'rgba(201,162,39,0.75)', 'line-style':'dashed', width:1.4 }},
         { selector: 'edge[relation="knows"]',         style: { 'line-color':'rgba(201,162,39,0.27)', width:0.4, 'line-style':'dashed' }},
@@ -186,12 +186,57 @@ fetch(`/${slug}/world/graph-data{% if as_of %}?as_of={{ as_of }}{% endif %}`)
     cy.on('tap', 'node', e => selectNode(e.target));
     cy.on('tap', e => { if (e.target === cy) clearSelection(); });
     applyFilters();
+    startPolling();
   })
   .catch(() => {
     const el = document.getElementById('cy-loading');
     el.style.display = 'flex';
     el.textContent = 'Failed to load graph data.';
   });
+
+function startPolling() {
+  let lastNodeCount = -1;
+  setInterval(() => {
+    fetch(`/${slug}/world/graph-data{% if as_of %}?as_of={{ as_of }}&{% else %}?{% endif %}t=${Date.now()}`)
+      .then(r => r.json())
+      .then(data => {
+        if (!cy) return;
+        const existingNodeIds = new Set(cy.nodes().map(n => n.id()));
+        const existingEdgeIds = new Set(cy.edges().map(e => e.id()));
+        const newNodes = data.nodes.filter(n => !existingNodeIds.has(n.data.id));
+        const newEdges = data.edges.filter(e => !existingEdgeIds.has(e.data.id));
+        const liveNodeIds = new Set(data.nodes.map(n => n.data.id));
+        cy.nodes().forEach(n => { if (!liveNodeIds.has(n.id())) n.remove(); });
+        if (newNodes.length || newEdges.length) {
+          cy.add([...newNodes, ...newEdges]);
+          cy.nodes().forEach(n => {
+            const fresh = data.nodes.find(d => d.data.id === n.id());
+            if (fresh) n.data(fresh.data);
+          });
+          cy.layout({ name:'cose', animate:true, animationDuration:600, fit:false, padding:40, nodeRepulsion:18000, nodeOverlap:6, idealEdgeLength:80, edgeElasticity:70, gravity:45, numIter:600, randomize:false }).run();
+          applyFilters();
+        }
+        const nodeCount = data.nodes.length;
+        if (lastNodeCount !== -1 && nodeCount !== lastNodeCount) {
+          refreshEntityCards();
+        }
+        lastNodeCount = nodeCount;
+      })
+      .catch(() => {});
+  }, 3000);
+}
+
+function refreshEntityCards() {
+  fetch(window.location.href + (window.location.search ? '&' : '?') + '_t=' + Date.now())
+    .then(r => r.text())
+    .then(html => {
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const fresh = doc.getElementById('rf-entities');
+      const current = document.getElementById('rf-entities');
+      if (fresh && current) current.replaceWith(fresh);
+    })
+    .catch(() => {});
+}
 
 function selectNode(node) {
   cy.elements().removeClass('dimmed source depth-1 depth-2 active-edge');
@@ -266,6 +311,7 @@ window.applyFilters = function() {
 })();
 </script>
 
+<div id="rf-entities">
 {% if conditions %}
 <h2 class="section-title">Active Conditions</h2>
 <div class="card-grid mb-4">
@@ -490,5 +536,6 @@ window.applyFilters = function() {
   {% endif %}
 </div>
 {% endif %}
+</div>{# /rf-entities #}
 
 {% endblock %}

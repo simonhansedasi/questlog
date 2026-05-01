@@ -16,7 +16,7 @@
     Log what happened. Every relationship, faction, and future consequence updates automatically.
   </p>
   <p style="color:var(--muted); font-size:0.8rem; margin:0 0 24px 0;">
-    Explore a living <strong style="color:var(--text);">World War II</strong> — twelve chapters, eight nations, fully interactive. Changes reset every 30 minutes.
+    Explore a living <strong style="color:var(--text);">The Ashcroft Vein</strong> — a frontier mining town, five sessions, fully interactive. Changes reset every 30 minutes.
   </p>
   <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
     <a href="/demo/world/ripples"
@@ -42,164 +42,112 @@
 <!-- Preview panels -->
 <div class="card-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:20px; margin-bottom:48px;">
 
-  <!-- Panel 1: Ripple chains -->
+  <!-- Panel 1: Log an event -->
   <div class="card" style="padding:0; overflow:hidden;">
     <div style="padding:14px 18px; background:var(--surface2); border-bottom:1px solid var(--border); min-height:185px; box-sizing:border-box;">
-      <p style="color:var(--purple); font-size:0.65rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; margin:0 0 4px 0;">01 — Ripple Chains</p>
-      <h3 style="margin:0 0 4px 0; font-size:0.95rem;">One event. Four consequences.</h3>
-      <p style="color:var(--text); font-size:0.82rem; margin:0 0 4px 0; font-style:italic;">An army surrenders. Four relationships shift overnight.</p>
-      <p style="color:var(--muted); font-size:0.78rem; margin:0;">One log entry. Every connected entity updates automatically. Scores show the weight of accumulated history.</p>
+      <p style="color:var(--purple); font-size:0.65rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; margin:0 0 4px 0;">01 — Log an Event</p>
+      <h3 style="margin:0 0 4px 0; font-size:0.95rem;">One entry. The web updates.</h3>
+      <p style="color:var(--text); font-size:0.82rem; margin:0 0 4px 0; font-style:italic;">Log what happened to Edda Sorn. Every connected entity feels it.</p>
+      <p style="color:var(--muted); font-size:0.78rem; margin:0;">Each NPC and faction lives in a relationship graph. Logging one event propagates consequences to everyone connected — allies, rivals, dependents.</p>
     </div>
     <div style="padding:14px 18px;">
-      <!-- Source event -->
-      <div style="margin-bottom:10px;">
-        <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
-          <span style="font-weight:700; font-size:0.88rem; color:var(--text);">Friedrich Paulus</span>
-          <span style="font-size:0.68rem; color:var(--muted);">Chapter 7</span>
-          <span style="font-size:0.68rem; color:var(--purple); font-weight:700; text-transform:uppercase; letter-spacing:0.04em;">capture</span>
+      <div style="border:1px solid var(--border); border-radius:5px; padding:10px 12px; margin-bottom:12px;">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px; flex-wrap:wrap;">
+          <span style="font-weight:700; font-size:0.88rem; color:var(--text);">Edda Sorn</span>
+          <span style="font-size:0.67rem; color:var(--purple); font-weight:700; text-transform:uppercase; letter-spacing:0.04em;">betrayal</span>
           <span style="font-size:0.75rem; font-weight:700; color:#e05c5c;">−3</span>
+          <span style="font-size:0.68rem; color:var(--muted);">Session 4</span>
         </div>
-        <p style="color:var(--text); font-size:0.82rem; margin:0;">Encircled at Stalingrad. Promoted to Field Marshal on the 30th — surrendered the next day. 91,000 men taken prisoner.</p>
+        <p style="color:var(--text); font-size:0.82rem; margin:0;">The Ironmasks found her ledgers. She was the only one who knew where they were hidden. Someone talked.</p>
       </div>
-      <!-- Ripples -->
-      <div style="display:flex; flex-direction:column; gap:7px; padding-left:12px; border-left:2px solid var(--border);">
-        <div style="display:flex; gap:6px;">
-          <span style="color:var(--muted); font-size:0.72rem; flex-shrink:0; padding-top:1px;">↳</span>
-          <div>
-            <span style="font-weight:700; font-size:0.82rem; color:var(--text);">Third Reich</span>
-            <span style="font-size:0.72rem; color:#e05c5c; font-weight:700; margin-left:5px;">−3</span>
-            <p style="color:var(--muted); font-size:0.78rem; margin:2px 0 0 0;">First full army lost. Eastern Front morale shattered.</p>
-          </div>
+      <p style="color:var(--muted); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; margin:0 0 6px 0;">Ripples fire automatically to:</p>
+      <div style="display:flex; flex-direction:column; gap:5px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.8rem;">
+          <span style="color:var(--text);">Trade Compact <span style="color:var(--muted); font-size:0.72rem;">— Edda Sorn</span></span>
+          <span style="color:#e05c5c; font-weight:700;">−2</span>
         </div>
-        <div style="display:flex; gap:6px;">
-          <span style="color:var(--muted); font-size:0.72rem; flex-shrink:0; padding-top:1px;">↳</span>
-          <div>
-            <span style="font-weight:700; font-size:0.82rem; color:var(--text);">Hermann Göring</span>
-            <span style="font-size:0.72rem; color:#e05c5c; font-weight:700; margin-left:5px;">−2</span>
-            <p style="color:var(--muted); font-size:0.78rem; margin:2px 0 0 0;">His airlift promise failed. Blamed for 300,000 trapped and lost.</p>
-          </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.8rem;">
+          <span style="color:var(--text);">Bram Ketterly <span style="color:var(--muted); font-size:0.72rem;">— Edda Sorn</span></span>
+          <span style="color:#e05c5c; font-weight:700;">−2</span>
         </div>
-        <div style="display:flex; gap:6px;">
-          <span style="color:var(--muted); font-size:0.72rem; flex-shrink:0; padding-top:1px;">↳</span>
-          <div>
-            <span style="font-weight:700; font-size:0.82rem; color:var(--text);">Georgy Zhukov</span>
-            <span style="font-size:0.72rem; color:#7ec87e; font-weight:700; margin-left:5px;">+3</span>
-            <p style="color:var(--muted); font-size:0.78rem; margin:2px 0 0 0;">Operation Uranus succeeded. Largest encirclement in history.</p>
-          </div>
-        </div>
-        <div style="display:flex; gap:6px;">
-          <span style="color:var(--muted); font-size:0.72rem; flex-shrink:0; padding-top:1px;">↳</span>
-          <div>
-            <span style="font-weight:700; font-size:0.82rem; color:var(--text);">Adolf Hitler</span>
-            <span style="font-size:0.72rem; color:#e05c5c; font-weight:700; margin-left:5px;">−2</span>
-            <p style="color:var(--muted); font-size:0.78rem; margin:2px 0 0 0;">Refused to allow a breakout. Raged at Paulus for not dying by his own hand.</p>
-          </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.8rem;">
+          <span style="color:var(--text);">The Ironmasks <span style="color:var(--muted); font-size:0.72rem;">— Edda Sorn</span></span>
+          <span style="color:#7ec87e; font-weight:700;">+2</span>
         </div>
       </div>
     </div>
     <div style="padding:10px 18px; border-top:1px solid var(--border);">
-      <a href="/demo/world/ripples" style="color:var(--purple); font-size:0.8rem; font-weight:700; text-decoration:none;">See all ripple chains →</a>
+      <a href="/demo/world" style="color:var(--purple); font-size:0.8rem; font-weight:700; text-decoration:none;">Explore the world graph →</a>
     </div>
   </div>
 
-  <!-- Panel 2: AI note parsing -->
+  <!-- Panel 2: World moves without players -->
   <div class="card" style="padding:0; overflow:hidden;">
     <div style="padding:14px 18px; background:var(--surface2); border-bottom:1px solid var(--border); min-height:185px; box-sizing:border-box;">
-      <p style="color:var(--purple); font-size:0.65rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; margin:0 0 4px 0;">02 — AI Event Parsing</p>
-      <h3 style="margin:0 0 4px 0; font-size:0.95rem;">Raw notes → structured events</h3>
-      <p style="color:var(--text); font-size:0.82rem; margin:0 0 4px 0; font-style:italic;">Your messy records become world-changing entries.</p>
-      <p style="color:var(--muted); font-size:0.78rem; margin:0;">Paste raw notes. AI extracts every meaningful interaction, matches entities, assigns polarity and event type.</p>
+      <p style="color:var(--purple); font-size:0.65rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; margin:0 0 4px 0;">02 — The World Moves</p>
+      <h3 style="margin:0 0 4px 0; font-size:0.95rem;">Do nothing. The world still moves.</h3>
+      <p style="color:var(--text); font-size:0.82rem; margin:0 0 4px 0; font-style:italic;">Between sessions 3 and 4. The party was resting.</p>
+      <p style="color:var(--muted); font-size:0.78rem; margin:0;">Every NPC and faction has its own agenda. Log what they do between sessions — relationships shift, power moves, the web changes before the party even arrives.</p>
     </div>
-    <div style="padding:14px 18px;">
-      <!-- Fake notes input -->
-      <div style="background:var(--surface2); border:1px solid var(--border); border-radius:4px; padding:8px 10px; margin-bottom:12px; font-size:0.75rem; color:var(--muted); font-family:monospace; line-height:1.5;">
-        Casablanca, Jan '43. <strong style="color:var(--text);">Churchill</strong> and <strong style="color:var(--text);">Roosevelt</strong> agreed on unconditional surrender. <strong style="color:var(--text);">Stalin</strong> refused to attend — said he couldn't leave Moscow. <strong style="color:var(--text);">Eisenhower</strong> privately worried the declaration would stiffen German resistance. <strong style="color:var(--text);">de Gaulle</strong> furious about being sidelined again...
+    <div style="padding:14px 18px; display:flex; flex-direction:column; gap:9px;">
+      <div>
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:3px; flex-wrap:wrap;">
+          <span style="font-weight:700; font-size:0.82rem; color:var(--text);">The Pale Widow</span>
+          <span style="font-size:0.67rem; color:var(--purple); font-weight:700; text-transform:uppercase; letter-spacing:0.04em;">consolidation</span>
+        </div>
+        <p style="color:var(--muted); font-size:0.78rem; margin:0 0 3px 0;">Absorbed two independent toll crews into Ironmask operations. No witness, no incident.</p>
+        <div style="display:flex; gap:12px; font-size:0.78rem;">
+          <span style="color:var(--text);">Ironmasks <span style="color:var(--muted);">— Pale Widow</span> <span style="color:#7ec87e; font-weight:700;">+2</span></span>
+          <span style="color:var(--text);">Trade Compact <span style="color:var(--muted);">— Pale Widow</span> <span style="color:#e05c5c; font-weight:700;">−1</span></span>
+        </div>
       </div>
-      <!-- Parsed entries -->
-      <div style="display:flex; flex-direction:column; gap:6px;">
-        <div style="border:1px solid var(--border); border-radius:4px; padding:8px 10px;">
-          <div style="display:flex; align-items:center; gap:6px; margin-bottom:3px; flex-wrap:wrap;">
-            <span style="font-weight:700; font-size:0.82rem; color:var(--text);">Winston Churchill</span>
-            <span style="font-size:0.67rem; color:var(--purple); font-weight:700; text-transform:uppercase; letter-spacing:0.04em;">politics</span>
-            <span style="font-size:0.72rem; font-weight:700; color:#7ec87e;">+2</span>
-          </div>
-          <p style="color:var(--muted); font-size:0.78rem; margin:0;">Co-announced unconditional surrender policy; secured Mediterranean strategy over US preference for France.</p>
+      <div style="border-top:1px solid var(--border); padding-top:9px;">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:3px; flex-wrap:wrap;">
+          <span style="font-weight:700; font-size:0.82rem; color:var(--text);">Corvin Ashale</span>
+          <span style="font-size:0.67rem; color:var(--purple); font-weight:700; text-transform:uppercase; letter-spacing:0.04em;">bribery</span>
         </div>
-        <div style="border:1px solid var(--border); border-radius:4px; padding:8px 10px;">
-          <div style="display:flex; align-items:center; gap:6px; margin-bottom:3px; flex-wrap:wrap;">
-            <span style="font-weight:700; font-size:0.82rem; color:var(--text);">Joseph Stalin</span>
-            <span style="font-size:0.67rem; color:var(--purple); font-weight:700; text-transform:uppercase; letter-spacing:0.04em;">politics</span>
-            <span style="font-size:0.72rem; font-weight:700; color:#e05c5c;">−1</span>
-          </div>
-          <p style="color:var(--muted); font-size:0.78rem; margin:0;">Declined to attend. Absence noted. Demanded a second front in France — got Africa instead.</p>
+        <p style="color:var(--muted); font-size:0.78rem; margin:0 0 3px 0;">Paid a Trade Compact factor to look the other way on manifests. Factor accepted.</p>
+        <div style="font-size:0.78rem;">
+          <span style="color:var(--text);">Trade Compact <span style="color:var(--muted);">— Corvin Ashale</span> <span style="color:#7ec87e; font-weight:700;">+2</span></span>
         </div>
-        <div style="border:1px solid var(--border); border-radius:4px; padding:8px 10px; opacity:0.6;">
-          <div style="display:flex; align-items:center; gap:6px; margin-bottom:3px;">
-            <span style="font-weight:700; font-size:0.82rem; color:var(--text);">Dwight Eisenhower</span>
-            <span style="font-size:0.67rem; color:var(--purple); font-weight:700; text-transform:uppercase; letter-spacing:0.04em;">dialogue</span>
-            <span style="font-size:0.68rem; color:var(--muted); font-style:italic;">Historian only</span>
-          </div>
-          <p style="color:var(--muted); font-size:0.78rem; margin:0;">Privately opposed unconditional surrender — feared it would harden German resistance in the field.</p>
+      </div>
+      <div style="border-top:1px solid var(--border); padding-top:9px;">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:3px; flex-wrap:wrap;">
+          <span style="font-weight:700; font-size:0.82rem; color:var(--text);">Governor Harwick Denn</span>
+          <span style="font-size:0.67rem; color:var(--purple); font-weight:700; text-transform:uppercase; letter-spacing:0.04em;">inaction</span>
+        </div>
+        <p style="color:var(--muted); font-size:0.78rem; margin:0 0 3px 0;">Received Maren Vosk's report. Filed it. Sent no response.</p>
+        <div style="display:flex; gap:12px; font-size:0.78rem;">
+          <span style="color:var(--text);">Maren Vosk <span style="color:var(--muted);">— Governor Denn</span> <span style="color:#e05c5c; font-weight:700;">−2</span></span>
+          <span style="color:var(--text);">Stonebreakers <span style="color:var(--muted);">— Governor Denn</span> <span style="color:#e05c5c; font-weight:700;">−1</span></span>
         </div>
       </div>
     </div>
     <div style="padding:10px 18px; border-top:1px solid var(--border);">
-      <a href="/demo/ai" style="color:var(--purple); font-size:0.8rem; font-weight:700; text-decoration:none;">Try the parser →</a>
+      <a href="/demo/journal" style="color:var(--purple); font-size:0.8rem; font-weight:700; text-decoration:none;">See the full chronicle →</a>
     </div>
   </div>
 
-  <!-- Panel 3: Consequence projection -->
-  <div class="card" style="padding:0; overflow:hidden;">
-    <div style="padding:14px 18px; background:var(--surface2); border-bottom:1px solid var(--border); min-height:185px; box-sizing:border-box;">
-      <p style="color:var(--purple); font-size:0.65rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; margin:0 0 4px 0;">03 — Consequence Projection</p>
-      <h3 style="margin:0 0 4px 0; font-size:0.95rem;">What happens if no one intervenes?</h3>
-      <p style="color:var(--text); font-size:0.82rem; margin:0 0 4px 0; font-style:italic;">Ignore a tension, and it resolves without you.</p>
-      <p style="color:var(--muted); font-size:0.78rem; margin:0;">AI reads every active tension and forecasts probable outcomes. These commit to the timeline as <strong style="color:var(--purple);">PROJECTED</strong> entries — not suggestions, world state.</p>
-    </div>
-    <div style="padding:14px 18px; display:flex; flex-direction:column; gap:8px;">
-      <div style="border:1px solid var(--border); border-left:3px solid #7ec87e; border-radius:4px; padding:10px 12px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
-          <span style="font-weight:700; font-size:0.83rem; color:var(--text);">Erwin Rommel</span>
-          <span style="font-size:0.68rem; font-weight:700; color:#7ec87e; text-transform:uppercase; letter-spacing:0.06em;">high</span>
-        </div>
-        <p style="color:var(--text); font-size:0.8rem; margin:0 0 4px 0;">Attempts to withdraw toward Tunisia as supply lines collapse — likely to reach defensible ground before Montgomery cuts him off.</p>
-        <p style="color:var(--muted); font-size:0.72rem; margin:0; font-style:italic;">El Alamein defeat removed his operational initiative but not his capacity for retreat.</p>
-      </div>
-      <div style="border:1px solid var(--border); border-left:3px solid var(--gold); border-radius:4px; padding:10px 12px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
-          <span style="font-weight:700; font-size:0.83rem; color:var(--text);">Adolf Hitler</span>
-          <span style="font-size:0.68rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:0.06em;">medium</span>
-        </div>
-        <p style="color:var(--text); font-size:0.8rem; margin:0 0 4px 0;">Issues stand-fast order to the Africa Korps — overriding Rommel's judgment and accelerating the collapse.</p>
-        <p style="color:var(--muted); font-size:0.72rem; margin:0; font-style:italic;">Pattern established at Stalingrad: micromanagement follows every reversal.</p>
-      </div>
-      <p style="color:var(--muted); font-size:0.73rem; margin:4px 0 0 0;">Select consequences to commit → they appear on each entity's timeline as <strong style="color:var(--purple);">PROJECTED</strong> entries.</p>
-    </div>
-    <div style="padding:10px 18px; border-top:1px solid var(--border);">
-      <a href="/demo/ai" style="color:var(--purple); font-size:0.8rem; font-weight:700; text-decoration:none;">Generate consequences →</a>
-    </div>
-  </div>
-
-  <!-- Panel 4: Timeline forking -->
+  <!-- Panel 3: Timeline forking -->
   <div class="card" style="padding:0; overflow:hidden; border-color:var(--gold)55;">
     <div style="padding:14px 18px; background:var(--surface2); border-bottom:1px solid var(--border); min-height:185px; box-sizing:border-box;">
-      <p style="color:var(--gold); font-size:0.65rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; margin:0 0 4px 0;">04 — Timeline Forking</p>
+      <p style="color:var(--gold); font-size:0.65rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; margin:0 0 4px 0;">03 — Timeline Forking</p>
       <h3 style="margin:0 0 4px 0; font-size:0.95rem;">What if they'd made a different choice?</h3>
-      <p style="color:var(--text); font-size:0.82rem; margin:0 0 4px 0; font-style:italic;">Rewind to any chapter. Branch. The original stays intact.</p>
-      <p style="color:var(--muted); font-size:0.78rem; margin:0;">Pick any point in history, fork an alternate timeline, and log events into the branch. The relationship graph shows exactly where the two timelines diverge.</p>
+      <p style="color:var(--text); font-size:0.82rem; margin:0 0 4px 0; font-style:italic;">Rewind to any session. Branch. The original stays intact.</p>
+      <p style="color:var(--muted); font-size:0.78rem; margin:0;">Pick any point in the timeline, fork an alternate branch, and log events into it. The relationship graph shows exactly where the two timelines diverge.</p>
     </div>
     <div style="padding:14px 18px; display:flex; flex-direction:column; gap:10px;">
       <div style="background:var(--surface2); border:1px solid var(--border); border-radius:5px; padding:10px 12px;">
         <p style="color:var(--muted); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; margin:0 0 4px 0;">Main timeline</p>
-        <p style="color:var(--text); font-size:0.82rem; margin:0;">Chapter 7: Paulus surrenders at Stalingrad. Germany's Eastern Front collapses.</p>
+        <p style="color:var(--text); font-size:0.82rem; margin:0;">Session 3: Party refused the Ironmask bribe. Conflict escalated.</p>
       </div>
       <div style="display:flex; align-items:center; gap:8px; padding-left:8px;">
         <span style="color:var(--gold); font-size:1rem;">⎇</span>
-        <span style="color:var(--muted); font-size:0.75rem; font-style:italic;">Fork at Chapter 6 — "What if Paulus broke out?"</span>
+        <span style="color:var(--muted); font-size:0.75rem; font-style:italic;">Fork at Session 2 — "What if they took the gold?"</span>
       </div>
       <div style="background:var(--surface2); border:1px solid var(--gold)55; border-radius:5px; padding:10px 12px;">
-        <p style="color:var(--gold); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; margin:0 0 4px 0;">Branch: Paulus breaks out</p>
-        <p style="color:var(--text); font-size:0.82rem; margin:0;">Paulus defies Hitler's order. 6th Army retreats west. Third Reich avoids Stalingrad collapse. Posterity score shifts — Hitler's relationship graph holds.</p>
+        <p style="color:var(--gold); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; margin:0 0 4px 0;">Branch: The party took the bribe</p>
+        <p style="color:var(--text); font-size:0.82rem; margin:0;">Ironmasks gain legitimacy. The Pale Widow's plan accelerates unopposed. Relationship graph diverges — the party is now inside the web.</p>
       </div>
     </div>
     <div style="padding:10px 18px; border-top:1px solid var(--border);">
@@ -209,31 +157,6 @@
 
 </div>
 
-<!-- Backlog pitch -->
-<div style="max-width:640px; margin:0 auto 48px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:28px 32px;">
-  <p style="color:var(--purple); font-size:0.65rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; margin:0 0 8px 0;">For histories already in motion</p>
-  <h2 style="font-size:1.15rem; font-weight:800; margin:0 0 10px 0; letter-spacing:-0.01em;">Your archived records are a goldmine.</h2>
-  <p style="color:var(--muted); font-size:0.88rem; line-height:1.65; margin:0 0 16px 0;">
-    Most tools require you to start fresh. RippleForge doesn't.<br>
-    Paste your existing notes — oldest first — and the world builds itself. Relationships accumulate, ripple chains trace back through history, and by chapter 10 the AI already knows which tensions are about to snap.
-  </p>
-  <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:20px;">
-    <div style="display:flex; gap:10px; align-items:flex-start; font-size:0.83rem; color:var(--muted);">
-      <span style="color:var(--purple); flex-shrink:0; font-weight:700;">1</span>
-      <span>Paste chapter 1 notes → AI extracts events, creates figures and factions automatically</span>
-    </div>
-    <div style="display:flex; gap:10px; align-items:flex-start; font-size:0.83rem; color:var(--muted);">
-      <span style="color:var(--purple); flex-shrink:0; font-weight:700;">2</span>
-      <span>Repeat for each chapter in order — relationships and ripple chains build up automatically</span>
-    </div>
-    <div style="display:flex; gap:10px; align-items:flex-start; font-size:0.83rem; color:var(--muted);">
-      <span style="color:var(--purple); flex-shrink:0; font-weight:700;">3</span>
-      <span>Ask "what happens next?" — answered from the full weight of your actual history</span>
-    </div>
-  </div>
-  <p style="color:var(--text); font-size:0.88rem; font-weight:700; font-style:italic; margin:0; opacity:0.85;">A world with 20 chapters of history loads in an afternoon.</p>
-</div>
-
 <!-- Bottom nav -->
 <div style="text-align:center; padding-bottom:32px;">
   <p style="color:var(--muted); font-size:0.8rem; margin:0 0 12px 0;">Ready to explore? The whole campaign is live.</p>
@@ -241,7 +164,7 @@
     <a href="/demo/world" style="color:var(--muted); text-decoration:none;">World →</a>
     <a href="/demo/journal" style="color:var(--muted); text-decoration:none;">Chronicle →</a>
     <a href="/demo/world/ripples" style="color:var(--muted); text-decoration:none;">Ripple chains →</a>
-    <a href="/demo/ai" style="color:var(--purple); font-weight:700; text-decoration:none;">AI tools →</a>
+    <a href="/demo/party" style="color:var(--muted); text-decoration:none;">Party →</a>
   </div>
 </div>
 

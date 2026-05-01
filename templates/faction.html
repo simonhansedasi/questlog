@@ -122,7 +122,7 @@
 
 {% if session.get('dm_' ~ slug) and faction.dm_notes %}
 <div class="card mt-8" style="border-color:rgba(140,100,220,0.4); background:rgba(140,100,220,0.05);">
-  <div style="color:var(--purple); font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:6px;">DM Secret</div>
+  <div style="color:var(--purple); font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:6px;">{{ terms.dm }} Secret</div>
   <p style="margin:0; white-space:pre-wrap;">{{ faction.dm_notes }}</p>
 </div>
 {% endif %}
@@ -317,7 +317,7 @@
         <input type="hidden" name="next" value="/{{ slug }}/world/faction/{{ faction.id }}">
         <span style="color:var(--muted); font-size:0.68rem; flex-shrink:0;">move to →</span>
         <select name="target" style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:3px; padding:1px 4px; font-size:0.68rem;">
-          {% if world_npcs %}<optgroup label="NPCs">{% for n in world_npcs %}<option value="npc:{{ n.id }}">{{ n.name }}</option>{% endfor %}</optgroup>{% endif %}
+          {% if world_npcs %}<optgroup label="{{ terms.npcs }}">{% for n in world_npcs %}<option value="npc:{{ n.id }}">{{ n.name }}</option>{% endfor %}</optgroup>{% endif %}
           {% if all_factions %}<optgroup label="Factions">{% for f in all_factions %}<option value="faction:{{ f.id }}">{{ f.name }}</option>{% endfor %}</optgroup>{% endif %}
         </select>
         <button type="submit" style="background:none; border:1px solid var(--border); color:var(--muted); border-radius:3px; padding:1px 6px; font-size:0.68rem; cursor:pointer;">Move</button>
@@ -358,7 +358,7 @@
                 style="{{ input_style }} resize:vertical; font-family:inherit;">{{ faction.description or '' }}</textarea>
     </div>
     <div style="display:flex; flex-direction:column; gap:4px;">
-      <label style="color:var(--purple); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">DM Secret <span style="font-weight:400; font-size:0.7rem; text-transform:none; color:var(--muted);">— never shown to players</span></label>
+      <label style="color:var(--purple); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">{{ terms.dm }} Secret <span style="font-weight:400; font-size:0.7rem; text-transform:none; color:var(--muted);">— never shown to {{ 'readers' if world_mode == 'fiction' else ('researchers' if world_mode == 'historical' else 'players') }}</span></label>
       <textarea name="dm_notes" rows="3" placeholder="True agenda, hidden members, plot hooks..."
                 style="{{ input_style }} resize:vertical; font-family:inherit; border-color:rgba(140,100,220,0.4);">{{ faction.dm_notes or '' }}</textarea>
     </div>
@@ -399,7 +399,7 @@
               onchange="this.form.actor_type.value = this.options[this.selectedIndex].dataset.type || ''"
               style="{{ input_style }} width:auto; flex-shrink:0; flex-grow:1; max-width:200px;">
         <option value="">— actor (optional) —</option>
-        {% if world_npcs %}<optgroup label="NPCs">
+        {% if world_npcs %}<optgroup label="{{ terms.npcs }}">
           {% for n in world_npcs %}<option value="{{ n.id }}" data-type="npc">{{ n.name }}</option>{% endfor %}
         </optgroup>{% endif %}
         {% if all_factions %}<optgroup label="Factions">
@@ -463,7 +463,7 @@
         <label style="color:var(--muted); font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em;">Target</label>
         <select name="target_id" required style="{{ input_style }} min-width:140px;" onchange="this.form.target_type.value=this.options[this.selectedIndex].dataset.type">
           {% if world_npcs %}
-          <optgroup label="NPCs">
+          <optgroup label="{{ terms.npcs }}">
             {% for n in world_npcs %}<option value="{{ n.id }}" data-type="npc">{{ n.name }}</option>{% endfor %}
           </optgroup>
           {% endif %}
@@ -556,7 +556,7 @@ document.addEventListener('submit', function(e) {
       if (d.ok) {
         status.textContent = 'Saved';
         status.style.color = '#7ec87e';
-        setTimeout(() => { status.style.display = 'none'; }, 2000);
+        setTimeout(() => { window.location.reload(); }, 800);
       } else {
         status.textContent = d.error || 'Error';
         status.style.color = '#e05c5c';
