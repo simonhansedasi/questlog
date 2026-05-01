@@ -17,15 +17,15 @@
   <p style="color:var(--muted); font-size:0.82rem; margin-bottom:14px;">Paste raw period notes. RippleForge extracts discrete world events, matches them to known figures and powers, and assigns polarity and intensity — ready to commit to the world log.</p>
 
   <textarea id="notes-input" rows="9"
-    style="width:100%; background:var(--surface2); border:1px solid var(--border); border-radius:5px; padding:10px 12px; color:var(--text); font-size:0.82rem; line-height:1.6; resize:vertical; box-sizing:border-box; font-family:inherit;">Period 7 notes — December 1941
+    style="width:100%; background:var(--surface2); border:1px solid var(--border); border-radius:5px; padding:10px 12px; color:var(--text); font-size:0.82rem; line-height:1.6; resize:vertical; box-sizing:border-box; font-family:inherit;">Session 5 notes — Coldwater Crossing
 
-Japan attacks Pearl Harbor, December 7. Yamamoto's kido butai strikes in two waves — eight battleships hit, Arizona and Oklahoma lost entirely. 2,403 Americans killed. Pacific Fleet battleship force destroyed in two hours. US carrier fleet and oil reserves untouched — the carriers were at sea.
+Party cornered Farlan Dusk at the Coldwater crossing. He broke under pressure — admitted he's been running messages for The Pale Widow since session 2. Named her safe house on the south edge of Ashford. Visibly terrified of what happens when she finds out he talked.
 
-Roosevelt addresses Congress December 8 — "a date which will live in infamy." War declared against Japan 388 to 1. Germany and Italy declare war on the United States December 11; Roosevelt counters immediately. US is now in on both fronts.
+Nessa Crane was gone before the party reached the Registry. Her post was cleared out, no note. Someone warned her — either she has her own contacts or the Pale Widow already knows.
 
-Churchill cables Roosevelt on hearing the news. "So we had won after all." Privately relieved — British survival had been in real doubt before today. Stalin is informed but makes no public statement.
+Maren Vosk handed over the ledger copy she's been sitting on for three sessions. Said she'll testify in front of the Governor if the party can get her there safely. She doesn't trust the roads.
 
-Yamamoto privately uneasy — regards the attack as an incomplete victory. The carrier fleet survived and oil reserves are intact. He believes the US will retaliate faster than Tokyo expects. He does not say this publicly.</textarea>
+Corvin Ashale sent a runner with an offer — he'll clear the path to the Pale Widow's safe house in exchange for 30% of whatever they find inside. Party hasn't responded yet.</textarea>
 
   <div style="display:flex; align-items:center; gap:14px; margin-top:12px; flex-wrap:wrap;">
     <button id="parse-btn" onclick="parseNotes()"
@@ -61,78 +61,78 @@ Yamamoto privately uneasy — regards the attack as an incomplete victory. The c
 <script>
 var FUTURES_DATA = [
   {
-    entity_id: "joseph_stalin",
+    entity_id: "the_pale_widow",
     entity_type: "npc",
-    entity_name: "Joseph Stalin",
-    hypothesis: "Demands a second front in Western Europe at the next Allied summit — Soviet losses are catastrophic and the Eastern Front cannot hold without relief.",
-    reasoning: "The Soviet Union has absorbed the brunt of German aggression for eighteen months. US entry gives Stalin the leverage to demand a western offensive. He will not stop asking.",
+    entity_name: "The Pale Widow",
+    hypothesis: "Moves on Maren Vosk before she can reach the Governor's office — either through the Ironmasks or through Nessa Crane, who is now in her debt.",
+    reasoning: "Maren's ledger copy is the only physical evidence that ties the Pale Widow to the Compact extortion. Farlan talked. She knows the timeline is closing. Maren is the loose end.",
     confidence: "high"
   },
   {
-    entity_id: "isoroku_yamamoto",
+    entity_id: "warchief_durnak",
     entity_type: "npc",
-    entity_name: "Isoroku Yamamoto",
-    hypothesis: "Moves to extend Japan's Pacific defensive perimeter — likely targeting Midway or the Aleutians — before American shipyards close the industrial gap.",
-    reasoning: "Yamamoto knows Japan's window is narrow. US industrial capacity will dwarf Japan's within eighteen months. The perimeter must be established now while the Pacific Fleet is still recovering.",
-    confidence: "high"
+    entity_name: "Warchief Durnak",
+    hypothesis: "Sends Stonebreaker warriors into the lower shafts to reclaim them — the clan elders have pushed past his patience and he needs to show movement before he loses their support.",
+    reasoning: "Durnak has held the clan back for three sessions. The vein instability report gave him cover to wait. That cover expires when the Ironmasks start working the lower shafts regardless.",
+    confidence: "medium"
   },
   {
-    entity_id: "adolf_hitler",
+    entity_id: "governor_harwick_denn",
     entity_type: "npc",
-    entity_name: "Adolf Hitler",
-    hypothesis: "Presses toward Stalingrad despite overextended supply lines — regards it as a symbolic objective and will not authorize a strategic withdrawal.",
-    reasoning: "Hitler has declared US entry irrelevant and doubled down on the Eastern Front. His refusal to delegate tactical authority means Army Group South will push to the Volga regardless of logistics.",
+    entity_name: "Governor Harwick Denn",
+    hypothesis: "Attempts to quietly leave Ashford before the situation breaks open — requests an escort to the capital under the pretense of filing quarterly reports.",
+    reasoning: "Denn filed Maren's report and did nothing. If Maren testifies, his inaction becomes complicity on record. He has no play that keeps him clean. Flight is the only option left to him.",
     confidence: "medium"
   }
 ];
 
 var PARSE_DATA = [
   {
-    entity_id: "imperial_japan",
-    entity_type: "faction",
-    entity_name: "Imperial Japan",
+    entity_id: "farlan_dusk",
+    entity_type: "npc",
+    entity_name: "Farlan Dusk",
     faction_name: null,
-    note: "Launches surprise attack on Pearl Harbor — eight battleships struck, Arizona and Oklahoma lost, 2,403 Americans killed.",
+    note: "Broke under interrogation at the Coldwater crossing — confessed to running messages for the Pale Widow since session 2. Named her safe house on Ashford's south edge.",
     polarity: "negative",
     intensity: 3,
-    event_type: "combat",
+    event_type: "confession",
     visibility: "public",
     conflict: false
   },
   {
-    entity_id: "franklin_d_roosevelt",
+    entity_id: "nessa_crane",
     entity_type: "npc",
-    entity_name: "Franklin D. Roosevelt",
+    entity_name: "Nessa Crane",
     faction_name: null,
-    note: "Delivers \"Day of Infamy\" address to Congress; war declared against Japan 388-1. Counters Germany and Italy's declarations immediately — United States enters on both fronts.",
-    polarity: "positive",
-    intensity: 3,
-    event_type: "politics",
-    visibility: "public",
-    conflict: false
-  },
-  {
-    entity_id: "winston_churchill",
-    entity_type: "npc",
-    entity_name: "Winston Churchill",
-    faction_name: null,
-    note: "Cables Roosevelt upon hearing the news: \"So we had won after all.\" US entry removes the existential threat to British survival.",
-    polarity: "positive",
+    note: "Cleared out her Registry post before the party arrived — no note left. Someone warned her. Her loyalties and whereabouts are now unknown.",
+    polarity: "negative",
     intensity: 2,
-    event_type: "dialogue",
-    visibility: "public",
-    conflict: false
-  },
-  {
-    entity_id: "isoroku_yamamoto",
-    entity_type: "npc",
-    entity_name: "Isoroku Yamamoto",
-    faction_name: null,
-    note: "Privately regards Pearl Harbor as an incomplete victory — US carrier fleet and oil reserves untouched. Believes American retaliation will come faster than Tokyo expects.",
-    polarity: "neutral",
-    intensity: 2,
-    event_type: "discovery",
+    event_type: "disappearance",
     visibility: "dm_only",
+    conflict: false
+  },
+  {
+    entity_id: "maren_vosk",
+    entity_type: "npc",
+    entity_name: "Maren Vosk",
+    faction_name: null,
+    note: "Handed over the ledger copy she had been concealing. Agreed to testify before the Governor if the party can guarantee safe passage to Ashford.",
+    polarity: "positive",
+    intensity: 2,
+    event_type: "alliance",
+    visibility: "public",
+    conflict: false
+  },
+  {
+    entity_id: "corvin_ashale",
+    entity_type: "npc",
+    entity_name: "Corvin Ashale",
+    faction_name: null,
+    note: "Sent a runner offering to clear the path to the Pale Widow's safe house in exchange for 30% of whatever is found inside. Party has not yet responded.",
+    polarity: "neutral",
+    intensity: 1,
+    event_type: "negotiation",
+    visibility: "public",
     conflict: false
   }
 ];
