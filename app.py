@@ -142,8 +142,8 @@ def compute_rel_filter(npc, is_dm=True):
 
 
 @app.template_filter("wikilinks")
-def wikilinks_filter(text, slug, npcs, factions):
-    """Replace [[Entity Name]] with links to matching NPC/faction pages."""
+def wikilinks_filter(text, slug, npcs, factions, locations=None, party=None):
+    """Replace [[Entity Name]] with links to matching NPC/faction/location/party pages."""
     if not text:
         return Markup('')
     lookup = {}
@@ -151,6 +151,10 @@ def wikilinks_filter(text, slug, npcs, factions):
         lookup[n['name'].lower()] = ('npc', n['id'])
     for f in (factions or []):
         lookup[f['name'].lower()] = ('faction', f['id'])
+    for loc in (locations or []):
+        lookup[loc['name'].lower()] = ('location', loc['id'])
+    for c in (party or []):
+        lookup[c['name'].lower()] = ('party', db.slugify(c['name']))
     escaped = str(Markup.escape(text))
 
     def replace(m):
@@ -162,15 +166,19 @@ def wikilinks_filter(text, slug, npcs, factions):
         key = entity.lower()
         if key in lookup:
             etype, eid = lookup[key]
+            if etype == 'location':
+                return f'<a href="/{slug}/world/location/{eid}" class="wikilink">{Markup.escape(display)}</a>'
+            if etype == 'party':
+                return f'<a href="/{slug}/party" class="wikilink">{Markup.escape(display)}</a>'
             return f'<a href="/{slug}/world/{etype}/{eid}" class="wikilink">{Markup.escape(display)}</a>'
-        return f'<span class="wikilink-missing">[[{Markup.escape(inner)}]]</span>'
+        return str(Markup.escape(display))
 
     return Markup(re.sub(r'\[\[([^\]\[]+)\]\]', replace, escaped))
 
 
-def _get_backlinks(entity_name, entity_id, all_npcs, all_factions):
+def _get_backlinks(entity_name, entity_id, all_npcs, all_factions, all_locations=None):
     """Return list of entities whose description mentions [[entity_name]]."""
-    pattern = re.compile(r'\[\[' + re.escape(entity_name) + r'\]\]', re.IGNORECASE)
+    pattern = re.compile(r'\[\[' + re.escape(entity_name) + r'(\|[^\]]+)?\]\]', re.IGNORECASE)
     links = []
     for n in (all_npcs or []):
         if n.get('id') != entity_id and pattern.search(n.get('description') or ''):
@@ -178,6 +186,9 @@ def _get_backlinks(entity_name, entity_id, all_npcs, all_factions):
     for f in (all_factions or []):
         if f.get('id') != entity_id and pattern.search(f.get('description') or ''):
             links.append({'type': 'faction', 'id': f['id'], 'name': f['name']})
+    for loc in (all_locations or []):
+        if loc.get('id') != entity_id and pattern.search(loc.get('description') or ''):
+            links.append({'type': 'location', 'id': loc['id'], 'name': loc['name']})
     return links
 
 
@@ -761,9 +772,10 @@ def demo_ai_propose():
     current_session = db.get_current_session("demo")
     npcs = db.get_npcs("demo", include_hidden=True)
     factions = db.get_factions("demo", include_hidden=True)
+    locations = db.get_locations("demo", include_hidden=True)
     party = db.get_party("demo")
     try:
-        proposals = ai.propose_log_entries(notes, meta.get("name", "Demo"), current_session, npcs, factions, party=party)
+        proposals = ai.propose_log_entries(notes, meta.get("name", "Demo"), current_session, npcs, factions, party=party, locations=locations)
     except Exception:
         return jsonify({"error": "ai_error"}), 500
     if visitor_id:
@@ -786,6 +798,7 @@ def demo_ai_commit_parsed():
     current_session = db.get_current_session("demo")
     npc_by_name = {n["name"].lower(): n["id"] for n in db.get_npcs("demo", include_hidden=True)}
     faction_by_name = {f["name"].lower(): f["id"] for f in db.get_factions("demo", include_hidden=True)}
+    location_by_name = {loc["name"].lower(): loc["id"] for loc in db.get_locations("demo", include_hidden=True)}
     before = {}
     for e in entries:
         eid = e.get("entity_id")
@@ -797,6 +810,21 @@ def demo_ai_commit_parsed():
         entity_type = entry.get("entity_type", "npc")
         note = entry.get("note", "").strip()[:500]
         if not note:
+            continue
+        if entity_type == "location":
+            if not entity_id:
+                name = (entry.get("entity_name") or "").strip()[:100]
+                entity_id = location_by_name.get(name.lower()) if name else None
+            if not entity_id:
+                continue
+            polarity = entry.get("polarity") or None
+            intensity = int(entry.get("intensity") or 1)
+            event_type = entry.get("event_type") or None
+            visibility = entry.get("visibility", "public")
+            session_n = int(entry.get("session") or current_session)
+            db.log_location("demo", entity_id, session_n, note, polarity=polarity,
+                            intensity=intensity, event_type=event_type, visibility=visibility)
+            committed += 1
             continue
         if not entity_id:
             name = (entry.get("entity_name") or "").strip()[:100]
@@ -1008,8 +1036,9 @@ def world(slug):
     conditions = db.get_conditions(slug, include_hidden=is_dm, include_resolved=False)
     for c in conditions:
         c["_severity"] = db.compute_condition_severity(c, is_dm=is_dm)
+    locations = db.get_locations(slug, include_hidden=is_dm)
     return render_template("world.html", meta=meta, npcs=npcs, factions=factions,
-                           conditions=conditions, slug=slug, is_dm=is_dm,
+                           conditions=conditions, locations=locations, slug=slug, is_dm=is_dm,
                            as_of=as_of, max_session=max_session,
                            branches=branches, active_branch=active_branch)
 
@@ -1752,7 +1781,8 @@ def npc(slug, npc_id):
     all_factions_full = db.get_factions(slug, include_hidden=True) if is_dm else factions
     link_npcs = db.get_npcs(slug, include_hidden=is_dm)
     link_factions = db.get_factions(slug, include_hidden=is_dm)
-    backlinks = _get_backlinks(npc_obj["name"], npc_id, link_npcs, link_factions)
+    link_locations = db.get_locations(slug, include_hidden=is_dm)
+    backlinks = _get_backlinks(npc_obj["name"], npc_id, link_npcs, link_factions, link_locations)
 
     return render_template("npc.html", meta=meta, npc=npc_obj, slug=slug,
                            is_dm=is_dm, is_player=is_player,
@@ -1768,6 +1798,7 @@ def npc(slug, npc_id):
                            active_branch=active_branch,
                            all_factions=all_factions_full,
                            link_npcs=link_npcs, link_factions=link_factions,
+                           link_locations=link_locations,
                            backlinks=backlinks)
 
 
@@ -1827,7 +1858,8 @@ def faction(slug, faction_id):
 
     link_npcs = all_npcs
     link_factions = all_factions
-    backlinks = _get_backlinks(faction_obj["name"], faction_id, link_npcs, link_factions)
+    link_locations = db.get_locations(slug, include_hidden=is_dm)
+    backlinks = _get_backlinks(faction_obj["name"], faction_id, link_npcs, link_factions, link_locations)
     char_bonds = db.get_conditions_for_faction(slug, faction_id)
 
     return render_template("faction.html", meta=meta, faction=faction_obj, slug=slug,
@@ -1839,8 +1871,59 @@ def faction(slug, faction_id):
                            inter_entity=inter_entity,
                            active_branch=active_branch,
                            link_npcs=link_npcs, link_factions=link_factions,
+                           link_locations=link_locations,
                            backlinks=backlinks,
                            char_bonds=char_bonds)
+
+
+@app.route("/<slug>/world/location/<location_id>")
+def location(slug, location_id):
+    r = campaign_access(slug)
+    if r: return r
+    meta = load(slug, "campaign.json")
+    is_dm = bool(session.get(f"dm_{slug}")) or (session.get("user") == meta.get("owner"))
+    loc_obj = db.get_location(slug, location_id)
+    if not loc_obj:
+        abort(404)
+    if loc_obj.get("hidden") and not is_dm:
+        abort(404)
+    loc_obj["log"] = [e for e in loc_obj.get("log", []) if not e.get("deleted")]
+    link_npcs = db.get_npcs(slug, include_hidden=is_dm)
+    link_factions = db.get_factions(slug, include_hidden=is_dm)
+    link_locations = db.get_locations(slug, include_hidden=is_dm)
+    party = db.get_party(slug)
+    backlinks = _get_backlinks(loc_obj["name"], location_id, link_npcs, link_factions, link_locations)
+    # Collect events from other entities tagged at this location
+    tagged_here = []
+    for n in link_npcs:
+        for e in n.get("log", []):
+            if e.get("deleted") or e.get("location_id") != location_id:
+                continue
+            vis = e.get("visibility", "public")
+            if not is_dm and vis == "dm_only":
+                continue
+            tagged_here.append({**e, "_entity_name": n["name"], "_entity_type": "npc", "_entity_id": n["id"]})
+    for f in link_factions:
+        for e in f.get("log", []):
+            if e.get("deleted") or e.get("location_id") != location_id:
+                continue
+            vis = e.get("visibility", "public")
+            if not is_dm and vis == "dm_only":
+                continue
+            tagged_here.append({**e, "_entity_name": f["name"], "_entity_type": "faction", "_entity_id": f["id"]})
+    tagged_here.sort(key=lambda e: (e.get("session", 0),))
+    branches = db.get_branches(slug)
+    active_branch_id = session.get(f"branch_{slug}") if is_dm or meta.get("demo_mode") else None
+    active_branch = next((b for b in branches if b["id"] == active_branch_id), None)
+    return render_template("location.html", meta=meta, location=loc_obj, slug=slug,
+                           is_dm=is_dm,
+                           current_session=db.get_current_session(slug),
+                           link_npcs=link_npcs, link_factions=link_factions,
+                           link_locations=link_locations,
+                           party=party,
+                           tagged_here=tagged_here,
+                           backlinks=backlinks,
+                           active_branch=active_branch)
 
 
 @app.route("/<slug>/story")
@@ -2079,6 +2162,7 @@ def dm(slug):
                            notes_parse_cursor=db.get_notes_parse_cursor(slug),
                            npcs=db.get_npcs(slug),
                            factions=db.get_factions(slug),
+                           locations=db.get_locations(slug),
                            conditions=conditions,
                            party=party,
                            party_relations=meta.get("party_relations", []),
@@ -2113,6 +2197,7 @@ def dm_quick_log(slug):
     actor_id = request.form.get("actor_id") or None
     actor_type = request.form.get("actor_type") or None
     actor_dm_only = bool(request.form.get("actor_dm_only"))
+    location_id = request.form.get("location_id") or None
     is_ajax = bool(request.form.get("ajax"))
     active_branch_id = session.get(f"branch_{slug}") or None
     if ":" in entity:
@@ -2133,7 +2218,8 @@ def dm_quick_log(slug):
             src_evt = db.log_npc(slug, entity_id, session_n, note, polarity=polarity,
                                  intensity=intensity, event_type=event_type, visibility=visibility,
                                  actor_id=actor_id, actor_type=actor_type,
-                                 actor_dm_only=actor_dm_only, branch=active_branch_id, axis=axis)
+                                 actor_dm_only=actor_dm_only, branch=active_branch_id, axis=axis,
+                                 location_id=location_id)
             for fid in also_fids:
                 if fid:
                     _also_ripple = {"entity_id": entity_id, "entity_type": "npc", "event_id": src_evt}
@@ -2157,7 +2243,8 @@ def dm_quick_log(slug):
             src_evt = db.log_faction(slug, entity_id, session_n, note, polarity=polarity,
                                      intensity=intensity, event_type=event_type, visibility=visibility,
                                      actor_id=actor_id, actor_type=actor_type,
-                                     actor_dm_only=actor_dm_only, branch=active_branch_id)
+                                     actor_dm_only=actor_dm_only, branch=active_branch_id,
+                                     location_id=location_id)
             if polarity:
                 db.apply_ripple(slug, entity_id, "faction", session_n, note, polarity, intensity,
                                 event_type, visibility=visibility, source_event_id=src_evt,
@@ -2171,7 +2258,8 @@ def dm_quick_log(slug):
                 flash("Logged", "success")
         elif entity_type == "condition" and note:
             src_evt = db.log_condition(slug, entity_id, session_n, note, polarity=polarity,
-                                       intensity=intensity, event_type=event_type, visibility=visibility)
+                                       intensity=intensity, event_type=event_type, visibility=visibility,
+                                       location_id=location_id)
             if polarity:
                 db.apply_ripple(slug, entity_id, "condition", session_n, note, polarity, intensity,
                                 event_type, visibility=visibility, source_event_id=src_evt)
@@ -2180,13 +2268,20 @@ def dm_quick_log(slug):
         elif entity_type == "party" and note:
             db.log_character(slug, entity_id, session_n, note, polarity=polarity,
                              intensity=intensity, event_type=event_type, visibility=visibility,
-                             actor_id=actor_id, actor_type=actor_type, actor_dm_only=actor_dm_only)
+                             actor_id=actor_id, actor_type=actor_type, actor_dm_only=actor_dm_only,
+                             location_id=location_id)
             if not is_ajax:
                 flash("Logged", "success")
         elif entity_type == "party_group" and note:
             db.log_party_group(slug, session_n, note, polarity=polarity,
                                intensity=intensity, event_type=event_type, visibility=visibility,
-                               actor_id=actor_id, actor_type=actor_type, actor_dm_only=actor_dm_only)
+                               actor_id=actor_id, actor_type=actor_type, actor_dm_only=actor_dm_only,
+                               location_id=location_id)
+            if not is_ajax:
+                flash("Logged", "success")
+        elif entity_type == "location" and note:
+            db.log_location(slug, entity_id, session_n, note, visibility=visibility,
+                            polarity=polarity, intensity=intensity, event_type=event_type)
             if not is_ajax:
                 flash("Logged", "success")
         if is_ajax:
@@ -2345,6 +2440,7 @@ def dm_propose_entries(slug):
     current_session = int(session_override) if session_override else db.get_current_session(slug)
     npcs = db.get_npcs(slug, include_hidden=True)
     factions = db.get_factions(slug, include_hidden=True)
+    locations = db.get_locations(slug, include_hidden=True)
     party = db.get_party(slug)
     ships = db.get_assets(slug).get("ships", [])
     conditions = db.get_conditions(slug, include_hidden=True, include_resolved=False)
@@ -2354,7 +2450,7 @@ def dm_propose_entries(slug):
             f_proposals = pool.submit(ai.propose_log_entries, notes, meta.get("name", ""),
                                       current_session, npcs, factions, party,
                                       ships=ships, conditions=conditions,
-                                      causal_context=causal_context)
+                                      causal_context=causal_context, locations=locations)
             f_relations = pool.submit(ai.suggest_relations, notes, npcs, factions)
             proposals = f_proposals.result()
             rel_suggestions = f_relations.result()
@@ -2440,6 +2536,7 @@ def dm_commit_proposals(slug):
     npc_by_name = {n["name"].lower(): n["id"] for n in db.get_npcs(slug, include_hidden=True)}
     faction_by_name = {f["name"].lower(): f["id"] for f in db.get_factions(slug, include_hidden=True)}
     condition_by_name = {c["name"].lower(): c["id"] for c in db.get_conditions(slug, include_hidden=True, include_resolved=True)}
+    location_by_name = {loc["name"].lower(): loc["id"] for loc in db.get_locations(slug, include_hidden=True)}
     party_names = {c["name"].lower() for c in db.get_party(slug)}
 
     committed = 0
@@ -2518,6 +2615,22 @@ def dm_commit_proposals(slug):
             if polarity:
                 db.apply_ripple(slug, entity_id, "condition", session_n, note, polarity, intensity,
                                 event_type, visibility=visibility, source_event_id=src_evt)
+            committed += 1
+            continue
+
+        if entity_type == "location":
+            if not entity_id:
+                name = (entry.get("entity_name") or "").strip()
+                entity_id = location_by_name.get(name.lower()) if name else None
+            if not entity_id:
+                continue
+            polarity = entry.get("polarity") or None
+            intensity = int(entry.get("intensity") or 1)
+            event_type = entry.get("event_type") or None
+            visibility = entry.get("visibility", "public")
+            session_n = int(entry.get("session") or current_session)
+            db.log_location(slug, entity_id, session_n, note, polarity=polarity,
+                            intensity=intensity, event_type=event_type, visibility=visibility)
             committed += 1
             continue
 
@@ -4084,6 +4197,80 @@ def dm_remove_faction_relation(slug, faction_id, rel_idx):
     if request.form.get("next") == "dm":
         return redirect(url_for("dm", slug=slug))
     return redirect(url_for("faction", slug=slug, faction_id=faction_id))
+
+
+@app.route("/<slug>/dm/location/add", methods=["POST"])
+@dm_required
+def dm_add_location(slug):
+    name = request.form.get("name", "").strip()
+    if not name:
+        flash("Name required", "error")
+        return redirect(url_for("dm", slug=slug))
+    loc_id = db.add_location(slug, name,
+                             role=request.form.get("role", "").strip() or None,
+                             description=request.form.get("description", "").strip(),
+                             hidden=bool(request.form.get("hidden")),
+                             dm_notes=request.form.get("dm_notes", "").strip() or None)
+    return redirect(url_for("location", slug=slug, location_id=loc_id))
+
+
+@app.route("/<slug>/dm/location/<location_id>/toggle_hidden", methods=["POST"])
+@dm_required
+def dm_location_toggle_hidden(slug, location_id):
+    loc = db.get_location(slug, location_id)
+    if loc:
+        db.set_location_hidden(slug, location_id, not loc.get("hidden", False))
+    return redirect(url_for("location", slug=slug, location_id=location_id))
+
+
+@app.route("/<slug>/dm/location/<location_id>/notes", methods=["POST"])
+@dm_required
+def dm_location_notes(slug, location_id):
+    db.update_location(slug, location_id,
+                       description=request.form.get("description", "").strip(),
+                       dm_notes=request.form.get("dm_notes", "").strip() or None)
+    if request.form.get("ajax"):
+        return jsonify({"ok": True})
+    return redirect(url_for("location", slug=slug, location_id=location_id))
+
+
+@app.route("/<slug>/dm/location/<location_id>/edit", methods=["POST"])
+@dm_required
+def dm_location_edit(slug, location_id):
+    db.update_location(slug, location_id,
+                       name=request.form.get("name", "").strip() or None,
+                       role=request.form.get("role", "").strip() or None)
+    return redirect(url_for("location", slug=slug, location_id=location_id))
+
+
+@app.route("/<slug>/dm/location/<location_id>/log", methods=["POST"])
+@dm_required
+def dm_location_log(slug, location_id):
+    db.log_location(slug, location_id,
+                    session=int(request.form.get("session", db.get_current_session(slug))),
+                    note=request.form.get("note", "").strip(),
+                    visibility=request.form.get("visibility", "public"),
+                    polarity=request.form.get("polarity") or None,
+                    intensity=int(request.form.get("intensity", 1)),
+                    event_type=request.form.get("event_type", "").strip() or None,
+                    actor_id=request.form.get("actor_id") or None,
+                    actor_type=request.form.get("actor_type") or None)
+    return redirect(url_for("location", slug=slug, location_id=location_id))
+
+
+@app.route("/<slug>/dm/location/<location_id>/log/<int:idx>/delete", methods=["POST"])
+@dm_required
+def dm_location_log_delete(slug, location_id, idx):
+    db.delete_location_log_entry(slug, location_id, idx)
+    return redirect(url_for("location", slug=slug, location_id=location_id))
+
+
+@app.route("/<slug>/dm/location/<location_id>/delete", methods=["POST"])
+@dm_required
+def dm_location_delete(slug, location_id):
+    db.delete_location(slug, location_id)
+    flash("Location deleted", "success")
+    return redirect(url_for("world", slug=slug))
 
 
 @app.route("/<slug>/dm/party/<party_id>/relation", methods=["POST"])

@@ -1,0 +1,265 @@
+{% extends "base.html" %}
+{% block title %}{{ location.name }} — {{ meta.name }}{% endblock %}
+{% block content %}
+
+<p class="text-muted text-sm"><a href="/{{ slug }}/world">← World</a></p>
+
+{% if active_branch %}
+<div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px; padding:8px 14px; background:var(--surface2); border:1px solid var(--gold)44; border-radius:6px; font-size:0.8rem;">
+  <span style="color:var(--gold);">⎇</span>
+  <span style="font-weight:700; color:var(--text);">{{ active_branch.name }}</span>
+  <span style="color:var(--muted);">forked at {{ terms.session }} {{ active_branch.fork_point }}</span>
+  <form method="post" action="/{{ slug }}/branch/switch" style="margin-left:auto;">
+    <input type="hidden" name="branch_id" value="">
+    <button type="submit" style="background:none; border:1px solid var(--border); color:var(--muted); border-radius:4px; padding:2px 10px; font-size:0.75rem; cursor:pointer;">Return to main timeline</button>
+  </form>
+</div>
+{% endif %}
+
+<div style="margin-top:12px;">
+  <div style="display:flex; align-items:center; gap:8px; margin-bottom:2px;">
+    <span style="color:var(--muted); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em;">Location</span>
+    {% if is_dm and location.hidden %}
+    <span class="badge" style="background:var(--surface2); color:var(--muted);">Hidden from players</span>
+    {% endif %}
+  </div>
+  <h1 class="page-title" style="margin-top:0;">{{ location.name }}</h1>
+  {% if location.role %}<div class="role">{{ location.role }}</div>{% endif %}
+</div>
+
+{% if location.description %}
+<div class="card mt-8">
+  <p>{{ location.description | wikilinks(slug, link_npcs, link_factions, link_locations) }}</p>
+</div>
+{% endif %}
+
+{% if is_dm and location.dm_notes %}
+<div class="card mt-8" style="border-color:rgba(140,100,220,0.4); background:rgba(140,100,220,0.05);">
+  <div style="color:var(--purple); font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:6px;">{{ terms.dm }} Secret</div>
+  <p style="margin:0; white-space:pre-wrap;">{{ location.dm_notes }}</p>
+</div>
+{% endif %}
+
+{% if backlinks %}
+<div style="margin-top:8px; display:flex; align-items:center; gap:6px; flex-wrap:wrap; font-size:0.78rem;">
+  <span style="color:var(--muted); flex-shrink:0;">Mentioned in:</span>
+  {% for b in backlinks %}
+  <a href="/{{ slug }}/world/{{ b.type }}/{{ b.id }}"
+     style="background:var(--surface2); border:1px solid var(--border); border-radius:4px; padding:2px 8px; color:var(--muted); text-decoration:none;">{{ b.name }}</a>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% if tagged_here %}
+<h2 class="section-title mt-8">What Happened Here</h2>
+<div class="card">
+<ul class="log-list">
+  {% for entry in tagged_here | sort(attribute='session') | reverse %}
+  <li style="display:flex; flex-direction:column; gap:4px;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; flex-wrap:wrap;">
+      <span>
+        <span class="log-session">{{ terms.session }} {{ entry.session }}</span>
+        {% if entry.event_type %}<span style="color:var(--purple); font-size:0.72rem; font-weight:700; margin-right:5px; text-transform:uppercase; letter-spacing:0.04em;">{{ entry.event_type }}</span>{% endif %}
+        {% if entry.polarity %}
+        <span style="color:{% if entry.polarity == 'positive' %}#7ec87e{% elif entry.polarity == 'negative' %}#e05c5c{% else %}var(--muted){% endif %}; font-size:0.72rem; margin-right:4px;">{% if entry.polarity == 'positive' %}+{% elif entry.polarity == 'negative' %}−{% endif %}{{ entry.intensity }}</span>
+        {% endif %}
+        <a href="/{{ slug }}/world/{{ entry._entity_type }}/{{ entry._entity_id }}" style="color:var(--gold); font-size:0.78rem; font-weight:700; text-decoration:none; margin-right:4px;">{{ entry._entity_name }}</a>
+        <span class="log-entry-note">{{ entry.note | wikilinks(slug, link_npcs, link_factions, link_locations, party) }}</span>
+        {% if is_dm and entry.visibility == 'dm_only' %}<span style="color:var(--muted); font-size:0.7rem; margin-left:6px; font-style:italic;">{{ terms.dm }} only</span>{% endif %}
+      </span>
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+</div>
+{% endif %}
+
+{% if location.log %}
+<h2 class="section-title mt-8">Location Log</h2>
+<div class="card">
+<ul class="log-list">
+  {% for entry in location.log | reverse %}
+  {% set vis = entry.visibility if entry.visibility is defined else 'public' %}
+  {% if is_dm or vis == 'public' %}
+  <li style="display:flex; flex-direction:column; gap:4px;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+      <span>
+        <span class="log-session">{{ terms.session }} {{ entry.session }}</span>
+        {% if entry.event_type %}<span style="color:var(--purple); font-size:0.72rem; font-weight:700; margin-right:5px; text-transform:uppercase; letter-spacing:0.04em;">{{ entry.event_type }}</span>{% endif %}
+        {% if entry.polarity %}
+        <span style="color:{% if entry.polarity == 'positive' %}#7ec87e{% elif entry.polarity == 'negative' %}#e05c5c{% else %}var(--muted){% endif %}; font-size:0.72rem; margin-right:4px;">
+          {% if entry.polarity == 'positive' %}+{% elif entry.polarity == 'negative' %}−{% endif %}{{ entry.intensity }}
+        </span>
+        {% endif %}
+        {% if entry.actor_id %}<span style="color:var(--muted); font-size:0.72rem; margin-right:4px;">← {{ entry.actor_id }}</span>{% endif %}
+        <span class="log-entry-note">{{ entry.note | wikilinks(slug, link_npcs, link_factions, link_locations, party) }}</span>
+        {% if is_dm and vis == 'dm_only' %}<span style="color:var(--muted); font-size:0.7rem; margin-left:6px; font-style:italic;">DM only</span>{% endif %}
+      </span>
+      {% if is_dm %}
+      <form method="POST" action="/{{ slug }}/dm/location/{{ location.id }}/log/{{ (location.log | length) - 1 - loop.index0 }}/delete" style="flex-shrink:0;">
+        <button type="submit" style="background:none; border:none; color:var(--muted); font-size:0.8rem; cursor:pointer; padding:0 4px;">×</button>
+      </form>
+      {% endif %}
+    </div>
+  </li>
+  {% endif %}
+  {% endfor %}
+</ul>
+</div>
+{% endif %}
+
+{% if is_dm %}
+{% set input_style = "background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:6px 10px; font-size:0.85rem; width:100%;" %}
+{% set label_style = "color:var(--gold); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;" %}
+{% set btn_style = "background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:6px 16px; font-size:0.85rem; font-weight:700; cursor:pointer;" %}
+
+<details id="dm-controls" class="card mt-8" style="border-color:var(--gold-dim);" {% if not location.log %} open{% endif %}>
+  <summary style="list-style:none; cursor:pointer; color:var(--gold); font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em;">
+    {{ terms.dm_controls }}
+  </summary>
+
+  <hr class="divider">
+
+  <form method="POST" action="/{{ slug }}/dm/location/{{ location.id }}/toggle_hidden" style="margin-bottom:4px;">
+    <button type="submit" style="background:{% if location.hidden %}var(--gold){% else %}var(--surface2){% endif %}; color:{% if location.hidden %}#080a18{% else %}var(--muted){% endif %}; border:1px solid {% if location.hidden %}var(--gold){% else %}var(--border){% endif %}; border-radius:4px; padding:5px 14px; font-size:0.82rem; font-weight:700; cursor:pointer;">
+      {% if location.hidden %}Reveal to Players{% else %}Hide from Players{% endif %}
+    </button>
+  </form>
+
+  <hr class="divider">
+
+  <form method="POST" action="/{{ slug }}/dm/location/{{ location.id }}/notes" class="location-notes-form" style="display:flex; flex-direction:column; gap:10px;">
+    <input type="hidden" name="ajax" value="1">
+    <div style="display:flex; flex-direction:column; gap:4px;">
+      <label style="{{ label_style }}">Description <span style="font-weight:400; font-size:0.7rem; text-transform:none; color:var(--muted);">— shown to players</span></label>
+      <textarea name="description" rows="3" placeholder="Public-facing description, supports [[wiki links]]"
+                style="{{ input_style }} resize:vertical; font-family:inherit;">{{ location.description or '' }}</textarea>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:4px;">
+      <label style="color:var(--purple); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">{{ terms.dm }} Secret <span style="font-weight:400; font-size:0.7rem; text-transform:none; color:var(--muted);">— never shown to players</span></label>
+      <textarea name="dm_notes" rows="3" placeholder="Hidden details, secret entrances, who controls this place..."
+                style="{{ input_style }} resize:vertical; font-family:inherit; border-color:rgba(140,100,220,0.4);">{{ location.dm_notes or '' }}</textarea>
+    </div>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <button type="submit" style="{{ btn_style }} padding:5px 16px; font-size:0.82rem;">Save Notes</button>
+      <span class="notes-save-status" style="font-size:0.75rem; color:#7ec87e; display:none;">Saved</span>
+    </div>
+  </form>
+
+  <hr class="divider">
+
+  <h3 style="color:var(--muted); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:12px;">{{ terms.log_verb }} Event</h3>
+  <form method="POST" action="/{{ slug }}/dm/location/{{ location.id }}/log" style="display:flex; flex-direction:column; gap:8px;">
+    <input type="hidden" name="actor_type" id="loc-actor-type" value="">
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <div style="display:flex; flex-direction:column; gap:2px; flex-shrink:0;">
+        <label style="color:var(--muted); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">{{ terms.session }}</label>
+        <input type="number" name="session" placeholder="#" min="1" value="{{ current_session }}"
+               style="{{ input_style }} width:90px;">
+      </div>
+      <select name="polarity" style="{{ input_style }} width:130px; flex-shrink:0;">
+        <option value="">— tone —</option>
+        <option value="positive">positive</option>
+        <option value="neutral">neutral</option>
+        <option value="negative">negative</option>
+      </select>
+      <select name="intensity" style="{{ input_style }} width:110px; flex-shrink:0;">
+        <option value="1">minor (1)</option>
+        <option value="2">moderate (2)</option>
+        <option value="3">major (3)</option>
+      </select>
+      <input type="text" name="event_type" placeholder="type (combat, discovery…)"
+             style="{{ input_style }} width:180px; flex-shrink:0;">
+    </div>
+    <label style="color:var(--muted); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Caused by</label>
+    <select name="actor_id" id="loc-actor-select"
+            style="{{ input_style }} width:auto;"
+            onchange="(function(s){document.getElementById('loc-actor-type').value=s.options[s.selectedIndex].dataset.type||''})(this)">
+      <option value="" data-type="">— caused by anyone —</option>
+      <option value="{{ meta.observer_name or terms.cast_label }}" data-type="party">{{ terms.cast_label }} (whole group)</option>
+      {% if party %}
+      <optgroup label="{{ terms.cast_label }} — individual">
+        {% for char in party %}<option value="{{ char.name }}" data-type="char">{{ char.name }}</option>{% endfor %}
+      </optgroup>
+      {% endif %}
+      {% if link_npcs %}
+      <optgroup label="{{ terms.npcs }}">
+        {% for npc in link_npcs %}<option value="{{ npc.id }}" data-type="npc">{{ npc.name }}</option>{% endfor %}
+      </optgroup>
+      {% endif %}
+      {% if link_factions %}
+      <optgroup label="{{ terms.factions }}">
+        {% for f in link_factions %}<option value="{{ f.id }}" data-type="faction">{{ f.name }}</option>{% endfor %}
+      </optgroup>
+      {% endif %}
+    </select>
+    <div style="display:flex; gap:8px;">
+      <input type="text" name="note" placeholder="What happened here?" required style="{{ input_style }} flex:1;">
+      <button type="submit" style="{{ btn_style }}">Log</button>
+    </div>
+    <select name="visibility" style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:4px 8px; font-size:0.8rem; width:fit-content;">
+      <option value="public">Public — all players</option>
+      <option value="restricted">Restricted — reveal individually</option>
+      <option value="dm_only">DM only — never shown</option>
+    </select>
+  </form>
+
+  <details style="margin-top:16px; border-top:1px solid var(--border); padding-top:14px;">
+    <summary style="list-style:none; cursor:pointer; color:var(--muted); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">Advanced ▾</summary>
+    <div style="margin-top:12px; display:flex; flex-direction:column; gap:12px;">
+
+      <h3 style="color:var(--muted); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">Edit Location</h3>
+      <form method="POST" action="/{{ slug }}/dm/location/{{ location.id }}/edit" style="display:flex; flex-direction:column; gap:10px;">
+        <div style="display:flex; flex-direction:column; gap:4px;">
+          <label style="{{ label_style }}">Name</label>
+          <input type="text" name="name" value="{{ location.name }}" required style="{{ input_style }}">
+        </div>
+        <div style="display:flex; flex-direction:column; gap:4px;">
+          <label style="{{ label_style }}">Role</label>
+          <input type="text" name="role" value="{{ location.role or '' }}" placeholder="e.g. fortified keep, market town, ancient ruin" style="{{ input_style }}">
+        </div>
+        <div><button type="submit" style="{{ btn_style }}">Save Changes</button></div>
+      </form>
+
+      <hr class="divider">
+
+      <form method="POST" action="/{{ slug }}/dm/location/{{ location.id }}/delete">
+        <button type="submit" style="background:none; border:1px solid #e05c5c; color:#e05c5c; border-radius:4px; padding:4px 12px; font-size:0.78rem; cursor:pointer;">
+          Delete Location
+        </button>
+      </form>
+
+    </div>
+  </details>
+
+</details>
+
+<script>
+document.addEventListener('submit', function(e) {
+  const form = e.target.closest('form.location-notes-form');
+  if (!form) return;
+  e.preventDefault();
+  const btn = form.querySelector('button[type=submit]');
+  const status = form.querySelector('.notes-save-status');
+  btn.disabled = true;
+  status.style.display = 'none';
+  fetch(form.action, {method: 'POST', body: new FormData(form)})
+    .then(r => r.json())
+    .then(d => {
+      btn.disabled = false;
+      status.style.display = 'inline';
+      if (d.ok) {
+        status.textContent = 'Saved';
+        status.style.color = '#7ec87e';
+        setTimeout(() => { window.location.reload(); }, 800);
+      } else {
+        status.textContent = d.error || 'Error';
+        status.style.color = '#e05c5c';
+      }
+    })
+    .catch(() => { btn.disabled = false; });
+}, true);
+</script>
+{% endif %}
+
+{% endblock %}

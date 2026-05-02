@@ -1,0 +1,147 @@
+{
+  "locations": [
+    {
+      "id": "normandy_omaha_beach",
+      "name": "Normandy \u2014 Omaha Beach",
+      "description": "The five beaches of the Normandy coast where 156,000 Allied troops landed on June 6, 1944. Omaha Beach cost 2,000 American casualties in a single morning. By nightfall, the Allies had a foothold in France. [[Dwight D. Eisenhower|Eisenhower]] carried a message in his pocket for if the landings failed. He did not need to send it.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_3d21c4",
+          "session": 9,
+          "note": "156,000 Allied troops land on five beaches. Omaha costs 2,000 American casualties in a morning. [[Dwight D. Eisenhower]] carries a message in his pocket for if the operation fails. By nightfall, the Allies are ashore. He does not need to send it.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat",
+          "actor_id": "dwight_d_eisenhower",
+          "actor_type": "npc"
+        }
+      ],
+      "role": "D-Day, June 6, 1944 \u2014 the Western Front opens",
+      "dm_notes": "The night before D-Day, Eisenhower walked among his paratroopers and could not tell them the odds. The Omaha landing nearly fails \u2014 the demolition teams are killed before they can clear the obstacles; the bombers miss the beach by miles. The assault succeeds because the men simply keep moving forward into fire. The beach is secured at enormous cost."
+    },
+    {
+      "id": "stalingrad",
+      "name": "Stalingrad",
+      "description": "A Soviet city on the Volga that [[Adolf Hitler|Hitler]] attached his name to and refused to surrender. The Battle of Stalingrad lasted from August 1942 to February 1943. Three hundred thousand German troops were encircled by [[Georgy Zhukov|Zhukov's]] Operation Uranus. Field Marshal Paulus surrendered with 91,000 survivors. The Wehrmacht never recovered.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_00d1c0",
+          "session": 7,
+          "note": "[[Georgy Zhukov]]'s Operation Uranus encircles 300,000 German troops. [[Adolf Hitler]] forbids retreat. The relief attempt fails. Field Marshal Paulus surrenders on January 31, 1943 with 91,000 survivors. The myth of German invincibility is over.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat",
+          "actor_id": "georgy_zhukov",
+          "actor_type": "npc"
+        }
+      ],
+      "role": "The Eastern Front turning point \u2014 where Germany's advance died",
+      "dm_notes": "Hitler's refusal to allow retreat at Stalingrad is his most consequential military error. The city becomes a trap: every soldier sent into it is consumed. Zhukov's encirclement is prepared for months while the city fighting draws German attention. The surrender is the first time the German public is told that something has gone seriously wrong."
+    },
+    {
+      "id": "pearl_harbor",
+      "name": "Pearl Harbor",
+      "description": "The US naval base at Pearl Harbor, Hawaii, attacked by the Japanese carrier fleet at dawn on December 7, 1941. Eighteen US warships were sunk or damaged. 2,403 Americans were killed. Four battleships went to the bottom. The three US aircraft carriers were not in port \u2014 they were at sea \u2014 and survived. [[Isoroku Yamamoto|Yamamoto]] knew this.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_e01399",
+          "session": 5,
+          "note": "[[Isoroku Yamamoto]]'s carrier fleet attacks at dawn. 18 warships sunk or damaged. 2,403 Americans killed. The three US aircraft carriers are not in port \u2014 they are at sea. [[Isoroku Yamamoto|Yamamoto]] knows this. [[Adolf Hitler]] declares war on the [[United States]] four days later. He was not required to.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "combat"
+        }
+      ],
+      "role": "December 7, 1941 \u2014 the attack that brought America into the war",
+      "dm_notes": "The carriers' absence from Pearl Harbor is the decisive fact of the Pacific war. Yamamoto designed the attack to destroy American offensive capability; without the carriers, it is only a tactical success. He reportedly says: 'I fear we have awakened a sleeping giant.' The quote may be apocryphal. The sentiment is not."
+    },
+    {
+      "id": "london_and_whitehall",
+      "name": "London and Whitehall",
+      "description": "London endured 57 consecutive nights of Luftwaffe bombing beginning September 7, 1940. Over 43,000 civilians were killed. [[Winston Churchill|Churchill]] refused to leave the city or consider armistice. He walked through the rubble in his hat and his cigar and the people cheered. The Cabinet War Rooms beneath Whitehall were where the war was actually run.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_cdde3a",
+          "session": 3,
+          "note": "[[Winston Churchill]] refuses armistice. He tells the War Cabinet: 'If this long island story of ours is to end at last, let it end only when each one of us lies choking in his own blood upon the ground.' The cabinet stands and cheers. [[Great Britain]] will not negotiate.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "dialogue",
+          "actor_id": "winston_churchill",
+          "actor_type": "npc"
+        }
+      ],
+      "role": "Britain's wartime capital \u2014 where Churchill governed",
+      "dm_notes": "Churchill's decision to remain in London and be seen among the bombed streets is a calculated act of political psychology. His broadcast speeches are the instrument by which he convinces Britain and the watching world that this is survivable. The Battle of Britain is won partly in the air and partly in these broadcasts."
+    },
+    {
+      "id": "the_berlin_bunker",
+      "name": "The Berlin Bunker",
+      "description": "The F\u00fchrerbunker beneath the Reich Chancellery garden in Berlin, where [[Adolf Hitler|Hitler]] spent his final weeks as [[Soviet Union|Soviet]] forces fought street by street above him. He died here on April 30, 1945 \u2014 a gunshot wound and cyanide, with Eva Braun, in the underground conference room. Their bodies were carried upstairs and burned in the garden. [[Nazi Germany|Germany]] surrendered eight days later.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_8e1452",
+          "session": 10,
+          "note": "[[Adolf Hitler]] dies here on April 30, 1945, as Soviet forces fight street by street above him. Cyanide and a gunshot, with Eva Braun. Their bodies are burned in the garden. Germany holds on for eight more days.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "other",
+          "actor_id": "georgy_zhukov",
+          "actor_type": "npc"
+        }
+      ],
+      "role": "Hitler's final refuge \u2014 where the Reich ended",
+      "dm_notes": "Hitler's last weeks in the bunker are marked by increasingly disconnected military conferences in which he moves nonexistent divisions. He is told Berlin is lost and continues to give orders. On April 28 he learns Himmler has tried to negotiate a separate peace. On April 29 he marries Eva Braun and dictates his final testament. On April 30 he dies. Germany holds on for eight more days."
+    },
+    {
+      "id": "auschwitz",
+      "name": "Auschwitz",
+      "description": "The Auschwitz-Birkenau complex in [[Occupied Europe|occupied Poland]] was the largest of the [[Nazi Germany|Nazi]] extermination camps. Between 1942 and 1944 it was the primary site of the industrial murder of European Jews. The camp was liberated by [[Soviet Union|Soviet]] forces on January 27, 1945. [[Dwight D. Eisenhower|Eisenhower]] ordered every available soldier and nearby German civilian to tour the liberated camps as witnesses.",
+      "hidden": true,
+      "log": [
+        {
+          "id": "evt_11c5f2",
+          "session": 11,
+          "note": "[[Heinrich Himmler]]'s SS operates the killing machinery at peak capacity through 1942-44. The camp is liberated by Soviet forces on January 27, 1945. [[Dwight D. Eisenhower]] orders every available soldier to tour the camps. He wants witnesses. He is afraid that someday someone will say this did not happen.",
+          "visibility": "dm_only",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "discovery"
+        }
+      ],
+      "role": "The Holocaust's largest killing center \u2014 six million murdered",
+      "dm_notes": "The Holocaust is not a sidebar to the war \u2014 it is the war's central crime. The Wannsee Conference of January 1942 coordinates the 'Final Solution.' Himmler's SS continues deportations to the gas chambers until the camps are physically liberated. Eisenhower's insistence on witness is the right instinct: 'I want to be in a position to give firsthand evidence of these things if ever in the future there develops a tendency to charge these allegations merely to propaganda.'"
+    },
+    {
+      "id": "hiroshima",
+      "name": "Hiroshima",
+      "description": "A Japanese city of 350,000 people. On August 6, 1945, a single B-29 dropped a uranium bomb that killed 80,000 people immediately. Total deaths reached 135,000. Three days later, Nagasaki. On August 15, [[Emperor Hirohito]] broadcast to his people in a voice they had never heard before. He did not say 'surrender.' He did not need to.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_17041c",
+          "session": 12,
+          "note": "[[Harry S. Truman]] orders the bomb. August 6, 1945. 80,000 dead immediately. Nagasaki on August 9. On August 15, [[Emperor Hirohito]] speaks to his people in a voice they have never heard. He does not say 'surrender.' Japan surrenders.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "other",
+          "actor_id": "harry_s_truman",
+          "actor_type": "npc"
+        }
+      ],
+      "role": "August 6, 1945 \u2014 the atomic bomb",
+      "dm_notes": "Truman's decision is argued about for the rest of the century. His calculation: an invasion of the Japanese home islands projects 250,000 to one million Allied casualties, and comparable Japanese losses. The bombs kill fewer people than an invasion would. Whether this arithmetic justifies the atomic destruction of two cities is a question the engine cannot answer and neither can we."
+    }
+  ]
+}

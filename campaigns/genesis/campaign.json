@@ -1,9 +1,10 @@
 {
   "name": "Book of Genesis",
+  "slug": "genesis",
   "system": "Sacred Text \u2014 Hebrew Bible",
-  "owner": "simon",
+  "owner": "demo",
   "dm_pin": "1234",
-  "share_token": "McBE7Ucgt_loJprBjMXOWQ",
+  "share_token": "2Nl8piht1fGbe5hwgOTa7w",
   "demo": true,
   "public": true,
   "mode": "fiction",

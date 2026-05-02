@@ -8,11 +8,12 @@ Run:  python seed_ashford.py
 import sys, json, secrets, shutil
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent))
+ROOT = Path(__file__).parent.parent
+sys.path.insert(0, str(ROOT))
 from src import data as db
 
 SLUG = "ashford"
-CAMPAIGNS = Path(__file__).parent / "campaigns"
+CAMPAIGNS = ROOT / "campaigns"
 CAMP_DIR = CAMPAIGNS / SLUG
 
 # ── Wipe and recreate ──────────────────────────────────────────────────────────
@@ -45,6 +46,7 @@ _w("references.json",                {"references": []})
 _w("world/npcs.json",                {"npcs": []})
 _w("world/factions.json",            {"factions": []})
 _w("world/conditions.json",          {"conditions": []})
+_w("world/locations.json",           {"locations": []})
 _w("story/quests.json",              {"quests": []})
 _w("dm/session.json",                {})
 _w("dm/relation_suggestions.json",   [])
@@ -91,23 +93,30 @@ def add_rel(src_type, src_id, tgt_id, tgt_type, relation, weight=0.8, dm_only=Fa
 
 
 def log_n(npc_id, session, note, polarity=None, intensity=1,
-          event_type=None, visibility="public", ripple=False, actor_id=None, actor_type=None):
+          event_type=None, visibility="public", ripple=False, actor_id=None, actor_type=None, location_id=None):
     evt = db.log_npc(SLUG, npc_id, session, note, polarity=polarity,
                      intensity=intensity, event_type=event_type, visibility=visibility,
-                     actor_id=actor_id, actor_type=actor_type)
+                     actor_id=actor_id, actor_type=actor_type, location_id=location_id)
     if ripple and polarity in ("positive", "negative"):
         db.apply_ripple(SLUG, npc_id, "npc", session, note, polarity, intensity, event_type, visibility)
     return evt
 
 
 def log_f(faction_id, session, note, polarity=None, intensity=1,
-          event_type=None, visibility="public", ripple=False, actor_id=None, actor_type=None):
+          event_type=None, visibility="public", ripple=False, actor_id=None, actor_type=None, location_id=None):
     evt = db.log_faction(SLUG, faction_id, session, note, polarity=polarity,
                          intensity=intensity, event_type=event_type, visibility=visibility,
-                         actor_id=actor_id, actor_type=actor_type)
+                         actor_id=actor_id, actor_type=actor_type, location_id=location_id)
     if ripple and polarity in ("positive", "negative"):
         db.apply_ripple(SLUG, faction_id, "faction", session, note, polarity, intensity, event_type, visibility)
     return evt
+
+
+def log_l(loc_id, session, note, polarity=None, intensity=1,
+          event_type=None, visibility="public", actor_id=None, actor_type=None):
+    db.log_location(SLUG, loc_id, session, note, visibility=visibility,
+                    polarity=polarity, intensity=intensity, event_type=event_type,
+                    actor_id=actor_id, actor_type=actor_type)
 
 
 # ── Party (level 4 — mid-campaign) ─────────────────────────────────────────────
@@ -133,29 +142,29 @@ factions = [
 
     ("The Trade Compact", "neutral", False,
      "The regional commercial authority that officially regulates trade in and out of Ashford. "
-     "They have been paying the Ironmask toll rather than escalating. "
+     "They have been paying the [[The Ironmasks|Ironmask]] toll rather than escalating. "
      "Someone in the Compact is more deeply entangled than they've admitted. "
-     "Edda Sorn is their local agent — she suspects the entanglement too."),
+     "[[Edda Sorn]] is their local agent — she suspects the entanglement too."),
 
     ("Greywood Rangers", "ally", False,
-     "The regional militia patrolling the Greywood and the roads to and from Ashford. "
+     "The regional militia patrolling [[The Greywood]] and the roads to and from Ashford. "
      "They are stretched thin — three rangers for thirty miles of road. "
-     "Farlan Dusk (retired) and Sister Veyne (active) represent what they can spare."),
+     "[[Farlan Dusk]] (retired) and [[Sister Veyne]] (active) represent what they can spare."),
 
     ("Stonebreaker Clan", "neutral", False,
-     "Orc clan occupying Greystone Keep in the hills north of Ashford. "
-     "The keep controls the upper vein entrance. Warchief Durnak has no love for the "
-     "Ironmasks but also no reason to help outsiders unless properly approached."),
+     "Orc clan occupying [[Greystone Keep]] in the hills north of Ashford. "
+     "The keep controls the upper vein entrance. [[Warchief Durnak]] has no love for the "
+     "[[The Ironmasks|Ironmasks]] but also no reason to help outsiders unless properly approached."),
 
     ("Emerald Circle", "neutral", False,
-     "A druidic order with ancient claim to the Greywood. They tolerate the mine because "
-     "the Ashcroft Vein is below the root line. They will not tolerate the expansion "
-     "the Ironmasks have been forcing on the miners."),
+     "A druidic order with ancient claim to [[The Greywood]]. They tolerate the mine because "
+     "[[The Ashcroft Vein]] is below the root line. They will not tolerate the expansion "
+     "[[The Ironmasks]] have been forcing on the miners."),
 
     ("The Shadow Wing", "hostile", True,
-     "The organization above the Ironmasks. They move rare materials out of the Vein "
-     "through an unofficial channel — bypassing the Trade Compact entirely. "
-     "The Factor (Corvin Ashale) coordinates them. (DM-only)"),
+     "The organization above [[The Ironmasks]]. They move rare materials out of [[The Ashcroft Vein|the Vein]] "
+     "through an unofficial channel — bypassing [[The Trade Compact]] entirely. "
+     "The Factor ([[Corvin Ashale]]) coordinates them. (DM-only)"),
 ]
 
 F = {}
@@ -169,22 +178,22 @@ for name, rel, hidden, desc in factions:
 npcs_to_add = [
     ("Edda Sorn", "Trade Compact agent — local liaison, probable whistleblower",
      "ally", False, [F["The Trade Compact"]],
-     "She was sent to Ashford to oversee Compact interests and immediately started "
+     "She was sent to Ashford to oversee [[The Trade Compact|Compact]] interests and immediately started "
      "noticing things she wasn't supposed to notice. She has been quietly documenting "
      "the discrepancy between declared mine output and actual shipments for four months. "
      "She approached the party because she doesn't know who else to trust."),
 
     ("Bram Ketterly", "Dwarf freight merchant — prisoner at Greystone Keep",
      "ally", False, [F["The Trade Compact"]],
-     "He refused to pay the Ironmask toll three months ago on principle. "
+     "He refused to pay the [[The Ironmasks|Ironmask]] toll three months ago on principle. "
      "They took his wagon, his cargo, and him. He is currently being held at "
-     "Greystone Keep as a 'debt collection.' He has information about the "
-     "Shadow Wing supply route that he doesn't know he has."),
+     "[[Greystone Keep]] as a 'debt collection.' He has information about the "
+     "[[The Shadow Wing|Shadow Wing]] supply route that he doesn't know he has."),
 
     ("Governor Harwick Denn", "Appointed Governor of Ashford — compromised",
      "neutral", False, [F["The Trade Compact"]],
-     "He was appointed by the Trade Compact to run Ashford. He has been quietly "
-     "paying the Ironmask toll from civic funds and recording it as road maintenance. "
+     "He was appointed by [[The Trade Compact]] to run Ashford. He has been quietly "
+     "paying the [[The Ironmasks|Ironmask]] toll from civic funds and recording it as road maintenance. "
      "He knows exactly what he has done and spends his evenings convincing himself "
      "it was the only reasonable option. He is not wrong that he had no other options. "
      "He is wrong that it ends there."),
@@ -193,40 +202,40 @@ npcs_to_add = [
      "neutral", False, [F["The Trade Compact"]],
      "She runs the largest trading post in Ashford. She has been paying the toll "
      "and passing the cost to her suppliers. Her suppliers are starting to push back. "
-     "She wants the Ironmasks gone but is not willing to be seen working against them "
+     "She wants [[The Ironmasks]] gone but is not willing to be seen working against them "
      "until it is safe to do so. She is watching the party's progress carefully."),
 
     ("Orvyn Thatch", "Proprietor — Thatch's General Store",
      "ally", False, [],
      "The town's most reliable gossip. He knows everything that moves through Ashford "
      "because he sells everything to everyone. He has been quietly giving discounts "
-     "to people the Ironmasks have victimized, which has strained his margins. "
+     "to people [[The Ironmasks]] have victimized, which has strained his margins. "
      "He is the party's best source of local intelligence."),
 
     ("Petra Holt", "Proprietor — Ashford Miners' Registry",
      "ally", False, [],
      "She registers every miner, tracks shift schedules, and maintains the payroll ledger "
-     "for the Vein. She has noticed that payroll deductions for 'safety equipment' "
-     "don't correspond to any equipment she can see. The Ironmasks are running a "
-     "payroll skim through the Registry. She has the evidence."),
+     "for [[The Ashcroft Vein|the Vein]]. She has noticed that payroll deductions for 'safety equipment' "
+     "don't correspond to any equipment she can see. [[The Ironmasks]] are running a "
+     "payroll skim through [[Ashford Miners' Registry|the Registry]]. She has the evidence."),
 
     ("Farlan Dusk", "Retired Greywood Ranger scout",
      "ally", False, [F["Greywood Rangers"]],
      "Retired on a hip injury, living in Ashford for three years. He still knows "
-     "the Greywood better than anyone active. He has been watching the Ironmask "
+     "[[The Greywood]] better than anyone active. He has been watching the [[The Ironmasks|Ironmask]] "
      "supply routes out of old habit and has a very good idea of where they go. "
      "He will help if asked directly. He doesn't volunteer."),
 
     ("Sister Veyne", "Active Greywood Ranger — cleric attached to the patrol",
      "ally", False, [F["Greywood Rangers"]],
      "The only active Ranger currently in Ashford. She has been filing incident "
-     "reports about the Ironmasks for two months. The reports go nowhere because "
-     "they go to the Governor. She has started filing them with the Trade Compact "
-     "instead, which is how Edda Sorn found out about the payroll skim."),
+     "reports about [[The Ironmasks]] for two months. The reports go nowhere because "
+     "they go to [[Governor Harwick Denn|the Governor]]. She has started filing them with [[The Trade Compact]] "
+     "instead, which is how [[Edda Sorn]] found out about the payroll skim."),
 
     ("Maren Vosk", "The Ledger — Ironmask boss",
      "hostile", False, [F["The Ironmasks"]],
-     "She runs the Ironmask operation in Ashford with ledger-perfect precision. "
+     "She runs the [[The Ironmasks|Ironmask]] operation in Ashford with ledger-perfect precision. "
      "Every toll, every payroll skim, every protection payment is documented. "
      "She does not enjoy violence but authorizes it without hesitation when the "
      "numbers require it. She knows exactly who the Factor is and considers "
@@ -235,36 +244,36 @@ npcs_to_add = [
     ("Corvin Ashale", "The Factor — Shadow Wing coordinator",
      "hostile", True, [F["The Shadow Wing"]],
      "He presents as a successful independent merchant with a modest warehouse near "
-     "the mine entrance. He is the Shadow Wing's operational coordinator for the "
-     "Ashcroft Vein: he decides what gets skimmed from the mine output, "
-     "routes it through the Ironmasks, and ships it out via a tunnel entrance "
-     "the Trade Compact doesn't know exists. (DM-only)"),
+     "the mine entrance. He is [[The Shadow Wing]]'s operational coordinator for "
+     "[[The Ashcroft Vein]]: he decides what gets skimmed from the mine output, "
+     "routes it through [[The Ironmasks]], and ships it out via a tunnel entrance "
+     "[[The Trade Compact]] doesn't know exists. (DM-only)"),
 
     ("Thane Bergrak", "Woodsman — Emerald Circle liaison",
      "neutral", False, [F["Emerald Circle"]],
-     "He lives in the Greywood and comes to Ashford once a week to sell timber rights "
-     "and deliver the Circle's opinions on what the miners are doing wrong. "
+     "He lives in [[The Greywood]] and comes to Ashford once a week to sell timber rights "
+     "and deliver the [[Emerald Circle|Circle]]'s opinions on what the miners are doing wrong. "
      "His opinions are accurate but his delivery is confrontational. "
-     "He knows a Circle-maintained passage through the Greywood that avoids the roads."),
+     "He knows a [[Emerald Circle|Circle]]-maintained passage through [[The Greywood]] that avoids the roads."),
 
     ("Warchief Durnak", "Stonebreaker Clan — holds Greystone Keep",
      "neutral", False, [F["Stonebreaker Clan"]],
-     "His clan has held Greystone Keep for three generations. They have no interest "
-     "in Ashford's problems but the Ironmasks have been using the Keep's outer "
+     "His clan has held [[Greystone Keep]] for three generations. They have no interest "
+     "in Ashford's problems but [[The Ironmasks]] have been using the Keep's outer "
      "courtyard as a holding area without asking. He has not acted because they "
      "haven't been worth the trouble. That calculation is changing."),
 
     ("The Pale Widow", "Ghost — Ruins of Coldwater",
      "neutral", False, [],
-     "A spirit haunting the Coldwater ruins two miles from Ashford. The miners "
-     "avoid her on superstition. The Ironmasks learned to avoid her because three "
-     "of their scouts went into Coldwater and didn't come back. "
-     "She has been watching the Vein for longer than the town has existed."),
+     "A spirit haunting [[Coldwater Ruins|the Coldwater ruins]] two miles from Ashford. The miners "
+     "avoid her on superstition. [[The Ironmasks]] learned to avoid her because three "
+     "of their scouts went into [[Coldwater Ruins|Coldwater]] and didn't come back. "
+     "She has been watching [[The Ashcroft Vein|the Vein]] for longer than the town has existed."),
 
     ("Serev", "Factor's courier — Shadow Wing operative",
      "hostile", True, [F["The Shadow Wing"]],
-     "Corvin Ashale's main courier between the Factor's operation and the Shadow Wing's "
-     "distribution network. Goes by multiple names. Was seen near the Registry "
+     "[[Corvin Ashale]]'s main courier between the Factor's operation and [[The Shadow Wing]]'s "
+     "distribution network. Goes by multiple names. Was seen near [[Ashford Miners' Registry|the Registry]] "
      "two nights before the payroll skim started. (DM-only)"),
 ]
 
@@ -354,6 +363,98 @@ db.add_quest(SLUG,
 
 print(f"  Quests seeded")
 
+# ── Locations ──────────────────────────────────────────────────────────────────
+db.add_location(SLUG,
+    "Thatch's General Store",
+    "General store and town information hub",
+    "The largest general goods shop in Ashford. [[Orvyn Thatch]] keeps the shelves full and the prices fair, "
+    "which means everyone passes through eventually. The notice board by the door has collected wanted posters, "
+    "missing persons reports, and overdue debt notices for three years running.",
+    hidden=False,
+    dm_notes="Orvyn has been logging [[The Ironmasks|Ironmask]] collector names and patrol timing in a ledger kept behind the flour sacks. "
+    "He'll hand it over freely if asked — he's been waiting for someone to ask. He knows which merchants have stopped "
+    "making the Ashford run and why.")
+
+db.add_location(SLUG,
+    "Ashford Miners' Registry",
+    "Official miner registration and payroll office",
+    "The Registry tracks shift assignments, safety records, and payroll for every miner working [[The Ashcroft Vein]]. "
+    "[[Petra Holt]] runs it with the kind of precision that makes irregularities impossible to miss — which is exactly "
+    "how the irregularities were found.",
+    hidden=False,
+    dm_notes="A complete copy of the doctored payroll ledger — showing the 12% 'safety equipment' skim against miner wages — "
+    "is hidden beneath the third floorboard from the window. The Registry is also where [[Maren Vosk]] is captured in Session 5; "
+    "her own ledgers are seized here.")
+
+db.add_location(SLUG,
+    "The Broken Crown",
+    "Ashford's main inn and tavern",
+    "The only inn in Ashford still operating after the [[The Ironmasks|Ironmask]] expansion drove two other taverns to close. "
+    "The common room stays crowded. The back room can be rented for private conversation — the innkeeper doesn't "
+    "ask questions about the topic.",
+    hidden=False,
+    dm_notes="[[Edda Sorn]] specifically chose this location to approach the party. The innkeeper owes her a favor and tells "
+    "her which strangers are worth talking to. The back room has been used for three private meetings in the last month.")
+
+db.add_location(SLUG,
+    "The Ashcroft Vein",
+    "Ashford's primary silver mine",
+    "The mine entrance sits at the base of the ridge north of town. The upper shafts produce good ore on regular cycles. "
+    "The lower shafts are roped off — officially for retimbering, actually because the timbering was never adequate "
+    "to begin with.",
+    hidden=False,
+    dm_notes="The [[Emerald Circle]] survey identified three critical failure points in the lower shafts — structural collapse "
+    "within sixty days, not might. A concealed secondary entrance, known only to [[Corvin Ashale]], runs from the deepest shaft "
+    "to an exit beneath his warehouse. [[The Shadow Wing]] uses it to move ore before it reaches [[The Trade Compact|the Compact]]'s scales.")
+
+db.add_location(SLUG,
+    "Greystone Keep",
+    "Ancient fortress, seat of the Stonebreaker Clan",
+    "A squat stone fortress on the ridge north of Ashford, held by the [[Stonebreaker Clan]] for three generations. "
+    "The walls are kept in better repair than they look. The outer courtyard has been used for purposes other than "
+    "livestock in recent months — [[Warchief Durnak|Durnak]] noticed and said nothing, until recently.",
+    hidden=False,
+    dm_notes="The outer courtyard is where [[The Ironmasks]] have been holding debtors including [[Bram Ketterly]]. [[Warchief Durnak|Durnak]] tolerated "
+    "this because it wasn't his people and the Ironmasks stayed out of the Keep proper. That tolerance is exhausted. "
+    "The lower vaults connect to the pre-mine tunnel network, though the Clan doesn't use them.")
+
+db.add_location(SLUG,
+    "Coldwater Ruins",
+    "Abandoned garrison post, haunted",
+    "The ruins of a garrison post from before Ashford's founding, two miles east of town. Miners avoid them on superstition. "
+    "Three [[The Ironmasks|Ironmask]] scouts entered Coldwater a few months ago and didn't come back out.",
+    hidden=False,
+    dm_notes="[[The Pale Widow]] is the spirit of the garrison's last archivist. She keeps the records intact and sealed. She will "
+    "show them to anyone who approaches with respect rather than force. The archive contains the original survey maps of the "
+    "pre-mine tunnel network — including the exit point beneath [[Corvin Ashale]]'s warehouse. The three [[The Ironmasks|Ironmask]] scouts are still "
+    "there, in a collapsed section they entered without a light.")
+
+db.add_location(SLUG,
+    "The Greywood",
+    "Ancient forest, Emerald Circle territory",
+    "The forest that borders Ashford to the west and north. The [[Greywood Rangers]] patrol the roads through it, though three "
+    "rangers for thirty miles of road is a difficult ratio. [[Thane Bergrak]] knows a [[Emerald Circle|Circle]]-maintained passage through the forest "
+    "that avoids the roads entirely.",
+    hidden=False,
+    dm_notes="[[The Ironmasks]] have been using the Greywood's eastern edge to run supply routes that avoid the main road toll "
+    "checkpoints — ironic given the toll is theirs. [[Farlan Dusk]] has been mapping these routes by habit. After the Ironmask "
+    "break in Session 5, surviving [[The Ironmasks|Ironmasks]] scatter into the Greywood.")
+
+db.add_location(SLUG,
+    "Corvin Ashale's Warehouse",
+    "Shadow Wing distribution hub — concealed",
+    "A modest freight warehouse near [[The Ashcroft Vein|the Vein]] entrance. Declared cargo: dry goods, rope, processed tallow. "
+    "Hours irregular. (DM only)",
+    hidden=True,
+    dm_notes="Sits directly above the old tunnel exit from [[The Ashcroft Vein]]. [[Corvin Ashale|Ashale]] moves refined ore up through the tunnel "
+    "and loads it here before it can be weighed by [[The Trade Compact|the Compact]]. The excess weight is distributed across multiple merchant "
+    "manifests as declared cargo overage — legal on paper, invisible in the aggregate. When [[The Ironmasks]] fall in Session 5, "
+    "Ashale barricades himself inside and sends for [[The Shadow Wing|Shadow Wing]] extraction via [[Serev]].")
+
+locations_data = db._load(SLUG, "world/locations.json")
+L = {loc["name"]: loc["id"] for loc in locations_data["locations"]}
+print(f"  Locations: {list(L.keys())}")
+
 # ── Relations ──────────────────────────────────────────────────────────────────
 
 # Dual-axis: formal vs personal
@@ -401,67 +502,76 @@ print("  Relations set")
 
 # Session 1: Arrival in Ashford
 log_n(N["Orvyn Thatch"], 1,
-      "The party arrives in Ashford and stops at Thatch's General Store. "
-      "Orvyn gives them a full picture without being asked: the toll, Bram's capture, "
-      "the Registry situation. He's been waiting for someone to tell.",
-      polarity="positive", intensity=1, event_type="dialogue")
+      "The party arrives in Ashford and stops at [[Thatch's General Store]]. "
+      "[[Orvyn Thatch]] gives them a full picture without being asked: the toll, "
+      "[[Bram Ketterly|Bram's capture]], the [[Ashford Miners' Registry|Registry]] situation. "
+      "He's been waiting for someone to tell.",
+      polarity="positive", intensity=1, event_type="dialogue",
+      location_id=L["Thatch's General Store"])
 
 log_n(N["Maren Vosk"], 1,
-      "The Ledger's collectors approach the party within two hours of their arrival "
+      "[[The Ironmasks|The Ledger's]] collectors approach the party within two hours of arrival "
       "to assess whether they are merchants subject to the toll. "
       "They back down when challenged but take notes.",
       polarity="negative", intensity=1, event_type="other")
 
 log_f(F["The Ironmasks"], 1,
-      "The Ironmasks have expanded their toll operations to cover the northern road "
-      "as well as the eastern approach. Farlan Dusk counted thirty-two collectors "
-      "working the roads in the past week — up from eighteen a month ago.",
+      "[[The Ironmasks]] have expanded their toll to cover the northern road "
+      "as well as the eastern approach. [[Farlan Dusk]] counted thirty-two collectors "
+      "working the roads this week — up from eighteen a month ago.",
       polarity="negative", intensity=2, event_type="other", ripple=True)
 
 log_n(N["Edda Sorn"], 1,
-      "Edda Sorn contacts the party privately at the inn. She lays out her shipping "
-      "discrepancy records: declared output versus actual weight shipped, month by month. "
-      "The gap has been growing for eight months. She needs someone to take this further.",
-      polarity="positive", intensity=2, event_type="dialogue")
+      "[[Edda Sorn]] contacts the party privately at [[The Broken Crown]]. "
+      "She lays out her shipping discrepancy records: declared output versus actual weight shipped, "
+      "month by month. The gap has been growing for eight months. "
+      "She needs someone to take this further.",
+      polarity="positive", intensity=2, event_type="dialogue",
+      location_id=L["The Broken Crown"])
 
 # Session 2: The Registry and the Keep
 log_n(N["Petra Holt"], 2,
-      "Petra Holt shows the party the Registry payroll records. The 'safety equipment' "
-      "deductions are real deductions against real miner wages. "
+      "[[Petra Holt]] shows the party the [[Ashford Miners' Registry|Registry]] payroll records. "
+      "The 'safety equipment' deductions are real deductions against real miner wages. "
       "Twelve percent of the payroll is being skimmed through a fictitious expense. "
       "She has a complete ledger copy hidden under the Registry floor.",
-      polarity="positive", intensity=2, event_type="discovery")
+      polarity="positive", intensity=2, event_type="discovery",
+      location_id=L["Ashford Miners' Registry"])
 
 log_n(N["Governor Harwick Denn"], 2,
-      "The party confronts Governor Denn with Petra's evidence. "
+      "The party confronts [[Governor Harwick Denn]] with [[Petra Holt|Petra's]] evidence. "
       "He does not deny it. He says: 'What exactly did you expect me to do?' "
       "He agrees to stop the civic fund payments going forward. He does nothing else.",
       polarity="negative", intensity=1, event_type="dialogue")
 
 log_n(N["Warchief Durnak"], 2,
-      "The party approaches Greystone Keep and requests parley. "
-      "Durnak meets them at the gate. He is not hostile but he is not friendly. "
-      "He will release Bram if the party removes the Ironmask presence from his outer courtyard. "
-      "He gives them three days.",
-      polarity="neutral", intensity=1, event_type="dialogue")
+      "The party approaches [[Greystone Keep]] and requests parley. "
+      "[[Warchief Durnak]] meets them at the gate — not hostile, not friendly. "
+      "He will release [[Bram Ketterly|Bram]] if the party removes the [[The Ironmasks|Ironmask]] "
+      "presence from his outer courtyard. He gives them three days.",
+      polarity="neutral", intensity=1, event_type="dialogue",
+      location_id=L["Greystone Keep"])
 
 # Session 3: Taking the Courtyard
 log_f(F["The Ironmasks"], 3,
-      "The party drives the Ironmask holding operation out of the Keep's outer courtyard. "
-      "Six Ironmasks subdued. Two escaped toward Ashford. Durnak watches from the wall "
-      "without interfering.",
+      "The party drives the [[The Ironmasks|Ironmask]] holding operation out of [[Greystone Keep|the Keep's]] "
+      "outer courtyard. Six Ironmasks subdued. Two escaped toward Ashford. "
+      "[[Warchief Durnak]] watches from the wall without interfering.",
       polarity="negative", intensity=3, event_type="combat",
-      ripple=True)
+      ripple=True, location_id=L["Greystone Keep"])
 
 log_n(N["Bram Ketterly"], 3,
-      "Bram Ketterly is released from the Keep's storage cellar, underfed but uninjured. "
-      "He remembers faces. He remembers routes. He saw a Shadow Wing courier twice "
-      "without knowing what they were. He will tell the party everything.",
-      polarity="positive", intensity=2, event_type="other")
+      "[[Bram Ketterly]] is released from [[Greystone Keep|the Keep's]] storage cellar, "
+      "underfed but uninjured. He remembers faces. He remembers routes. "
+      "He saw a [[The Shadow Wing|Shadow Wing]] courier twice without knowing what they were. "
+      "He will tell the party everything.",
+      polarity="positive", intensity=2, event_type="other",
+      location_id=L["Greystone Keep"])
 
 log_n(N["Maren Vosk"], 3,
-      "The Ledger responds to the Keep incident by doubling Ironmask patrols in town "
-      "and imposing a 'security surcharge' on all merchants. She is escalating, not retreating.",
+      "[[The Ironmasks|The Ledger]] responds to the [[Greystone Keep|Keep]] incident by doubling "
+      "[[The Ironmasks|Ironmask]] patrols in town and imposing a 'security surcharge' on all merchants. "
+      "She is escalating, not retreating.",
       polarity="negative", intensity=2, event_type="politics", ripple=True)
 
 db.apply_ripple(SLUG, N["Maren Vosk"], "npc", 3,
@@ -470,31 +580,36 @@ db.apply_ripple(SLUG, N["Maren Vosk"], "npc", 3,
 
 # Session 4: The Mine and the Pale Widow
 log_n(N["Thane Bergrak"], 4,
-      "Thane Bergrak approaches the party on the road to Coldwater. "
-      "He knows about the unsafe shaft situation. The Emerald Circle has been "
-      "monitoring the mine's structural deterioration. He shows them the Circle's "
-      "own survey: three shafts will fail within sixty days. Not might. Will.",
+      "[[Thane Bergrak]] approaches the party on the road to [[Coldwater Ruins|Coldwater]]. "
+      "He knows about the unsafe shaft situation. The [[Emerald Circle]] has been "
+      "monitoring [[The Ashcroft Vein|the mine's]] structural deterioration. "
+      "He shows them the Circle's own survey: three shafts will fail within sixty days. "
+      "Not might. Will.",
       polarity="positive", intensity=2, event_type="dialogue")
 
 log_n(N["The Pale Widow"], 4,
-      "The party approaches Coldwater ruins respectfully. The Pale Widow does not attack. "
+      "The party approaches [[Coldwater Ruins]] respectfully. [[The Pale Widow]] does not attack. "
       "She shows them the garrison archive: maps of a tunnel system predating the mine, "
-      "running beneath the Vein. One tunnel connects to an exit point near Corvin Ashale's warehouse.",
-      polarity="positive", intensity=3, event_type="discovery")
+      "running beneath [[The Ashcroft Vein|the Vein]]. "
+      "One tunnel connects to an exit point near [[Corvin Ashale]]'s warehouse.",
+      polarity="positive", intensity=3, event_type="discovery",
+      location_id=L["Coldwater Ruins"])
 
 log_n(N["Corvin Ashale"], 4,
-      "Watching the Coldwater tunnel maps, the party realizes Corvin Ashale's warehouse "
-      "sits directly above the old tunnel exit. The shipping weight discrepancy finally makes sense. "
+      "Watching the [[Coldwater Ruins|Coldwater]] tunnel maps, the party realizes "
+      "[[Corvin Ashale]]'s warehouse sits directly above the old tunnel exit. "
+      "The shipping weight discrepancy finally makes sense. "
       "He's not moving cargo out. He's moving it down.",
       polarity="negative", intensity=3, event_type="discovery",
-      visibility="dm_only")
+      visibility="dm_only", location_id=L["Corvin Ashale's Warehouse"])
 
 log_f(F["The Shadow Wing"], 4,
-      "The Shadow Wing moves refined ore samples through the tunnel system twice a week. "
-      "The operation has been running for eight months — exactly as long as the "
-      "shipping discrepancy in Edda's records.",
+      "[[The Shadow Wing]] moves refined ore samples through the tunnel system twice a week. "
+      "The operation has been running for eight months — exactly as long as "
+      "the shipping discrepancy in [[Edda Sorn|Edda's]] records.",
       polarity="negative", intensity=2, event_type="other",
-      visibility="dm_only", ripple=True)
+      visibility="dm_only", ripple=True,
+      location_id=L["Corvin Ashale's Warehouse"])
 
 db.log_condition(SLUG, C["Vein Instability"], 4,
                  "Three shafts confirmed as critical per Emerald Circle survey. "
@@ -503,40 +618,42 @@ db.log_condition(SLUG, C["Vein Instability"], 4,
 
 # Session 5: The Ironmasks Break
 log_n(N["Sister Veyne"], 5,
-      "Sister Veyne coordinates a simultaneous ranger action on three Ironmask "
-      "collection points. With the party holding the road north, the operation "
-      "lands cleanly. Seventeen Ironmasks captured. Maren Vosk's records seized.",
+      "[[Sister Veyne]] coordinates a simultaneous ranger action on three [[The Ironmasks|Ironmask]] "
+      "collection points. With the party holding the road north, the operation lands cleanly. "
+      "Seventeen Ironmasks captured. [[Maren Vosk|Maren Vosk's]] records seized.",
       polarity="positive", intensity=3, event_type="combat")
 
 log_n(N["Maren Vosk"], 5,
-      "Maren Vosk is captured in the Registry during the raid. Her ledgers are complete. "
-      "They name Corvin Ashale by initials — 'CA' — in seventeen separate entries "
-      "as the recipient of skim payments. She will not confirm the name but she won't deny it.",
+      "[[Maren Vosk]] is captured in the [[Ashford Miners' Registry|Registry]] during the raid. "
+      "Her ledgers are complete. They name [[Corvin Ashale]] by initials — 'CA' — "
+      "in seventeen separate entries as the recipient of skim payments. "
+      "She will not confirm the name but she won't deny it.",
       polarity="negative", intensity=3, event_type="combat",
-      actor_id=N["Sister Veyne"], actor_type="npc")
+      actor_id=N["Sister Veyne"], actor_type="npc",
+      location_id=L["Ashford Miners' Registry"])
 
 db.apply_ripple(SLUG, N["Maren Vosk"], "npc", 5,
                 "The Ledger captured — Ironmask operation collapses.",
                 "negative", 3, "combat", "public")
 
 log_f(F["The Ironmasks"], 5,
-      "The Ironmask street operation in Ashford is broken. The toll is ended. "
-      "Remaining Ironmasks have scattered into the Greywood. "
-      "Corvin Ashale's warehouse is locked from the inside.",
+      "The [[The Ironmasks|Ironmask]] street operation in Ashford is broken. The toll is ended. "
+      "Remaining Ironmasks have scattered into [[The Greywood]]. "
+      "[[Corvin Ashale]]'s warehouse is locked from the inside.",
       polarity="positive", intensity=3, event_type="other", ripple=True)
 
 log_n(N["Corvin Ashale"], 5,
-      "Corvin Ashale barricades himself in his warehouse when the Ironmasks fall. "
-      "He has already sent a coded message via Serev. The Shadow Wing knows the operation "
-      "is burned. He is waiting for extraction.",
+      "[[Corvin Ashale]] barricades himself in his [[Corvin Ashale's Warehouse|warehouse]] "
+      "when the [[The Ironmasks|Ironmasks]] fall. He has already sent a coded message via [[Serev]]. "
+      "The [[The Shadow Wing|Shadow Wing]] knows the operation is burned. He is waiting for extraction.",
       polarity="negative", intensity=2, event_type="other",
-      visibility="dm_only")
+      visibility="dm_only", location_id=L["Corvin Ashale's Warehouse"])
 
 log_n(N["Edda Sorn"], 5,
-      "Edda Sorn presents the shipping discrepancy records to the Trade Compact "
-      "regional office, backed by Maren Vosk's seized ledgers. "
-      "The Compact has opened a formal investigation. The Governor has gone quiet. "
-      "The Factor hasn't been found yet.",
+      "[[Edda Sorn]] presents the shipping discrepancy records to the [[The Trade Compact|Trade Compact]] "
+      "regional office, backed by [[Maren Vosk|Maren Vosk's]] seized ledgers. "
+      "The Compact has opened a formal investigation. [[Governor Harwick Denn|The Governor]] "
+      "has gone quiet. The Factor hasn't been found yet.",
       polarity="positive", intensity=2, event_type="politics")
 
 db.log_condition(SLUG, C["The Ironmask Toll"], 5,
@@ -545,6 +662,65 @@ db.log_condition(SLUG, C["The Ironmask Toll"], 5,
                  polarity="positive", intensity=3)
 
 print("  Event log complete")
+
+# ── Location log entries ───────────────────────────────────────────────────────
+
+log_l(L["Thatch's General Store"], 1,
+      "[[Orvyn Thatch]] speaks freely for the first time in months. Names every collector, "
+      "describes patrol timing, produces his private log of Ironmask activity. "
+      "The party has their first real picture of what they're dealing with.",
+      polarity="positive", intensity=1, event_type="dialogue")
+
+log_l(L["The Broken Crown"], 1,
+      "[[Edda Sorn]] makes contact in the back room. Her shipping discrepancy records "
+      "cover eight months. The gap between declared output and actual weight shipped "
+      "is not a rounding error.",
+      polarity="positive", intensity=2, event_type="dialogue")
+
+log_l(L["Ashford Miners' Registry"], 2,
+      "[[Petra Holt]] recovers the hidden ledger copy from beneath the floorboards. "
+      "Twelve percent of miner wages have been skimmed through a fictitious 'safety equipment' line "
+      "for at least six months.",
+      polarity="positive", intensity=2, event_type="discovery",
+      actor_id="The Party", actor_type="party")
+
+log_l(L["Greystone Keep"], 2,
+      "[[Warchief Durnak]] parleys at the gate. Terms set: clear the outer courtyard, "
+      "[[Bram Ketterly|Bram]] goes free. Three days.",
+      polarity="neutral", intensity=1, event_type="dialogue")
+
+log_l(L["Greystone Keep"], 3,
+      "The outer courtyard is taken. Six [[The Ironmasks|Ironmasks]] subdued, two escaped. "
+      "[[Bram Ketterly]] released from the storage cellar — underfed, uninjured, and remembering everything.",
+      polarity="positive", intensity=3, event_type="combat",
+      actor_id="The Party", actor_type="party")
+
+log_l(L["The Ashcroft Vein"], 4,
+      "[[Emerald Circle]] survey confirmed: three critical failure points in the lower shafts. "
+      "Structural collapse projected within sixty days. Miners are already refusing the lower shaft shifts.",
+      polarity="negative", intensity=2, event_type="discovery")
+
+log_l(L["Coldwater Ruins"], 4,
+      "[[The Pale Widow]] shows the party the garrison archive. The tunnel maps are intact. "
+      "One exit runs directly beneath [[Corvin Ashale]]'s warehouse — "
+      "eight months of shipping discrepancies explained in a single diagram.",
+      polarity="positive", intensity=3, event_type="discovery",
+      actor_id="The Party", actor_type="party")
+
+log_l(L["Ashford Miners' Registry"], 5,
+      "[[Maren Vosk]] captured here during the raid. Complete ledgers seized. "
+      "'CA' appears in seventeen entries. [[Sister Veyne]] secures the building.",
+      polarity="positive", intensity=3, event_type="combat",
+      actor_id=N["Sister Veyne"], actor_type="npc")
+
+log_l(L["Corvin Ashale's Warehouse"], 5,
+      "[[Corvin Ashale]] barricades the doors when [[The Ironmasks|Ironmasks]] break. "
+      "[[Serev]] has already left with a message. The warehouse is locked from the inside. "
+      "The tunnel entrance is somewhere below.",
+      polarity="negative", intensity=2, event_type="other",
+      visibility="dm_only")
+
+print("  Location logs complete")
 
 # ── Journal ────────────────────────────────────────────────────────────────────
 db.post_journal(SLUG, 1, "Session 1 — Ashford",

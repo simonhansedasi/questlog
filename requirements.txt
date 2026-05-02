@@ -6,3 +6,4 @@ markdown
 python-dotenv
 stripe
 werkzeug
+resend

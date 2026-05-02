@@ -1,0 +1,148 @@
+{
+  "locations": [
+    {
+      "id": "the_achaean_camp",
+      "name": "The Achaean Camp",
+      "description": "Ten years of siege have turned a beachhead into a city of tents, ships, and fires. The camp stretches along the shore from [[The Ships of Achilles|the ships of Achilles]] on one end to the ships of [[Ajax]] on the other. The assembly is held here. The plague burned through here for nine days. [[Agamemnon]]'s tent is at the center.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_db6cc2",
+          "session": 1,
+          "note": "[[Apollo]]'s plague burns through the camp for nine days after [[Agamemnon]] dishonors his priest. Men and mules die. The fires of cremation never go out. [[Achilles]] forces the assembly. [[Agamemnon]] returns Chryseis and takes [[Achilles]]' prize instead.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "other"
+        }
+      ],
+      "role": "Greek military encampment on the Trojan shore",
+      "dm_notes": "The plague that opens the poem originates here when Agamemnon dishonors Chryses. Achilles withdraws to the ships on the camp's edge \u2014 his separation from the main body is physical as well as symbolic. The embassy to Achilles comes to him here in Book 4. Patroclus borrows the armor here."
+    },
+    {
+      "id": "the_ships_of_achilles",
+      "name": "The Ships of Achilles",
+      "description": "[[Achilles]]' black ships are beached at the far end of the Achaean line. When he withdraws from battle, he comes here and stays \u2014 singing of the deeds of men, playing his lyre, with [[Patroclus]] beside him. The rest of the army bleeds against [[The Walls of Troy|the Trojan walls]] while the greatest warrior of the age sits idle at his ships.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_b84617",
+          "session": 1,
+          "note": "[[Achilles]] withdraws here after [[Agamemnon]] seizes Briseis. He sits at his ships, plays his lyre, and sings of the deeds of men. [[Patroclus]] sits beside him. The Achaean army bleeds against the walls of Troy.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "other"
+        },
+        {
+          "id": "evt_ff94c6",
+          "session": 4,
+          "note": "[[Odysseus]], [[Ajax]], and Phoenix come with [[Agamemnon]]'s offer: treasure, Briseis returned, a daughter in marriage. [[Achilles]] sees the pride beneath the gifts. He refuses. Two fates await him \u2014 long life or short glory. He is choosing neither yet.",
+          "visibility": "public",
+          "polarity": "neutral",
+          "intensity": 2,
+          "event_type": "dialogue"
+        }
+      ],
+      "role": "Where Achilles withdraws \u2014 the edge of the war",
+      "dm_notes": "This is the emotional center of the Iliad's first half. Thetis rises from the sea here. The embassy (Odysseus, Ajax, Phoenix) comes here. Patroclus comes here weeping to beg for the armor. The ships represent both Achilles' withdrawal and his eventual return \u2014 when he finally arms again, it is here."
+    },
+    {
+      "id": "the_scaean_gate",
+      "name": "The Scaean Gate",
+      "description": "The great gate on Troy's western wall, the entrance most used in battle. [[Hector]] passes through it every morning to fight. [[Andromache]] waits for him here. It is at this gate that [[Hector]] bids her farewell \u2014 lifting his son Astyanax, who recoils from the horsehair crest of his helmet. [[Hector]] removes it. He holds the boy. He goes back through the gate.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_6e7398",
+          "session": 3,
+          "note": "[[Hector]] bids [[Andromache]] farewell at the gate. He lifts [[Astyanax]], who recoils from the horsehair crest. [[Hector]] removes the helmet and holds his son. He prays: let him be greater than his father. He goes back through the gate. [[Andromache]] watches him until he is out of sight.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "dialogue"
+        }
+      ],
+      "role": "Troy's western gate \u2014 the farewell place",
+      "dm_notes": "The Scaean Gate farewell is the poem's moral center. Hector knows Troy will fall. He goes anyway. The scene is constructed to break the reader: the baby who fears the helmet, the prayer for the son to surpass the father, Andromache watching him walk away knowing she will never see him again. Homer gives the Trojans this scene so we cannot simply root for the Greeks."
+    },
+    {
+      "id": "the_walls_of_troy",
+      "name": "The Walls of Troy",
+      "description": "The walls of Troy are the boundary between survival and destruction. The Trojan elders sit here and watch [[Helen]] name the Greek heroes on [[The Plain of Troy|the plain]] below. [[Andromache]] runs to these walls when she hears [[Hector]] is dead. [[Priam]] tears his white hair here watching his son die. The walls have held for ten years. They will not hold forever.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_24dece",
+          "session": 7,
+          "note": "[[Priam]] watches [[Hector]] die from the walls. He tears his white hair and weeps in the dust. He begged [[Hector]] not to face [[Achilles]]. [[Hector]] waited anyway. Troy's walls still stand. Everything behind them is changed.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "other"
+        }
+      ],
+      "role": "Troy's ramparts \u2014 where the Trojans watch and fall",
+      "dm_notes": "The wall scenes give the Trojans their domestic humanity \u2014 we see them watching the war rather than fighting it. Andromache's collapse on the wall when Hector's body is dragged by Achilles is among the most devastating moments in the poem. Priam sees everything from here."
+    },
+    {
+      "id": "priam_s_palace",
+      "name": "Priam's Palace",
+      "description": "The palace of King [[Priam]] within [[The Walls of Troy|Troy's walls]]. His fifty sons and their wives are housed here. It is to this palace that [[Hector]] goes to find [[Paris]] idle with [[Helen]] when he should be fighting. Here Hecuba tears her robes. Here [[Priam]] prepares the wagon of treasure that he will take, alone, into the enemy camp.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_204443",
+          "session": 8,
+          "note": "[[Hector]] is brought home. [[Andromache]] leads the lament. [[Hecuba]] mourns her son. [[Helen]] mourns the only man in Troy who was kind to her. The poem ends at a funeral, not a victory. That is Homer's point.",
+          "visibility": "public",
+          "polarity": "neutral",
+          "intensity": 1,
+          "event_type": "other"
+        }
+      ],
+      "role": "Troy's royal halls \u2014 grief and counsel",
+      "dm_notes": "The palace is where Troy's private grief is held. Hector's body is mourned here by Andromache, Hecuba, and Helen, each in turn, with different forms of lament. Priam's departure from the palace with the treasure \u2014 alone, at night \u2014 is the poem's final act of courage."
+    },
+    {
+      "id": "achilles_hut",
+      "name": "Achilles' Hut",
+      "description": "[[Achilles]]' dwelling in [[The Achaean Camp|the Achaean camp]] \u2014 larger than a tent, a shelter built for the siege's duration. It is here that [[Priam]] comes at midnight, guided by Hermes, to kneel before the man who killed his son. [[Achilles]] weeps with him. He promises twelve days of truce. He returns [[Hector]]'s body without ransom. The poem ends here, in this act of grace in an enemy's dwelling.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_99e4d1",
+          "session": 8,
+          "note": "[[Priam]] comes at midnight, guided by Hermes, and kneels before [[Achilles]]. He asks him to remember his own father. He kisses the hands that killed his son. [[Achilles]] weeps. He lifts the old king. He promises twelve days of truce and returns [[Hector]]'s body.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "dialogue",
+          "actor_id": "priam",
+          "actor_type": "npc"
+        }
+      ],
+      "role": "Where Priam ransoms Hector's body",
+      "dm_notes": "The final scene of the Iliad takes place in this hut. Two men weeping together \u2014 each for what they have lost. Achilles sees his own father in Priam. He lifts the old king from the ground. He returns the body. He does not have to. That is Homer's answer to the question of what heroism is."
+    },
+    {
+      "id": "the_plain_of_troy",
+      "name": "The Plain of Troy",
+      "description": "The broad plain before [[The Walls of Troy|Troy's walls]], between [[The Scaean Gate]] and [[The Achaean Camp]]. Ten years of war have been fought here. The River Scamander crosses it. This is where [[Diomedes]] wounds Aphrodite and Ares. Where the Trojans breach the wall. Where [[Patroclus]] drives the Trojans back and then presses too far. Where [[Hector]] and [[Achilles]] fight their last fight.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_9031e0",
+          "session": 6,
+          "note": "[[Patroclus]] fights brilliantly in [[Achilles]]' armor and drives the [[The City of Troy|Trojans]] from the ships. Then he presses on toward [[The Walls of Troy|the walls]]. [[Apollo]] stuns him from behind. [[Hector]] drives in the killing blow. The armor is stripped.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "combat"
+        }
+      ],
+      "role": "The battlefield \u2014 where the war is fought and decided",
+      "dm_notes": "The plain is the theater of the war's action. The Trojan women can see it from the walls. Hector runs three circuits of Troy on this plain pursued by Achilles. Patroclus's overreach happens here \u2014 he drives the Trojans from the ships and then cannot stop. Apollo stuns him at the walls of Troy on the plain's far edge."
+    }
+  ]
+}

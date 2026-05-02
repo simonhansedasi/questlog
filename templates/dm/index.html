@@ -63,9 +63,10 @@
 {% set _gs_nc = npcs | length %}
 {% set _gs_fc = factions | length %}
 {% set _gs_pc = party | length %}
+{% set _gs_lc = locations | length %}
 {% set _gs_ttrpg = meta.mode not in ('fiction', 'historical') %}
 
-{% if not (meta.observer_name and _gs_nc >= 2 and _gs.has_events and _gs_fc >= 1 and _gs.has_ripples and (not _gs_ttrpg or _gs_pc >= 1)) %}
+{% if not (meta.observer_name and _gs_nc >= 2 and _gs_lc >= 1 and _gs.has_events and _gs_fc >= 1 and _gs.has_ripples and (not _gs_ttrpg or _gs_pc >= 1)) %}
 {% set _gs3_href = "/" ~ slug ~ "/world/npc/" ~ npcs[0].id if npcs else "/" ~ slug ~ "/world" %}
 {% set _gs3_label = "Open " ~ npcs[0].name if npcs else "Go to World" %}
 <div id="rf-gs" style="display:none; border:1px solid rgba(140,100,220,0.4); border-radius:8px; padding:16px 20px; margin-bottom:20px; background:rgba(100,80,180,0.06);">
@@ -120,33 +121,37 @@
       "Add a second " ~ terms.npc | lower ~ " for them to interact with",
       "",
       "Add Another", "#add", "add") }}
+  {{ gs_row(4, _gs_lc >= 1,
+      "Add a location",
+      "Give your " ~ terms.npc | lower ~ "s somewhere to exist — a town, a ship, a building. Log events at that place to make it feel real.",
+      "Add Location", "#add", "add") }}
   {% if _gs_ttrpg %}
-  {{ gs_row(4, _gs_pc >= 1,
+  {{ gs_row(5, _gs_pc >= 1,
       "Add a " ~ terms.cast_label | lower ~ " member",
       terms.cast_label ~ " members track fog-of-war and whose perspective events are seen from. Add at least one player character.",
       "Add " ~ terms.cast_label ~ " Member", "#add", "add") }}
+  {{ gs_row(6, _gs.has_events,
+      "Log their first interaction",
+      "Use " ~ terms.quick_log_label ~ " below. Pick who the event affects, set Caused by, and use the Where field to tag the location.",
+      terms.quick_log_label, "#quicklog", "quicklog") }}
+  {{ gs_row(7, _gs_fc >= 1,
+      "Create a " ~ terms.faction | lower ~ " and connect a " ~ terms.npc | lower,
+      terms.factions ~ " scale ripples — an event on a member echoes through the whole " ~ terms.faction | lower ~ ".",
+      "Add " ~ terms.faction, "#add", "add") }}
+  {{ gs_row(8, _gs.has_ripples,
+      "Formalize a relationship and watch it ripple",
+      ("Assign a " ~ terms.npc | lower ~ " to your " ~ terms.faction | lower ~ " first: edit them → " ~ terms.faction ~ " Affiliation." if not _gs.npc_in_faction else "Open a " ~ terms.npc | lower ~ " page that shows a relationship pattern — click Formalize, then log another event and check Ripple Chains."),
+      _gs3_label, _gs3_href, "") }}
+  {% else %}
   {{ gs_row(5, _gs.has_events,
       "Log their first interaction",
-      "Use " ~ terms.quick_log_label ~ " below. Pick who the event affects, then set Caused by to the other " ~ terms.npc | lower ~ ". Tone and a note are enough — their relationship score starts building immediately.",
+      "Use " ~ terms.quick_log_label ~ " below. Pick who the event affects, set Caused by, and use the Where field to tag the location.",
       terms.quick_log_label, "#quicklog", "quicklog") }}
   {{ gs_row(6, _gs_fc >= 1,
       "Create a " ~ terms.faction | lower ~ " and connect a " ~ terms.npc | lower,
       terms.factions ~ " scale ripples — an event on a member echoes through the whole " ~ terms.faction | lower ~ ".",
       "Add " ~ terms.faction, "#add", "add") }}
   {{ gs_row(7, _gs.has_ripples,
-      "Formalize a relationship and watch it ripple",
-      ("Assign a " ~ terms.npc | lower ~ " to your " ~ terms.faction | lower ~ " first: edit them → " ~ terms.faction ~ " Affiliation." if not _gs.npc_in_faction else "Open a " ~ terms.npc | lower ~ " page that shows a relationship pattern — click Formalize, then log another event and check Ripple Chains."),
-      _gs3_label, _gs3_href, "") }}
-  {% else %}
-  {{ gs_row(4, _gs.has_events,
-      "Log their first interaction",
-      "Use " ~ terms.quick_log_label ~ " below. Pick who the event affects, then set Caused by to the other " ~ terms.npc | lower ~ ". Tone and a note are enough — their relationship score starts building immediately.",
-      terms.quick_log_label, "#quicklog", "quicklog") }}
-  {{ gs_row(5, _gs_fc >= 1,
-      "Create a " ~ terms.faction | lower ~ " and connect a " ~ terms.npc | lower,
-      terms.factions ~ " scale ripples — an event on a member echoes through the whole " ~ terms.faction | lower ~ ".",
-      "Add " ~ terms.faction, "#add", "add") }}
-  {{ gs_row(6, _gs.has_ripples,
       "Formalize a relationship and watch it ripple",
       ("Assign a " ~ terms.npc | lower ~ " to your " ~ terms.faction | lower ~ " first: edit them → " ~ terms.faction ~ " Affiliation." if not _gs.npc_in_faction else "Open a " ~ terms.npc | lower ~ " page that shows a relationship pattern — click Formalize, then log another event and check Ripple Chains."),
       _gs3_label, _gs3_href, "") }}
@@ -1605,6 +1610,11 @@ function generateBrief() {
           {% for c in conditions %}<option value="condition:{{ c.id }}">{{ c.name }}</option>{% endfor %}
         </optgroup>
         {% endif %}
+        {% if locations %}
+        <optgroup label="Locations">
+          {% for loc in locations %}<option value="location:{{ loc.id }}">{{ loc.name }}</option>{% endfor %}
+        </optgroup>
+        {% endif %}
       </select>
     </div>
     <div style="display:flex; flex-direction:column; gap:4px;">
@@ -1616,13 +1626,14 @@ function generateBrief() {
                        border-radius:4px; padding:6px 10px; font-size:0.85rem; min-width:160px;"
                 onchange="(function(s){document.getElementById('quick-actor-type').value=s.options[s.selectedIndex].dataset.type||''})(this)">
           <option value="" data-type="">— nobody specific —</option>
+          <option value="{{ meta.observer_name or terms.cast_label }}" data-type="party">{{ terms.cast_label }} (whole group)</option>
           {% if npcs %}
           <optgroup label="{{ terms.npcs }}">
             {% for npc in npcs %}<option value="{{ npc.id }}" data-type="npc">{{ npc.name }}</option>{% endfor %}
           </optgroup>
           {% endif %}
           {% if party %}
-          <optgroup label="{{ terms.cast_label }}">
+          <optgroup label="{{ terms.cast_label }} — individual">
             {% for char in party %}<option value="{{ char.name }}" data-type="char">{{ char.name }}</option>{% endfor %}
           </optgroup>
           {% endif %}
@@ -1637,6 +1648,17 @@ function generateBrief() {
         </label>
       </div>
     </div>
+    {% if locations %}
+    <div style="display:flex; flex-direction:column; gap:4px;">
+      <label style="color:var(--muted); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Where</label>
+      <select name="location_id"
+              style="background:var(--surface2); border:1px solid var(--border); color:var(--text);
+                     border-radius:4px; padding:6px 10px; font-size:0.85rem; min-width:140px;">
+        <option value="">— anywhere —</option>
+        {% for loc in locations %}<option value="{{ loc.id }}">{{ loc.name }}</option>{% endfor %}
+      </select>
+    </div>
+    {% endif %}
     <div style="display:flex; flex-direction:column; gap:4px;">
       <label style="color:var(--muted); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">{{ terms.session }}</label>
       <input type="number" name="session" value="{{ current_session }}" min="0"
@@ -1700,16 +1722,18 @@ function generateBrief() {
       <option value="restricted">Restricted — reveal individually</option>
       <option value="dm_only">{{ terms.dm }} only</option>
     </select>
-    {% if party %}
-    <span style="color:var(--muted); font-size:0.75rem; margin-left:4px;">Seen by:</span>
+  </div>
+  {% if party %}
+  <div style="display:flex; align-items:center; gap:12px; margin-top:4px; flex-wrap:wrap;">
+    <span style="color:var(--muted); font-size:0.75rem;">Seen by:</span>
     {% for char in party %}
     <label style="display:flex; align-items:center; gap:3px; font-size:0.75rem; color:var(--muted); cursor:pointer; white-space:nowrap;">
       <input type="checkbox" name="witnesses" value="{{ char.name }}" form="quick-log-form" style="accent-color:var(--gold);">
       {{ char.name }}
     </label>
     {% endfor %}
-    {% endif %}
   </div>
+  {% endif %}
   <script>
   (function() {
     var factionNames = {
@@ -1805,6 +1829,7 @@ function generateBrief() {
           <span style="color:{{ _pcol }}; font-size:0.72rem; font-weight:700;">{{ _sign }}{{ e.intensity if e.intensity else '' }}</span>
           {% endif %}
           {% if e.event_type %}<span style="color:var(--purple); font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">{{ e.event_type }}</span>{% endif %}
+          {% if e.location_id %}{% set _loc = locations | selectattr('id', 'equalto', e.location_id) | first %}{% if _loc %}<a href="/{{ slug }}/world/location/{{ e.location_id }}" style="color:var(--muted); font-size:0.65rem; text-decoration:none;" title="{{ _loc.name }}">@ {{ _loc.name }}</a>{% endif %}{% endif %}
           {% if vis == 'dm_only' %}<span style="color:var(--muted); font-size:0.65rem; font-style:italic;">{{ terms.dm }} only</span>{% endif %}
           <span style="margin-left:auto; display:flex; gap:3px; flex-shrink:0;">
             <button data-eid="{{ e.id }}" data-entity-id="{{ e.entity_id }}" data-etype="{{ e.type | lower }}"
@@ -1816,7 +1841,7 @@ function generateBrief() {
                     style="background:none; border:none; color:var(--muted); padding:0 4px; font-size:0.7rem; cursor:pointer; opacity:0.5;" title="Delete">×</button>
           </span>
         </div>
-        <div id="evtnote-{{ e.id }}" style="font-size:0.8rem; color:var(--text-dim); margin-top:1px; padding-left:2px;">{{ e.note }}</div>
+        <div id="evtnote-{{ e.id }}" style="font-size:0.8rem; color:var(--text-dim); margin-top:1px; padding-left:2px;">{{ e.note | wikilinks(slug, npcs, factions, locations, party) }}</div>
         <div id="evtedit-{{ e.id }}" style="display:none; flex-direction:column; gap:5px; margin-top:6px;">
           <textarea id="evtinput-{{ e.id }}" rows="2"
                     style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:4px 8px; font-size:0.8rem; width:100%; box-sizing:border-box; resize:vertical; font-family:inherit;">{{ e.note }}</textarea>
@@ -2569,6 +2594,33 @@ function rfEvtDelete(btn) {
           <input type="checkbox" name="hidden" value="1" style="accent-color:var(--gold);"> Start hidden
         </label>
         <button type="submit" style="{{ btn_s }}">Add {{ terms.faction }}</button>
+      </div>
+    </form>
+  </div>
+
+  {# ── Add Location ── #}
+  <div class="card">
+    <h3>Add Location</h3>
+    <p class="text-muted text-sm" style="margin-bottom:12px;">Add a place — town, keep, dungeon, region, or any named site.</p>
+    <form method="POST" action="/{{ slug }}/dm/location/add"
+          style="display:flex; flex-direction:column; gap:8px;">
+      <input type="text" name="name" placeholder="Name" required
+             style="{{ input_s }} width:100%; box-sizing:border-box;">
+      <input type="text" name="role" placeholder="Role (e.g. fortified keep, market town)"
+             style="{{ input_s }} width:100%; box-sizing:border-box;">
+      <textarea name="description" rows="2" placeholder="Description — supports [[wiki links]]"
+                style="{{ input_s }} width:100%; box-sizing:border-box; resize:vertical; font-family:inherit;"></textarea>
+      <div style="display:flex; flex-direction:column; gap:3px;">
+        <label style="color:var(--purple); font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em;">{{ terms.dm }} Secrets</label>
+        <textarea name="dm_notes" rows="2"
+                  placeholder="Hidden details, secret entrances, true controllers..."
+                  style="{{ input_s }} width:100%; box-sizing:border-box; resize:vertical; font-family:inherit; border-color:rgba(140,100,220,0.4);"></textarea>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <label style="display:flex; align-items:center; gap:6px; font-size:0.78rem; color:var(--muted); cursor:pointer;">
+          <input type="checkbox" name="hidden" value="1" style="accent-color:var(--gold);"> Start hidden
+        </label>
+        <button type="submit" style="{{ btn_s }}">Add Location</button>
       </div>
     </form>
   </div>

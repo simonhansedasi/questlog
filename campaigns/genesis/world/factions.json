@@ -4,7 +4,7 @@
       "id": "the_heavenly_court",
       "name": "The Heavenly Court",
       "relationship": "ally",
-      "description": "YHWH and the divine assembly \u2014 angels, messengers, the sons of God. They execute God's will: announce births, destroy cities, wrestle with patriarchs, guard Eden. In Genesis, God is the primary actor, not an absent observer. Every human story unfolds within this frame.",
+      "description": "YHWH and the divine assembly \u2014 angels, messengers, the sons of God. They execute God's will: announce births, destroy cities, wrestle with patriarchs, guard [[The Garden of Eden|Eden]]. In Genesis, God is the primary actor, not an absent observer. Every human story unfolds within this frame.",
       "hidden": true,
       "log": []
     },
@@ -12,13 +12,13 @@
       "id": "house_of_israel",
       "name": "House of Israel",
       "relationship": "ally",
-      "description": "The covenant family: Abraham, Isaac, Jacob, and the twelve sons who become the twelve tribes. Not yet a nation \u2014 a family, a promise, a genealogy God has staked his reputation on. Their survival across famine and fratricide is the spine of the narrative.",
+      "description": "The covenant family: [[Abraham]], [[Isaac]], [[Jacob]], and the twelve sons who become the twelve tribes. Not yet a nation \u2014 a family, a promise, a genealogy God has staked his reputation on. Their survival across famine and fratricide is the spine of the narrative.",
       "hidden": false,
       "log": [
         {
-          "id": "evt_a16f91",
+          "id": "evt_0abe2f",
           "session": 10,
-          "note": "The famine strikes Canaan; Jacob sends his sons to Egypt to buy grain, keeping Benjamin at home. They bow before the vizier without recognizing Joseph.",
+          "note": "The famine strikes Canaan; [[Jacob]] sends his sons to Egypt to buy grain, keeping [[Benjamin]] at home. They bow before the vizier without recognizing [[Joseph]].",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
@@ -44,11 +44,11 @@
       "id": "the_nations",
       "name": "The Nations",
       "relationship": "neutral",
-      "description": "Egypt, Canaan, and all the peoples surrounding the covenant family. They are not enemies by default \u2014 Pharaoh shelters Abraham, Melchizedek blesses him, and the Canaanites trade with Isaac. The covenant does not yet mean conquest. That comes later.",
+      "description": "Egypt, Canaan, and all the peoples surrounding the covenant family. They are not enemies by default \u2014 [[Pharaoh]] shelters [[Abraham]], [[Melchizedek]] blesses him, and the Canaanites trade with [[Isaac]]. The covenant does not yet mean conquest. That comes later.",
       "hidden": false,
       "log": [
         {
-          "id": "evt_26802c",
+          "id": "evt_b05062",
           "session": 2,
           "note": "The flood covers the earth for forty days; every living thing outside the ark dies. The world is unmade and remade.",
           "visibility": "public",

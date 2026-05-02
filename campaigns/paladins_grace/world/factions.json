@@ -4,7 +4,7 @@
       "id": "the_grace_sworn",
       "name": "The Grace-Sworn",
       "relationship": "ally",
-      "description": "The paladin order that has kept Hartstone neutral for three generations. They serve no king and take no side \u2014 only the compact. Their numbers are dwindling and their resources thin, but their reputation is the only thing stopping Hartstone from becoming a battlefield.",
+      "description": "The paladin order that has kept Hartstone neutral for three generations. They serve no king and take no side \u2014 only the compact. Their numbers are dwindling and their resources thin, but their reputation is the only thing stopping Hartstone from becoming a battlefield. [[Commander Aldric Vane]] leads them.",
       "hidden": false,
       "log": [],
       "relations": [
@@ -32,20 +32,21 @@
       "id": "house_vespar",
       "name": "House Vespar",
       "relationship": "rival",
-      "description": "A powerful northern noble house pressing its claim to Hartstone with lawyers and armed escorts, in that order. Lady Ivra Malt speaks for the house with silk gloves and iron intent. They believe Hartstone is historically theirs.",
+      "description": "A powerful northern noble house pressing its claim to Hartstone with lawyers and armed escorts, in that order. [[Lady Ivra Malt]] speaks for the house with silk gloves and iron intent. They believe Hartstone is historically theirs.",
       "hidden": false,
       "log": [
         {
-          "id": "evt_1746a5",
+          "id": "evt_aba863",
           "session": 1,
-          "note": "Vespar's delegation exceeds the twelve-guard compact limit by twenty-eight. The Grace-Sworn are counting swords. Aldric has not yet invoked the clause.",
+          "note": "[[House Vespar]]'s delegation exceeds the twelve-guard compact limit by twenty-eight. [[The Grace-Sworn]] are counting swords. [[Commander Aldric Vane]] has not yet invoked the clause.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
-          "event_type": "politics"
+          "event_type": "politics",
+          "location_id": "hartstone_north_gate"
         },
         {
-          "id": "evt_9900e1",
+          "id": "evt_43c42a",
           "session": 2,
           "note": "Consequence of The Underbrick (ally): Three shipments of weapons have moved through the east tunnels in two weeks \u2014 too many for street crime. Consistent with equipping a small private force.",
           "visibility": "dm_only",
@@ -61,7 +62,7 @@
           "actor_type": "faction"
         },
         {
-          "id": "evt_54bb25",
+          "id": "evt_707dc9",
           "session": 4,
           "note": "Consequence of The Underbrick (ally): Underbrick attacks Grace-Sworn patrol \u2014 open confrontation.",
           "visibility": "public",
@@ -96,7 +97,7 @@
       "id": "the_compact_guild",
       "name": "The Compact Guild",
       "relationship": "neutral",
-      "description": "Hartstone's merchant class has thrived precisely because the city is neutral \u2014 both kingdoms trade through it, pay its tariffs, and need its roads. The Guild will back whoever keeps the trade routes open. Right now that is the compact. Guildmaster Sena Cord has a price she has not yet named.",
+      "description": "Hartstone's merchant class has thrived precisely because the city is neutral \u2014 both kingdoms trade through it, pay its tariffs, and need its roads. The Guild will back whoever keeps the trade routes open. Right now that is the compact. [[Guildmaster Sena Cord]] has a price she has not yet named.",
       "hidden": false,
       "log": [],
       "relations": [
@@ -112,7 +113,7 @@
       "id": "the_kelrath_envoys",
       "name": "The Kelrath Envoys",
       "relationship": "rival",
-      "description": "The southern Confederation sends diplomats instead of armies \u2014 so far. Emissary Dax Fell has been in Hartstone six months before Vespar's delegation arrived. He knows where every magistrate eats dinner and which ones have debts.",
+      "description": "The southern Confederation sends diplomats instead of armies \u2014 so far. [[Emissary Dax Fell]] has been in Hartstone six months before [[House Vespar|Vespar's]] delegation arrived. He knows where every magistrate eats dinner and which ones have debts.",
       "hidden": false,
       "log": [],
       "relations": [
@@ -134,11 +135,11 @@
       "id": "the_underbrick",
       "name": "The Underbrick",
       "relationship": "hostile",
-      "description": "Hartstone's criminal network operates in tunnels below the east quarter. They have survived every political change by being useful to whoever is winning. Someone is paying them very well right now. Nobody knows for what. (DM-only)",
+      "description": "Hartstone's criminal network operates in [[The East Quarter Tunnels|tunnels below the east quarter]]. They have survived every political change by being useful to whoever is winning. Someone is paying them very well right now. Nobody knows for what. (DM-only)",
       "hidden": true,
       "log": [
         {
-          "id": "evt_6d7afc",
+          "id": "evt_1bc31a",
           "session": 2,
           "note": "Three shipments of weapons have moved through the east tunnels in two weeks \u2014 too many for street crime. Consistent with equipping a small private force.",
           "visibility": "dm_only",
@@ -147,15 +148,16 @@
           "event_type": "other"
         },
         {
-          "id": "evt_e91469",
+          "id": "evt_d74820",
           "session": 4,
-          "note": "A Grace-Sworn patrol is ambushed in the east tunnels \u2014 non-lethal, but disarmed and blindfolded for two hours. A message is left: 'Stop looking.'",
+          "note": "A [[The Grace-Sworn|Grace-Sworn]] patrol is ambushed in the east tunnels \u2014 non-lethal, but disarmed and blindfolded for two hours. A message is left: 'Stop looking.'",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
           "event_type": "combat",
           "actor_id": "the_loom",
-          "actor_type": "npc"
+          "actor_type": "npc",
+          "location_id": "the_east_quarter_tunnels"
         }
       ],
       "relations": [

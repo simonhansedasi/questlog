@@ -1,29 +1,3 @@
 {
-  "ships": [],
-  "currency": {
-    "Gold": 340,
-    "Silver": 12
-  },
-  "items": [
-    {
-      "name": "Edda Sorn's Ledger Copy",
-      "notes": "A handwritten duplicate of the Trade Compact extortion records. Maren Vosk confirmed it matches the original. Admissible before the Governor if they can get her there."
-    },
-    {
-      "name": "Ironmask Toll Seal",
-      "notes": "Recovered from the Coldwater checkpoint. Grants passage through Ironmask roadblocks without inspection. Expires in usefulness the moment the Pale Widow knows Farlan talked."
-    },
-    {
-      "name": "Bram Ketterly's Map",
-      "notes": "Crude sketch of the underground courier route Bram saw saw used twice from his cellar. Marked with a Shadow Wing sigil at one junction. No surface landmarks — the route is entirely subterranean."
-    },
-    {
-      "name": "Stonebreaker Token",
-      "notes": "Given by Warchief Durnak after the party cleared the keep. Clan-marked iron disc. Guarantees safe passage through Stonebreaker territory and one audience with the Warchief without prior arrangement."
-    },
-    {
-      "name": "Corvin Ashale's Offer (Unsigned)",
-      "notes": "30% of whatever is found in the Pale Widow's safe house in exchange for clearing the path. Runner confirmed the sender. Party has not responded."
-    }
-  ]
+  "ships": []
 }

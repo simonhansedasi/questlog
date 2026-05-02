@@ -1,0 +1,139 @@
+{
+  "locations": [
+    {
+      "id": "the_tower_of_london",
+      "name": "The Tower of London",
+      "description": "The Tower has housed kings, princes, and traitors throughout the wars. [[Henry VI]] is imprisoned here twice. Edward V and his brother Richard are placed here 'for their safety' in 1483. The Princes are seen less and less frequently after that summer. No bodies are found in their lifetimes.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_657d83",
+          "session": 5,
+          "note": "[[Henry VI]] is returned here after [[Barnet Field|Barnet]]. He is murdered on the night of May 21, 1471 \u2014 the same night [[Edward IV]] returns from Tewkesbury. The official cause of death is 'pure displeasure and melancholy.' No one believes this.",
+          "visibility": "dm_only",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "other",
+          "actor_id": "edward_iv",
+          "actor_type": "npc"
+        }
+      ],
+      "role": "Royal fortress, prison, and place of execution",
+      "dm_notes": "Henry VI is almost certainly murdered here on the night of May 21, 1471 \u2014 on the same night Edward IV returns from Tewkesbury. The Princes in the Tower disappear here after Richard III's usurpation. Whether Richard ordered their deaths is the most debated question in English history. The Tower is also where George of Clarence is executed, tradition says in a barrel of Malmsey wine."
+    },
+    {
+      "id": "st_albans",
+      "name": "St. Albans",
+      "description": "A market town north of London where the Wars of the Roses drew first blood on May 22, 1455. [[Richard Duke of York]] intercepted the royal army on a market street. The battle lasted less than an hour. The Lancastrian commander Somerset was killed in a back garden. [[Henry VI]] was found alone in a tanner's cottage, wounded by an arrow in the neck.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_e450d5",
+          "session": 1,
+          "note": "The first battle of the wars is fought on a market street. [[Richard Duke of York]] intercepts the royal army. [[Henry VI]] is found alone in a tanner's cottage with an arrow wound. Somerset is killed in a garden. Both sides call it a misunderstanding.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "combat"
+        }
+      ],
+      "role": "Site of the First Battle \u2014 the war's first blood",
+      "dm_notes": "The First Battle of St. Albans is presented as a misunderstanding by both sides afterward \u2014 York kneels before Henry and blames Somerset for everything. This is the shape of the entire war: violence followed by claims that no violence was intended. The battle is the first registered event on the rival edge between York and Lancaster."
+    },
+    {
+      "id": "towton_field",
+      "name": "Towton Field",
+      "description": "A field in Yorkshire where the decisive battle of the first phase of the wars was fought on March 29, 1461, in a blizzard on Palm Sunday. An estimated 28,000 men died \u2014 the bloodiest battle ever fought on English soil. The Lancastrian army was destroyed. [[Henry VI]] and [[Margaret of Anjou|Margaret]] fled to Scotland. [[Edward IV]] was king.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_e7aae7",
+          "session": 3,
+          "note": "Palm Sunday, 1461. A blizzard. 28,000 dead. [[Edward IV]] is nineteen. He destroys the [[House of Lancaster|Lancastrian]] army in the bloodiest battle ever fought on English soil. [[Henry VI]] flees to Scotland. The snow carries York's arrows further. The river runs red.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "combat"
+        }
+      ],
+      "role": "Palm Sunday 1461 \u2014 the bloodiest battle in English history",
+      "dm_notes": "The snow carried York's arrows further than Lancaster's \u2014 the wind shifted mid-battle. The slaughter after the rout was total: the victors killed the fleeing. The River Cock ran red. Edward is nineteen years old when he wins here. The battle ends the first phase of the war. Lancaster will not field a serious army again until Warwick switches sides."
+    },
+    {
+      "id": "barnet_field",
+      "name": "Barnet Field",
+      "description": "A field north of London where the Battle of Barnet was fought in thick Easter morning fog on April 14, 1471. [[Richard Neville, Earl of Warwick|Warwick's]] Lancastrian forces accidentally attacked their own allies in the confusion. [[Richard Neville, Earl of Warwick|Warwick]] was killed \u2014 on foot, trying to reach his horse. [[Edward IV]] wept over his cousin's body and had it publicly displayed to prevent rumors that [[Richard Neville, Earl of Warwick|Warwick]] had survived.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_6cf096",
+          "session": 5,
+          "note": "[[Richard Neville, Earl of Warwick]] is killed in the fog. His own allies misidentify a banner and turn on him. He is on foot, trying to reach his horse. [[Edward IV]] weeps over his cousin's body. The Kingmaker is dead. The war can finally end \u2014 or begin again differently.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "combat"
+        }
+      ],
+      "role": "April 14, 1471 \u2014 where Warwick died in fog",
+      "dm_notes": "Warwick's death is decided by fog and misidentified banners. The Earl of Oxford's star-and-rays badge was mistaken for Edward's sun-in-splendour. Warwick's own allies turned on him. The man who made Edward IV king is killed by Edward's army by accident. His death removes the only man capable of keeping Lancaster-York division permanently active."
+    },
+    {
+      "id": "bosworth_field",
+      "name": "Bosworth Field",
+      "description": "A field in Leicestershire where the Wars of the Roses ended on August 22, 1485. [[Richard Duke of Gloucester|Richard III]] charged personally toward [[Henry Tudor]]'s position with his household cavalry in a bold gamble to end the battle in a single stroke. The Stanley family, watching from the flank, chose that moment to charge into [[Richard Duke of Gloucester|Richard's]] side. [[Richard Duke of Gloucester|Richard]] was surrounded and killed. His crown was found in a hawthorn bush.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_0e1934",
+          "session": 9,
+          "note": "[[Richard Duke of Gloucester]] charges personally toward [[Henry Tudor]]'s exposed position. The Stanleys, watching from the flank, make their choice. They charge into Richard's side. He is surrounded, unhorsed, killed. His crown is found in a hawthorn bush. Thirty years of war end in a Leicestershire field.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "combat"
+        }
+      ],
+      "role": "August 22, 1485 \u2014 the last battle, Richard III's death",
+      "dm_notes": "Richard's charge is strategically sound \u2014 Tudor is exposed and vulnerable. It nearly works. The Stanleys' decision to intervene is the margin. Lord Stanley places the crown on Henry Tudor's head on the field. Richard is the last English king to die in battle. His body is stripped, slung over a horse, and displayed. He is buried without ceremony."
+    },
+    {
+      "id": "westminster_abbey",
+      "name": "Westminster Abbey",
+      "description": "The Abbey has served as coronation church and sanctuary throughout the wars. [[Elizabeth Woodville]] takes sanctuary here with her daughters when [[Richard Duke of Gloucester|Richard]] moves against the Woodvilles in 1483. She is eventually persuaded to release her younger son into [[Richard Duke of Gloucester|Richard's]] custody from this place. Both boys go to [[The Tower of London|the Tower]]. She watches from sanctuary.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_b2170b",
+          "session": 8,
+          "note": "[[Elizabeth Woodville]] takes sanctuary here with her daughters when [[Richard Duke of Gloucester]] moves against the Woodvilles. She is eventually persuaded to release her younger son Richard into his uncle's custody. Both boys go to [[The Tower of London]]. She never sees them again.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "politics"
+        }
+      ],
+      "role": "Sanctuary, coronation church, and seat of English legitimacy",
+      "dm_notes": "The sanctuary at Westminster is inviolable under church law \u2014 Richard cannot simply take Elizabeth or her daughters. He needs her to willingly release young Richard. The persuasion that achieves this is one of the war's most consequential acts of political pressure. Elizabeth spends months here watching her son's fate unfold without being able to intervene."
+    },
+    {
+      "id": "france_and_brittany",
+      "name": "France and Brittany",
+      "description": "[[Henry Tudor]] spent fourteen years in exile in Brittany and Normandy, waiting. Louis XI of [[Kingdom of France|France]] funded [[Richard Neville, Earl of Warwick|Warwick's]] switch to [[House of Lancaster|Lancaster]]. Louis harbored [[Henry Tudor|Tudor]]. When [[Richard Duke of Gloucester|Richard III's]] support collapsed in 1485, [[Henry Tudor|Tudor]] landed at Milford Haven with French soldiers and marched to [[Bosworth Field|Bosworth]]. France did not fight England's civil war \u2014 it sustained it.",
+      "hidden": true,
+      "log": [
+        {
+          "id": "evt_2f8f3e",
+          "session": 4,
+          "note": "[[Richard Neville, Earl of Warwick]] goes to [[Margaret of Anjou]] in France after fleeing England. He was her greatest enemy for fifteen years. She makes him wait on his knees for a quarter hour before agreeing. The price: his daughter marries her son. The [[House of Neville|Kingmaker]] and the She-Wolf, united by shared hatred of [[Edward IV]].",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "politics"
+        }
+      ],
+      "role": "The exile's refuge \u2014 where Henry Tudor waited",
+      "dm_notes": "Louis XI \u2014 the Spider King \u2014 consistently backed whichever English faction kept England divided. He funded Warwick in 1470. He kept Tudor alive for fourteen years. He provided the troops for the Bosworth invasion. England's civil war is partly sustained by French interest in its continuation. Tudor's debt to France is significant \u2014 he pays it by leaving France alone for twenty-four years."
+    }
+  ]
+}

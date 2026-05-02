@@ -9,11 +9,12 @@ Run:  python seed_roses.py
 import sys, os, json, secrets, shutil
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent))
+ROOT = Path(__file__).parent.parent
+sys.path.insert(0, str(ROOT))
 from src import data as db
 
 SLUG = "roses"
-CAMPAIGNS = Path(__file__).parent / "campaigns"
+CAMPAIGNS = ROOT / "campaigns"
 CAMP_DIR = CAMPAIGNS / SLUG
 
 if CAMP_DIR.exists():
@@ -65,6 +66,7 @@ _w("world/conditions.json",{"conditions": []})
 _w("story/quests.json",    {"quests": []})
 _w("dm/session.json",      {})
 _w("dm/relation_suggestions.json", [])
+_w("world/locations.json",           {"locations": []})
 
 print(f"Campaign directory: {CAMP_DIR}")
 
@@ -72,51 +74,51 @@ print(f"Campaign directory: {CAMP_DIR}")
 factions_to_add = [
     ("House of Lancaster", "neutral", False,
      "The red rose. The ruling house of England for three generations — "
-     "Henry IV, Henry V, Henry VI. Their claim derives from John of Gaunt, "
+     "Henry IV, Henry V, [[Henry VI]]. Their claim derives from John of Gaunt, "
      "fourth son of Edward III, but passes through an illegitimate line. "
-     "Their strength is legitimacy; their weakness is Henry VI himself — "
+     "Their strength is legitimacy; their weakness is [[Henry VI]] himself — "
      "a pious, gentle, occasionally catatonic king who cannot govern. "
-     "The real Lancastrian force is his queen, Margaret of Anjou, "
+     "The real Lancastrian force is his queen, [[Margaret of Anjou]], "
      "whose ferocity and political will hold the cause together long "
      "after the cause should have collapsed. The red rose is finally "
-     "extinguished at Bosworth Field in 1485."),
+     "extinguished at [[Bosworth Field]] in 1485."),
 
     ("House of York", "neutral", False,
      "The white rose. Their claim descends from Edward III through two lines "
-     "— both stronger than Lancaster's if inheritance is traced honestly. "
-     "Richard Duke of York asserts this claim not by ambition alone "
+     "— both stronger than [[House of Lancaster|Lancaster's]] if inheritance is traced honestly. "
+     "[[Richard Duke of York]] asserts this claim not by ambition alone "
      "but by the specific failure of Lancastrian governance. "
-     "His son Edward IV is everything Henry VI is not: physically imposing, "
+     "His son [[Edward IV]] is everything [[Henry VI]] is not: physically imposing, "
      "politically shrewd, militarily devastating. York wins the crown twice. "
      "It is a Yorkist internal collapse — Richard III — that ends their dynasty."),
 
     ("House of Neville", "neutral", False,
      "The kingmakers. The Nevilles are the most powerful noble family in England "
-     "— wealthier than most kings, connected to both York and Lancaster by blood. "
-     "Richard Neville, Earl of Warwick, is the central figure: he makes Edward IV king, "
-     "then unmakes him, then dies trying to restore Lancaster. "
+     "— wealthier than most kings, connected to both [[House of York|York]] and [[House of Lancaster|Lancaster]] by blood. "
+     "[[Richard Neville, Earl of Warwick]], is the central figure: he makes [[Edward IV]] king, "
+     "then unmakes him, then dies trying to restore [[House of Lancaster|Lancaster]]. "
      "His nickname — the Kingmaker — is earned. No single magnate in English history "
      "holds more political and military power for longer. His fatal flaw: "
      "he cannot accept that the king he made does not need him anymore."),
 
     ("House of Tudor", "neutral", True,
      "The red dragon. An obscure Welsh dynasty with a tenuous Lancastrian bloodline "
-     "through an illegitimate line — Henry Tudor's claim is weak on paper. "
-     "What Henry VII has instead of legitimacy is patience, timing, and French backing. "
-     "He waits in Brittany and France for fourteen years. "
-     "When Richard III's support collapses in 1485, he lands in Wales, "
-     "gathers an army of Welsh and English defectors, and kills Richard at Bosworth. "
+     "through an illegitimate line — [[Henry Tudor|Henry Tudor's]] claim is weak on paper. "
+     "What Henry VII has instead of legitimacy is patience, timing, and [[Kingdom of France|French]] backing. "
+     "He waits in [[France and Brittany]] for fourteen years. "
+     "When [[Richard Duke of Gloucester|Richard III's]] support collapses in 1485, he lands in Wales, "
+     "gathers an army of Welsh and English defectors, and kills Richard at [[Bosworth Field|Bosworth]]. "
      "He then marries Elizabeth of York — uniting the roses — and rules for twenty-four years. "
      "Every English monarch since has been a Tudor or a Tudor descendant."),
 
     ("Kingdom of France", "neutral", True,
      "Louis XI — 'the Spider King' — watches the English tear themselves apart "
      "with quiet satisfaction. An England consumed by civil war cannot threaten France. "
-     "Louis funds Warwick when Warwick switches sides. He harbors Henry Tudor in exile. "
+     "Louis funds [[Richard Neville, Earl of Warwick|Warwick]] when [[Richard Neville, Earl of Warwick|Warwick]] switches sides. He harbors [[Henry Tudor]] in exile. "
      "He is not England's enemy so much as England's opportunist: "
      "wherever the English conflict creates leverage, Louis applies it. "
-     "His backing of Tudor at the critical moment in 1485 is the margin "
-     "that makes Bosworth possible."),
+     "His backing of [[House of Tudor|Tudor]] at the critical moment in 1485 is the margin "
+     "that makes [[Bosworth Field|Bosworth]] possible."),
 ]
 
 for name, rel, hidden, desc in factions_to_add:
@@ -132,103 +134,103 @@ npcs_to_add = [
      "The least warlike king England has ever had at the worst possible moment. "
      "Devout, gentle, and subject to complete mental collapses — possibly "
      "catatonic schizophrenia — during which he cannot speak, move, or rule. "
-     "His first episode (1453–1454) is what gives Richard of York his opening. "
+     "His first episode (1453–1454) is what gives [[Richard Duke of York]] his opening. "
      "He does not want the crown in any active sense; he wants to found Eton "
      "and King's College Cambridge, which he does. "
      "He is deposed twice, restored once, and almost certainly murdered "
-     "in the Tower of London in May 1471, probably on Edward IV's orders. "
+     "in [[The Tower of London]] in May 1471, probably on [[Edward IV]]'s orders. "
      "He never understands why any of this is happening to him.",
      [F["House of Lancaster"]], []),
 
     ("Margaret of Anjou", "Queen of England — The She-Wolf of France", "neutral", False,
      "The most formidable political operator of the entire conflict. "
-     "She marries Henry VI at fifteen and quickly understands that she is "
+     "She marries [[Henry VI]] at fifteen and quickly understands that she is "
      "the effective ruler of England — her husband cannot govern. "
-     "She fights for the Lancastrian cause with a ferocity Henry never possesses, "
+     "She fights for the Lancastrian cause with a ferocity [[Henry VI|Henry]] never possesses, "
      "raising armies, negotiating alliances, and leading forces personally. "
-     "Her alliance with Warwick — her former enemy — to restore Henry in 1470 "
+     "Her alliance with [[Richard Neville, Earl of Warwick|Warwick]] — her former enemy — to restore [[Henry VI|Henry]] in 1470 "
      "is a masterpiece of pragmatic politics. "
      "After Tewkesbury (1471) kills her son and destroys her cause, "
-     "she is imprisoned, ransomed by Louis XI, and dies in France in 1482. "
+     "she is imprisoned, ransomed by Louis XI, and dies in [[France and Brittany|France]] in 1482. "
      "She outlives the cause she kept alive by force of will alone.",
      [F["House of Lancaster"]], []),
 
     ("Edward Prince of Wales", "Heir to Lancaster — Killed at Tewkesbury", "neutral", True,
-     "Margaret's son, the Lancastrian heir. Unlike his father, he is reported "
+     "[[Margaret of Anjou|Margaret's]] son, the Lancastrian heir. Unlike his father, he is reported "
      "to speak of nothing but war and the cutting-off of heads — the opposite "
-     "temperament to Henry VI. He represents Lancaster's future: "
+     "temperament to [[Henry VI]]. He represents [[House of Lancaster|Lancaster's]] future: "
      "if he lives, the dynasty can recover. "
      "He is killed at the Battle of Tewkesbury on May 4, 1471 — "
-     "reportedly after the battle, captured and executed in Edward IV's presence. "
+     "reportedly after the battle, captured and executed in [[Edward IV]]'s presence. "
      "He is seventeen years old. His death effectively ends the Lancastrian line.",
      [F["House of Lancaster"]], []),
 
     # ── York ───────────────────────────────────────────────────────────────────
     ("Richard Duke of York", "Protector of England — Yorkist Patriarch", "neutral", False,
      "The father of the Yorkist cause. He is not initially a rebel — "
-     "he is appointed Protector of England during Henry VI's first mental breakdown "
-     "and governs competently. But the restoration of Henry's favor to Somerset "
+     "he is appointed Protector of England during [[Henry VI]]'s first mental breakdown "
+     "and governs competently. But the restoration of [[Henry VI|Henry's]] favor to Somerset "
      "(York's rival) and the birth of the Lancastrian heir end any hope "
      "of peaceful accommodation. York presses his own dynastic claim. "
      "He is killed at the Battle of Wakefield on December 30, 1460, "
      "ambushed outside his castle. His head is mounted on the gates of York "
-     "wearing a paper crown. His son becomes Edward IV. "
+     "wearing a paper crown. His son becomes [[Edward IV]]. "
      "York's cause outlives him entirely.",
      [F["House of York"]], []),
 
     ("Edward IV", "King of England — The Sun in Splendour", "neutral", False,
      "The most physically impressive English king since Henry V — "
      "six feet four inches, handsome, charismatic, an exceptional battlefield commander. "
-     "He wins the crown at nineteen by destroying the Lancastrian army at Towton "
+     "He wins the crown at nineteen by destroying the Lancastrian army at [[Towton Field|Towton]] "
      "(1461), the bloodiest battle ever fought on English soil. "
-     "His secret marriage to Elizabeth Woodville alienates Warwick irreparably "
-     "and nearly destroys him — Warwick deposes him briefly in 1470. "
-     "He recovers, kills Warwick at Barnet, destroys Lancaster at Tewkesbury, "
+     "His secret marriage to [[Elizabeth Woodville]] alienates [[Richard Neville, Earl of Warwick|Warwick]] irreparably "
+     "and nearly destroys him — [[Richard Neville, Earl of Warwick|Warwick]] deposes him briefly in 1470. "
+     "He recovers, kills [[Richard Neville, Earl of Warwick|Warwick]] at [[Barnet Field|Barnet]], destroys [[House of Lancaster|Lancaster]] at Tewkesbury, "
      "and rules stably for twelve years. "
      "He dies unexpectedly in April 1483 at age forty, likely of a fever "
-     "worsened by years of campaigning and excess. His death hands England to Richard III.",
+     "worsened by years of campaigning and excess. His death hands England to [[Richard Duke of Gloucester|Richard III]].",
      [F["House of York"]], []),
 
     ("Richard Duke of Gloucester", "Lord Protector — Richard III", "neutral", False,
-     "Edward IV's youngest brother. Loyal to Edward throughout the wars — "
-     "a capable military commander who fights at Barnet and Tewkesbury. "
-     "His loyalty to Edward is unquestioned. His behavior after Edward's death is not. "
+     "[[Edward IV]]'s youngest brother. Loyal to [[Edward IV|Edward]] throughout the wars — "
+     "a capable military commander who fights at [[Barnet Field|Barnet]] and Tewkesbury. "
+     "His loyalty to [[Edward IV|Edward]] is unquestioned. His behavior after [[Edward IV|Edward's]] death is not. "
      "He takes custody of the young Edward V, declares him illegitimate, "
      "and has himself crowned Richard III in June 1483. "
-     "The two young princes — Edward V and his brother — disappear in the Tower. "
+     "The two young princes — Edward V and his brother — disappear in [[The Tower of London|the Tower]]. "
      "Their fate is unknown; almost everyone assumes Richard killed them. "
-     "He is killed at Bosworth Field on August 22, 1485 — "
+     "He is killed at [[Bosworth Field]] on August 22, 1485 — "
      "abandoned mid-battle by allies who switched sides — "
      "the last English king to die in combat. "
      "His body is buried without ceremony. His reputation never recovers.",
      [F["House of York"]], []),
 
     ("George Duke of Clarence", "Treacherous Brother — Drowned in Malmsey Wine", "neutral", False,
-     "Edward IV's middle brother, and the most unreliable man in England. "
-     "He switches sides to Warwick in 1469, returns to Edward in 1471, "
-     "and schemes against Edward for the rest of his life. "
-     "He is attainted of treason in 1478 — with Edward's consent — "
-     "and executed privately in the Tower. "
+     "[[Edward IV]]'s middle brother, and the most unreliable man in England. "
+     "He switches sides to [[Richard Neville, Earl of Warwick|Warwick]] in 1469, returns to [[Edward IV|Edward]] in 1471, "
+     "and schemes against [[Edward IV|Edward]] for the rest of his life. "
+     "He is attainted of treason in 1478 — with [[Edward IV|Edward's]] consent — "
+     "and executed privately in [[The Tower of London|the Tower]]. "
      "The tradition that he was drowned in a barrel of Malmsey wine "
      "comes from contemporary sources. Whether it is literally true or "
      "a dark joke about his famous love of wine, no one knows. "
-     "He is the only sibling Edward has executed.",
+     "He is the only sibling [[Edward IV|Edward]] has executed.",
      [F["House of York"]], []),
 
     # ── Neville ────────────────────────────────────────────────────────────────
     ("Richard Neville, Earl of Warwick", "The Kingmaker", "neutral", False,
      "The most powerful subject in English history. "
      "His combined landholdings and revenues exceed any other noble and rival the crown. "
-     "He is Edward IV's cousin, his chief military commander, and the architect "
+     "He is [[Edward IV]]'s cousin, his chief military commander, and the architect "
      "of Yorkist victory in the early years. He expects to run foreign policy; "
-     "Edward's secret marriage to Elizabeth Woodville — bypassing Warwick's "
+     "[[Edward IV|Edward's]] secret marriage to [[Elizabeth Woodville]] — bypassing Warwick's "
      "diplomatic negotiations entirely — is the wound that never heals. "
-     "He rebels in 1469, captures Edward IV, rules briefly in his name, "
-     "switches to Lancaster in 1470, restores Henry VI, and is killed "
-     "at the Battle of Barnet on April 14, 1471. "
-     "His death removes the only man capable of keeping the Lancaster-York "
+     "He rebels in 1469, captures [[Edward IV]], rules briefly in his name, "
+     "switches to [[House of Lancaster|Lancaster]] in 1470, restores [[Henry VI]], and is killed "
+     "at the Battle of [[Barnet Field|Barnet]] on April 14, 1471. "
+     "His death removes the only man capable of keeping the [[House of Lancaster|Lancaster]]-[[House of York|York]] "
      "conflict permanently unresolved. It is his absence, not his presence, "
-     "that allows Edward IV to finally stabilize his rule.",
+     "that allows [[Edward IV]] to finally stabilize his rule.",
      [F["House of Neville"]], []),
 
     # ── Tudor ──────────────────────────────────────────────────────────────────
@@ -237,34 +239,34 @@ npcs_to_add = [
      "His claim to the throne runs through an illegitimate descent from John of Gaunt "
      "and an uneasy reading of inheritance law. He is not the obvious claimant. "
      "But he is the only claimant alive after 1471, he is patient, "
-     "and he has the backing of France. "
-     "He spends fourteen years in Brittany and Normandy watching England implode. "
+     "and he has the backing of [[Kingdom of France|France]]. "
+     "He spends fourteen years in [[France and Brittany|Brittany and Normandy]] watching England implode. "
      "When he lands at Milford Haven in August 1485 with a French army, "
      "he has never met most of the men fighting under his banner. "
-     "He wins because Richard III's allies switch sides mid-battle. "
+     "He wins because [[Richard Duke of Gloucester|Richard III's]] allies switch sides mid-battle. "
      "He marries Elizabeth of York and calls himself the end of the wars. "
      "He is right.",
      [F["House of Tudor"]], [F["Kingdom of France"]]),
 
     ("Jasper Tudor", "Earl of Pembroke — Henry's Protector", "neutral", True,
-     "Henry Tudor's uncle and the man who keeps him alive. "
-     "He shelters the young Henry when the Yorkists take power in 1461, "
-     "flees to Brittany with him in 1471, and maintains the Lancastrian network "
+     "[[Henry Tudor]]'s uncle and the man who keeps him alive. "
+     "He shelters the young [[Henry Tudor|Henry]] when the Yorkists take power in 1461, "
+     "flees to [[France and Brittany|Brittany]] with him in 1471, and maintains the Lancastrian network "
      "in Wales throughout the long years of exile. "
-     "Without Jasper Tudor there is no Henry Tudor. "
+     "Without Jasper Tudor there is no [[Henry Tudor]]. "
      "He outlives the war, is restored to his earldom, and dies in 1495.",
      [F["House of Tudor"]], []),
 
     # ── Woodville ──────────────────────────────────────────────────────────────
     ("Elizabeth Woodville", "Queen of England — The Grey Mare", "neutral", False,
-     "A widow of a Lancastrian knight who catches Edward IV's eye in 1464. "
-     "Their secret marriage is the single most destabilizing act of Edward's reign: "
-     "it humiliates Warwick, who was negotiating Edward's marriage to a French princess; "
+     "A widow of a Lancastrian knight who catches [[Edward IV]]'s eye in 1464. "
+     "Their secret marriage is the single most destabilizing act of [[Edward IV|Edward's]] reign: "
+     "it humiliates [[Richard Neville, Earl of Warwick|Warwick]], who was negotiating [[Edward IV|Edward's]] marriage to a French princess; "
      "it floods the court with Woodville relatives seeking patronage; "
-     "and it creates the factional tension that Richard III exploits in 1483. "
-     "After Edward's death she takes sanctuary in Westminster Abbey, "
-     "watches her son deposed and imprisoned, and is forced to make terms with Richard. "
-     "After Bosworth she sees her daughter Elizabeth marry Henry VII — "
+     "and it creates the factional tension that [[Richard Duke of Gloucester|Richard III]] exploits in 1483. "
+     "After [[Edward IV|Edward's]] death she takes sanctuary in [[Westminster Abbey]], "
+     "watches her son deposed and imprisoned, and is forced to make terms with [[Richard Duke of Gloucester|Richard]]. "
+     "After [[Bosworth Field|Bosworth]] she sees her daughter Elizabeth marry [[Henry Tudor|Henry VII]] — "
      "and becomes the grandmother of Henry VIII.",
      [F["House of York"]], []),
 ]
@@ -471,24 +473,79 @@ db.add_quest(SLUG,
 
 print("Historical threads seeded.")
 
+# ── Locations ──────────────────────────────────────────────────────────────────
+db.add_location(SLUG, "The Tower of London",
+    role="Royal fortress, prison, and place of execution",
+    description="The Tower has housed kings, princes, and traitors throughout the wars. [[Henry VI]] is imprisoned here twice. Edward V and his brother Richard are placed here 'for their safety' in 1483. The Princes are seen less and less frequently after that summer. No bodies are found in their lifetimes.",
+    hidden=False,
+    dm_notes="Henry VI is almost certainly murdered here on the night of May 21, 1471 — on the same night Edward IV returns from Tewkesbury. The Princes in the Tower disappear here after Richard III's usurpation. Whether Richard ordered their deaths is the most debated question in English history. The Tower is also where George of Clarence is executed, tradition says in a barrel of Malmsey wine.")
+
+db.add_location(SLUG, "St. Albans",
+    role="Site of the First Battle — the war's first blood",
+    description="A market town north of London where the Wars of the Roses drew first blood on May 22, 1455. [[Richard Duke of York]] intercepted the royal army on a market street. The battle lasted less than an hour. The Lancastrian commander Somerset was killed in a back garden. [[Henry VI]] was found alone in a tanner's cottage, wounded by an arrow in the neck.",
+    hidden=False,
+    dm_notes="The First Battle of St. Albans is presented as a misunderstanding by both sides afterward — York kneels before Henry and blames Somerset for everything. This is the shape of the entire war: violence followed by claims that no violence was intended. The battle is the first registered event on the rival edge between York and Lancaster.")
+
+db.add_location(SLUG, "Towton Field",
+    role="Palm Sunday 1461 — the bloodiest battle in English history",
+    description="A field in Yorkshire where the decisive battle of the first phase of the wars was fought on March 29, 1461, in a blizzard on Palm Sunday. An estimated 28,000 men died — the bloodiest battle ever fought on English soil. The Lancastrian army was destroyed. [[Henry VI]] and [[Margaret of Anjou|Margaret]] fled to Scotland. [[Edward IV]] was king.",
+    hidden=False,
+    dm_notes="The snow carried York's arrows further than Lancaster's — the wind shifted mid-battle. The slaughter after the rout was total: the victors killed the fleeing. The River Cock ran red. Edward is nineteen years old when he wins here. The battle ends the first phase of the war. Lancaster will not field a serious army again until Warwick switches sides.")
+
+db.add_location(SLUG, "Barnet Field",
+    role="April 14, 1471 — where Warwick died in fog",
+    description="A field north of London where the Battle of Barnet was fought in thick Easter morning fog on April 14, 1471. [[Richard Neville, Earl of Warwick|Warwick's]] Lancastrian forces accidentally attacked their own allies in the confusion. [[Richard Neville, Earl of Warwick|Warwick]] was killed — on foot, trying to reach his horse. [[Edward IV]] wept over his cousin's body and had it publicly displayed to prevent rumors that [[Richard Neville, Earl of Warwick|Warwick]] had survived.",
+    hidden=False,
+    dm_notes="Warwick's death is decided by fog and misidentified banners. The Earl of Oxford's star-and-rays badge was mistaken for Edward's sun-in-splendour. Warwick's own allies turned on him. The man who made Edward IV king is killed by Edward's army by accident. His death removes the only man capable of keeping Lancaster-York division permanently active.")
+
+db.add_location(SLUG, "Bosworth Field",
+    role="August 22, 1485 — the last battle, Richard III's death",
+    description="A field in Leicestershire where the Wars of the Roses ended on August 22, 1485. [[Richard Duke of Gloucester|Richard III]] charged personally toward [[Henry Tudor]]'s position with his household cavalry in a bold gamble to end the battle in a single stroke. The Stanley family, watching from the flank, chose that moment to charge into [[Richard Duke of Gloucester|Richard's]] side. [[Richard Duke of Gloucester|Richard]] was surrounded and killed. His crown was found in a hawthorn bush.",
+    hidden=False,
+    dm_notes="Richard's charge is strategically sound — Tudor is exposed and vulnerable. It nearly works. The Stanleys' decision to intervene is the margin. Lord Stanley places the crown on Henry Tudor's head on the field. Richard is the last English king to die in battle. His body is stripped, slung over a horse, and displayed. He is buried without ceremony.")
+
+db.add_location(SLUG, "Westminster Abbey",
+    role="Sanctuary, coronation church, and seat of English legitimacy",
+    description="The Abbey has served as coronation church and sanctuary throughout the wars. [[Elizabeth Woodville]] takes sanctuary here with her daughters when [[Richard Duke of Gloucester|Richard]] moves against the Woodvilles in 1483. She is eventually persuaded to release her younger son into [[Richard Duke of Gloucester|Richard's]] custody from this place. Both boys go to [[The Tower of London|the Tower]]. She watches from sanctuary.",
+    hidden=False,
+    dm_notes="The sanctuary at Westminster is inviolable under church law — Richard cannot simply take Elizabeth or her daughters. He needs her to willingly release young Richard. The persuasion that achieves this is one of the war's most consequential acts of political pressure. Elizabeth spends months here watching her son's fate unfold without being able to intervene.")
+
+db.add_location(SLUG, "France and Brittany",
+    role="The exile's refuge — where Henry Tudor waited",
+    description="[[Henry Tudor]] spent fourteen years in exile in Brittany and Normandy, waiting. Louis XI of [[Kingdom of France|France]] funded [[Richard Neville, Earl of Warwick|Warwick's]] switch to [[House of Lancaster|Lancaster]]. Louis harbored [[Henry Tudor|Tudor]]. When [[Richard Duke of Gloucester|Richard III's]] support collapsed in 1485, [[Henry Tudor|Tudor]] landed at Milford Haven with French soldiers and marched to [[Bosworth Field|Bosworth]]. France did not fight England's civil war — it sustained it.",
+    hidden=True,
+    dm_notes="Louis XI — the Spider King — consistently backed whichever English faction kept England divided. He funded Warwick in 1470. He kept Tudor alive for fourteen years. He provided the troops for the Bosworth invasion. England's civil war is partly sustained by French interest in its continuation. Tudor's debt to France is significant — he pays it by leaving France alone for twenty-four years.")
+
+locations_data = db._load(SLUG, "world/locations.json")
+L = {loc["name"]: loc["id"] for loc in locations_data["locations"]}
+print(f"  Locations: {list(L.keys())}")
+
 # ── Helpers ───────────────────────────────────────────────────────────────────
 def log_n(npc_id, session, note, polarity=None, intensity=1,
-          event_type=None, visibility="public", ripple=False):
+          event_type=None, visibility="public", ripple=False, actor_id=None, actor_type=None, location_id=None):
     evt = db.log_npc(SLUG, npc_id, session, note, polarity=polarity,
-                     intensity=intensity, event_type=event_type, visibility=visibility)
+                     intensity=intensity, event_type=event_type, visibility=visibility,
+                     actor_id=actor_id, actor_type=actor_type, location_id=location_id)
     if ripple and polarity:
         db.apply_ripple(SLUG, npc_id, "npc", session, note, polarity, intensity,
                         event_type, visibility=visibility, source_event_id=evt)
     return evt
 
 def log_f(fid, session, note, polarity=None, intensity=1,
-          event_type=None, visibility="public", ripple=False):
+          event_type=None, visibility="public", ripple=False, actor_id=None, actor_type=None, location_id=None):
     evt = db.log_faction(SLUG, fid, session, note, polarity=polarity,
-                         intensity=intensity, event_type=event_type, visibility=visibility)
+                         intensity=intensity, event_type=event_type, visibility=visibility,
+                         actor_id=actor_id, actor_type=actor_type, location_id=location_id)
     if ripple and polarity:
         db.apply_ripple(SLUG, fid, "faction", session, note, polarity, intensity,
                         event_type, visibility=visibility, source_event_id=evt)
     return evt
+
+def log_l(loc_id, session, note, polarity=None, intensity=1,
+          event_type=None, visibility="public", actor_id=None, actor_type=None):
+    db.log_location(SLUG, loc_id, session, note, visibility=visibility,
+                    polarity=polarity, intensity=intensity, event_type=event_type,
+                    actor_id=actor_id, actor_type=actor_type)
 
 # ── Period 1: First Blood (1455) ───────────────────────────────────────────────
 log_n(N["Henry VI"], 1,
@@ -500,21 +557,23 @@ log_n(N["Henry VI"], 1,
     polarity="negative", intensity=3, event_type="other", ripple=True)
 
 log_n(N["Richard Duke of York"], 1,
-    "The First Battle of St. Albans, May 22, 1455: York intercepts the royal "
+    "The First Battle of St. Albans, May 22, 1455: [[Richard Duke of York]] intercepts the royal "
     "army on a market street. The battle lasts less than an hour. "
-    "The Lancastrian commander Somerset is killed. Henry VI is found sitting "
+    "The Lancastrian commander Somerset is killed. [[Henry VI]] is found sitting "
     "alone in a tanner's cottage, wounded by an arrow in the neck. "
     "York kneels before him and blames the dead Somerset for everything. "
     "It is the first blood of the war. It is presented as a misunderstanding.",
-    polarity="negative", intensity=2, event_type="combat", ripple=True)
+    polarity="negative", intensity=2, event_type="combat", ripple=True,
+    location_id=L["St. Albans"])
 
 log_f(F["House of Lancaster"], 1,
-    "The Lancastrian court loses its chief military commander at St. Albans. "
-    "Margaret of Anjou, excluded from formal power because she is a woman, "
+    "The [[House of Lancaster|Lancastrian]] court loses its chief military commander at St. Albans. "
+    "[[Margaret of Anjou]], excluded from formal power because she is a woman, "
     "begins building her own political network — writing to nobles, "
     "controlling access to the king, accumulating influence outside "
     "the structures that exclude her. She will not be excluded for long.",
-    polarity="negative", intensity=2, event_type="politics", ripple=True)
+    polarity="negative", intensity=2, event_type="politics", ripple=True,
+    location_id=L["St. Albans"])
 
 db.post_journal(SLUG, 1, "2024-01-01",
     "**Period 1 — First Blood (1455)**\n\n"
@@ -568,31 +627,34 @@ db.post_journal(SLUG, 2, "2024-01-01",
 
 # ── Period 3: Towton (March 1461) ─────────────────────────────────────────────
 log_n(N["Edward IV"], 3,
-    "Edward IV enters London in February 1461 and is acclaimed king. "
+    "[[Edward IV]] enters London in February 1461 and is acclaimed king. "
     "He immediately marches north to end the war. "
     "The Battle of Towton, March 29, 1461: fought in a blizzard on Palm Sunday. "
     "An estimated 28,000 dead — the bloodiest battle ever fought on English soil. "
-    "The Lancastrian army is destroyed. Henry VI and Margaret flee to Scotland. "
+    "The [[House of Lancaster|Lancastrian]] army is destroyed. [[Henry VI]] and [[Margaret of Anjou]] flee to Scotland. "
     "Edward IV is king. He is nineteen years old.",
-    polarity="positive", intensity=3, event_type="combat", ripple=True)
+    polarity="positive", intensity=3, event_type="combat", ripple=True,
+    location_id=L["Towton Field"])
 
 log_n(N["Henry VI"], 3,
-    "Henry VI flees north after Towton with Margaret and the Lancastrian court. "
+    "[[Henry VI]] flees north after Towton with [[Margaret of Anjou]] and the [[House of Lancaster|Lancastrian]] court. "
     "He spends three years as a fugitive in Scotland and northern England. "
     "He is captured in Lancashire in 1465 and imprisoned in the Tower of London. "
     "He prays. He is content, by some accounts, in a way he never was as a king. "
-    "He is not executed — Edward finds him more useful as a symbol "
+    "He is not executed — [[Edward IV]] finds him more useful as a symbol "
     "of Lancastrian incompetence than as a martyr.",
-    polarity="negative", intensity=3, event_type="other", ripple=True)
+    polarity="negative", intensity=3, event_type="other", ripple=True,
+    location_id=L["Towton Field"])
 
 log_f(F["House of Lancaster"], 3,
-    "The Lancastrian cause after Towton is a rump: "
+    "The [[House of Lancaster|Lancastrian]] cause after Towton is a rump: "
     "a fugitive king, an exile queen, and a handful of northern castles "
-    "that hold out until 1464. Margaret leads fruitless campaigns "
+    "that hold out until 1464. [[Margaret of Anjou]] leads fruitless campaigns "
     "from France and Scotland, burning through political capital "
     "and receiving less each time. The red rose is not extinguished — "
     "but it is very nearly so.",
-    polarity="negative", intensity=3, event_type="combat", ripple=True)
+    polarity="negative", intensity=3, event_type="combat", ripple=True,
+    location_id=L["Towton Field"])
 
 db.post_journal(SLUG, 3, "2024-01-01",
     "**Period 3 — Towton (1461)**\n\n"
@@ -616,26 +678,28 @@ log_n(N["Edward IV"], 4,
     polarity="negative", intensity=2, event_type="politics", ripple=True)
 
 log_n(N["Richard Neville, Earl of Warwick"], 4,
-    "Warwick rebels in 1469 in alliance with George of Clarence — "
-    "Edward's own brother. They defeat a royal army at Edgecote, "
+    "[[Richard Neville, Earl of Warwick]] rebels in 1469 in alliance with [[George Duke of Clarence]] — "
+    "[[Edward IV]]'s own brother. They defeat a royal army at Edgecote, "
     "capture Edward IV, and govern briefly in his name. "
     "It does not hold: Edward is released when the nobility refuses "
     "to support a king held prisoner by his own subject. "
     "Warwick and Clarence flee to France. "
-    "Warwick approaches Margaret of Anjou — his former enemy — "
-    "and offers to restore Henry VI if she will ally with him.",
-    polarity="negative", intensity=3, event_type="betrayal", ripple=True)
+    "Warwick approaches [[Margaret of Anjou]] — his former enemy — "
+    "and offers to restore [[Henry VI]] if she will ally with him.",
+    polarity="negative", intensity=3, event_type="betrayal", ripple=True,
+    location_id=L["France and Brittany"])
 
 log_n(N["Margaret of Anjou"], 4,
-    "Margaret receives Warwick's offer in France. "
+    "[[Margaret of Anjou]] receives [[Richard Neville, Earl of Warwick|Warwick]]'s offer in [[Kingdom of France|France]]. "
     "He was her greatest enemy for fifteen years. "
     "She makes him wait on his knees for a quarter of an hour "
     "before agreeing. "
-    "The price: Warwick's daughter Anne will marry her son Edward, "
-    "Prince of Wales, securing the alliance with a dynastic bond. "
+    "The price: Warwick's daughter Anne will marry her son [[Edward Prince of Wales]], "
+    "securing the alliance with a dynastic bond. "
     "It is the most extraordinary political agreement of the entire war — "
-    "the Kingmaker and the She-Wolf, united by shared hatred of Edward IV.",
-    polarity="positive", intensity=3, event_type="politics", ripple=True)
+    "the Kingmaker and the She-Wolf, united by shared hatred of [[Edward IV]].",
+    polarity="positive", intensity=3, event_type="politics", ripple=True,
+    location_id=L["France and Brittany"])
 
 db.post_journal(SLUG, 4, "2024-01-01",
     "**Period 4 — The Kingmaker Rebels (1469–1470)**\n\n"
@@ -651,36 +715,39 @@ db.post_journal(SLUG, 4, "2024-01-01",
 
 # ── Period 5: The Re-adoption of Henry VI (1470–1471) ─────────────────────────
 log_n(N["Richard Neville, Earl of Warwick"], 5,
-    "Warwick invades England with French backing in September 1470. "
-    "Edward IV, caught off guard, flees to Burgundy with Richard of Gloucester. "
-    "Warwick releases Henry VI from the Tower and restores him as king — "
+    "[[Richard Neville, Earl of Warwick]] invades England with [[Kingdom of France|French]] backing in September 1470. "
+    "[[Edward IV]], caught off guard, flees to Burgundy with [[Richard Duke of Gloucester]]. "
+    "Warwick releases [[Henry VI]] from the Tower and restores him as king — "
     "the 'Re-adeption' of Henry VI. "
     "Henry is paraded through London. He is described as dazed and confused, "
     "wearing a long blue velvet gown, repeating 'My kingdom, my kingdom.' "
     "It lasts six months.",
-    polarity="negative", intensity=3, event_type="politics", ripple=True)
+    polarity="negative", intensity=3, event_type="politics", ripple=True,
+    location_id=L["The Tower of London"])
 
 log_n(N["Edward IV"], 5,
-    "Edward IV returns from Burgundy in March 1471 with a small army and "
+    "[[Edward IV]] returns from Burgundy in March 1471 with a small army and "
     "reclaims England town by town, battle by battle. "
-    "George of Clarence, characteristically, switches back to Edward "
+    "[[George Duke of Clarence]], characteristically, switches back to Edward "
     "mid-campaign — he meets his brother on the road and they reconcile. "
-    "Warwick is killed at the Battle of Barnet on April 14, 1471, "
-    "in thick fog, partly by friendly fire from his own Lancastrian allies. "
+    "[[Richard Neville, Earl of Warwick]] is killed at the Battle of Barnet on April 14, 1471, "
+    "in thick fog, partly by friendly fire from his own [[House of Lancaster|Lancastrian]] allies. "
     "Edward weeps over his cousin's body and has it displayed publicly "
     "to prevent rumours that Warwick survived.",
-    polarity="positive", intensity=3, event_type="combat", ripple=True)
+    polarity="positive", intensity=3, event_type="combat", ripple=True,
+    location_id=L["Barnet Field"])
 
 log_n(N["Henry VI"], 5,
-    "Henry VI is returned to the Tower after Barnet. "
+    "[[Henry VI]] is returned to the Tower after Barnet. "
     "He is murdered there on May 21, 1471 — "
-    "on the same night Edward IV returns to London after Tewkesbury. "
+    "on the same night [[Edward IV]] returns to London after Tewkesbury. "
     "The official cause of death is 'pure displeasure and melancholy.' "
-    "No one believes this. Edward needs the Lancastrian line ended; "
+    "No one believes this. Edward needs the [[House of Lancaster|Lancastrian]] line ended; "
     "Henry is the last legitimate adult male claimant. "
     "He is buried without ceremony. He is later venerated as a saint.",
     polarity="negative", intensity=3, event_type="other",
-    visibility="dm_only", ripple=True)
+    visibility="dm_only", ripple=True,
+    location_id=L["The Tower of London"])
 
 db.post_journal(SLUG, 5, "2024-01-01",
     "**Period 5 — The Re-adoption (1470–1471)**\n\n"
@@ -782,25 +849,27 @@ db.post_journal(SLUG, 7, "2024-01-01",
 
 # ── Period 8: The Usurpation (April–June 1483) ────────────────────────────────
 log_n(N["Richard Duke of Gloucester"], 8,
-    "Edward IV dies in April 1483. Richard intercepts his nephew Edward V "
-    "on the road to London, takes custody of him, and arrests his Woodville escorts. "
+    "[[Edward IV]] dies in April 1483. [[Richard Duke of Gloucester]] intercepts his nephew Edward V "
+    "on the road to London, takes custody of him, and arrests his [[Elizabeth Woodville|Woodville]] escorts. "
     "He is appointed Lord Protector. Within weeks he has imprisoned the boy king "
     "and his brother in the Tower 'for their safety.' "
     "He declares both boys illegitimate on the grounds that Edward IV's "
-    "marriage to Elizabeth Woodville was invalid. "
+    "marriage to [[Elizabeth Woodville]] was invalid. "
     "He is crowned Richard III on July 6, 1483. "
     "He is efficient, thorough, and hated for it.",
-    polarity="negative", intensity=3, event_type="betrayal", ripple=True)
+    polarity="negative", intensity=3, event_type="betrayal", ripple=True,
+    location_id=L["The Tower of London"])
 
 log_n(N["Elizabeth Woodville"], 8,
-    "Elizabeth Woodville takes sanctuary in Westminster Abbey with her daughters "
-    "when Richard moves against the Woodvilles. "
+    "[[Elizabeth Woodville]] takes sanctuary in Westminster Abbey with her daughters "
+    "when [[Richard Duke of Gloucester]] moves against the Woodvilles. "
     "She is powerless: her son is Richard's prisoner; her relatives are arrested. "
     "She is eventually persuaded to release her younger son Richard "
     "into his uncle's custody — a decision she will spend the rest of her life "
     "regretting or justifying, depending on the source. "
     "Both boys are never seen publicly again.",
-    polarity="negative", intensity=3, event_type="politics", ripple=True)
+    polarity="negative", intensity=3, event_type="politics", ripple=True,
+    location_id=L["Westminster Abbey"])
 
 log_f(F["House of York"], 8,
     "Richard III's usurpation fractures the Yorkist coalition. "
@@ -824,17 +893,18 @@ db.post_journal(SLUG, 8, "2024-01-01",
 
 # ── Period 9: Bosworth Field (August 22, 1485) ────────────────────────────────
 log_n(N["Henry Tudor"], 9,
-    "Henry Tudor lands at Milford Haven in Wales on August 7, 1485 "
-    "with 2,000 French soldiers and growing Welsh support. "
+    "[[Henry Tudor]] lands at Milford Haven in Wales on August 7, 1485 "
+    "with 2,000 [[Kingdom of France|French]] soldiers and growing Welsh support. "
     "He marches through Wales gathering men under the red dragon banner. "
     "By the time he reaches Bosworth, he has perhaps 5,000 men. "
-    "Richard III has twice that. But the Stanley family — "
+    "[[Richard Duke of Gloucester|Richard III]] has twice that. But the Stanley family — "
     "controlling 6,000 men — hovers at the battlefield's edge, uncommitted.",
-    polarity="positive", intensity=2, event_type="combat", ripple=True)
+    polarity="positive", intensity=2, event_type="combat", ripple=True,
+    location_id=L["Bosworth Field"])
 
 log_n(N["Richard Duke of Gloucester"], 9,
     "The Battle of Bosworth Field, August 22, 1485. "
-    "Richard III sees Henry Tudor exposed away from his main force "
+    "[[Richard Duke of Gloucester|Richard III]] sees [[Henry Tudor]] exposed away from his main force "
     "and charges personally with his household cavalry to kill him directly — "
     "a bold, desperate, and strategically sound gamble. "
     "The Stanley family, watching from the flank, makes their decision: "
@@ -842,19 +912,21 @@ log_n(N["Richard Duke of Gloucester"], 9,
     "Richard is unhorsed, surrounded, and killed. "
     "'A horse, a horse, my kingdom for a horse.' "
     "Whether he said it is unknown. He is the last English king to die in battle. "
-    "His crown is found in a hawthorn bush and placed on Henry Tudor's head.",
-    polarity="negative", intensity=3, event_type="combat", ripple=True)
+    "His crown is found in a hawthorn bush and placed on [[Henry Tudor]]'s head.",
+    polarity="negative", intensity=3, event_type="combat", ripple=True,
+    location_id=L["Bosworth Field"])
 
 log_n(N["Henry Tudor"], 9,
-    "Henry VII is crowned on the battlefield. "
-    "He imprisons Elizabeth of York, Edward IV's daughter, "
+    "[[Henry VII|Henry VII]] is crowned on the battlefield. "
+    "He imprisons Elizabeth of York, [[Edward IV]]'s daughter, "
     "and then marries her — the union of the roses that ends thirty years of war. "
     "He rules for twenty-four years. He never faces a serious dynastic challenge "
     "that he cannot defeat. He is cold, careful, and extraordinarily competent. "
     "Everything that follows — the English Reformation, the British Empire, "
     "Shakespeare's history plays — begins here, in a Leicestershire field, "
     "on a summer morning in 1485.",
-    polarity="positive", intensity=3, event_type="other", ripple=True)
+    polarity="positive", intensity=3, event_type="other", ripple=True,
+    location_id=L["Bosworth Field"])
 
 log_f(F["House of Tudor"], 9,
     "Henry VII marries Elizabeth of York on January 18, 1486 — "
@@ -880,6 +952,40 @@ db.post_journal(SLUG, 9, "2024-01-01",
     "House of Lancaster restored through the Tudor marriage. "
     "Thirty years of war, settled by a cavalry charge and a hawthorn crown."
 )
+
+# ── Location log entries ───────────────────────────────────────────────────────
+
+log_l(L["St. Albans"], 1,
+      "The first battle of the wars is fought on a market street. [[Richard Duke of York]] intercepts the royal army. [[Henry VI]] is found alone in a tanner's cottage with an arrow wound. Somerset is killed in a garden. Both sides call it a misunderstanding.",
+      polarity="negative", intensity=2, event_type="combat")
+
+log_l(L["Towton Field"], 3,
+      "Palm Sunday, 1461. A blizzard. 28,000 dead. [[Edward IV]] is nineteen. He destroys the [[House of Lancaster|Lancastrian]] army in the bloodiest battle ever fought on English soil. [[Henry VI]] flees to Scotland. The snow carries York's arrows further. The river runs red.",
+      polarity="negative", intensity=3, event_type="combat")
+
+log_l(L["The Tower of London"], 5,
+      "[[Henry VI]] is returned here after [[Barnet Field|Barnet]]. He is murdered on the night of May 21, 1471 — the same night [[Edward IV]] returns from Tewkesbury. The official cause of death is 'pure displeasure and melancholy.' No one believes this.",
+      polarity="negative", intensity=3, event_type="other",
+      visibility="dm_only",
+      actor_id=N["Edward IV"], actor_type="npc")
+
+log_l(L["France and Brittany"], 4,
+      "[[Richard Neville, Earl of Warwick]] goes to [[Margaret of Anjou]] in France after fleeing England. He was her greatest enemy for fifteen years. She makes him wait on his knees for a quarter hour before agreeing. The price: his daughter marries her son. The [[House of Neville|Kingmaker]] and the She-Wolf, united by shared hatred of [[Edward IV]].",
+      polarity="positive", intensity=3, event_type="politics")
+
+log_l(L["Barnet Field"], 5,
+      "[[Richard Neville, Earl of Warwick]] is killed in the fog. His own allies misidentify a banner and turn on him. He is on foot, trying to reach his horse. [[Edward IV]] weeps over his cousin's body. The Kingmaker is dead. The war can finally end — or begin again differently.",
+      polarity="negative", intensity=3, event_type="combat")
+
+log_l(L["Westminster Abbey"], 8,
+      "[[Elizabeth Woodville]] takes sanctuary here with her daughters when [[Richard Duke of Gloucester]] moves against the Woodvilles. She is eventually persuaded to release her younger son Richard into his uncle's custody. Both boys go to [[The Tower of London]]. She never sees them again.",
+      polarity="negative", intensity=3, event_type="politics")
+
+log_l(L["Bosworth Field"], 9,
+      "[[Richard Duke of Gloucester]] charges personally toward [[Henry Tudor]]'s exposed position. The Stanleys, watching from the flank, make their choice. They charge into Richard's side. He is surrounded, unhorsed, killed. His crown is found in a hawthorn bush. Thirty years of war end in a Leicestershire field.",
+      polarity="negative", intensity=3, event_type="combat")
+
+print("  Location logs complete")
 
 print("\nWars of the Roses campaign seeded successfully.")
 print("To deploy to Pi:  rsync -av campaigns/roses/ simonhans@raspberrypi:/mnt/serverdrive/coding/rippleforge/campaigns/roses/")

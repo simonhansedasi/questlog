@@ -1,0 +1,161 @@
+{
+  "locations": [
+    {
+      "id": "the_garden_of_eden",
+      "name": "The Garden of Eden",
+      "description": "A garden planted by God in Eden, watered by four rivers. Every tree pleasing to the eye and good for food grows here. The tree of life stands at its center, and the tree of the knowledge of good and evil. God walks here in the cool of the day. The garden is closed now. Cherubim with a flaming sword guard the way back.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_bab8f6",
+          "session": 1,
+          "note": "[[Adam]] and [[Eve]] eat the forbidden fruit. God walks in the garden in the cool of the day and calls: where are you? [[Adam]] blames [[Eve]]. [[Eve]] blames the serpent. The garden is lost.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "other"
+        }
+      ],
+      "role": "The first home \u2014 paradise, then lost",
+      "dm_notes": "The garden is the baseline against which every other place in Genesis is measured. Every displacement \u2014 Cain's exile, Hagar's desert, Jacob's flight \u2014 echoes the original displacement. The flaming sword is not punishment; it is protection. God does not want humanity to eat from the tree of life in a fallen state."
+    },
+    {
+      "id": "the_land_of_nod",
+      "name": "The Land of Nod",
+      "description": "The land east of [[The Garden of Eden|Eden]] where [[Cain]] was sent after murdering his brother. Its name means 'wandering.' [[Cain]] built a city here and named it after his son Enoch. The land of Nod is not described further. It does not need to be.",
+      "hidden": false,
+      "log": [],
+      "role": "East of Eden \u2014 Cain's exile",
+      "dm_notes": "Cain is marked but not destroyed \u2014 the mark is God's protection, not God's punishment. The city Cain builds is the first human city in the text. The pattern: violence, exile, civilization. The city is built by the man who killed his brother."
+    },
+    {
+      "id": "beer_lahai_roi",
+      "name": "Beer-lahai-roi",
+      "description": "A spring in the wilderness between Kadesh and Bered, on the road to Shur. [[Hagar]] fled here from [[Sarah]]'s mistreatment. The angel of the LORD found her at this spring. She is the only person in the Bible to give God a name: El-roi, the God who sees me. The well is named for this: 'the well of the Living One who sees me.'",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_bd0751",
+          "session": 4,
+          "note": "[[Hagar]] meets the angel of the LORD at this spring, fleeing [[Sarah]]'s cruelty. She is seen. She names God El-roi \u2014 the one who sees me. This is the only place in the Bible where a human gives God a name.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "dialogue"
+        }
+      ],
+      "role": "The well where Hagar named God",
+      "dm_notes": "Beer-lahai-roi is a theological pivot. The God of Abraham appears to the Egyptian slave woman who has been mistreated and abandoned. He sees her. This is the text's first clear statement that the covenant does not make God blind to those outside it. Isaac later lives near this well."
+    },
+    {
+      "id": "mount_moriah",
+      "name": "Mount Moriah",
+      "description": "A mountain in the land of Moriah, three days' journey from Beersheba. [[Abraham]] brought [[Isaac]] here to offer him as a burnt offering. God stopped him. A ram caught in a thicket was sacrificed instead. [[Abraham]] named the place 'The LORD will provide.' The site is later identified with Jerusalem.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_ce0746",
+          "session": 5,
+          "note": "[[Abraham]] brings [[Isaac]] here. He builds the altar. He binds his son. He raises the knife. God stops him. A ram is caught in the thicket. [[Abraham]] names the place: the LORD will provide.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "other",
+          "actor_id": "The Reader",
+          "actor_type": "party"
+        }
+      ],
+      "role": "The place of the binding of Isaac",
+      "dm_notes": "The binding (Akedah) is the hinge of the Abraham covenant. God asks for what he most values and then does not take it. The ram in the thicket is provided before Abraham reaches the altar \u2014 the provision precedes the act of faith, not rewards it. Abraham rises early in the morning and saddles his donkey himself. He does not wake a servant. He does not tell Sarah."
+    },
+    {
+      "id": "bethel",
+      "name": "Bethel",
+      "description": "A place [[Jacob]] named Bethel \u2014 House of God \u2014 after sleeping there on a stone pillow. He dreamed of a ladder reaching to heaven, with angels ascending and descending, and God speaking from above, renewing the covenant of [[Abraham]]. He woke and said: surely the LORD is in this place, and I did not know it. He anointed the stone and made a vow.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_3c114e",
+          "session": 6,
+          "note": "[[Jacob]] sleeps on a stone with angels ascending and descending above him. God renews the covenant: your descendants will be as the dust of the earth. [[Jacob]] wakes and anoints the stone.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "other"
+        }
+      ],
+      "role": "Where Jacob dreamed of the ladder",
+      "dm_notes": "Jacob encounters God here as a fugitive \u2014 not as a patriarch but as a young man running from his brother. The covenant is given here without precondition. Jacob's response is a bargain: if God does this, then the LORD shall be my God. The bargaining is characteristic. He is already Jacob."
+    },
+    {
+      "id": "the_ford_of_jabbok",
+      "name": "The Ford of Jabbok",
+      "description": "A ford on the river Jabbok, a tributary of the Jordan. [[Jacob]] was alone here when a man came and wrestled with him until daybreak. [[Jacob]] would not release him without a blessing. The man renamed him Israel \u2014 he who strives with God \u2014 and struck his hip. [[Jacob]] limped away. He called the place Peniel: I have seen God face to face, and yet my life is preserved.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_da2be4",
+          "session": 7,
+          "note": "[[Jacob]] wrestles alone until daybreak. He refuses to release the man without a blessing. His hip is struck. He is renamed Israel. He limps into the sunrise carrying a new name and a permanent wound.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat"
+        }
+      ],
+      "role": "Where Jacob wrestled and was renamed Israel",
+      "dm_notes": "The wrestling match is the most mysterious scene in Genesis. The text does not say who the man is. Jacob knows. The covenant family is renamed for a wrestling match with God. Jacob wins \u2014 or is allowed to win \u2014 and is permanently marked by it. He limps into the sunrise. That is the point."
+    },
+    {
+      "id": "the_pit_at_dothan",
+      "name": "The Pit at Dothan",
+      "description": "A dry pit in the fields near Dothan, where [[Joseph]]'s brothers stripped his coat of many colors, threw him in, and sat down to eat bread. Ishmaelite traders passed on the road. [[Judah]] proposed selling him rather than killing him. [[Joseph]] was pulled from the pit and sold for twenty pieces of silver. The coat was dipped in goat's blood and taken to [[Jacob]].",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_6f1ef1",
+          "session": 8,
+          "note": "[[Joseph]]'s brothers strip his coat and throw him in a dry pit. [[Judah]] proposes selling him. Twenty pieces of silver. The coat is dipped in goat's blood. [[Jacob]] weeps and will not be comforted.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 3,
+          "event_type": "other",
+          "actor_id": "judah",
+          "actor_type": "npc"
+        }
+      ],
+      "role": "Where Joseph was thrown by his brothers",
+      "dm_notes": "The pit is empty of water \u2014 the text specifies this. No one drowns in it. Joseph is in a dry pit with twenty pieces of silver changing hands above him. The coat of many colors goes one direction; Joseph goes another. Jacob weeps for years over the coat. God is not mentioned in this scene at all."
+    },
+    {
+      "id": "pharaoh_s_court",
+      "name": "Pharaoh's Court",
+      "description": "The court of [[Pharaoh]], king of Egypt. [[Joseph]] is brought here from prison to interpret [[Pharaoh]]'s dreams of seven fat cows and seven lean ones. [[Pharaoh]] makes him second in command of all Egypt before breakfast. He gives [[Joseph]] his signet ring, fine linen, a gold chain, and a new name. [[Joseph]] is thirty years old.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_390c92",
+          "session": 10,
+          "note": "[[Pharaoh]] dreams of fat cows and lean cows. [[Joseph]] interprets it. [[Pharaoh]] gives him his ring, his linen, his chain. Second in command of all Egypt. [[Joseph]] is thirty years old. He was in a pit ten years ago.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "dialogue",
+          "actor_id": "pharaoh",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_3ce61e",
+          "session": 10,
+          "note": "[[Joseph]] reveals himself to his brothers. 'I am Joseph. Is my father still alive?' He cannot stop weeping. His brothers cannot answer him \u2014 they are dismayed before him.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "dialogue"
+        }
+      ],
+      "role": "The seat of Egyptian power \u2014 Joseph's throne",
+      "dm_notes": "Pharaoh in the Joseph story is not the Pharaoh of the Exodus. He is shrewd, pragmatic, and willing to be advised. The elevation of a Hebrew slave to vizier of Egypt requires a level of institutional flexibility the text takes for granted. The grain stores Joseph builds during the seven years of plenty are what make the reunion with his brothers possible."
+    }
+  ]
+}

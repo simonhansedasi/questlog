@@ -4,31 +4,33 @@
       "id": "the_achaean_host",
       "name": "The Achaean Host",
       "relationship": "ally",
-      "description": "The coalition of Greek city-states besieging Troy. One hundred thousand men under Agamemnon's nominal command, held together by oaths and ambition. Their unity is their weakness: the kings quarrel, the soldiers grow weary, and without Achilles they bleed against the Trojan walls.",
+      "description": "The coalition of Greek city-states besieging Troy. One hundred thousand men under [[Agamemnon]]'s nominal command, held together by oaths and ambition. Their unity is their weakness: the kings quarrel, the soldiers grow weary, and without [[Achilles]] they bleed against the Trojan walls.",
       "hidden": false,
       "log": [
         {
-          "id": "evt_30ae12",
+          "id": "evt_6aaa94",
           "session": 1,
-          "note": "Nine days of plague devastate the camp; the army demands answers. The seer Calchas reveals the cause: Agamemnon's insult to Chryses.",
+          "note": "Nine days of plague devastate the camp; the army demands answers. The seer Calchas reveals the cause: [[Agamemnon]]'s insult to Chryses.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
-          "event_type": "other"
+          "event_type": "other",
+          "location_id": "the_achaean_camp"
         },
         {
-          "id": "evt_a64219",
+          "id": "evt_54ca6e",
           "session": 5,
-          "note": "The Trojans breach the great wall of the Greek camp; Hector hurls a boulder through the gate and leads the charge toward the ships.",
+          "note": "[[The City of Troy|The Trojans]] breach the great wall of the Greek camp; [[Hector]] hurls a boulder through the gate and leads the charge toward the ships.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
-          "event_type": "combat"
+          "event_type": "combat",
+          "location_id": "the_achaean_camp"
         },
         {
-          "id": "evt_c273ab",
+          "id": "evt_de75f5",
           "session": 5,
-          "note": "Consequence of The City of Troy (rival): For the first time in ten years Trojans fight on the beach beside Achaean ships; the tide of the war shifts.",
+          "note": "Consequence of The City of Troy (rival): For the first time in ten years [[The City of Troy|Trojans]] fight on the beach beside Achaean ships; the tide of the war shifts.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
@@ -42,9 +44,9 @@
           "actor_type": "faction"
         },
         {
-          "id": "evt_357f59",
+          "id": "evt_ad4f9a",
           "session": 6,
-          "note": "Word of Patroclus's death spreads through the Achaean camp; Achilles' cry of grief shakes the battlefield. Everyone knows what comes next.",
+          "note": "Word of [[Patroclus]]'s death spreads through the Achaean camp; [[Achilles]]' cry of grief shakes the battlefield. Everyone knows what comes next.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
@@ -64,13 +66,13 @@
       "id": "the_city_of_troy",
       "name": "The City of Troy",
       "relationship": "neutral",
-      "description": "Priam's city \u2014 rich, walled, and ten years under siege. The Trojans fight not for glory but for survival. Their greatest strength is Hector; their original wound is Paris. Troy is beloved of Apollo and Aphrodite, which keeps it standing long past reason.",
+      "description": "[[Priam]]'s city \u2014 rich, walled, and ten years under siege. The Trojans fight not for glory but for survival. Their greatest strength is [[Hector]]; their original wound is [[Paris]]. Troy is beloved of [[Apollo]] and Aphrodite, which keeps it standing long past reason.",
       "hidden": false,
       "log": [
         {
-          "id": "evt_170887",
+          "id": "evt_5bf48a",
           "session": 5,
-          "note": "Consequence of The Achaean Host (rival): The Trojans breach the great wall of the Greek camp; Hector hurls a boulder through the gate and leads the charge toward the ships.",
+          "note": "Consequence of The Achaean Host (rival): [[The City of Troy|The Trojans]] breach the great wall of the Greek camp; [[Hector]] hurls a boulder through the gate and leads the charge toward the ships.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 3,
@@ -84,22 +86,23 @@
           "actor_type": "faction"
         },
         {
-          "id": "evt_55e3a8",
+          "id": "evt_33e480",
           "session": 5,
-          "note": "For the first time in ten years Trojans fight on the beach beside Achaean ships; the tide of the war shifts.",
+          "note": "For the first time in ten years [[The City of Troy|Trojans]] fight on the beach beside Achaean ships; the tide of the war shifts.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 2,
           "event_type": "combat"
         },
         {
-          "id": "evt_9eb631",
+          "id": "evt_062179",
           "session": 8,
-          "note": "Hector is brought home. Andromache, Hecuba, and Helen lead the lament. The poem ends here \u2014 not at Troy's fall, but at a funeral. That is Homer's answer to the question of what war is.",
+          "note": "[[Hector]] is brought home. [[Andromache]], Hecuba, and [[Helen]] lead the lament. The poem ends here \u2014 not at Troy's fall, but at a funeral. That is Homer's answer to the question of what war is.",
           "visibility": "public",
           "polarity": "neutral",
           "intensity": 1,
-          "event_type": "other"
+          "event_type": "other",
+          "location_id": "priam_s_palace"
         }
       ],
       "relations": [
@@ -115,13 +118,13 @@
       "id": "the_divine_council",
       "name": "The Divine Council",
       "relationship": "neutral",
-      "description": "The Olympian gods, who treat the Trojan War as their own theater. Zeus holds the scales of fate; Hera and Athena back the Achaeans; Apollo and Aphrodite shield Troy. Their interventions decide what human valor alone cannot. Hidden to mortal eyes.",
+      "description": "The Olympian gods, who treat the Trojan War as their own theater. Zeus holds the scales of fate; Hera and [[Athena]] back the Achaeans; [[Apollo]] and Aphrodite shield Troy. Their interventions decide what human valor alone cannot. Hidden to mortal eyes.",
       "hidden": true,
       "log": [
         {
-          "id": "evt_aae14e",
+          "id": "evt_23d4f3",
           "session": 5,
-          "note": "Consequence of The Achaean Host (ally): The Trojans breach the great wall of the Greek camp; Hector hurls a boulder through the gate and leads the charge toward the ships.",
+          "note": "Consequence of The Achaean Host (ally): [[The City of Troy|The Trojans]] breach the great wall of the Greek camp; [[Hector]] hurls a boulder through the gate and leads the charge toward the ships.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
@@ -135,9 +138,9 @@
           "actor_type": "faction"
         },
         {
-          "id": "evt_3248e4",
+          "id": "evt_6791b0",
           "session": 5,
-          "note": "Consequence of The City of Troy (ally): For the first time in ten years Trojans fight on the beach beside Achaean ships; the tide of the war shifts.",
+          "note": "Consequence of The City of Troy (ally): For the first time in ten years [[The City of Troy|Trojans]] fight on the beach beside Achaean ships; the tide of the war shifts.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 1,

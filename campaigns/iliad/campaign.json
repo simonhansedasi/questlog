@@ -1,9 +1,10 @@
 {
   "name": "The Iliad",
+  "slug": "iliad",
   "system": "Greek Epic \u2014 Homer",
-  "owner": "simon",
+  "owner": "demo",
   "dm_pin": "1234",
-  "share_token": "N7bZCYpDaAFEmLiXjvfB0w",
+  "share_token": "lWCM3d_UBnofZj2oOMGYrA",
   "demo": true,
   "public": true,
   "mode": "fiction",

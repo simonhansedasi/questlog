@@ -1,0 +1,172 @@
+{
+  "locations": [
+    {
+      "id": "thatch_s_general_store",
+      "name": "Thatch's General Store",
+      "description": "The largest general goods shop in Ashford. [[Orvyn Thatch]] keeps the shelves full and the prices fair, which means everyone passes through eventually. The notice board by the door has collected wanted posters, missing persons reports, and overdue debt notices for three years running.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_90fd62",
+          "session": 1,
+          "note": "[[Orvyn Thatch]] speaks freely for the first time in months. Names every collector, describes patrol timing, produces his private log of Ironmask activity. The party has their first real picture of what they're dealing with.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 1,
+          "event_type": "dialogue"
+        }
+      ],
+      "role": "General store and town information hub",
+      "dm_notes": "Orvyn has been logging [[The Ironmasks|Ironmask]] collector names and patrol timing in a ledger kept behind the flour sacks. He'll hand it over freely if asked \u2014 he's been waiting for someone to ask. He knows which merchants have stopped making the Ashford run and why."
+    },
+    {
+      "id": "ashford_miners_registry",
+      "name": "Ashford Miners' Registry",
+      "description": "The Registry tracks shift assignments, safety records, and payroll for every miner working [[The Ashcroft Vein]]. [[Petra Holt]] runs it with the kind of precision that makes irregularities impossible to miss \u2014 which is exactly how the irregularities were found.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_3151d8",
+          "session": 2,
+          "note": "[[Petra Holt]] recovers the hidden ledger copy from beneath the floorboards. Twelve percent of miner wages have been skimmed through a fictitious 'safety equipment' line for at least six months.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "discovery",
+          "actor_id": "The Party",
+          "actor_type": "party"
+        },
+        {
+          "id": "evt_63251a",
+          "session": 5,
+          "note": "[[Maren Vosk]] captured here during the raid. Complete ledgers seized. 'CA' appears in seventeen entries. [[Sister Veyne]] secures the building.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat",
+          "actor_id": "sister_veyne",
+          "actor_type": "npc"
+        }
+      ],
+      "role": "Official miner registration and payroll office",
+      "dm_notes": "A complete copy of the doctored payroll ledger \u2014 showing the 12% 'safety equipment' skim against miner wages \u2014 is hidden beneath the third floorboard from the window. The Registry is also where [[Maren Vosk]] is captured in Session 5; her own ledgers are seized here."
+    },
+    {
+      "id": "the_broken_crown",
+      "name": "The Broken Crown",
+      "description": "The only inn in Ashford still operating after the [[The Ironmasks|Ironmask]] expansion drove two other taverns to close. The common room stays crowded. The back room can be rented for private conversation \u2014 the innkeeper doesn't ask questions about the topic.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_66b98b",
+          "session": 1,
+          "note": "[[Edda Sorn]] makes contact in the back room. Her shipping discrepancy records cover eight months. The gap between declared output and actual weight shipped is not a rounding error.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "dialogue"
+        }
+      ],
+      "role": "Ashford's main inn and tavern",
+      "dm_notes": "[[Edda Sorn]] specifically chose this location to approach the party. The innkeeper owes her a favor and tells her which strangers are worth talking to. The back room has been used for three private meetings in the last month."
+    },
+    {
+      "id": "the_ashcroft_vein",
+      "name": "The Ashcroft Vein",
+      "description": "The mine entrance sits at the base of the ridge north of town. The upper shafts produce good ore on regular cycles. The lower shafts are roped off \u2014 officially for retimbering, actually because the timbering was never adequate to begin with.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_d9f96b",
+          "session": 4,
+          "note": "[[Emerald Circle]] survey confirmed: three critical failure points in the lower shafts. Structural collapse projected within sixty days. Miners are already refusing the lower shaft shifts.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "discovery"
+        }
+      ],
+      "role": "Ashford's primary silver mine",
+      "dm_notes": "The [[Emerald Circle]] survey identified three critical failure points in the lower shafts \u2014 structural collapse within sixty days, not might. A concealed secondary entrance, known only to [[Corvin Ashale]], runs from the deepest shaft to an exit beneath his warehouse. [[The Shadow Wing]] uses it to move ore before it reaches [[The Trade Compact|the Compact]]'s scales."
+    },
+    {
+      "id": "greystone_keep",
+      "name": "Greystone Keep",
+      "description": "A squat stone fortress on the ridge north of Ashford, held by the [[Stonebreaker Clan]] for three generations. The walls are kept in better repair than they look. The outer courtyard has been used for purposes other than livestock in recent months \u2014 [[Warchief Durnak|Durnak]] noticed and said nothing, until recently.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_c17495",
+          "session": 2,
+          "note": "[[Warchief Durnak]] parleys at the gate. Terms set: clear the outer courtyard, [[Bram Ketterly|Bram]] goes free. Three days.",
+          "visibility": "public",
+          "polarity": "neutral",
+          "intensity": 1,
+          "event_type": "dialogue"
+        },
+        {
+          "id": "evt_ea7e1e",
+          "session": 3,
+          "note": "The outer courtyard is taken. Six [[The Ironmasks|Ironmasks]] subdued, two escaped. [[Bram Ketterly]] released from the storage cellar \u2014 underfed, uninjured, and remembering everything.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "combat",
+          "actor_id": "The Party",
+          "actor_type": "party"
+        }
+      ],
+      "role": "Ancient fortress, seat of the Stonebreaker Clan",
+      "dm_notes": "The outer courtyard is where [[The Ironmasks]] have been holding debtors including [[Bram Ketterly]]. [[Warchief Durnak|Durnak]] tolerated this because it wasn't his people and the Ironmasks stayed out of the Keep proper. That tolerance is exhausted. The lower vaults connect to the pre-mine tunnel network, though the Clan doesn't use them."
+    },
+    {
+      "id": "coldwater_ruins",
+      "name": "Coldwater Ruins",
+      "description": "The ruins of a garrison post from before Ashford's founding, two miles east of town. Miners avoid them on superstition. Three [[The Ironmasks|Ironmask]] scouts entered Coldwater a few months ago and didn't come back out.",
+      "hidden": false,
+      "log": [
+        {
+          "id": "evt_3df995",
+          "session": 4,
+          "note": "[[The Pale Widow]] shows the party the garrison archive. The tunnel maps are intact. One exit runs directly beneath [[Corvin Ashale]]'s warehouse \u2014 eight months of shipping discrepancies explained in a single diagram.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 3,
+          "event_type": "discovery",
+          "actor_id": "The Party",
+          "actor_type": "party"
+        }
+      ],
+      "role": "Abandoned garrison post, haunted",
+      "dm_notes": "[[The Pale Widow]] is the spirit of the garrison's last archivist. She keeps the records intact and sealed. She will show them to anyone who approaches with respect rather than force. The archive contains the original survey maps of the pre-mine tunnel network \u2014 including the exit point beneath [[Corvin Ashale]]'s warehouse. The three [[The Ironmasks|Ironmask]] scouts are still there, in a collapsed section they entered without a light."
+    },
+    {
+      "id": "the_greywood",
+      "name": "The Greywood",
+      "description": "The forest that borders Ashford to the west and north. The [[Greywood Rangers]] patrol the roads through it, though three rangers for thirty miles of road is a difficult ratio. [[Thane Bergrak]] knows a [[Emerald Circle|Circle]]-maintained passage through the forest that avoids the roads entirely.",
+      "hidden": false,
+      "log": [],
+      "role": "Ancient forest, Emerald Circle territory",
+      "dm_notes": "[[The Ironmasks]] have been using the Greywood's eastern edge to run supply routes that avoid the main road toll checkpoints \u2014 ironic given the toll is theirs. [[Farlan Dusk]] has been mapping these routes by habit. After the Ironmask break in Session 5, surviving [[The Ironmasks|Ironmasks]] scatter into the Greywood."
+    },
+    {
+      "id": "corvin_ashale_s_warehouse",
+      "name": "Corvin Ashale's Warehouse",
+      "description": "A modest freight warehouse near [[The Ashcroft Vein|the Vein]] entrance. Declared cargo: dry goods, rope, processed tallow. Hours irregular. (DM only)",
+      "hidden": true,
+      "log": [
+        {
+          "id": "evt_9ac125",
+          "session": 5,
+          "note": "[[Corvin Ashale]] barricades the doors when [[The Ironmasks|Ironmasks]] break. [[Serev]] has already left with a message. The warehouse is locked from the inside. The tunnel entrance is somewhere below.",
+          "visibility": "dm_only",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "other"
+        }
+      ],
+      "role": "Shadow Wing distribution hub \u2014 concealed",
+      "dm_notes": "Sits directly above the old tunnel exit from [[The Ashcroft Vein]]. [[Corvin Ashale|Ashale]] moves refined ore up through the tunnel and loads it here before it can be weighed by [[The Trade Compact|the Compact]]. The excess weight is distributed across multiple merchant manifests as declared cargo overage \u2014 legal on paper, invisible in the aggregate. When [[The Ironmasks]] fall in Session 5, Ashale barricades himself inside and sends for [[The Shadow Wing|Shadow Wing]] extraction via [[Serev]]."
+    }
+  ]
+}

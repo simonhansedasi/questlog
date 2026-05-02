@@ -9,11 +9,12 @@ Run:  python seed_ww2.py
 import sys, os, json, secrets, shutil
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent))
+ROOT = Path(__file__).parent.parent
+sys.path.insert(0, str(ROOT))
 from src import data as db
 
 SLUG = "ww2"
-CAMPAIGNS = Path(__file__).parent / "campaigns"
+CAMPAIGNS = ROOT / "campaigns"
 CAMP_DIR = CAMPAIGNS / SLUG
 
 if CAMP_DIR.exists():
@@ -65,72 +66,73 @@ _w("world/conditions.json",{"conditions": []})
 _w("story/quests.json",    {"quests": []})
 _w("dm/session.json",      {})
 _w("dm/relation_suggestions.json", [])
+_w("world/locations.json",           {"locations": []})
 
 print(f"Campaign directory: {CAMP_DIR}")
 
 # ── Factions ───────────────────────────────────────────────────────────────────
 factions_to_add = [
     ("Nazi Germany", "hostile", False,
-     "The Third Reich under Adolf Hitler. The dominant European aggressor: "
-     "it remilitarizes, annexes Austria and Czechoslovakia, invades Poland, "
+     "The Third Reich under [[Adolf Hitler]]. The dominant European aggressor: "
+     "it remilitarizes, annexes Austria and Czechoslovakia, invades [[Poland]], "
      "conquers France, and launches the largest land invasion in history against "
-     "the Soviet Union. Its industrial and military capacity is matched only by "
+     "the [[Soviet Union]]. Its industrial and military capacity is matched only by "
      "its ideological machinery of racial extermination. Peak territorial control "
      "in 1942. Defeated May 1945."),
 
     ("Imperial Japan", "hostile", False,
-     "The Empire of Japan under Emperor Hirohito and the militarist government. "
-     "At war with China since 1937, it expands into Southeast Asia and the Pacific "
+     "The Empire of Japan under [[Emperor Hirohito]] and the militarist government. "
+     "At war with [[Nationalist China|China]] since 1937, it expands into Southeast Asia and the Pacific "
      "in 1941–1942, seizing an empire from Burma to Guadalcanal. "
-     "The attack on Pearl Harbor brings the United States fully into the war. "
+     "The attack on [[Pearl Harbor]] brings the [[United States]] fully into the war. "
      "Japan's industrial capacity cannot sustain the war of attrition that follows. "
      "Surrenders September 2, 1945."),
 
     ("Fascist Italy", "hostile", False,
-     "Mussolini's Italy — the original fascist state, ally to Germany via the "
+     "[[Benito Mussolini|Mussolini's]] Italy — the original fascist state, ally to [[Nazi Germany|Germany]] via the "
      "Pact of Steel. Italy's military performance disappoints: failures in Greece "
      "force German intervention, and North Africa is lost by 1943. "
-     "Mussolini is deposed by his own Grand Council in July 1943. "
+     "[[Benito Mussolini|Mussolini]] is deposed by his own Grand Council in July 1943. "
      "Italy surrenders in September. A German-backed puppet state "
      "holds northern Italy until April 1945."),
 
     ("Soviet Union", "neutral", False,
-     "The USSR under Stalin. Signs the Molotov–Ribbentrop non-aggression pact "
-     "with Germany in 1939, enabling the invasion of Poland. "
-     "Germany's Operation Barbarossa in June 1941 reverses this completely: "
+     "The USSR under [[Joseph Stalin|Stalin]]. Signs the Molotov–Ribbentrop non-aggression pact "
+     "with [[Nazi Germany|Germany]] in 1939, enabling the invasion of [[Poland]]. "
+     "[[Nazi Germany|Germany's]] Operation Barbarossa in June 1941 reverses this completely: "
      "the Soviets suffer catastrophic early losses, then stabilize, then push back. "
-     "Stalingrad is the turning point. The Red Army drives west from 1943, "
-     "taking Berlin in April 1945. The Soviet contribution to defeating Germany "
+     "[[Stalingrad]] is the turning point. The Red Army drives west from 1943, "
+     "taking Berlin in April 1945. The Soviet contribution to defeating [[Nazi Germany|Germany]] "
      "is larger than all other Allied contributions combined."),
 
     ("United States", "ally", False,
-     "The Arsenal of Democracy. Formally neutral until Pearl Harbor (December 7, 1941), "
-     "though Lend-Lease arms Britain and the USSR from 1941. "
+     "The Arsenal of Democracy. Formally neutral until [[Pearl Harbor]] (December 7, 1941), "
+     "though Lend-Lease arms [[Great Britain|Britain]] and the [[Soviet Union|USSR]] from 1941. "
      "American industrial capacity — untouched by bombing — is the decisive material "
      "factor in Allied victory. Fights in North Africa (1942), Italy (1943), "
      "Western Europe (1944–45), and the Pacific throughout. "
      "The Manhattan Project produces the atomic bombs that end the Pacific War."),
 
     ("Great Britain", "ally", False,
-     "The island that held. Churchill becomes Prime Minister in May 1940, "
-     "the same week Germany begins its western offensive. "
+     "The island that held. [[Winston Churchill|Churchill]] becomes Prime Minister in May 1940, "
+     "the same week [[Nazi Germany|Germany]] begins its western offensive. "
      "Britain stands alone from June 1940 through December 1941, "
      "surviving the Blitz and winning the Battle of Britain. "
-     "The British Empire's global resources, combined with Churchill's alliance "
+     "The British Empire's global resources, combined with [[Winston Churchill|Churchill's]] alliance "
      "management, make Britain the indispensable link between American power "
-     "and the Soviet eastern front."),
+     "and the [[Soviet Union|Soviet]] eastern front."),
 
     ("Free France", "ally", False,
-     "Charles de Gaulle's government-in-exile, operating from London. "
-     "After France's armistice, de Gaulle broadcasts from the BBC on June 18, 1940: "
+     "[[Charles de Gaulle|De Gaulle's]] government-in-exile, operating from [[London and Whitehall|London]]. "
+     "After France's armistice, [[Charles de Gaulle|de Gaulle]] broadcasts from the BBC on June 18, 1940: "
      "'Whatever happens, the flame of French resistance must not and shall not die.' "
      "The Free French forces fight in North Africa, Italy, and eventually liberate "
      "Paris alongside the Allies in August 1944. "
-     "De Gaulle enters Paris on foot. The legitimacy of Free France is contested "
-     "by both Vichy and, at times, by Allied leadership who find de Gaulle difficult."),
+     "[[Charles de Gaulle|De Gaulle]] enters Paris on foot. The legitimacy of Free France is contested "
+     "by both Vichy and, at times, by Allied leadership who find [[Charles de Gaulle|de Gaulle]] difficult."),
 
     ("Nationalist China", "ally", False,
-     "The Republic of China under Chiang Kai-shek, at war with Japan since 1937. "
+     "The Republic of China under Chiang Kai-shek, at war with [[Imperial Japan|Japan]] since 1937. "
      "China absorbs enormous Japanese manpower throughout the war — "
      "the China theater ties down more Japanese troops than any other front. "
      "Chiang's government is plagued by corruption and a parallel civil war "
@@ -138,23 +140,23 @@ factions_to_add = [
      "China's war is the longest and most costly of any Allied nation."),
 
     ("Occupied Europe", "hostile", True,
-     "The peoples living under Nazi occupation: France, Poland, Netherlands, Belgium, "
-     "Norway, Denmark, Yugoslavia, Greece, and the conquered Soviet territories. "
+     "The peoples living under [[Nazi Germany|Nazi]] occupation: France, [[Poland]], Netherlands, Belgium, "
+     "Norway, Denmark, Yugoslavia, Greece, and the conquered [[Soviet Union|Soviet]] territories. "
      "The occupied populations range from collaboration to resistance. "
      "The Jews of Europe, along with Roma, disabled people, political prisoners, "
-     "and others targeted by Nazi racial ideology, are systematically murdered "
+     "and others targeted by [[Nazi Germany|Nazi]] racial ideology, are systematically murdered "
      "in what becomes the Holocaust — six million Jews killed. "
      "This is the largest criminal enterprise in recorded history, "
      "conducted bureaucratically, industrially, and in deliberate secrecy."),
 
     ("Poland", "ally", False,
-     "The first nation to fight back: Poland resists the German invasion from "
-     "September 1, 1939, and when the Soviets invade from the east on September 17, "
+     "The first nation to fight back: Poland resists the [[Nazi Germany|German]] invasion from "
+     "September 1, 1939, and when the [[Soviet Union|Soviets]] invade from the east on September 17, "
      "Polish resistance collapses within weeks. "
-     "The Polish government-in-exile operates from London throughout the war. "
-     "The Polish armed forces — reconstituted in Britain — fight at Narvik, "
+     "The Polish government-in-exile operates from [[London and Whitehall|London]] throughout the war. "
+     "The Polish armed forces — reconstituted in [[Great Britain|Britain]] — fight at Narvik, "
      "Tobruk, Monte Cassino, and Arnhem. "
-     "Poland is liberated in 1945 by Soviet forces — and then remains under "
+     "Poland is liberated in 1945 by [[Soviet Union|Soviet]] forces — and then remains under "
      "Soviet domination. The country that started the war ends it having lost "
      "more than a fifth of its population."),
 ]
@@ -175,25 +177,25 @@ npcs_to_add = [
      "and outmaneuvers every opponent in the 1930s. His military instincts "
      "are erratic — brilliant in 1939–1941, catastrophic from 1942 onward "
      "as he refuses to retreat, relieves competent generals, and increasingly "
-     "substitutes ideology for strategy. Dies by suicide in the Berlin bunker "
+     "substitutes ideology for strategy. Dies by suicide in [[The Berlin Bunker]] "
      "on April 30, 1945.",
      [F["Nazi Germany"]], []),
 
     ("Benito Mussolini", "Duce of Fascist Italy", "hostile", False,
      "The original fascist, in power in Italy since 1922. "
-     "Hitler models himself partly on Mussolini. But Italy's military is "
-     "underequipped and poorly led, and Mussolini's strategic judgment "
-     "is poor. He invades Greece without telling Hitler; the resulting "
+     "[[Adolf Hitler|Hitler]] models himself partly on Mussolini. But Italy's military is "
+     "underequipped and poorly led, and [[Benito Mussolini|Mussolini's]] strategic judgment "
+     "is poor. He invades Greece without telling [[Adolf Hitler|Hitler]]; the resulting "
      "disaster requires German rescue and delays Barbarossa. "
      "He is deposed by his own Grand Council on July 25, 1943, "
      "rescued by German commandos, and installed as puppet ruler "
      "of northern Italy until Italian partisans capture and execute him "
-     "on April 28, 1945 — two days before Hitler's death.",
+     "on April 28, 1945 — two days before [[Adolf Hitler|Hitler's]] death.",
      [F["Fascist Italy"]], []),
 
     ("Hideki Tojo", "Prime Minister and War Minister of Japan", "hostile", False,
      "Army general who becomes Prime Minister in October 1941 and drives "
-     "Japan's decision to attack the United States. He believes Japan must "
+     "Japan's decision to attack the [[United States]]. He believes Japan must "
      "strike before American rearmament makes war impossible to win. "
      "He is right about the window and wrong about the outcome. "
      "He is the dominant figure of Japanese war policy until July 1944, "
@@ -205,7 +207,7 @@ npcs_to_add = [
      "The 124th Emperor of Japan, theoretically divine, practically constrained. "
      "His role in Japan's war decisions is historically disputed. "
      "He does not stop the war in 1944 or early 1945 despite catastrophic losses. "
-     "He does end it in 1945: after the atomic bombs and the Soviet declaration "
+     "He does end it in 1945: after the atomic bombs and the [[Soviet Union|Soviet]] declaration "
      "of war, he makes the unprecedented decision to broadcast to his people "
      "in a recorded radio address on August 15, 1945. "
      "His voice has never been heard publicly before. "
@@ -214,14 +216,14 @@ npcs_to_add = [
      [F["Imperial Japan"]], []),
 
     ("Heinrich Himmler", "Reichsführer-SS — Architect of the Holocaust", "hostile", True,
-     "The second most powerful man in Nazi Germany after Hitler. "
+     "The second most powerful man in [[Nazi Germany]] after [[Adolf Hitler|Hitler]]. "
      "Head of the SS, the Gestapo, and the entire apparatus of Nazi terror. "
      "He is the primary architect of the Holocaust — the systematic, "
      "industrial murder of six million Jews and millions of others. "
      "A former chicken farmer who implements genocide with bureaucratic precision. "
      "In the war's final months he makes secret contact with Allied representatives, "
-     "trying to negotiate a separate peace. Hitler, learning of this, strips him "
-     "of all offices. Himmler is captured by British forces in May 1945 "
+     "trying to negotiate a separate peace. [[Adolf Hitler|Hitler]], learning of this, strips him "
+     "of all offices. Himmler is captured by [[Great Britain|British]] forces in May 1945 "
      "and bites down on a cyanide capsule before he can be tried.",
      [F["Nazi Germany"]], []),
 
@@ -230,21 +232,21 @@ npcs_to_add = [
      "is a masterclass in armored warfare. In North Africa his Afrika Korps "
      "performs feats of operational brilliance against larger forces. "
      "He is also the most humane of the senior German commanders — "
-     "he ignores Hitler's orders to execute prisoners and Jewish civilians. "
-     "By 1944 he privately believes Germany cannot win and is connected "
+     "he ignores [[Adolf Hitler|Hitler's]] orders to execute prisoners and Jewish civilians. "
+     "By 1944 he privately believes [[Nazi Germany|Germany]] cannot win and is connected "
      "to the July 20 assassination plot. He does not detonate the bomb. "
      "After the plot's failure, he is given the choice: public trial "
      "or private suicide. He takes poison on October 14, 1944. "
-     "Germany announces he died of his wounds. He is given a state funeral.",
+     "[[Nazi Germany|Germany]] announces he died of his wounds. He is given a state funeral.",
      [F["Nazi Germany"]], []),
 
     # ── Allied leaders ─────────────────────────────────────────────────────────
     ("Winston Churchill", "Prime Minister of Great Britain", "ally", False,
      "The right man for the worst moment. Becomes PM on May 10, 1940 — "
-     "the same day Germany launches its western offensive. "
-     "He has been warning about Hitler since 1933; no one listened. "
+     "the same day [[Nazi Germany|Germany]] launches its western offensive. "
+     "He has been warning about [[Adolf Hitler|Hitler]] since 1933; no one listened. "
      "His value in 1940–1941 is not military but psychological: "
-     "he convinces Britain and the watching world that this is survivable "
+     "he convinces [[Great Britain|Britain]] and the watching world that this is survivable "
      "and worth surviving. 'We shall fight on the beaches.' "
      "He is also difficult: stubborn, Mediterranean-strategy-obsessed, "
      "condescending to Americans, and prone to operational interference. "
@@ -254,70 +256,70 @@ npcs_to_add = [
     ("Franklin D. Roosevelt", "President of the United States — 1933–1945", "ally", False,
      "Serves an unprecedented four terms. Leads the US out of the Depression "
      "and into the war. His strategic instincts are sound: he identifies "
-     "Germany as the primary threat, institutes Lend-Lease before America "
+     "[[Nazi Germany|Germany]] as the primary threat, institutes Lend-Lease before America "
      "enters the war, and builds the coalition that wins it. "
-     "He manages Churchill's stubbornness and Stalin's paranoia without "
+     "He manages [[Winston Churchill|Churchill's]] stubbornness and [[Joseph Stalin|Stalin's]] paranoia without "
      "fully satisfying either. He dies on April 12, 1945 — "
-     "three weeks before Germany's surrender — of a cerebral hemorrhage "
+     "three weeks before [[Nazi Germany|Germany's]] surrender — of a cerebral hemorrhage "
      "at Warm Springs, Georgia. He does not live to see victory.",
      [F["United States"]], []),
 
     ("Harry S. Truman", "President of the United States — 1945", "ally", False,
-     "Vice President for 82 days before Roosevelt's death. "
+     "Vice President for 82 days before [[Franklin D. Roosevelt|Roosevelt's]] death. "
      "He is told about the Manhattan Project only after becoming president. "
      "He has to decide, within months of taking office, whether to use "
-     "atomic weapons on Japan. He decides yes: he believes an invasion "
+     "atomic weapons on [[Imperial Japan|Japan]]. He decides yes: he believes an invasion "
      "of the Japanese home islands would cost more lives — American and Japanese — "
-     "than the bombs. He orders the destruction of Hiroshima on August 6, 1945. "
+     "than the bombs. He orders the destruction of [[Hiroshima]] on August 6, 1945. "
      "He orders Nagasaki on August 9. Japan surrenders August 15.",
      [F["United States"]], []),
 
     ("Dwight D. Eisenhower", "Supreme Allied Commander — Europe", "ally", False,
      "The coalition builder. Not the most tactically gifted Allied general — "
-     "Montgomery and Patton both outperform him in pure battlefield terms — "
+     "[[Bernard Montgomery|Montgomery]] and [[George S. Patton|Patton]] both outperform him in pure battlefield terms — "
      "but the one who can hold the alliance together. "
      "He commands the North Africa landings, the Sicily invasion, "
-     "and Operation Overlord (D-Day). He manages the egos of Churchill, "
-     "Montgomery, and Patton simultaneously without losing any of them "
-     "irreparably. After the war he becomes the 34th President of the United States.",
+     "and Operation Overlord (D-Day). He manages the egos of [[Winston Churchill|Churchill]], "
+     "[[Bernard Montgomery|Montgomery]], and [[George S. Patton|Patton]] simultaneously without losing any of them "
+     "irreparably. After the war he becomes the 34th President of the [[United States]].",
      [F["United States"]], []),
 
     ("Douglas MacArthur", "Supreme Commander — Pacific (Southwest)", "ally", False,
      "Brilliant, theatrical, and difficult. Escapes the Philippines by PT boat "
      "in March 1942 under orders, leaving his men to the Bataan Death March. "
      "'I shall return' — and he does, wading ashore at Leyte in October 1944. "
-     "He commands the island-hopping campaign that brings the war to Japan's doorstep. "
-     "He accepts Japan's formal surrender on the deck of the USS Missouri "
-     "on September 2, 1945, and then personally oversees Japan's postwar reconstruction.",
+     "He commands the island-hopping campaign that brings the war to [[Imperial Japan|Japan's]] doorstep. "
+     "He accepts [[Imperial Japan|Japan's]] formal surrender on the deck of the USS Missouri "
+     "on September 2, 1945, and then personally oversees [[Imperial Japan|Japan's]] postwar reconstruction.",
      [F["United States"]], []),
 
     ("George S. Patton", "Commanding General — Third Army", "ally", False,
      "The most aggressive Allied commander and the one the Germans most feared. "
-     "His Third Army's breakout from Normandy (August 1944) covers ground "
+     "His Third Army's breakout from [[Normandy — Omaha Beach|Normandy]] (August 1944) covers ground "
      "faster than any army in the history of warfare. "
      "He slaps a shell-shocked soldier in a field hospital in Sicily "
-     "and is nearly relieved of command by Eisenhower — his value as a threat "
+     "and is nearly relieved of command by [[Dwight D. Eisenhower|Eisenhower]] — his value as a threat "
      "to German planning exceeds his personal conduct. "
      "He dies in December 1945 in a car accident in occupied Germany.",
      [F["United States"]], []),
 
     ("Bernard Montgomery", "Field Marshal — 8th Army and 21st Army Group", "friendly", False,
-     "The British general who defeats Rommel at El Alamein — the first "
+     "The British general who defeats [[Erwin Rommel|Rommel]] at El Alamein — the first "
      "major Allied land victory of the war. Meticulous, cautious, and convinced "
-     "of his own genius. His rivalry with Patton is real: they compete for "
-     "fuel, glory, and Eisenhower's approval throughout the 1944 campaign. "
+     "of his own genius. His rivalry with [[George S. Patton|Patton]] is real: they compete for "
+     "fuel, glory, and [[Dwight D. Eisenhower|Eisenhower's]] approval throughout the 1944 campaign. "
      "His Operation Market Garden (September 1944) — a bold airdrop into "
      "the Netherlands — fails at Arnhem, the bridge too far. "
-     "He accepts Germany's surrender at Lüneburg Heath on May 4, 1945.",
+     "He accepts [[Nazi Germany|Germany's]] surrender at Lüneburg Heath on May 4, 1945.",
      [F["Great Britain"]], []),
 
     ("Charles de Gaulle", "Leader of Free France", "friendly", False,
      "A two-star brigadier general who refuses to accept France's armistice "
-     "and broadcasts from London on June 18, 1940. "
+     "and broadcasts from [[London and Whitehall|London]] on June 18, 1940. "
      "He has no army, no government, no territory, and no recognition. "
      "He builds all of these through sheer will and the force of a single "
      "argument: France has not lost, only its government has surrendered. "
-     "He is difficult to work with — Churchill calls him the heaviest cross "
+     "He is difficult to work with — [[Winston Churchill|Churchill]] calls him the heaviest cross "
      "he has to bear — and he is right about almost everything. "
      "He walks down the Champs-Élysées in August 1944 under sniper fire "
      "because the scene requires it.",
@@ -325,35 +327,35 @@ npcs_to_add = [
 
     # ── Soviet commanders ──────────────────────────────────────────────────────
     ("Joseph Stalin", "General Secretary — Soviet Union", "neutral", False,
-     "The man who industrialized the Soviet Union by force and killed millions "
+     "The man who industrialized the [[Soviet Union]] by force and killed millions "
      "doing it. His purge of the Red Army's officer corps in 1937–1938 "
      "removes most of his best military minds — they are shot, or imprisoned, "
      "or broken — and this is why Barbarossa's early months are catastrophic. "
      "He recovers. He learns to let his generals fight. "
      "By 1943 the Soviet military machine is the most powerful on earth. "
      "He extracts maximum territorial concessions from the Allies at Yalta "
-     "and leaves the war controlling Eastern Europe.",
+     "and leaves the war controlling [[Occupied Europe|Eastern Europe]].",
      [F["Soviet Union"]], []),
 
     ("Georgy Zhukov", "Marshal of the Soviet Union — Defender of Moscow, Berlin", "friendly", False,
      "The greatest general of World War II by almost any measure. "
      "He is recalled to defend Moscow in October 1941 when German forces "
      "are within sight of the Kremlin's spires — and he holds. "
-     "He commands at Stalingrad, Kursk, the destruction of Army Group Centre, "
+     "He commands at [[Stalingrad]], Kursk, the destruction of Army Group Centre, "
      "the Vistula-Oder Offensive, and the final assault on Berlin. "
-     "He accepts Germany's unconditional surrender in Berlin on May 8, 1945. "
-     "Stalin, jealous of his reputation, sidelines him after the war.",
+     "He accepts [[Nazi Germany|Germany's]] unconditional surrender in Berlin on May 8, 1945. "
+     "[[Joseph Stalin|Stalin]], jealous of his reputation, sidelines him after the war.",
      [F["Soviet Union"]], []),
 
     # ── Japanese commanders ────────────────────────────────────────────────────
     ("Isoroku Yamamoto", "Fleet Admiral — Architect of Pearl Harbor", "hostile", False,
      "The most sophisticated Japanese strategic thinker. He has lived in America, "
-     "studied at Harvard, and knows that Japan cannot win a long war with the US. "
-     "He proposes Pearl Harbor as a way to buy time — not as a path to victory. "
+     "studied at Harvard, and knows that [[Imperial Japan|Japan]] cannot win a long war with the [[United States|US]]. "
+     "He proposes [[Pearl Harbor]] as a way to buy time — not as a path to victory. "
      "'I fear we have awakened a sleeping giant,' he allegedly says afterward. "
-     "He plans the Midway operation, which fails catastrophically when US "
+     "He plans the Midway operation, which fails catastrophically when [[United States|US]] "
      "code-breakers read the Japanese naval codes. "
-     "He is killed on April 18, 1943, when US fighters intercept his transport "
+     "He is killed on April 18, 1943, when [[United States|US]] fighters intercept his transport "
      "over Bougainville — his flight schedule decoded from an intercepted message.",
      [F["Imperial Japan"]], []),
 ]
@@ -554,24 +556,79 @@ db.add_quest(SLUG,
 
 print("Historical threads seeded.")
 
+# ── Locations ──────────────────────────────────────────────────────────────────
+db.add_location(SLUG, "Normandy — Omaha Beach",
+    role="D-Day, June 6, 1944 — the Western Front opens",
+    description="The five beaches of the Normandy coast where 156,000 Allied troops landed on June 6, 1944. Omaha Beach cost 2,000 American casualties in a single morning. By nightfall, the Allies had a foothold in France. [[Dwight D. Eisenhower|Eisenhower]] carried a message in his pocket for if the landings failed. He did not need to send it.",
+    hidden=False,
+    dm_notes="The night before D-Day, Eisenhower walked among his paratroopers and could not tell them the odds. The Omaha landing nearly fails — the demolition teams are killed before they can clear the obstacles; the bombers miss the beach by miles. The assault succeeds because the men simply keep moving forward into fire. The beach is secured at enormous cost.")
+
+db.add_location(SLUG, "Stalingrad",
+    role="The Eastern Front turning point — where Germany's advance died",
+    description="A Soviet city on the Volga that [[Adolf Hitler|Hitler]] attached his name to and refused to surrender. The Battle of Stalingrad lasted from August 1942 to February 1943. Three hundred thousand German troops were encircled by [[Georgy Zhukov|Zhukov's]] Operation Uranus. Field Marshal Paulus surrendered with 91,000 survivors. The Wehrmacht never recovered.",
+    hidden=False,
+    dm_notes="Hitler's refusal to allow retreat at Stalingrad is his most consequential military error. The city becomes a trap: every soldier sent into it is consumed. Zhukov's encirclement is prepared for months while the city fighting draws German attention. The surrender is the first time the German public is told that something has gone seriously wrong.")
+
+db.add_location(SLUG, "Pearl Harbor",
+    role="December 7, 1941 — the attack that brought America into the war",
+    description="The US naval base at Pearl Harbor, Hawaii, attacked by the Japanese carrier fleet at dawn on December 7, 1941. Eighteen US warships were sunk or damaged. 2,403 Americans were killed. Four battleships went to the bottom. The three US aircraft carriers were not in port — they were at sea — and survived. [[Isoroku Yamamoto|Yamamoto]] knew this.",
+    hidden=False,
+    dm_notes="The carriers' absence from Pearl Harbor is the decisive fact of the Pacific war. Yamamoto designed the attack to destroy American offensive capability; without the carriers, it is only a tactical success. He reportedly says: 'I fear we have awakened a sleeping giant.' The quote may be apocryphal. The sentiment is not.")
+
+db.add_location(SLUG, "London and Whitehall",
+    role="Britain's wartime capital — where Churchill governed",
+    description="London endured 57 consecutive nights of Luftwaffe bombing beginning September 7, 1940. Over 43,000 civilians were killed. [[Winston Churchill|Churchill]] refused to leave the city or consider armistice. He walked through the rubble in his hat and his cigar and the people cheered. The Cabinet War Rooms beneath Whitehall were where the war was actually run.",
+    hidden=False,
+    dm_notes="Churchill's decision to remain in London and be seen among the bombed streets is a calculated act of political psychology. His broadcast speeches are the instrument by which he convinces Britain and the watching world that this is survivable. The Battle of Britain is won partly in the air and partly in these broadcasts.")
+
+db.add_location(SLUG, "The Berlin Bunker",
+    role="Hitler's final refuge — where the Reich ended",
+    description="The Führerbunker beneath the Reich Chancellery garden in Berlin, where [[Adolf Hitler|Hitler]] spent his final weeks as [[Soviet Union|Soviet]] forces fought street by street above him. He died here on April 30, 1945 — a gunshot wound and cyanide, with Eva Braun, in the underground conference room. Their bodies were carried upstairs and burned in the garden. [[Nazi Germany|Germany]] surrendered eight days later.",
+    hidden=False,
+    dm_notes="Hitler's last weeks in the bunker are marked by increasingly disconnected military conferences in which he moves nonexistent divisions. He is told Berlin is lost and continues to give orders. On April 28 he learns Himmler has tried to negotiate a separate peace. On April 29 he marries Eva Braun and dictates his final testament. On April 30 he dies. Germany holds on for eight more days.")
+
+db.add_location(SLUG, "Auschwitz",
+    role="The Holocaust's largest killing center — six million murdered",
+    description="The Auschwitz-Birkenau complex in [[Occupied Europe|occupied Poland]] was the largest of the [[Nazi Germany|Nazi]] extermination camps. Between 1942 and 1944 it was the primary site of the industrial murder of European Jews. The camp was liberated by [[Soviet Union|Soviet]] forces on January 27, 1945. [[Dwight D. Eisenhower|Eisenhower]] ordered every available soldier and nearby German civilian to tour the liberated camps as witnesses.",
+    hidden=True,
+    dm_notes="The Holocaust is not a sidebar to the war — it is the war's central crime. The Wannsee Conference of January 1942 coordinates the 'Final Solution.' Himmler's SS continues deportations to the gas chambers until the camps are physically liberated. Eisenhower's insistence on witness is the right instinct: 'I want to be in a position to give firsthand evidence of these things if ever in the future there develops a tendency to charge these allegations merely to propaganda.'")
+
+db.add_location(SLUG, "Hiroshima",
+    role="August 6, 1945 — the atomic bomb",
+    description="A Japanese city of 350,000 people. On August 6, 1945, a single B-29 dropped a uranium bomb that killed 80,000 people immediately. Total deaths reached 135,000. Three days later, Nagasaki. On August 15, [[Emperor Hirohito]] broadcast to his people in a voice they had never heard before. He did not say 'surrender.' He did not need to.",
+    hidden=False,
+    dm_notes="Truman's decision is argued about for the rest of the century. His calculation: an invasion of the Japanese home islands projects 250,000 to one million Allied casualties, and comparable Japanese losses. The bombs kill fewer people than an invasion would. Whether this arithmetic justifies the atomic destruction of two cities is a question the engine cannot answer and neither can we.")
+
+locations_data = db._load(SLUG, "world/locations.json")
+L = {loc["name"]: loc["id"] for loc in locations_data["locations"]}
+print(f"  Locations: {list(L.keys())}")
+
 # ── Helpers ───────────────────────────────────────────────────────────────────
 def log_n(npc_id, session, note, polarity=None, intensity=1,
-          event_type=None, visibility="public", ripple=False):
+          event_type=None, visibility="public", ripple=False, actor_id=None, actor_type=None, location_id=None):
     evt = db.log_npc(SLUG, npc_id, session, note, polarity=polarity,
-                     intensity=intensity, event_type=event_type, visibility=visibility)
+                     intensity=intensity, event_type=event_type, visibility=visibility,
+                     actor_id=actor_id, actor_type=actor_type, location_id=location_id)
     if ripple and polarity:
         db.apply_ripple(SLUG, npc_id, "npc", session, note, polarity, intensity,
                         event_type, visibility=visibility, source_event_id=evt)
     return evt
 
 def log_f(fid, session, note, polarity=None, intensity=1,
-          event_type=None, visibility="public", ripple=False):
+          event_type=None, visibility="public", ripple=False, actor_id=None, actor_type=None, location_id=None):
     evt = db.log_faction(SLUG, fid, session, note, polarity=polarity,
-                         intensity=intensity, event_type=event_type, visibility=visibility)
+                         intensity=intensity, event_type=event_type, visibility=visibility,
+                         actor_id=actor_id, actor_type=actor_type, location_id=location_id)
     if ripple and polarity:
         db.apply_ripple(SLUG, fid, "faction", session, note, polarity, intensity,
                         event_type, visibility=visibility, source_event_id=evt)
     return evt
+
+def log_l(loc_id, session, note, polarity=None, intensity=1,
+          event_type=None, visibility="public", actor_id=None, actor_type=None):
+    db.log_location(SLUG, loc_id, session, note, visibility=visibility,
+                    polarity=polarity, intensity=intensity, event_type=event_type,
+                    actor_id=actor_id, actor_type=actor_type)
 
 # ── Session 1: The Axis Rises (1933–1938) ─────────────────────────────────────
 log_n(N["Adolf Hitler"], 1,
@@ -678,13 +735,14 @@ log_f(F["Nazi Germany"], 3,
     polarity="negative", intensity=3, event_type="combat", ripple=True)
 
 log_n(N["Winston Churchill"], 3,
-    "Churchill becomes Prime Minister on May 10, 1940 — the day Germany attacks. "
+    "[[Winston Churchill]] becomes Prime Minister on May 10, 1940 — the day [[Nazi Germany|Germany]] attacks. "
     "He tells the House of Commons he has nothing to offer but blood, toil, "
     "tears, and sweat. He refuses to consider any armistice or negotiated peace. "
     "When the War Cabinet debates terms, he ends it: 'If this long island story "
     "of ours is to end at last, let it end only when each one of us lies "
     "choking in his own blood upon the ground.' The cabinet stands and cheers.",
-    polarity="positive", intensity=3, event_type="dialogue", ripple=True)
+    polarity="positive", intensity=3, event_type="dialogue", ripple=True,
+    location_id=L["London and Whitehall"])
 
 log_n(N["Charles de Gaulle"], 3,
     "De Gaulle is a junior general when France falls. He flies to London "
@@ -699,10 +757,11 @@ log_f(F["Great Britain"], 3,
     "The Battle of Britain (July–September 1940): the Luftwaffe attempts to "
     "destroy the RAF and establish air superiority for invasion. "
     "The RAF holds — by a narrow margin, exhausting its pilots, "
-    "but holding. Hitler postpones Operation Sea Lion indefinitely. "
-    "Britain will not be invaded. Churchill: 'Never in the field of human "
+    "but holding. [[Adolf Hitler]] postpones Operation Sea Lion indefinitely. "
+    "[[Great Britain]] will not be invaded. [[Winston Churchill]]: 'Never in the field of human "
     "conflict was so much owed by so many to so few.'",
-    polarity="positive", intensity=3, event_type="combat", ripple=True)
+    polarity="positive", intensity=3, event_type="combat", ripple=True,
+    location_id=L["London and Whitehall"])
 
 db.post_journal(SLUG, 3, "2024-01-01",
     "**Session 3 — The Fall of France (1940)**\n\n"
@@ -760,29 +819,32 @@ db.post_journal(SLUG, 4, "2024-01-01",
 
 # ── Session 5: Pearl Harbor — America Enters (December 1941) ─────────────────
 log_n(N["Isoroku Yamamoto"], 5,
-    "Yamamoto's strike force attacks Pearl Harbor at dawn on December 7, 1941. "
+    "[[Isoroku Yamamoto]]'s strike force attacks [[Pearl Harbor]] at dawn on December 7, 1941. "
     "Eighteen US warships are sunk or damaged; 2,403 Americans are killed. "
     "Four battleships go to the bottom. Crucially, three US aircraft carriers "
     "are not in port — they are at sea — and survive. "
     "Yamamoto knows this. He knows the carriers are what matter.",
-    polarity="negative", intensity=3, event_type="combat", ripple=True)
+    polarity="negative", intensity=3, event_type="combat", ripple=True,
+    location_id=L["Pearl Harbor"])
 
 log_n(N["Franklin D. Roosevelt"], 5,
-    "Roosevelt addresses Congress on December 8, 1941: "
+    "[[Franklin D. Roosevelt]] addresses Congress on December 8, 1941: "
     "'Yesterday, December 7, 1941 — a date which will live in infamy.' "
     "Congress declares war on Japan in thirty-three minutes. "
-    "Hitler, in the single most consequential blunder of the war, "
-    "declares war on the United States four days later. "
+    "[[Adolf Hitler]], in the single most consequential blunder of the war, "
+    "declares war on the [[United States]] four days later. "
     "He was not required to do this by the Axis pact. He does it anyway.",
-    polarity="positive", intensity=3, event_type="dialogue", ripple=True)
+    polarity="positive", intensity=3, event_type="dialogue", ripple=True,
+    location_id=L["Pearl Harbor"])
 
 log_n(N["Winston Churchill"], 5,
-    "Churchill hears about Pearl Harbor on a radio and goes to bed and slept "
-    "the sleep of the saved and thankful. He knows that with America in the war, "
+    "[[Winston Churchill]] hears about [[Pearl Harbor]] on a radio and goes to bed and slept "
+    "the sleep of the saved and thankful. He knows that with [[United States|America]] in the war, "
     "victory is now certain — it is only a question of time and suffering. "
-    "He sails immediately to Washington to meet Roosevelt and begin building "
+    "He sails immediately to Washington to meet [[Franklin D. Roosevelt]] and begin building "
     "the Grand Alliance.",
-    polarity="positive", intensity=3, event_type="dialogue", ripple=True)
+    polarity="positive", intensity=3, event_type="dialogue", ripple=True,
+    location_id=L["London and Whitehall"])
 
 log_f(F["United States"], 5,
     "America's industrial conversion is immediate and total. "
@@ -865,23 +927,25 @@ log_n(N["Erwin Rommel"], 7,
     polarity="negative", intensity=3, event_type="combat", ripple=True)
 
 log_n(N["Georgy Zhukov"], 7,
-    "Operation Uranus (November 1942): Zhukov's encirclement of the German "
-    "6th Army at Stalingrad. Three hundred thousand German troops are surrounded. "
-    "Hitler forbids retreat. Operation Winter Storm — the relief attempt — fails. "
+    "Operation Uranus (November 1942): [[Georgy Zhukov]]'s encirclement of the German "
+    "6th Army at [[Stalingrad]]. Three hundred thousand German troops are surrounded. "
+    "[[Adolf Hitler]] forbids retreat. Operation Winter Storm — the relief attempt — fails. "
     "Field Marshal Paulus surrenders with 91,000 survivors on January 31, 1943. "
     "The Wehrmacht has never suffered a defeat of this magnitude. "
     "The war on the Eastern Front has turned.",
-    polarity="positive", intensity=3, event_type="combat", ripple=True)
+    polarity="positive", intensity=3, event_type="combat", ripple=True,
+    location_id=L["Stalingrad"])
 
 log_f(F["Nazi Germany"], 7,
-    "Stalingrad kills the myth of German invincibility. "
+    "[[Stalingrad]] kills the myth of [[Nazi Germany|German]] invincibility. "
     "The German public is told for the first time that something has gone wrong. "
     "Goebbels declares 'total war' in February 1943. "
     "Germany's manpower and material reserves, already strained, "
     "begin an irreversible decline. The Kursk offensive in July 1943 — "
     "the last major German offensive on the Eastern Front — fails. "
     "After Kursk, Germany never attacks in the East again.",
-    polarity="negative", intensity=3, event_type="other", ripple=True)
+    polarity="negative", intensity=3, event_type="other", ripple=True,
+    location_id=L["Stalingrad"])
 
 db.post_journal(SLUG, 7, "2024-01-01",
     "**Session 7 — El Alamein and Stalingrad (1942–1943)**\n\n"
@@ -940,21 +1004,23 @@ db.post_journal(SLUG, 8, "2024-01-01",
 log_n(N["Dwight D. Eisenhower"], 9,
     "Operation Overlord, June 6, 1944: the largest amphibious assault in history. "
     "156,000 Allied troops land on five Normandy beaches. "
-    "Omaha Beach costs 2,000 American casualties in a single morning. "
+    "[[Normandy — Omaha Beach|Omaha Beach]] costs 2,000 American casualties in a single morning. "
     "By nightfall, the Allies have a foothold in France. "
-    "The night before, Eisenhower prepares a message for if the operation fails: "
+    "The night before, [[Dwight D. Eisenhower]] prepares a message for if the operation fails: "
     "'Our landings have failed... If any blame or fault attaches to the attempt, "
     "it is mine alone.' He writes it. He does not need to send it.",
-    polarity="positive", intensity=3, event_type="combat", ripple=True)
+    polarity="positive", intensity=3, event_type="combat", ripple=True,
+    location_id=L["Normandy — Omaha Beach"])
 
 log_n(N["George S. Patton"], 9,
-    "Operation Cobra (July 1944): Patton's Third Army breaks out of Normandy "
+    "Operation Cobra (July 1944): [[George S. Patton]]'s Third Army breaks out of Normandy "
     "and races across France — 600 miles in two weeks, the fastest advance "
     "in the history of armored warfare. Patton outstrips his supply lines "
     "and is eventually halted by fuel shortages. He argues — correctly — "
     "that if given the fuel he could end the war by Christmas. "
     "He is not given the fuel. The war does not end by Christmas.",
-    polarity="positive", intensity=3, event_type="combat", ripple=True)
+    polarity="positive", intensity=3, event_type="combat", ripple=True,
+    location_id=L["Normandy — Omaha Beach"])
 
 log_n(N["Charles de Gaulle"], 9,
     "Paris is liberated on August 25, 1944. De Gaulle insists that French "
@@ -1008,21 +1074,23 @@ log_n(N["Adolf Hitler"], 10,
 
 log_n(N["Georgy Zhukov"], 10,
     "Berlin falls to the Red Army on May 2, 1945. "
-    "Hitler dies by suicide on April 30 — a gunshot wound and cyanide, "
+    "[[Adolf Hitler]] dies by suicide on April 30 — a gunshot wound and cyanide, "
     "with Eva Braun, in the Führerbunker. "
     "Their bodies are burned in the garden above. "
     "Germany signs unconditional surrender on May 8, 1945. "
     "V-E Day. The war in Europe is over.",
-    polarity="positive", intensity=3, event_type="combat", ripple=True)
+    polarity="positive", intensity=3, event_type="combat", ripple=True,
+    location_id=L["The Berlin Bunker"])
 
 log_n(N["Adolf Hitler"], 10,
-    "Hitler kills himself in the Führerbunker on April 30, 1945, "
-    "as Soviet forces fight street by street through Berlin. "
-    "He has governed Germany for twelve years, started a war that kills "
+    "[[Adolf Hitler]] kills himself in the Führerbunker on April 30, 1945, "
+    "as [[Soviet Union|Soviet]] forces fight street by street through Berlin. "
+    "He has governed [[Nazi Germany|Germany]] for twelve years, started a war that kills "
     "seventy to eighty-five million people, and presided over the "
     "deliberate murder of six million Jews. "
     "He dies blaming everyone else.",
-    polarity="positive", intensity=3, event_type="other", ripple=True)
+    polarity="positive", intensity=3, event_type="other", ripple=True,
+    location_id=L["The Berlin Bunker"])
 
 db.post_journal(SLUG, 10, "2024-01-01",
     "**Session 10 — The Eastern Colossus and V-E Day (1945)**\n\n"
@@ -1039,23 +1107,25 @@ db.post_journal(SLUG, 10, "2024-01-01",
 
 # ── Session 11: Himmler, the Holocaust, and the Liberation of the Camps ───────
 log_n(N["Heinrich Himmler"], 11,
-    "The Holocaust reaches its industrial peak in 1942–1944 at Auschwitz-Birkenau, "
+    "The Holocaust reaches its industrial peak in 1942–1944 at [[Auschwitz|Auschwitz-Birkenau]], "
     "Treblinka, Sobibor, Belzec, Chelmno, and Majdanek. "
-    "Six million Jews are murdered — two-thirds of European Jewry. "
+    "Six million Jews are murdered — two-thirds of [[Occupied Europe|European Jewry]]. "
     "The killing does not stop when Germany begins losing the war; "
-    "it accelerates. Himmler's SS continues deportations to the gas chambers "
+    "it accelerates. [[Heinrich Himmler]]'s SS continues deportations to the gas chambers "
     "until the camps are liberated by Allied forces in 1945.",
     polarity="negative", intensity=3, event_type="other",
-    visibility="dm_only", ripple=True)
+    visibility="dm_only", ripple=True,
+    location_id=L["Auschwitz"])
 
 log_f(F["Occupied Europe"], 11,
     "Allied forces liberate the concentration camps in spring 1945: "
     "Buchenwald (April 11), Bergen-Belsen (April 15), Dachau (April 29). "
-    "Eisenhower orders every available soldier and nearby German civilian "
+    "[[Dwight D. Eisenhower]] orders every available soldier and nearby German civilian "
     "to tour the camps. He cables Washington: the evidence is 'beyond the "
     "American mind to comprehend.' He wants witnesses. He is afraid "
     "that someday someone will say this did not happen.",
-    polarity="positive", intensity=3, event_type="discovery", ripple=True)
+    polarity="positive", intensity=3, event_type="discovery", ripple=True,
+    location_id=L["Auschwitz"])
 
 log_n(N["Heinrich Himmler"], 11,
     "In the war's final weeks, Himmler secretly contacts the World Jewish Congress "
@@ -1094,23 +1164,25 @@ log_n(N["Douglas MacArthur"], 12,
     polarity="negative", intensity=3, event_type="combat", ripple=True)
 
 log_n(N["Harry S. Truman"], 12,
-    "Truman authorizes the use of atomic bombs on Japan. "
-    "Hiroshima: August 6, 1945. One bomb kills 80,000 people immediately; "
+    "[[Harry S. Truman]] authorizes the use of atomic bombs on [[Imperial Japan|Japan]]. "
+    "[[Hiroshima]]: August 6, 1945. One bomb kills 80,000 people immediately; "
     "total deaths reach 135,000. Nagasaki: August 9. "
-    "On August 8, the Soviet Union declares war on Japan and invades Manchuria. "
+    "On August 8, the [[Soviet Union]] declares war on Japan and invades Manchuria. "
     "Japan faces atomic annihilation and Soviet invasion simultaneously. "
     "Truman's calculation — that the bombs save more lives than an invasion — "
     "is argued about for the rest of the century.",
-    polarity="positive", intensity=3, event_type="other", ripple=True)
+    polarity="positive", intensity=3, event_type="other", ripple=True,
+    location_id=L["Hiroshima"])
 
 log_n(N["Emperor Hirohito"], 12,
-    "Hirohito records a message on August 14, 1945 — the first time "
+    "[[Emperor Hirohito]] records a message on August 14, 1945 — the first time "
     "a Japanese emperor has spoken directly to the people. "
     "The army briefly attempts to seize the recording and prevent surrender. "
-    "They fail. The broadcast goes out August 15: Japan has decided to "
+    "They fail. The broadcast goes out August 15: [[Imperial Japan|Japan]] has decided to "
     "'endure the unendurable and suffer the insufferable.' "
     "He does not say 'surrender.' He does not need to.",
-    polarity="positive", intensity=3, event_type="dialogue", ripple=True)
+    polarity="positive", intensity=3, event_type="dialogue", ripple=True,
+    location_id=L["Hiroshima"])
 
 log_n(N["Douglas MacArthur"], 12,
     "Japan formally surrenders on the deck of the USS Missouri in Tokyo Bay "
@@ -1143,6 +1215,44 @@ db.post_journal(SLUG, 12, "2024-01-01",
     "Total dead: seventy to eighty-five million people. "
     "The engine cannot hold that number. Neither can we."
 )
+
+# ── Location log entries ───────────────────────────────────────────────────────
+
+log_l(L["London and Whitehall"], 3,
+      "[[Winston Churchill]] refuses armistice. He tells the War Cabinet: 'If this long island story of ours is to end at last, let it end only when each one of us lies choking in his own blood upon the ground.' The cabinet stands and cheers. [[Great Britain]] will not negotiate.",
+      polarity="positive", intensity=3, event_type="dialogue",
+      actor_id=N["Winston Churchill"], actor_type="npc")
+
+log_l(L["Pearl Harbor"], 5,
+      "[[Isoroku Yamamoto]]'s carrier fleet attacks at dawn. 18 warships sunk or damaged. 2,403 Americans killed. The three US aircraft carriers are not in port — they are at sea. [[Isoroku Yamamoto|Yamamoto]] knows this. [[Adolf Hitler]] declares war on the [[United States]] four days later. He was not required to.",
+      polarity="negative", intensity=3, event_type="combat")
+
+log_l(L["Stalingrad"], 7,
+      "[[Georgy Zhukov]]'s Operation Uranus encircles 300,000 German troops. [[Adolf Hitler]] forbids retreat. The relief attempt fails. Field Marshal Paulus surrenders on January 31, 1943 with 91,000 survivors. The myth of German invincibility is over.",
+      polarity="positive", intensity=3, event_type="combat",
+      actor_id=N["Georgy Zhukov"], actor_type="npc")
+
+log_l(L["Normandy — Omaha Beach"], 9,
+      "156,000 Allied troops land on five beaches. Omaha costs 2,000 American casualties in a morning. [[Dwight D. Eisenhower]] carries a message in his pocket for if the operation fails. By nightfall, the Allies are ashore. He does not need to send it.",
+      polarity="positive", intensity=3, event_type="combat",
+      actor_id=N["Dwight D. Eisenhower"], actor_type="npc")
+
+log_l(L["Auschwitz"], 11,
+      "[[Heinrich Himmler]]'s SS operates the killing machinery at peak capacity through 1942-44. The camp is liberated by Soviet forces on January 27, 1945. [[Dwight D. Eisenhower]] orders every available soldier to tour the camps. He wants witnesses. He is afraid that someday someone will say this did not happen.",
+      polarity="negative", intensity=3, event_type="discovery",
+      visibility="dm_only")
+
+log_l(L["The Berlin Bunker"], 10,
+      "[[Adolf Hitler]] dies here on April 30, 1945, as Soviet forces fight street by street above him. Cyanide and a gunshot, with Eva Braun. Their bodies are burned in the garden. Germany holds on for eight more days.",
+      polarity="positive", intensity=3, event_type="other",
+      actor_id=N["Georgy Zhukov"], actor_type="npc")
+
+log_l(L["Hiroshima"], 12,
+      "[[Harry S. Truman]] orders the bomb. August 6, 1945. 80,000 dead immediately. Nagasaki on August 9. On August 15, [[Emperor Hirohito]] speaks to his people in a voice they have never heard. He does not say 'surrender.' Japan surrenders.",
+      polarity="positive", intensity=3, event_type="other",
+      actor_id=N["Harry S. Truman"], actor_type="npc")
+
+print("  Location logs complete")
 
 print("\nWorld War II campaign seeded successfully.")
 print("To deploy to Pi:  rsync -av campaigns/ww2/ simonhans@raspberrypi:/mnt/serverdrive/coding/rippleforge/campaigns/ww2/")

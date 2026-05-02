@@ -180,7 +180,7 @@ def delete_npc_log_entry(slug, npc_id, entry_idx):
 
 def log_npc(slug, npc_id, session, note, polarity=None, intensity=None, event_type=None,
             visibility="public", ripple_source=None, actor_id=None, actor_type=None, branch=None,
-            axis=None, actor_dm_only=False):
+            axis=None, actor_dm_only=False, location_id=None):
     data = _load(slug, "world/npcs.json")
     event_id = "evt_" + secrets.token_hex(3)
     for npc in data.get("npcs", []):
@@ -208,6 +208,8 @@ def log_npc(slug, npc_id, session, note, polarity=None, intensity=None, event_ty
                 entry["branch"] = branch
             if axis in ("formal", "personal"):
                 entry["axis"] = axis
+            if location_id:
+                entry["location_id"] = location_id
             npc.setdefault("log", []).append(entry)
     _save(slug, data, "world/npcs.json")
     return event_id
@@ -448,7 +450,7 @@ def delete_faction_log_entry(slug, faction_id, entry_idx):
 
 def log_faction(slug, faction_id, session, note, polarity=None, intensity=None, event_type=None,
                 visibility="public", ripple_source=None, actor_id=None, actor_type=None, branch=None,
-                axis=None, actor_dm_only=False):
+                axis=None, actor_dm_only=False, location_id=None):
     data = _load(slug, "world/factions.json")
     event_id = "evt_" + secrets.token_hex(3)
     for f in data.get("factions", []):
@@ -476,9 +478,113 @@ def log_faction(slug, faction_id, session, note, polarity=None, intensity=None, 
                 entry["branch"] = branch
             if axis in ("formal", "personal"):
                 entry["axis"] = axis
+            if location_id:
+                entry["location_id"] = location_id
             f.setdefault("log", []).append(entry)
     _save(slug, data, "world/factions.json")
     return event_id
+
+
+# ── Locations ─────────────────────────────────────────────────────────────────
+
+def get_locations(slug, include_hidden=True):
+    locations = _load(slug, "world/locations.json").get("locations", [])
+    if not include_hidden:
+        locations = [l for l in locations if not l.get("hidden", False)]
+    return locations
+
+
+def get_location(slug, location_id):
+    return next((l for l in get_locations(slug) if l["id"] == location_id), None)
+
+
+def add_location(slug, name, role=None, description="", hidden=False, dm_notes=None):
+    data = _load(slug, "world/locations.json")
+    entry = {
+        "id": slugify(name),
+        "name": name,
+        "description": description,
+        "hidden": hidden,
+        "log": [],
+    }
+    if role:
+        entry["role"] = role
+    if dm_notes:
+        entry["dm_notes"] = dm_notes
+    data.setdefault("locations", []).append(entry)
+    _save(slug, data, "world/locations.json")
+    return entry["id"]
+
+
+def update_location(slug, location_id, name=None, role=None, description=None, dm_notes=None):
+    data = _load(slug, "world/locations.json")
+    for loc in data.get("locations", []):
+        if loc["id"] == location_id:
+            if name is not None:
+                loc["name"] = name
+            if role is not None:
+                if role:
+                    loc["role"] = role
+                else:
+                    loc.pop("role", None)
+            if description is not None:
+                loc["description"] = description
+            if dm_notes is not None:
+                if dm_notes:
+                    loc["dm_notes"] = dm_notes
+                else:
+                    loc.pop("dm_notes", None)
+    _save(slug, data, "world/locations.json")
+
+
+def set_location_hidden(slug, location_id, hidden):
+    data = _load(slug, "world/locations.json")
+    for loc in data.get("locations", []):
+        if loc["id"] == location_id:
+            loc["hidden"] = hidden
+    _save(slug, data, "world/locations.json")
+
+
+def delete_location(slug, location_id):
+    data = _load(slug, "world/locations.json")
+    data["locations"] = [l for l in data.get("locations", []) if l["id"] != location_id]
+    _save(slug, data, "world/locations.json")
+
+
+def log_location(slug, location_id, session, note, visibility="public", polarity=None,
+                 intensity=None, event_type=None, actor_id=None, actor_type=None):
+    data = _load(slug, "world/locations.json")
+    event_id = "evt_" + secrets.token_hex(3)
+    for loc in data.get("locations", []):
+        if loc["id"] == location_id:
+            entry = {
+                "id": event_id,
+                "session": session,
+                "note": note,
+                "visibility": visibility,
+            }
+            if polarity in ("positive", "neutral", "negative"):
+                entry["polarity"] = polarity
+                entry["intensity"] = int(intensity) if intensity in (1, 2, 3) else 1
+            if event_type:
+                entry["event_type"] = event_type.strip()
+            if actor_id:
+                entry["actor_id"] = actor_id
+                if actor_type:
+                    entry["actor_type"] = actor_type
+            loc.setdefault("log", []).append(entry)
+    _save(slug, data, "world/locations.json")
+    return event_id
+
+
+def delete_location_log_entry(slug, location_id, entry_idx):
+    data = _load(slug, "world/locations.json")
+    for loc in data.get("locations", []):
+        if loc["id"] == location_id:
+            log = loc.get("log", [])
+            if 0 <= entry_idx < len(log):
+                log.pop(entry_idx)
+    _save(slug, data, "world/locations.json")
 
 
 # ── Inter-faction relationship tracking ──────────────────────────────────────
@@ -713,7 +819,7 @@ def delete_condition_log_entry(slug, condition_id, entry_idx):
 
 
 def log_condition(slug, condition_id, session, note, polarity=None, intensity=None,
-                  event_type=None, visibility="public", ripple_source=None):
+                  event_type=None, visibility="public", ripple_source=None, location_id=None):
     data = _load(slug, "world/conditions.json")
     event_id = "evt_" + secrets.token_hex(3)
     for c in data.get("conditions", []):
@@ -731,6 +837,8 @@ def log_condition(slug, condition_id, session, note, polarity=None, intensity=No
                 entry["event_type"] = event_type.strip()
             if ripple_source:
                 entry["ripple_source"] = ripple_source
+            if location_id:
+                entry["location_id"] = location_id
             c.setdefault("log", []).append(entry)
     _save(slug, data, "world/conditions.json")
     return event_id
@@ -928,7 +1036,7 @@ def add_character(slug, name, race, char_class, level, notes="", hidden=False):
 
 def log_character(slug, char_name, session, note, polarity=None, intensity=None,
                   event_type=None, visibility="public", actor_id=None, actor_type=None,
-                  actor_dm_only=False):
+                  actor_dm_only=False, location_id=None):
     data = _load(slug, "party.json")
     event_id = "evt_" + secrets.token_hex(3)
     for char in data.get("characters", []):
@@ -945,13 +1053,16 @@ def log_character(slug, char_name, session, note, polarity=None, intensity=None,
                     entry["actor_type"] = actor_type
                 if actor_dm_only:
                     entry["actor_dm_only"] = True
+            if location_id:
+                entry["location_id"] = location_id
             char.setdefault("log", []).append(entry)
     _save(slug, data, "party.json")
     return event_id
 
 
 def log_party_group(slug, session, note, polarity=None, intensity=None, event_type=None,
-                    visibility="public", actor_id=None, actor_type=None, actor_dm_only=False):
+                    visibility="public", actor_id=None, actor_type=None, actor_dm_only=False,
+                    location_id=None):
     data = _load(slug, "campaign.json")
     event_id = "evt_" + secrets.token_hex(3)
     entry = {"id": event_id, "session": session, "note": note, "visibility": visibility}
@@ -966,6 +1077,8 @@ def log_party_group(slug, session, note, polarity=None, intensity=None, event_ty
             entry["actor_type"] = actor_type
         if actor_dm_only:
             entry["actor_dm_only"] = True
+    if location_id:
+        entry["location_id"] = location_id
     data.setdefault("party_group_log", []).append(entry)
     _save(slug, data, "campaign.json")
     return event_id

@@ -83,7 +83,7 @@
       <span style="color:{% if c.polarity == 'positive' %}#7ec87e{% elif c.polarity == 'negative' %}#e05c5c{% else %}var(--muted){% endif %}; font-size:0.72rem; flex-shrink:0; min-width:22px;">
         {% if c.polarity == 'positive' %}+{% elif c.polarity == 'negative' %}−{% endif %}{{ c.intensity }}
       </span>
-      <span style="flex:1;">{{ c.note }}</span>
+      <span style="flex:1;">{{ c.note | wikilinks(slug, link_npcs, link_factions, link_locations) }}</span>
       <span style="font-size:0.68rem; font-family:monospace; color:{% if c._cumulative > 0 %}#7ec87e{% elif c._cumulative < 0 %}#e05c5c{% else %}var(--muted){% endif %}; opacity:0.7; flex-shrink:0; margin-left:4px;" title="running total">
         {% if c._cumulative > 0 %}+{% endif %}{{ c._cumulative }}
       </span>
@@ -208,7 +208,7 @@ function rfFormalize(srcId, srcType, tgtId, tgtType, rel, rowId) {
 
 {% if npc.description %}
 <div class="card mt-8">
-  <p>{{ npc.description | wikilinks(slug, link_npcs, link_factions) }}</p>
+  <p>{{ npc.description | wikilinks(slug, link_npcs, link_factions, link_locations) }}</p>
 </div>
 {% endif %}
 
@@ -261,7 +261,7 @@ function rfFormalize(srcId, srcType, tgtId, tgtType, rel, rowId) {
             {% if entry.polarity == 'positive' %}+{% elif entry.polarity == 'negative' %}−{% endif %}{{ entry.intensity }}
           </span>
           {% endif %}
-          <span class="log-entry-note">{{ entry.note }}</span>
+          <span class="log-entry-note">{{ entry.note | wikilinks(slug, link_npcs, link_factions, link_locations, party) }}</span>
           {% if is_dm %}
             {% if vis == 'dm_only' %}<span style="color:var(--muted); font-size:0.7rem; margin-left:6px; font-style:italic;">DM only</span>{% endif %}
             {% if vis == 'restricted' %}<span style="color:var(--purple); font-size:0.7rem; margin-left:6px; font-style:italic;">restricted</span>{% endif %}
@@ -406,8 +406,11 @@ function rfFormalize(srcId, srcType, tgtId, tgtType, rel, rowId) {
 {% macro log_form(action) %}
 <div style="display:flex; flex-direction:column; gap:8px;">
   <div style="display:flex; gap:8px; flex-wrap:wrap;">
-    <input type="number" name="session" placeholder="Session #" min="1" value="{{ current_session }}"
-           style="{{ input_style }} width:90px; flex-shrink:0;">
+    <div style="display:flex; flex-direction:column; gap:2px; flex-shrink:0;">
+      <label style="color:var(--muted); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">{{ terms.session }}</label>
+      <input type="number" name="session" placeholder="#" min="1" value="{{ current_session }}"
+             style="{{ input_style }} width:90px;">
+    </div>
     <select name="polarity" style="{{ input_style }} width:130px; flex-shrink:0;">
       <option value="">— tone —</option>
       <option value="positive">positive</option>
@@ -547,12 +550,13 @@ function rfFormalize(srcId, srcType, tgtId, tgtType, rel, rowId) {
   <form method="POST" action="/{{ slug }}/dm/npc/{{ npc.id }}/log">
     {{ log_form("/{{ slug }}/dm/npc/{{ npc.id }}/log") }}
     <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:6px;">
-      <label style="color:var(--muted); font-size:0.75rem; flex-shrink:0;">Caused by:</label>
+      <label style="color:var(--muted); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; flex-shrink:0;">Caused by</label>
       <select name="actor_id" style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:4px 8px; font-size:0.8rem;"
               onchange="this.form.querySelector('[name=actor_type]').value=this.options[this.selectedIndex].dataset.type||''">
         <option value="" data-type="">— nobody specific —</option>
+        <option value="{{ meta.observer_name or terms.cast_label }}" data-type="party">{{ terms.cast_label }} (whole group)</option>
         {% if party %}
-        <optgroup label="{{ terms.cast_label }}">
+        <optgroup label="{{ terms.cast_label }} — individual">
           {% for char in party %}<option value="{{ char.name }}" data-type="char">{{ char.name }}</option>{% endfor %}
         </optgroup>
         {% endif %}

@@ -9,11 +9,12 @@ Run:  python seed_genesis.py
 import sys, json, secrets, shutil
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent))
+ROOT = Path(__file__).parent.parent
+sys.path.insert(0, str(ROOT))
 from src import data as db
 
 SLUG = "genesis"
-CAMPAIGNS = Path(__file__).parent / "campaigns"
+CAMPAIGNS = ROOT / "campaigns"
 CAMP_DIR = CAMPAIGNS / SLUG
 
 # ── Wipe and recreate ──────────────────────────────────────────────────────────
@@ -68,6 +69,7 @@ _w("world/conditions.json",          {"conditions": []})
 _w("story/quests.json",              {"quests": []})
 _w("dm/session.json",                {})
 _w("dm/relation_suggestions.json",   [])
+_w("world/locations.json",           {"locations": []})
 
 print(f"Seeding {CAMP_DIR} …")
 
@@ -111,23 +113,30 @@ def add_rel(src_type, src_id, tgt_id, tgt_type, relation, weight=0.8, dm_only=Fa
 
 
 def log_n(npc_id, session, note, polarity=None, intensity=1,
-          event_type=None, visibility="public", ripple=False, actor_id=None, actor_type=None):
+          event_type=None, visibility="public", ripple=False, actor_id=None, actor_type=None, location_id=None):
     evt = db.log_npc(SLUG, npc_id, session, note, polarity=polarity,
                      intensity=intensity, event_type=event_type, visibility=visibility,
-                     actor_id=actor_id, actor_type=actor_type)
+                     actor_id=actor_id, actor_type=actor_type, location_id=location_id)
     if ripple and polarity in ("positive", "negative"):
         db.apply_ripple(SLUG, npc_id, "npc", session, note, polarity, intensity, event_type, visibility)
     return evt
 
 
 def log_f(faction_id, session, note, polarity=None, intensity=1,
-          event_type=None, visibility="public", ripple=False, actor_id=None, actor_type=None):
+          event_type=None, visibility="public", ripple=False, actor_id=None, actor_type=None, location_id=None):
     evt = db.log_faction(SLUG, faction_id, session, note, polarity=polarity,
                          intensity=intensity, event_type=event_type, visibility=visibility,
-                         actor_id=actor_id, actor_type=actor_type)
+                         actor_id=actor_id, actor_type=actor_type, location_id=location_id)
     if ripple and polarity in ("positive", "negative"):
         db.apply_ripple(SLUG, faction_id, "faction", session, note, polarity, intensity, event_type, visibility)
     return evt
+
+
+def log_l(loc_id, session, note, polarity=None, intensity=1,
+          event_type=None, visibility="public", actor_id=None, actor_type=None):
+    db.log_location(SLUG, loc_id, session, note, visibility=visibility,
+                    polarity=polarity, intensity=intensity, event_type=event_type,
+                    actor_id=actor_id, actor_type=actor_type)
 
 
 # ── Factions ───────────────────────────────────────────────────────────────────
@@ -135,19 +144,19 @@ factions = [
     ("The Heavenly Court", "ally", True,
      "YHWH and the divine assembly — angels, messengers, the sons of God. "
      "They execute God's will: announce births, destroy cities, wrestle with patriarchs, "
-     "guard Eden. In Genesis, God is the primary actor, not an absent observer. "
+     "guard [[The Garden of Eden|Eden]]. In Genesis, God is the primary actor, not an absent observer. "
      "Every human story unfolds within this frame."),
 
     ("House of Israel", "ally", False,
-     "The covenant family: Abraham, Isaac, Jacob, and the twelve sons who become "
+     "The covenant family: [[Abraham]], [[Isaac]], [[Jacob]], and the twelve sons who become "
      "the twelve tribes. Not yet a nation — a family, a promise, a genealogy God "
      "has staked his reputation on. Their survival across famine and fratricide "
      "is the spine of the narrative."),
 
     ("The Nations", "neutral", False,
      "Egypt, Canaan, and all the peoples surrounding the covenant family. "
-     "They are not enemies by default — Pharaoh shelters Abraham, Melchizedek blesses him, "
-     "and the Canaanites trade with Isaac. The covenant does not yet mean conquest. "
+     "They are not enemies by default — [[Pharaoh]] shelters [[Abraham]], [[Melchizedek]] blesses him, "
+     "and the Canaanites trade with [[Isaac]]. The covenant does not yet mean conquest. "
      "That comes later."),
 ]
 
@@ -165,27 +174,27 @@ npcs_to_add = [
      "ally", True, [F["The Heavenly Court"]],
      "YHWH acts directly in Genesis: creating, judging, promising, relenting. "
      "He makes covenants he then tests. He destroys the world and regrets it. "
-     "He chooses Jacob over Esau before either is born. He wrestles with Jacob "
+     "He chooses [[Jacob]] over [[Esau]] before either is born. He wrestles with [[Jacob]] "
      "in the dark. He is not distant or symbolic — he is present and surprising."),
 
     ("Adam", "The First Man, keeper of the garden",
      "neutral", False, [F["House of Israel"]],
-     "Made from dust, given breath, placed in a garden with one prohibition. "
+     "Made from dust, given breath, placed in [[The Garden of Eden|a garden]] with one prohibition. "
      "He names every creature. He receives the woman and joins her in the one "
      "thing they were told not to do. He blames her when caught. He is every man."),
 
     ("Eve", "The First Woman, mother of all living",
      "neutral", False, [F["House of Israel"]],
      "She hears the serpent's argument and finds it compelling — the fruit will "
-     "make them wise, like God. She eats. She gives to Adam. She names herself "
+     "make them wise, like God. She eats. She gives to [[Adam]]. She names herself "
      "Eve, 'mother of all living,' after the curse. The naming is an act of defiance "
      "and hope in the same breath."),
 
     # Cain and Abel
     ("Cain", "The First Murderer, keeper of the earth",
      "negative", False, [F["House of Israel"]],
-     "He offers the fruits of the ground; Abel offers fat portions of his flock. "
-     "God regards Abel's offering and not his. The text never explains why. Cain's "
+     "He offers the fruits of the ground; [[Abel]] offers fat portions of his flock. "
+     "God regards [[Abel]]'s offering and not his. The text never explains why. Cain's "
      "rage at the injustice is understandable. What he does with it is not. "
      "He is marked but not destroyed — God protects the first murderer."),
 
@@ -209,19 +218,19 @@ npcs_to_add = [
      "He leaves everything at seventy-five on the strength of a promise. "
      "He passes his wife off as his sister twice to save his own skin. "
      "He laughs when God promises a son at ninety-nine. He rises at dawn to "
-     "take Isaac to Moriah without a word to Sarah. He is the central figure "
+     "take [[Isaac]] to [[Mount Moriah|Moriah]] without a word to [[Sarah]]. He is the central figure "
      "of Genesis: brave, flawed, chosen."),
 
     ("Sarah", "Matriarch, mother of the promise",
      "ally", False, [F["House of Israel"]],
      "She laughs at the angel's announcement — a ninety-year-old woman bearing a son. "
      "She laughed, God notes. She says she didn't laugh. God says she did. "
-     "The argument is never resolved. She named her son Isaac: laughter. "
-     "She is fiercer and harder than Abraham in protecting her line."),
+     "The argument is never resolved. She named her son [[Isaac]]: laughter. "
+     "She is fiercer and harder than [[Abraham]] in protecting her line."),
 
     ("Hagar", "Egyptian servant, mother of Ishmael",
      "neutral", False, [F["The Nations"]],
-     "Sarah gives her to Abraham as a surrogate and then treats her with cruelty "
+     "[[Sarah]] gives her to [[Abraham]] as a surrogate and then treats her with cruelty "
      "when Hagar grows proud of her pregnancy. She flees into the desert. "
      "An angel finds her at a spring. God sees her — the text emphasizes this: "
      "she is the only person in the Bible to name God. She calls him El-roi: "
@@ -230,15 +239,15 @@ npcs_to_add = [
     ("Ishmael", "Son of Abraham and Hagar, father of twelve princes",
      "neutral", False, [F["The Nations"]],
      "The first son, the not-chosen one. He and his mother are sent into the "
-     "desert with bread and a skin of water when Isaac is weaned. The water runs "
-     "out. Hagar sets the boy under a bush and walks away so she won't watch him "
+     "desert with bread and a skin of water when [[Isaac]] is weaned. The water runs "
+     "out. [[Hagar]] sets the boy under a bush and walks away so she won't watch him "
      "die. God hears the boy crying. He will be a great nation too — just not "
      "this story's nation."),
 
     ("Melchizedek", "Priest-King of Salem, man of mystery",
      "ally", False, [F["The Nations"]],
-     "He appears from nowhere to bless Abraham after battle, brings bread and wine, "
-     "and disappears. He is priest of El-Elyon — God Most High — before Abraham "
+     "He appears from nowhere to bless [[Abraham]] after battle, brings bread and wine, "
+     "and disappears. He is priest of El-Elyon — God Most High — before [[Abraham]] "
      "ever hears that name. He has no genealogy in the text, no beginning or end. "
      "He becomes a type: priesthood outside the bloodline."),
 
@@ -251,51 +260,51 @@ npcs_to_add = [
 
     ("Isaac", "Son of Promise, quiet patriarch",
      "ally", False, [F["House of Israel"]],
-     "He is bound on the altar at Moriah and unmade. He is the passive center "
+     "He is bound on the altar at [[Mount Moriah|Moriah]] and unmade. He is the passive center "
      "of his own story: the sacrifice that doesn't happen. He grows up, marries "
-     "Rebekah, fathers twins he cannot see clearly — literally or otherwise. "
-     "He blesses Jacob thinking he is Esau. He is deceived by his own family."),
+     "[[Rebekah]], fathers twins he cannot see clearly — literally or otherwise. "
+     "He blesses [[Jacob]] thinking he is [[Esau]]. He is deceived by his own family."),
 
     ("Rebekah", "Matriarch, planner of the deception",
      "ally", False, [F["House of Israel"]],
-     "She waters ten camels unasked when Abraham's servant arrives at her family's well — "
+     "She waters ten camels unasked when [[Abraham]]'s servant arrives at her family's well — "
      "an act of extraordinary generosity. She leaves everything to marry a stranger. "
      "She hears the oracle: the elder will serve the younger. She makes it happen, "
-     "using her husband's blindness. She never sees Jacob again after she saves him."),
+     "using her husband's blindness. She never sees [[Jacob]] again after she saves him."),
 
     # Jacob cycle — the heart of Genesis
     ("Jacob", "Patriarch of Israel, heel-grabber and wrestler",
      "ally", False, [F["House of Israel"]],
-     "He is born grabbing his twin's heel. He buys Esau's birthright for stew. "
-     "He steals Isaac's blessing. He flees, dreams of a ladder, bargains with God. "
-     "He works seven years for Rachel and is given Leah instead. He works seven "
-     "more. He wrestles God at the ford of Jabbok and refuses to let go. "
+     "He is born grabbing his twin's heel. He buys [[Esau]]'s birthright for stew. "
+     "He steals [[Isaac]]'s blessing. He flees, dreams of a ladder, bargains with God. "
+     "He works seven years for [[Rachel]] and is given [[Leah]] instead. He works seven "
+     "more. He wrestles God at [[The Ford of Jabbok|the ford of Jabbok]] and refuses to let go. "
      "His name becomes Israel. He is the ancestor of everyone."),
 
     ("Esau", "The elder twin, man of the field",
      "neutral", False, [F["House of Israel"]],
      "He sells his birthright for a bowl of red stew because he is starving "
      "and cannot see past the moment. He weeps when he finds the blessing stolen "
-     "— a sound that tears the reader in two. He forgives Jacob decades later "
+     "— a sound that tears the reader in two. He forgives [[Jacob]] decades later "
      "and runs to meet him. His mercy is greater than his loss."),
 
     ("Laban", "Jacob's uncle and adversary",
      "negative", False, [F["The Nations"]],
-     "He substitutes Leah for Rachel on the wedding night and explains it away "
-     "with local custom. He changes Jacob's wages ten times over fourteen years. "
-     "He pursues Jacob when he finally leaves and finds his household gods missing. "
-     "He is the mirror Jacob needed: he meets a manipulator who out-manipulates him."),
+     "He substitutes [[Leah]] for [[Rachel]] on the wedding night and explains it away "
+     "with local custom. He changes [[Jacob]]'s wages ten times over fourteen years. "
+     "He pursues [[Jacob]] when he finally leaves and finds his household gods missing. "
+     "He is the mirror [[Jacob]] needed: he meets a manipulator who out-manipulates him."),
 
     ("Rachel", "Beloved wife of Jacob",
      "ally", False, [F["House of Israel"]],
-     "Jacob sees her at the well and weeps. He works seven years for her. "
+     "[[Jacob]] sees her at the well and weeps. He works seven years for her. "
      "He works seven more. She steals her father's household gods when they leave — "
      "the text never explains why. She dies giving birth to Benjamin, naming him "
-     "Son of My Sorrow with her last breath. Jacob renames him Son of My Right Hand."),
+     "Son of My Sorrow with her last breath. [[Jacob]] renames him Son of My Right Hand."),
 
     ("Leah", "Elder wife of Jacob, unseen and fertile",
      "neutral", False, [F["House of Israel"]],
-     "She was substituted for her sister. The text says Jacob loved Rachel more. "
+     "She was substituted for her sister. The text says [[Jacob]] loved [[Rachel]] more. "
      "God sees Leah's unloved condition and opens her womb. She names her sons "
      "with prayers: Reuben — God has seen my affliction. Simeon — God heard "
      "I am unloved. Her naming of her children is a theology of pain acknowledged."),
@@ -303,23 +312,23 @@ npcs_to_add = [
     # Joseph cycle
     ("Joseph", "Dreamer and Vizier of Egypt",
      "ally", False, [F["House of Israel"]],
-     "Jacob's favorite son, given a coat of many colors. His dreams say his "
-     "brothers will bow to him. His brothers throw him in a pit and sell him to "
+     "[[Jacob]]'s favorite son, given a coat of many colors. His dreams say his "
+     "brothers will bow to him. His brothers throw him in [[The Pit at Dothan|a pit]] and sell him to "
      "Ishmaelite traders for twenty pieces of silver. In Egypt he rises to the top "
-     "of every system he enters — Potiphar's house, the prison, Pharaoh's court. "
+     "of every system he enters — Potiphar's house, the prison, [[Pharaoh's Court|Pharaoh's court]]. "
      "He weeps when he finally sees his brothers again. He forgives them."),
 
     ("Judah", "Fourth son of Jacob, the unexpected leader",
      "neutral", False, [F["House of Israel"]],
-     "He suggests selling Joseph instead of killing him. He fails his daughter-in-law "
-     "Tamar. He stands surety for Benjamin before Jacob. In Egypt, when Pharaoh's "
+     "He suggests selling [[Joseph]] instead of killing him. He fails his daughter-in-law "
+     "Tamar. He stands surety for Benjamin before [[Jacob]]. In Egypt, when [[Pharaoh]]'s "
      "vizier threatens to keep Benjamin, it is Judah — not Reuben — who steps forward "
-     "and offers himself as a substitute. That speech changes Joseph. The line of Judah "
+     "and offers himself as a substitute. That speech changes [[Joseph]]. The line of Judah "
      "becomes the royal line."),
 
     ("Pharaoh", "King of Egypt, Joseph's patron",
      "neutral", False, [F["The Nations"]],
-     "He dreams of seven fat cows and seven lean cows, and Joseph interprets it: "
+     "He dreams of seven fat cows and seven lean cows, and [[Joseph]] interprets it: "
      "seven years of plenty, then seven years of famine. He makes a Hebrew slave "
      "and prisoner second-in-command of all Egypt before breakfast. He is "
      "pragmatic, powerful, and — in Genesis — not yet an enemy."),
@@ -402,6 +411,59 @@ db.add_quest(SLUG,
 
 print(f"  Story arcs seeded")
 
+# ── Locations ──────────────────────────────────────────────────────────────────
+db.add_location(SLUG, "The Garden of Eden",
+    role="The first home — paradise, then lost",
+    description="A garden planted by God in Eden, watered by four rivers. Every tree pleasing to the eye and good for food grows here. The tree of life stands at its center, and the tree of the knowledge of good and evil. God walks here in the cool of the day. The garden is closed now. Cherubim with a flaming sword guard the way back.",
+    hidden=False,
+    dm_notes="The garden is the baseline against which every other place in Genesis is measured. Every displacement — Cain's exile, Hagar's desert, Jacob's flight — echoes the original displacement. The flaming sword is not punishment; it is protection. God does not want humanity to eat from the tree of life in a fallen state.")
+
+db.add_location(SLUG, "The Land of Nod",
+    role="East of Eden — Cain's exile",
+    description="The land east of [[The Garden of Eden|Eden]] where [[Cain]] was sent after murdering his brother. Its name means 'wandering.' [[Cain]] built a city here and named it after his son Enoch. The land of Nod is not described further. It does not need to be.",
+    hidden=False,
+    dm_notes="Cain is marked but not destroyed — the mark is God's protection, not God's punishment. The city Cain builds is the first human city in the text. The pattern: violence, exile, civilization. The city is built by the man who killed his brother.")
+
+db.add_location(SLUG, "Beer-lahai-roi",
+    role="The well where Hagar named God",
+    description="A spring in the wilderness between Kadesh and Bered, on the road to Shur. [[Hagar]] fled here from [[Sarah]]'s mistreatment. The angel of the LORD found her at this spring. She is the only person in the Bible to give God a name: El-roi, the God who sees me. The well is named for this: 'the well of the Living One who sees me.'",
+    hidden=False,
+    dm_notes="Beer-lahai-roi is a theological pivot. The God of Abraham appears to the Egyptian slave woman who has been mistreated and abandoned. He sees her. This is the text's first clear statement that the covenant does not make God blind to those outside it. Isaac later lives near this well.")
+
+db.add_location(SLUG, "Mount Moriah",
+    role="The place of the binding of Isaac",
+    description="A mountain in the land of Moriah, three days' journey from Beersheba. [[Abraham]] brought [[Isaac]] here to offer him as a burnt offering. God stopped him. A ram caught in a thicket was sacrificed instead. [[Abraham]] named the place 'The LORD will provide.' The site is later identified with Jerusalem.",
+    hidden=False,
+    dm_notes="The binding (Akedah) is the hinge of the Abraham covenant. God asks for what he most values and then does not take it. The ram in the thicket is provided before Abraham reaches the altar — the provision precedes the act of faith, not rewards it. Abraham rises early in the morning and saddles his donkey himself. He does not wake a servant. He does not tell Sarah.")
+
+db.add_location(SLUG, "Bethel",
+    role="Where Jacob dreamed of the ladder",
+    description="A place [[Jacob]] named Bethel — House of God — after sleeping there on a stone pillow. He dreamed of a ladder reaching to heaven, with angels ascending and descending, and God speaking from above, renewing the covenant of [[Abraham]]. He woke and said: surely the LORD is in this place, and I did not know it. He anointed the stone and made a vow.",
+    hidden=False,
+    dm_notes="Jacob encounters God here as a fugitive — not as a patriarch but as a young man running from his brother. The covenant is given here without precondition. Jacob's response is a bargain: if God does this, then the LORD shall be my God. The bargaining is characteristic. He is already Jacob.")
+
+db.add_location(SLUG, "The Ford of Jabbok",
+    role="Where Jacob wrestled and was renamed Israel",
+    description="A ford on the river Jabbok, a tributary of the Jordan. [[Jacob]] was alone here when a man came and wrestled with him until daybreak. [[Jacob]] would not release him without a blessing. The man renamed him Israel — he who strives with God — and struck his hip. [[Jacob]] limped away. He called the place Peniel: I have seen God face to face, and yet my life is preserved.",
+    hidden=False,
+    dm_notes="The wrestling match is the most mysterious scene in Genesis. The text does not say who the man is. Jacob knows. The covenant family is renamed for a wrestling match with God. Jacob wins — or is allowed to win — and is permanently marked by it. He limps into the sunrise. That is the point.")
+
+db.add_location(SLUG, "The Pit at Dothan",
+    role="Where Joseph was thrown by his brothers",
+    description="A dry pit in the fields near Dothan, where [[Joseph]]'s brothers stripped his coat of many colors, threw him in, and sat down to eat bread. Ishmaelite traders passed on the road. [[Judah]] proposed selling him rather than killing him. [[Joseph]] was pulled from the pit and sold for twenty pieces of silver. The coat was dipped in goat's blood and taken to [[Jacob]].",
+    hidden=False,
+    dm_notes="The pit is empty of water — the text specifies this. No one drowns in it. Joseph is in a dry pit with twenty pieces of silver changing hands above him. The coat of many colors goes one direction; Joseph goes another. Jacob weeps for years over the coat. God is not mentioned in this scene at all.")
+
+db.add_location(SLUG, "Pharaoh's Court",
+    role="The seat of Egyptian power — Joseph's throne",
+    description="The court of [[Pharaoh]], king of Egypt. [[Joseph]] is brought here from prison to interpret [[Pharaoh]]'s dreams of seven fat cows and seven lean ones. [[Pharaoh]] makes him second in command of all Egypt before breakfast. He gives [[Joseph]] his signet ring, fine linen, a gold chain, and a new name. [[Joseph]] is thirty years old.",
+    hidden=False,
+    dm_notes="Pharaoh in the Joseph story is not the Pharaoh of the Exodus. He is shrewd, pragmatic, and willing to be advised. The elevation of a Hebrew slave to vizier of Egypt requires a level of institutional flexibility the text takes for granted. The grain stores Joseph builds during the seven years of plenty are what make the reunion with his brothers possible.")
+
+locations_data = db._load(SLUG, "world/locations.json")
+L = {loc["name"]: loc["id"] for loc in locations_data["locations"]}
+print(f"  Locations: {list(L.keys())}")
+
 # ── Relations ──────────────────────────────────────────────────────────────────
 
 # Dual-axis: formal bond vs personal rupture
@@ -446,21 +508,23 @@ print("  Relations set")
 
 # Chapters 1-3: The Primordial History
 log_n(N["Adam"], 1,
-      "Adam and Eve eat the fruit of the tree of knowledge of good and evil; "
+      "[[Adam]] and [[Eve]] eat the fruit of the tree of knowledge of good and evil; "
       "they hide from God among the trees of the garden.",
-      polarity="negative", intensity=2, event_type="other", ripple=True)
+      polarity="negative", intensity=2, event_type="other", ripple=True,
+      location_id=L["The Garden of Eden"])
 
 log_n(N["Cain"], 1,
-      "Cain kills his brother Abel in the field; when God asks where Abel is, "
-      "Cain says: am I my brother's keeper?",
-      polarity="negative", intensity=3, event_type="combat")
+      "[[Cain]] kills his brother [[Abel]] in the field; when God asks where [[Abel]] is, "
+      "[[Cain]] says: am I my brother's keeper?",
+      polarity="negative", intensity=3, event_type="combat",
+      location_id=L["The Land of Nod"])
 
 db.apply_ripple(SLUG, N["Cain"], "npc", 1,
-                "Cain kills Abel — the first violence in the world.",
+                "[[Cain]] kills [[Abel]] — the first violence in the world.",
                 "negative", 3, "combat", "public")
 
 log_n(N["Noah"], 2,
-      "God tells Noah to build an ark; Noah does exactly what God commands "
+      "God tells [[Noah]] to build an ark; [[Noah]] does exactly what God commands "
       "without a word of protest or a question.",
       polarity="positive", intensity=1, event_type="other")
 
@@ -470,150 +534,158 @@ log_f(F["The Nations"], 2,
       polarity="negative", intensity=3, event_type="other")
 
 log_n(N["Noah"], 2,
-      "Noah plants a vineyard, drinks too much, and lies uncovered in his tent; "
+      "[[Noah]] plants a vineyard, drinks too much, and lies uncovered in his tent; "
       "Ham sees him and tells his brothers. Shem and Japheth walk in backward "
       "with a garment and cover him.",
       polarity="negative", intensity=1, event_type="other")
 
 # Chapter 4: Abraham
 log_n(N["Abraham"], 3,
-      "God tells Abram to leave his country, his kindred, and his father's house "
-      "for a land he will be shown. Abram leaves. He is seventy-five years old.",
+      "God tells [[Abraham|Abram]] to leave his country, his kindred, and his father's house "
+      "for a land he will be shown. [[Abraham|Abram]] leaves. He is seventy-five years old.",
       polarity="positive", intensity=2, event_type="other")
 
 log_n(N["Abraham"], 3,
-      "Entering Egypt during famine, Abram tells Sarai to say she is his sister "
+      "Entering Egypt during famine, [[Abraham|Abram]] tells [[Sarah|Sarai]] to say she is his sister "
       "to protect himself from men who would kill him for her. She is taken into "
-      "Pharaoh's house. God strikes the household with plagues.",
+      "[[Pharaoh]]'s house. God strikes the household with plagues.",
       polarity="negative", intensity=2, event_type="politics")
 
 log_n(N["Melchizedek"], 4,
-      "After Abraham's victory over the kings, Melchizedek king of Salem "
-      "brings bread and wine and blesses him: blessed be Abram by God Most High, "
+      "After [[Abraham]]'s victory over the kings, [[Melchizedek]] king of Salem "
+      "brings bread and wine and blesses him: blessed be [[Abraham|Abram]] by God Most High, "
       "creator of heaven and earth.",
       polarity="positive", intensity=2, event_type="dialogue")
 
 log_n(N["Hagar"], 4,
-      "Hagar flees into the desert after Sarah mistreats her; "
+      "[[Hagar]] flees into the desert after [[Sarah]] mistreats her; "
       "the angel of the LORD finds her at a spring on the way to Shur and tells her "
       "to return. She names God El-roi: the one who sees me.",
-      polarity="positive", intensity=3, event_type="other")
+      polarity="positive", intensity=3, event_type="other",
+      location_id=L["Beer-lahai-roi"])
 
 log_n(N["Abraham"], 5,
-      "God appears to Abraham at age ninety-nine and promises a son from Sarah; "
-      "Abraham falls on his face and laughs. He says: shall Sarah, at ninety, bear a child?",
+      "God appears to [[Abraham]] at age ninety-nine and promises a son from [[Sarah]]; "
+      "[[Abraham]] falls on his face and laughs. He says: shall [[Sarah]], at ninety, bear a child?",
       polarity="positive", intensity=2, event_type="dialogue")
 
 log_n(N["Sarah"], 5,
-      "Sarah listens from the tent entrance when the angels announce she will bear "
+      "[[Sarah]] listens from the tent entrance when the angels announce she will bear "
       "a son in a year. She laughs to herself. God asks: is anything too hard for the LORD?",
       polarity="positive", intensity=2, event_type="dialogue")
 
 log_n(N["Abraham"], 5,
-      "Abraham rises early in the morning and takes Isaac to Mount Moriah. "
+      "[[Abraham]] rises early in the morning and takes [[Isaac]] to [[Mount Moriah]]. "
       "He builds the altar, binds his son, and raises the knife. "
       "God stops him: now I know you fear God, for you have not withheld your son.",
-      polarity="positive", intensity=3, event_type="other", ripple=True)
+      polarity="positive", intensity=3, event_type="other", ripple=True,
+      location_id=L["Mount Moriah"])
 
 # Chapter 5: Jacob and Esau
 log_n(N["Esau"], 5,
-      "Esau comes in from the field famished and sells his birthright to Jacob "
+      "[[Esau]] comes in from the field famished and sells his birthright to [[Jacob]] "
       "for bread and a bowl of red lentil stew. He eats, rises, and goes away, "
       "having despised his birthright.",
       polarity="negative", intensity=2, event_type="dialogue")
 
 log_n(N["Rebekah"], 5,
-      "Rebekah hears that Isaac intends to bless Esau; she dresses Jacob in goat skins "
-      "so blind Isaac will mistake him for his hairy brother, "
-      "and sends Jacob to steal the blessing.",
+      "[[Rebekah]] hears that [[Isaac]] intends to bless [[Esau]]; she dresses [[Jacob]] in goat skins "
+      "so blind [[Isaac]] will mistake him for his hairy brother, "
+      "and sends [[Jacob]] to steal the blessing.",
       polarity="neutral", intensity=2, event_type="other")
 
 log_n(N["Jacob"], 5,
-      "Jacob deceives his blind father and receives the blessing of the firstborn; "
-      "Esau arrives minutes later and weeps: is he not rightly named Jacob? "
-      "He has supplanted me twice. He plans to kill Jacob after Isaac's death.",
+      "[[Jacob]] deceives his blind father and receives the blessing of the firstborn; "
+      "[[Esau]] arrives minutes later and weeps: is he not rightly named [[Jacob]]? "
+      "He has supplanted me twice. He plans to kill [[Jacob]] after [[Isaac]]'s death.",
       polarity="negative", intensity=3, event_type="dialogue", ripple=True)
 
 log_n(N["Jacob"], 6,
-      "Jacob flees to Laban's house and dreams of a ladder reaching to heaven "
+      "[[Jacob]] flees to [[Laban]]'s house and dreams of a ladder reaching to heaven "
       "with angels ascending and descending; God speaks from above and renews "
-      "the covenant of Abraham. Jacob wakes: surely the LORD is in this place.",
-      polarity="positive", intensity=3, event_type="other")
+      "the covenant of [[Abraham]]. [[Jacob]] wakes: surely the LORD is in this place.",
+      polarity="positive", intensity=3, event_type="other",
+      location_id=L["Bethel"])
 
 log_n(N["Laban"], 6,
-      "On the wedding night Laban substitutes Leah for Rachel; Jacob wakes "
-      "to find the wrong wife. Laban explains: it is not done to give the younger "
-      "before the firstborn. Jacob must work seven more years for Rachel.",
+      "On the wedding night [[Laban]] substitutes [[Leah]] for [[Rachel]]; [[Jacob]] wakes "
+      "to find the wrong wife. [[Laban]] explains: it is not done to give the younger "
+      "before the firstborn. [[Jacob]] must work seven more years for [[Rachel]].",
       polarity="negative", intensity=3, event_type="other", ripple=True)
 
 log_n(N["Jacob"], 7,
-      "At the ford of Jabbok, Jacob wrestles with a man until daybreak; "
-      "the man strikes Jacob's hip but cannot pin him. Jacob refuses to release him "
+      "At [[The Ford of Jabbok]], [[Jacob]] wrestles with a man until daybreak; "
+      "the man strikes [[Jacob]]'s hip but cannot pin him. [[Jacob]] refuses to release him "
       "without a blessing. The man asks his name. Then renames him: Israel.",
-      polarity="positive", intensity=3, event_type="combat")
+      polarity="positive", intensity=3, event_type="combat",
+      location_id=L["The Ford of Jabbok"])
 
 log_n(N["Esau"], 7,
-      "Esau runs to meet Jacob returning with his family and embraces him; "
-      "Jacob had sent gifts ahead expecting violence and found forgiveness instead. "
-      "Esau says: I have enough, my brother. Keep what you have.",
+      "[[Esau]] runs to meet [[Jacob]] returning with his family and embraces him; "
+      "[[Jacob]] had sent gifts ahead expecting violence and found forgiveness instead. "
+      "[[Esau]] says: I have enough, my brother. Keep what you have.",
       polarity="positive", intensity=3, event_type="dialogue")
 
 # Chapter 6: Joseph
 log_n(N["Joseph"], 8,
-      "Joseph tells his dreams — sheaves bowing, stars bowing — to his father "
+      "[[Joseph]] tells his dreams — sheaves bowing, stars bowing — to his father "
       "and brothers. His brothers hate him and cannot speak peaceably to him.",
       polarity="negative", intensity=1, event_type="dialogue")
 
 log_n(N["Judah"], 8,
-      "Judah persuades his brothers not to kill Joseph but to sell him to Ishmaelite "
+      "[[Judah]] persuades his brothers not to kill [[Joseph]] but to sell him to Ishmaelite "
       "traders for twenty pieces of silver. They dip his coat in goat's blood "
-      "and bring it to Jacob: we found this. Is it your son's robe?",
+      "and bring it to [[Jacob]]: we found this. Is it your son's robe?",
       polarity="negative", intensity=3, event_type="other",
-      actor_id=N["Joseph"], actor_type="npc")
+      actor_id=N["Joseph"], actor_type="npc",
+      location_id=L["The Pit at Dothan"])
 
 db.apply_ripple(SLUG, N["Joseph"], "npc", 8,
-                "Joseph is sold into Egypt by his own brothers.",
+                "[[Joseph]] is sold into Egypt by his own brothers.",
                 "negative", 3, "other", "public")
 
 log_n(N["Joseph"], 9,
-      "In Egypt Joseph rises to oversee Potiphar's household; "
+      "In Egypt [[Joseph]] rises to oversee Potiphar's household; "
       "Potiphar's wife falsely accuses him of assault when he rejects her; "
       "he is thrown into prison.",
       polarity="negative", intensity=2, event_type="other")
 
 log_n(N["Joseph"], 9,
-      "In prison Joseph correctly interprets the dreams of Pharaoh's cupbearer "
+      "In prison [[Joseph]] correctly interprets the dreams of [[Pharaoh]]'s cupbearer "
       "and baker; the cupbearer forgets him for two years.",
       polarity="neutral", intensity=1, event_type="other")
 
 log_n(N["Pharaoh"], 10,
-      "Pharaoh dreams of seven fat cows and seven lean cows; Joseph interprets "
+      "[[Pharaoh]] dreams of seven fat cows and seven lean cows; [[Joseph]] interprets "
       "the dream: seven years of plenty, then seven years of famine. "
-      "Pharaoh makes Joseph second in command of all Egypt.",
-      polarity="positive", intensity=3, event_type="dialogue")
+      "[[Pharaoh]] makes [[Joseph]] second in command of all Egypt.",
+      polarity="positive", intensity=3, event_type="dialogue",
+      location_id=L["Pharaoh's Court"])
 
 log_f(F["House of Israel"], 10,
-      "The famine strikes Canaan; Jacob sends his sons to Egypt to buy grain, "
-      "keeping Benjamin at home. They bow before the vizier without recognizing Joseph.",
+      "The famine strikes Canaan; [[Jacob]] sends his sons to Egypt to buy grain, "
+      "keeping [[Benjamin]] at home. They bow before the vizier without recognizing [[Joseph]].",
       polarity="negative", intensity=3, event_type="other")
 
 log_n(N["Joseph"], 10,
-      "Joseph recognizes his brothers but does not reveal himself; he tests them, "
-      "accuses them of spying, keeps Simeon, and demands Benjamin be brought. "
+      "[[Joseph]] recognizes his brothers but does not reveal himself; he tests them, "
+      "accuses them of spying, keeps Simeon, and demands [[Benjamin]] be brought. "
       "He turns away and weeps.",
-      polarity="positive", intensity=2, event_type="dialogue")
+      polarity="positive", intensity=2, event_type="dialogue",
+      location_id=L["Pharaoh's Court"])
 
 log_n(N["Judah"], 10,
-      "When Joseph threatens to keep Benjamin, Judah steps forward and offers "
+      "When [[Joseph]] threatens to keep [[Benjamin]], [[Judah]] steps forward and offers "
       "himself as a substitute: let me remain as your servant in place of the boy. "
       "How can I go back to my father if the boy is not with me?",
       polarity="positive", intensity=3, event_type="dialogue")
 
 log_n(N["Joseph"], 10,
-      "Joseph can control himself no longer; he clears the room and weeps aloud. "
-      "He says: I am Joseph. Is my father still alive? He cannot stop weeping. "
+      "[[Joseph]] can control himself no longer; he clears the room and weeps aloud. "
+      "He says: I am [[Joseph]]. Is my father still alive? He cannot stop weeping. "
       "He kisses all his brothers and they talk together.",
-      polarity="positive", intensity=3, event_type="dialogue", ripple=True)
+      polarity="positive", intensity=3, event_type="dialogue", ripple=True,
+      location_id=L["Pharaoh's Court"])
 
 db.log_condition(SLUG, C["The Great Famine"], 10,
                  "Joseph's grain stores sustain Egypt and Canaan through the seven lean years; "
@@ -621,6 +693,45 @@ db.log_condition(SLUG, C["The Great Famine"], 10,
                  polarity="positive", intensity=3)
 
 print("  Event log complete")
+
+# ── Location log entries ───────────────────────────────────────────────────────
+
+log_l(L["The Garden of Eden"], 1,
+      "[[Adam]] and [[Eve]] eat the forbidden fruit. God walks in the garden in the cool of the day and calls: where are you? [[Adam]] blames [[Eve]]. [[Eve]] blames the serpent. The garden is lost.",
+      polarity="negative", intensity=3, event_type="other")
+
+log_l(L["Beer-lahai-roi"], 4,
+      "[[Hagar]] meets the angel of the LORD at this spring, fleeing [[Sarah]]'s cruelty. She is seen. She names God El-roi — the one who sees me. This is the only place in the Bible where a human gives God a name.",
+      polarity="positive", intensity=3, event_type="dialogue")
+
+log_l(L["Mount Moriah"], 5,
+      "[[Abraham]] brings [[Isaac]] here. He builds the altar. He binds his son. He raises the knife. God stops him. A ram is caught in the thicket. [[Abraham]] names the place: the LORD will provide.",
+      polarity="positive", intensity=3, event_type="other",
+      actor_id="The Reader", actor_type="party")
+
+log_l(L["Bethel"], 6,
+      "[[Jacob]] sleeps on a stone with angels ascending and descending above him. God renews the covenant: your descendants will be as the dust of the earth. [[Jacob]] wakes and anoints the stone.",
+      polarity="positive", intensity=2, event_type="other")
+
+log_l(L["The Ford of Jabbok"], 7,
+      "[[Jacob]] wrestles alone until daybreak. He refuses to release the man without a blessing. His hip is struck. He is renamed Israel. He limps into the sunrise carrying a new name and a permanent wound.",
+      polarity="positive", intensity=3, event_type="combat")
+
+log_l(L["The Pit at Dothan"], 8,
+      "[[Joseph]]'s brothers strip his coat and throw him in a dry pit. [[Judah]] proposes selling him. Twenty pieces of silver. The coat is dipped in goat's blood. [[Jacob]] weeps and will not be comforted.",
+      polarity="negative", intensity=3, event_type="other",
+      actor_id=N["Judah"], actor_type="npc")
+
+log_l(L["Pharaoh's Court"], 10,
+      "[[Pharaoh]] dreams of fat cows and lean cows. [[Joseph]] interprets it. [[Pharaoh]] gives him his ring, his linen, his chain. Second in command of all Egypt. [[Joseph]] is thirty years old. He was in a pit ten years ago.",
+      polarity="positive", intensity=3, event_type="dialogue",
+      actor_id=N["Pharaoh"], actor_type="npc")
+
+log_l(L["Pharaoh's Court"], 10,
+      "[[Joseph]] reveals himself to his brothers. 'I am Joseph. Is my father still alive?' He cannot stop weeping. His brothers cannot answer him — they are dismayed before him.",
+      polarity="positive", intensity=3, event_type="dialogue")
+
+print("  Location logs complete")
 
 # ── Journal entries ─────────────────────────────────────────────────────────────
 db.post_journal(SLUG, 1, "The Garden",

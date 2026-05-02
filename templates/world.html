@@ -352,7 +352,7 @@ window.applyFilters = function() {
           {% if entry.polarity == 'negative' %}↑{% elif entry.polarity == 'positive' %}↓{% endif %}{{ entry.intensity }}
         </span>
         {% endif %}
-        {{ entry.note }}
+        {{ entry.note | wikilinks(slug, npcs, factions, locations) }}
       </li>
       {% endif %}{% endfor %}
     </ul>
@@ -410,7 +410,7 @@ window.applyFilters = function() {
     <hr class="divider" style="margin:10px 0;">
 
     {% if npc.description %}
-    <p style="font-size:0.88rem; color:var(--text); margin-bottom:10px;">{{ npc.description | wikilinks(slug, npcs, factions) }}</p>
+    <p style="font-size:0.88rem; color:var(--text); margin-bottom:10px;">{{ npc.description | wikilinks(slug, npcs, factions, locations) }}</p>
     {% endif %}
 
     {% if npc.relations %}
@@ -454,7 +454,7 @@ window.applyFilters = function() {
           {% if entry.polarity == 'positive' %}+{% elif entry.polarity == 'negative' %}−{% endif %}{{ entry.intensity }}
         </span>
         {% endif %}
-        {{ entry.note }}
+        {{ entry.note | wikilinks(slug, npcs, factions, locations) }}
       </li>
       {% endif %}{% endfor %}
     </ul>
@@ -499,7 +499,7 @@ window.applyFilters = function() {
     <hr class="divider" style="margin:10px 0;">
 
     {% if faction.description %}
-    <p style="font-size:0.88rem; color:var(--text); margin-bottom:10px;">{{ faction.description | wikilinks(slug, npcs, factions) }}</p>
+    <p style="font-size:0.88rem; color:var(--text); margin-bottom:10px;">{{ faction.description | wikilinks(slug, npcs, factions, locations) }}</p>
     {% endif %}
 
     <a href="/{{ slug }}/world/faction/{{ faction.id }}"
@@ -512,7 +512,7 @@ window.applyFilters = function() {
       {% for entry in faction.log | sort(attribute='session', reverse=true) %}{% if loop.index0 < 4 %}
       <li style="font-size:0.82rem;">
         <span class="log-session">{{ terms.session }} {{ entry.session }}</span>
-        {{ entry.note }}
+        {{ entry.note | wikilinks(slug, npcs, factions, locations) }}
       </li>
       {% endif %}{% endfor %}
     </ul>
@@ -527,7 +527,57 @@ window.applyFilters = function() {
 </div>
 {% endif %}
 
-{% if not npcs and not factions and not conditions %}
+{% if locations %}
+<h2 class="section-title mt-8">Locations</h2>
+<div class="card-grid">
+  {% for loc in locations %}
+  <details class="card" style="{% if session.get('dm_' ~ slug) and loc.hidden %}opacity:0.6;{% endif %}">
+    <summary style="list-style:none; cursor:pointer;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
+        <div>
+          <h3 style="margin-bottom:4px;">{{ loc.name }}</h3>
+          {% if loc.role %}<div class="role">{{ loc.role }}</div>{% endif %}
+          {% if session.get('dm_' ~ slug) and loc.hidden %}
+          <div style="margin-top:4px;"><span class="badge" style="background:var(--surface2); color:var(--muted); font-size:0.7rem;">Hidden</span></div>
+          {% endif %}
+        </div>
+        <span style="color:var(--muted); font-size:0.8rem; padding-top:4px; flex-shrink:0;">{% if loc.log %}{{ loc.log | length }}{% endif %}</span>
+      </div>
+    </summary>
+
+    <hr class="divider" style="margin:10px 0;">
+
+    {% if loc.description %}
+    <p style="font-size:0.88rem; color:var(--text); margin-bottom:10px;">{{ loc.description | wikilinks(slug, npcs, factions, locations) }}</p>
+    {% endif %}
+
+    <a href="/{{ slug }}/world/location/{{ loc.id }}"
+       style="font-size:0.78rem; color:var(--gold-dim); text-decoration:none; display:inline-block; margin-bottom:8px;">
+      Full page {% if session.get('dm_' ~ slug) %}+ {{ terms.dm_controls | lower }}{% endif %} →
+    </a>
+
+    {% if loc.log %}
+    <ul class="log-list" style="margin-bottom:0;">
+      {% for entry in loc.log | sort(attribute='session', reverse=true) %}{% if loop.index0 < 4 %}
+      <li style="font-size:0.82rem;">
+        <span class="log-session">{{ terms.session }} {{ entry.session }}</span>
+        {% if entry.event_type %}<span style="color:var(--purple); font-size:0.72rem; font-weight:700; margin-right:5px; text-transform:uppercase; letter-spacing:0.04em;">{{ entry.event_type }}</span>{% endif %}
+        {{ entry.note | wikilinks(slug, npcs, factions, locations) }}
+      </li>
+      {% endif %}{% endfor %}
+    </ul>
+    {% if loc.log | length > 4 %}
+    <p style="font-size:0.72rem; color:var(--muted); margin:4px 0 0 0;">+{{ loc.log | length - 4 }} more — <a href="/{{ slug }}/world/location/{{ loc.id }}" style="color:var(--muted);">full page</a></p>
+    {% endif %}
+    {% else %}
+    <p class="text-muted text-sm" style="margin-bottom:0;">No events logged here yet.</p>
+    {% endif %}
+  </details>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% if not npcs and not factions and not conditions and not locations %}
 <div class="card" style="padding:40px 24px; text-align:center;">
   {% if session.get('dm_' ~ slug) %}
   <p class="text-muted">Nothing here yet. Add a <a href="/{{ slug }}/dm/npcs/add">{{ terms.npc }}</a> or <a href="/{{ slug }}/dm/factions/add">faction</a> from the DM dashboard.</p>

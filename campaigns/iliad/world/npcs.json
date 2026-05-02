@@ -5,7 +5,7 @@
       "name": "Achilles",
       "role": "Prince of Phthia, son of Thetis \u2014 the greatest warrior of the age",
       "relationship": "neutral",
-      "description": "Son of the sea-nymph Thetis and mortal king Peleus. He was given a choice at birth: a long, obscure life or a short, glorious one. He chose glory. Now in his rage at Agamemnon he may choose wrong again \u2014 and take the Achaeans down with him. His grief at Patroclus's death will shake heaven.",
+      "description": "Son of the sea-nymph [[Thetis]] and mortal king Peleus. He was given a choice at birth: a long, obscure life or a short, glorious one. He chose glory. Now in his rage at [[Agamemnon]] he may choose wrong again \u2014 and take the [[The Achaean Host|Achaeans]] down with him. His grief at [[Patroclus]]'s death will shake heaven.",
       "hidden": false,
       "factions": [
         "the_achaean_host"
@@ -13,9 +13,9 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_e2ada0",
+          "id": "evt_0cb3cb",
           "session": 1,
-          "note": "Consequence of Agamemnon (ally): Chryses, priest of Apollo, comes to ransom his daughter Chryseis; Agamemnon dismisses him with contempt and threats, dishonoring Apollo's servant.",
+          "note": "Consequence of Agamemnon (ally): Chryses, priest of [[Apollo]], comes to ransom his daughter Chryseis; [[Agamemnon]] dismisses him with contempt and threats, dishonoring [[Apollo]]'s servant.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
@@ -29,18 +29,19 @@
           "actor_type": "npc"
         },
         {
-          "id": "evt_c31b21",
+          "id": "evt_14c286",
           "session": 1,
-          "note": "Achilles calls an assembly and demands Agamemnon explain the plague; he is the only one willing to name what everyone knows.",
+          "note": "[[Achilles]] calls an assembly and demands [[Agamemnon]] explain the plague; he is the only one willing to name what everyone knows.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 1,
-          "event_type": "dialogue"
+          "event_type": "dialogue",
+          "location_id": "the_achaean_camp"
         },
         {
-          "id": "evt_e53490",
+          "id": "evt_3be770",
           "session": 1,
-          "note": "Consequence of Agamemnon (ally): Agamemnon returns Chryseis but seizes Briseis from Achilles as compensation; a calculated humiliation of the man he most needs and most resents.",
+          "note": "Consequence of Agamemnon (ally): [[Agamemnon]] returns Chryseis but seizes Briseis from [[Achilles]] as compensation; a calculated humiliation of the man he most needs and most resents.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
@@ -54,25 +55,27 @@
           "actor_type": "npc"
         },
         {
-          "id": "evt_289eca",
+          "id": "evt_1e9670",
           "session": 1,
-          "note": "Achilles nearly kills Agamemnon; Athena stops him. He withdraws from battle, prays to Thetis to beg Zeus to let the Achaeans suffer, and retreats to his ships.",
+          "note": "[[Achilles]] nearly kills [[Agamemnon]]; [[Athena]] stops him. He withdraws from battle, prays to [[Thetis]] to beg Zeus to let the Achaeans suffer, and retreats to his ships.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 2,
-          "event_type": "other"
+          "event_type": "other",
+          "location_id": "the_ships_of_achilles"
         },
         {
-          "id": "evt_3294df",
+          "id": "evt_33b78a",
           "session": 4,
-          "note": "Achilles refuses everything. He says: two fates await him \u2014 return home and live long, or stay and die young with glory. He is choosing neither right now. He will decide when Hector burns the ships.",
+          "note": "[[Achilles]] refuses everything. He says: two fates await him \u2014 return home and live long, or stay and die young with glory. He is choosing neither right now. He will decide when [[Hector]] burns the ships.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 2,
-          "event_type": "dialogue"
+          "event_type": "dialogue",
+          "location_id": "the_ships_of_achilles"
         },
         {
-          "id": "evt_89de8f",
+          "id": "evt_6e2765",
           "session": 6,
           "note": "Consequence of Patroclus (ally): Patroclus is killed by Hector \u2014 Achilles' armor stripped, the bond severed.",
           "visibility": "public",
@@ -88,34 +91,37 @@
           "actor_type": "npc"
         },
         {
-          "id": "evt_14418c",
+          "id": "evt_a037c0",
           "session": 7,
-          "note": "Achilles learns Patroclus is dead. He collapses. His grief is absolute. Thetis rises from the sea to hold him. He tells her: I will kill Hector and then I will die.",
+          "note": "[[Achilles]] learns [[Patroclus]] is dead. He collapses. His grief is absolute. [[Thetis]] rises from the sea to hold him. He tells her: I will kill [[Hector]] and then I will die.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 3,
-          "event_type": "other"
+          "event_type": "other",
+          "location_id": "the_ships_of_achilles"
         },
         {
-          "id": "evt_4a7e7f",
+          "id": "evt_f54bf9",
           "session": 7,
-          "note": "Achilles returns to battle in new divine armor; the Trojans rout at the sight of him. He kills everything in his path. The river Scamander runs red.",
+          "note": "[[Achilles]] returns to battle in new divine armor; [[The City of Troy|the Trojans]] rout at the sight of him. He kills everything in his path. The river Scamander runs red.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 3,
-          "event_type": "combat"
+          "event_type": "combat",
+          "location_id": "the_plain_of_troy"
         },
         {
-          "id": "evt_51e50c",
+          "id": "evt_4088f1",
           "session": 7,
-          "note": "Achilles kills Hector. He drags the body behind his chariot around Troy's walls for twelve days, visiting Patroclus's tomb. The gods watch in pain. Priam watches from the walls.",
+          "note": "[[Achilles]] kills [[Hector]]. He drags the body behind his chariot around Troy's walls for twelve days, visiting [[Patroclus]]'s tomb. The gods watch in pain. [[Priam]] watches from the walls.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
-          "event_type": "combat"
+          "event_type": "combat",
+          "location_id": "the_plain_of_troy"
         },
         {
-          "id": "evt_31a036",
+          "id": "evt_638859",
           "session": 7,
           "note": "Consequence of Hector (rival): Hector is killed by Achilles \u2014 his body desecrated, Troy's future severed.",
           "visibility": "public",
@@ -131,13 +137,14 @@
           "actor_type": "npc"
         },
         {
-          "id": "evt_881eec",
+          "id": "evt_371860",
           "session": 8,
-          "note": "Achilles weeps with Priam \u2014 each man weeping for what he has lost. He lifts the old king from the ground. He promises twelve days of truce. He returns Hector's body without ransom.",
+          "note": "[[Achilles]] weeps with [[Priam]] \u2014 each man weeping for what he has lost. He lifts the old king from the ground. He promises twelve days of truce. He returns [[Hector]]'s body without ransom.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 3,
-          "event_type": "dialogue"
+          "event_type": "dialogue",
+          "location_id": "achilles_hut"
         }
       ],
       "relations": [
@@ -145,14 +152,14 @@
           "target": "agamemnon",
           "target_type": "npc",
           "formal_relation": "ally",
-          "personal_relation": "hostile",
+          "personal_relation": "rival",
           "weight": 0.9
         },
         {
           "target": "hector",
           "target_type": "npc",
           "formal_relation": "rival",
-          "personal_relation": "respect",
+          "personal_relation": "ally",
           "weight": 0.95
         },
         {
@@ -174,7 +181,7 @@
       "name": "Agamemnon",
       "role": "High King of Mycenae, commander of the Achaean forces",
       "relationship": "negative",
-      "description": "King of kings by wealth and bloodline, not merit. He started this war to reclaim his brother's wife and has kept one hundred thousand men from home for a decade. He is capable of grandeur and of pettiness in equal measure. Stripping Briseis from Achilles is the worst decision of the war.",
+      "description": "King of kings by wealth and bloodline, not merit. He started this war to reclaim his brother's wife and has kept one hundred thousand men from home for a decade. He is capable of grandeur and of pettiness in equal measure. Stripping Briseis from [[Achilles]] is the worst decision of the war.",
       "hidden": false,
       "factions": [
         "the_achaean_host"
@@ -182,36 +189,38 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_c69851",
+          "id": "evt_878481",
           "session": 1,
-          "note": "Chryses, priest of Apollo, comes to ransom his daughter Chryseis; Agamemnon dismisses him with contempt and threats, dishonoring Apollo's servant.",
+          "note": "Chryses, priest of [[Apollo]], comes to ransom his daughter Chryseis; [[Agamemnon]] dismisses him with contempt and threats, dishonoring [[Apollo]]'s servant.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
-          "event_type": "dialogue"
+          "event_type": "dialogue",
+          "location_id": "the_achaean_camp"
         },
         {
-          "id": "evt_45cd3f",
+          "id": "evt_a242c7",
           "session": 1,
-          "note": "Agamemnon returns Chryseis but seizes Briseis from Achilles as compensation; a calculated humiliation of the man he most needs and most resents.",
+          "note": "[[Agamemnon]] returns Chryseis but seizes Briseis from [[Achilles]] as compensation; a calculated humiliation of the man he most needs and most resents.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
-          "event_type": "other"
+          "event_type": "other",
+          "location_id": "the_achaean_camp"
         },
         {
-          "id": "evt_09aed0",
+          "id": "evt_4644c8",
           "session": 4,
-          "note": "Agamemnon's offer is enormous in treasure and zero in apology; Achilles reads the pride beneath the gifts and says no to all of it.",
+          "note": "[[Agamemnon]]'s offer is enormous in treasure and zero in apology; [[Achilles]] reads the pride beneath the gifts and says no to all of it.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 1,
           "event_type": "other"
         },
         {
-          "id": "evt_c7df5a",
+          "id": "evt_9bc5c7",
           "session": 7,
-          "note": "Consequence of Achilles (ally): Achilles returns to battle in new divine armor; the Trojans rout at the sight of him. He kills everything in his path. The river Scamander runs red.",
+          "note": "Consequence of Achilles (ally): [[Achilles]] returns to battle in new divine armor; [[The City of Troy|the Trojans]] rout at the sight of him. He kills everything in his path. The river Scamander runs red.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 3,
@@ -230,7 +239,7 @@
           "target": "achilles",
           "target_type": "npc",
           "formal_relation": "ally",
-          "personal_relation": "hostile",
+          "personal_relation": "rival",
           "weight": 0.9
         },
         {
@@ -252,7 +261,7 @@
       "name": "Patroclus",
       "role": "Companion of Achilles, the gentlest of the Greeks",
       "relationship": "ally",
-      "description": "Achilles' closest friend \u2014 some say his soul's other half. He killed a boy in a quarrel as a child and was sent to Achilles' father's court in exile, where the two grew up together. He is braver than he should be and more compassionate than the war deserves. He will die wearing Achilles' armor.",
+      "description": "[[Achilles]]' closest friend \u2014 some say his soul's other half. He killed a boy in a quarrel as a child and was sent to [[Achilles]]' father's court in exile, where the two grew up together. He is braver than he should be and more compassionate than the war deserves. He will die wearing [[Achilles]]' armor.",
       "hidden": false,
       "factions": [
         "the_achaean_host"
@@ -260,49 +269,36 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_f9bedd",
+          "id": "evt_8c9f89",
           "session": 6,
-          "note": "Patroclus comes to Achilles with tears and begs to fight in his armor; Achilles relents, giving the Myrmidons and his divine horses, but warns him: drive the Trojans back and then return.",
+          "note": "[[Patroclus]] comes to [[Achilles]] with tears and begs to fight in his armor; [[Achilles]] relents, giving the Myrmidons and his divine horses, but warns him: drive [[The City of Troy|the Trojans]] back and then return.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 2,
-          "event_type": "dialogue"
+          "event_type": "dialogue",
+          "location_id": "the_ships_of_achilles"
         },
         {
-          "id": "evt_65771c",
+          "id": "evt_bae762",
           "session": 6,
-          "note": "Patroclus fights brilliantly in Achilles' armor, driving Trojans back from the ships; then, ignoring his friend's command, he presses on toward Troy's walls.",
+          "note": "[[Patroclus]] fights brilliantly in [[Achilles]]' armor, driving [[The City of Troy|Trojans]] back from the ships; then, ignoring his friend's command, he presses on toward Troy's walls.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 2,
-          "event_type": "combat"
+          "event_type": "combat",
+          "location_id": "the_plain_of_troy"
         },
         {
-          "id": "evt_60af5c",
+          "id": "evt_cc386e",
           "session": 6,
-          "note": "Patroclus dies. His last words to Hector: death is coming for you too, and it is not far off. Hector strips Achilles' divine armor from the body.",
+          "note": "[[Patroclus]] dies. His last words to [[Hector]]: death is coming for you too, and it is not far off. [[Hector]] strips [[Achilles]]' divine armor from the body.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
           "event_type": "combat",
           "actor_id": "hector",
-          "actor_type": "npc"
-        },
-        {
-          "id": "evt_7d6721",
-          "session": 7,
-          "note": "Consequence of Achilles (ally): Achilles returns to battle in new divine armor; the Trojans rout at the sight of him. He kills everything in his path. The river Scamander runs red.",
-          "visibility": "public",
-          "polarity": "positive",
-          "intensity": 3,
-          "event_type": "combat",
-          "ripple_source": {
-            "entity_id": "achilles",
-            "entity_type": "npc",
-            "event_id": null
-          },
-          "actor_id": "achilles",
-          "actor_type": "npc"
+          "actor_type": "npc",
+          "location_id": "the_plain_of_troy"
         }
       ],
       "relations": [
@@ -312,7 +308,9 @@
           "relation": "ally",
           "weight": 1.0
         }
-      ]
+      ],
+      "dead": true,
+      "dead_session": 6
     },
     {
       "id": "odysseus",
@@ -327,9 +325,9 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_685677",
+          "id": "evt_8cf532",
           "session": 1,
-          "note": "Consequence of Agamemnon (ally): Chryses, priest of Apollo, comes to ransom his daughter Chryseis; Agamemnon dismisses him with contempt and threats, dishonoring Apollo's servant.",
+          "note": "Consequence of Agamemnon (ally): Chryses, priest of [[Apollo]], comes to ransom his daughter Chryseis; [[Agamemnon]] dismisses him with contempt and threats, dishonoring [[Apollo]]'s servant.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
@@ -343,9 +341,9 @@
           "actor_type": "npc"
         },
         {
-          "id": "evt_328663",
+          "id": "evt_23cb48",
           "session": 1,
-          "note": "Consequence of Agamemnon (ally): Agamemnon returns Chryseis but seizes Briseis from Achilles as compensation; a calculated humiliation of the man he most needs and most resents.",
+          "note": "Consequence of Agamemnon (ally): [[Agamemnon]] returns Chryseis but seizes Briseis from [[Achilles]] as compensation; a calculated humiliation of the man he most needs and most resents.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
@@ -359,13 +357,14 @@
           "actor_type": "npc"
         },
         {
-          "id": "evt_311d61",
+          "id": "evt_50330a",
           "session": 4,
-          "note": "Odysseus, Ajax, and Phoenix carry Agamemnon's offer to Achilles: treasure, Briseis returned, Agamemnon's daughter in marriage. Odysseus presents it brilliantly. Achilles sees the pride beneath the gifts.",
+          "note": "[[Odysseus]], [[Ajax]], and Phoenix carry [[Agamemnon]]'s offer to [[Achilles]]: treasure, Briseis returned, [[Agamemnon]]'s daughter in marriage. [[Odysseus]] presents it brilliantly. [[Achilles]] sees the pride beneath the gifts.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 1,
-          "event_type": "dialogue"
+          "event_type": "dialogue",
+          "location_id": "the_ships_of_achilles"
         }
       ],
       "relations": [
@@ -388,7 +387,7 @@
       "name": "Ajax",
       "role": "Prince of Salamis, bulwark of the Greeks",
       "relationship": "ally",
-      "description": "The largest and second-strongest of the Greeks. Where Achilles is a force of nature, Ajax is a wall \u2014 steadfast, immovable, the last man standing when others break. He will hold the ships against Hector alone. He carries a shield like a tower and feels the weight of every man he cannot save.",
+      "description": "The largest and second-strongest of the Greeks. Where [[Achilles]] is a force of nature, Ajax is a wall \u2014 steadfast, immovable, the last man standing when others break. He will hold the ships against [[Hector]] alone. He carries a shield like a tower and feels the weight of every man he cannot save.",
       "hidden": false,
       "factions": [
         "the_achaean_host"
@@ -396,18 +395,19 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_990aa9",
+          "id": "evt_4f343b",
           "session": 5,
-          "note": "Ajax stands alone at the ships and drives off Hector's assault; he is the last thing between the fleet and fire.",
+          "note": "[[Ajax]] stands alone at the ships and drives off [[Hector]]'s assault; he is the last thing between the fleet and fire.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 3,
-          "event_type": "combat"
+          "event_type": "combat",
+          "location_id": "the_ships_of_achilles"
         },
         {
-          "id": "evt_d4c23d",
+          "id": "evt_e30b6b",
           "session": 7,
-          "note": "Consequence of Achilles (ally): Achilles returns to battle in new divine armor; the Trojans rout at the sight of him. He kills everything in his path. The river Scamander runs red.",
+          "note": "Consequence of Achilles (ally): [[Achilles]] returns to battle in new divine armor; [[The City of Troy|the Trojans]] rout at the sight of him. He kills everything in his path. The river Scamander runs red.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 2,
@@ -435,7 +435,7 @@
       "name": "Menelaus",
       "role": "King of Sparta, wronged husband",
       "relationship": "neutral",
-      "description": "This war was nominally fought to bring back his wife. He is brave but outclassed by the war his brother's armies waged in his name. When he finally duels Paris \u2014 the man who stole Helen \u2014 he nearly wins. Aphrodite saves Paris and Menelaus is left holding nothing but his anger.",
+      "description": "This war was nominally fought to bring back his wife. He is brave but outclassed by the war his brother [[Agamemnon]]'s armies waged in his name. When he finally duels [[Paris]] \u2014 the man who stole [[Helen]] \u2014 he nearly wins. Aphrodite saves [[Paris]] and Menelaus is left holding nothing but his anger.",
       "hidden": false,
       "factions": [
         "the_achaean_host"
@@ -443,9 +443,9 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_e69fe5",
+          "id": "evt_b00b88",
           "session": 1,
-          "note": "Consequence of Agamemnon (ally): Chryses, priest of Apollo, comes to ransom his daughter Chryseis; Agamemnon dismisses him with contempt and threats, dishonoring Apollo's servant.",
+          "note": "Consequence of Agamemnon (ally): Chryses, priest of [[Apollo]], comes to ransom his daughter Chryseis; [[Agamemnon]] dismisses him with contempt and threats, dishonoring [[Apollo]]'s servant.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
@@ -459,9 +459,9 @@
           "actor_type": "npc"
         },
         {
-          "id": "evt_2b51ec",
+          "id": "evt_40d54c",
           "session": 1,
-          "note": "Consequence of Agamemnon (ally): Agamemnon returns Chryseis but seizes Briseis from Achilles as compensation; a calculated humiliation of the man he most needs and most resents.",
+          "note": "Consequence of Agamemnon (ally): [[Agamemnon]] returns Chryseis but seizes Briseis from [[Achilles]] as compensation; a calculated humiliation of the man he most needs and most resents.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
@@ -475,13 +475,14 @@
           "actor_type": "npc"
         },
         {
-          "id": "evt_cbea07",
+          "id": "evt_34ca0d",
           "session": 2,
-          "note": "Menelaus fights Paris in single combat; he seizes Paris by the helmet and is about to drag him to death when Aphrodite snaps the chin-strap and spirits Paris away.",
+          "note": "[[Menelaus]] fights [[Paris]] in single combat; he seizes [[Paris]] by the helmet and is about to drag him to death when Aphrodite snaps the chin-strap and spirits [[Paris]] away.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 2,
-          "event_type": "combat"
+          "event_type": "combat",
+          "location_id": "the_plain_of_troy"
         }
       ],
       "relations": [
@@ -489,7 +490,7 @@
           "target": "helen",
           "target_type": "npc",
           "formal_relation": "ally",
-          "personal_relation": "hostile",
+          "personal_relation": "rival",
           "weight": 0.7
         },
         {
@@ -505,7 +506,7 @@
       "name": "Diomedes",
       "role": "King of Argos, the most fearless fighter",
       "relationship": "ally",
-      "description": "The most effective Achaean fighter during Achilles' absence. He wounds Aphrodite. He wounds Ares. He does things no mortal should do and survives them. Athena walks beside him, unseen, during his aristeia. He is what heroism looks like without the tragic weight.",
+      "description": "The most effective Achaean fighter during [[Achilles]]' absence. He wounds Aphrodite. He wounds Ares. He does things no mortal should do and survives them. [[Athena]] walks beside him, unseen, during his aristeia. He is what heroism looks like without the tragic weight.",
       "hidden": false,
       "factions": [
         "the_achaean_host"
@@ -513,13 +514,14 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_086264",
+          "id": "evt_83457d",
           "session": 3,
-          "note": "With Athena beside him Diomedes tears through the Trojan line, wounding Aphrodite's wrist and driving his spear into Ares' flank. He is doing the impossible.",
+          "note": "With [[Athena]] beside him [[Diomedes]] tears through the Trojan line, wounding Aphrodite's wrist and driving his spear into Ares' flank. He is doing the impossible.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 3,
-          "event_type": "combat"
+          "event_type": "combat",
+          "location_id": "the_plain_of_troy"
         }
       ],
       "relations": [
@@ -549,7 +551,7 @@
       "name": "Hector",
       "role": "Prince of Troy, champion of the Trojans",
       "relationship": "ally",
-      "description": "Priam's eldest son and Troy's defender. He fights not for glory but for his city, his wife, his infant son. He knows Troy will fall. He goes out each morning anyway. The Iliad's moral center \u2014 the poem loves him even as it kills him. His farewell to Andromache at the Scaean Gate is everything.",
+      "description": "[[Priam]]'s eldest son and Troy's defender. He fights not for glory but for his city, his wife, his infant son. He knows Troy will fall. He goes out each morning anyway. The Iliad's moral center \u2014 the poem loves him even as it kills him. His farewell to [[Andromache]] at [[The Scaean Gate]] is everything.",
       "hidden": false,
       "factions": [
         "the_city_of_troy"
@@ -557,36 +559,39 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_05995b",
+          "id": "evt_387bd2",
           "session": 3,
-          "note": "Hector enters Troy to arrange sacrifice; he finds Paris idle at home with Helen and shames him back to battle. He goes to find Andromache.",
+          "note": "[[Hector]] enters Troy to arrange sacrifice; he finds [[Paris]] idle at home with [[Helen]] and shames him back to battle. He goes to find [[Andromache]].",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 1,
-          "event_type": "other"
+          "event_type": "other",
+          "location_id": "priam_s_palace"
         },
         {
-          "id": "evt_8c0961",
+          "id": "evt_b016a7",
           "session": 3,
-          "note": "At the Scaean Gate Hector bids Andromache farewell; she begs him to stay. He lifts their son Astyanax, who recoils from the great shining helmet. He prays the boy will be greater than his father. He goes back to war.",
+          "note": "At the Scaean Gate [[Hector]] bids [[Andromache]] farewell; she begs him to stay. He lifts their son Astyanax, who recoils from the great shining helmet. He prays the boy will be greater than his father. He goes back to war.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 3,
-          "event_type": "dialogue"
+          "event_type": "dialogue",
+          "location_id": "the_scaean_gate"
         },
         {
-          "id": "evt_0d3f83",
+          "id": "evt_59d0b6",
           "session": 6,
-          "note": "Hector kills Patroclus in single combat and strips Achilles' divine armor; he puts it on himself, not knowing what the act will cost him.",
+          "note": "[[Hector]] kills [[Patroclus]] in single combat and strips [[Achilles]]' divine armor; he puts it on himself, not knowing what the act will cost him.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
-          "event_type": "combat"
+          "event_type": "combat",
+          "location_id": "the_plain_of_troy"
         },
         {
-          "id": "evt_685902",
+          "id": "evt_d21dd2",
           "session": 7,
-          "note": "Consequence of Achilles (rival): Achilles returns to battle in new divine armor; the Trojans rout at the sight of him. He kills everything in his path. The river Scamander runs red.",
+          "note": "Consequence of Achilles (rival): [[Achilles]] returns to battle in new divine armor; [[The City of Troy|the Trojans]] rout at the sight of him. He kills everything in his path. The river Scamander runs red.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
@@ -600,22 +605,24 @@
           "actor_type": "npc"
         },
         {
-          "id": "evt_6a0800",
+          "id": "evt_aeee5c",
           "session": 7,
-          "note": "Hector stands outside the gates as all of Troy flees inside. His father begs from the walls; his mother tears her robes. He waits for Achilles.",
+          "note": "[[Hector]] stands outside the gates as all of Troy flees inside. His father [[Priam]] begs from the walls; his mother tears her robes. He waits for [[Achilles]].",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 3,
-          "event_type": "other"
+          "event_type": "other",
+          "location_id": "the_walls_of_troy"
         },
         {
-          "id": "evt_7ec44f",
+          "id": "evt_1bb2f8",
           "session": 7,
-          "note": "Hector runs three circuits of Troy pursued by Achilles; Athena takes Deiphobus's form to stop him. He turns and faces his death with full knowledge. He asks only to be given back for burial. Achilles refuses.",
+          "note": "[[Hector]] runs three circuits of Troy pursued by [[Achilles]]; [[Athena]] takes Deiphobus's form to stop him. He turns and faces his death with full knowledge. He asks only to be given back for burial. [[Achilles]] refuses.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 3,
-          "event_type": "combat"
+          "event_type": "combat",
+          "location_id": "the_plain_of_troy"
         }
       ],
       "relations": [
@@ -630,7 +637,7 @@
           "target": "achilles",
           "target_type": "npc",
           "formal_relation": "rival",
-          "personal_relation": "respect",
+          "personal_relation": "ally",
           "weight": 0.9
         },
         {
@@ -645,14 +652,16 @@
           "relation": "ally",
           "weight": 1.0
         }
-      ]
+      ],
+      "dead": true,
+      "dead_session": 7
     },
     {
       "id": "andromache",
       "name": "Andromache",
       "role": "Wife of Hector, voice of grief",
       "relationship": "ally",
-      "description": "Her father and seven brothers were killed by Achilles before the poem begins. She has no one left but Hector. She begs him not to fight; she knows exactly how this ends. Her lament over his body is among the most devastating passages in Western literature.",
+      "description": "Her father and seven brothers were killed by [[Achilles]] before the poem begins. She has no one left but [[Hector]]. She begs him not to fight; she knows exactly how this ends. Her lament over his body is among the most devastating passages in Western literature.",
       "hidden": false,
       "factions": [
         "the_city_of_troy"
@@ -660,16 +669,17 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_f3aa93",
+          "id": "evt_22edb8",
           "session": 3,
-          "note": "Andromache tells Hector he is her father, her mother, her brothers \u2014 everyone she has left. She watches him walk away knowing it is the last time.",
+          "note": "[[Andromache]] tells [[Hector]] he is her father, her mother, her brothers \u2014 everyone she has left. She watches him walk away knowing it is the last time.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 3,
-          "event_type": "dialogue"
+          "event_type": "dialogue",
+          "location_id": "the_scaean_gate"
         },
         {
-          "id": "evt_c453a7",
+          "id": "evt_248fcf",
           "session": 7,
           "note": "Consequence of Hector (ally): Hector is killed by Achilles \u2014 his body desecrated, Troy's future severed.",
           "visibility": "public",
@@ -685,13 +695,14 @@
           "actor_type": "npc"
         },
         {
-          "id": "evt_f977a4",
+          "id": "evt_aa0910",
           "session": 7,
-          "note": "Andromache faints upon the wall when she sees Hector's body dragged behind Achilles' chariot. She weeps not for Troy but for their son Astyanax, who will grow up fatherless in a fallen city.",
+          "note": "[[Andromache]] faints upon the wall when she sees [[Hector]]'s body dragged behind [[Achilles]]' chariot. She weeps not for Troy but for their son Astyanax, who will grow up fatherless in a fallen city.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
-          "event_type": "other"
+          "event_type": "other",
+          "location_id": "the_walls_of_troy"
         }
       ],
       "relations": [
@@ -708,7 +719,7 @@
       "name": "Priam",
       "role": "King of Troy, father of fifty sons",
       "relationship": "neutral",
-      "description": "He has watched his city become a prison and his sons die one by one. His dignity is extraordinary \u2014 he walks alone into Achilles' camp to beg for Hector's body, and Achilles weeps with him. The poem's final act is between these two men who have every reason to be enemies.",
+      "description": "He has watched his city become a prison and his sons die one by one. His dignity is extraordinary \u2014 he walks alone into [[Achilles]]' camp to beg for [[Hector]]'s body, and [[Achilles]] weeps with him. The poem's final act is between these two men who have every reason to be enemies.",
       "hidden": false,
       "factions": [
         "the_city_of_troy"
@@ -716,7 +727,7 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_0f4bbb",
+          "id": "evt_f89f44",
           "session": 7,
           "note": "Consequence of Hector (ally): Hector is killed by Achilles \u2014 his body desecrated, Troy's future severed.",
           "visibility": "public",
@@ -732,22 +743,24 @@
           "actor_type": "npc"
         },
         {
-          "id": "evt_082099",
+          "id": "evt_962418",
           "session": 7,
-          "note": "Priam watches his greatest son die from the walls. He tears his white hair and weeps in the dust. Troy's fathers watch with him.",
+          "note": "[[Priam]] watches his greatest son [[Hector]] die from the walls. He tears his white hair and weeps in the dust. Troy's fathers watch with him.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
-          "event_type": "other"
+          "event_type": "other",
+          "location_id": "the_walls_of_troy"
         },
         {
-          "id": "evt_6a7a5b",
+          "id": "evt_58195f",
           "session": 8,
-          "note": "Priam loads a wagon with treasure, guided by Hermes, and walks alone into the enemy camp at night. He kneels before Achilles and asks him to remember his own father. He kisses the hands that killed his son.",
+          "note": "[[Priam]] loads a wagon with treasure, guided by Hermes, and walks alone into the enemy camp at night. He kneels before [[Achilles]] and asks him to remember his own father. He kisses the hands that killed his son.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 3,
-          "event_type": "dialogue"
+          "event_type": "dialogue",
+          "location_id": "achilles_hut"
         }
       ],
       "relations": [
@@ -770,7 +783,7 @@
       "name": "Paris",
       "role": "Prince of Troy, the cause of everything",
       "relationship": "negative",
-      "description": "Hector's younger brother. He was given a choice by the gods \u2014 wisdom, power, or beauty \u2014 and chose beauty: Aphrodite and Helen. Now a hundred thousand men are dead for his decision and he fights the consequences with a bow, at a distance, never quite accepting blame. He kills Achilles in the end. He never deserves to.",
+      "description": "[[Hector]]'s younger brother. He was given a choice by the gods \u2014 wisdom, power, or beauty \u2014 and chose beauty: Aphrodite and [[Helen]]. Now a hundred thousand men are dead for his decision and he fights the consequences with a bow, at a distance, never quite accepting blame. He kills [[Achilles]] in the end. He never deserves to.",
       "hidden": false,
       "factions": [
         "the_city_of_troy"
@@ -778,18 +791,19 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_bd420f",
+          "id": "evt_47ff5f",
           "session": 2,
-          "note": "Paris challenges the assembled Greeks to single combat; he nearly flees when Menelaus actually steps forward \u2014 Hector shames him back.",
+          "note": "[[Paris]] challenges the assembled Greeks to single combat; he nearly flees when [[Menelaus]] actually steps forward \u2014 [[Hector]] shames him back.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 1,
-          "event_type": "dialogue"
+          "event_type": "dialogue",
+          "location_id": "the_plain_of_troy"
         },
         {
-          "id": "evt_e082b5",
+          "id": "evt_5c22ef",
           "session": 2,
-          "note": "Aphrodite deposits Paris in Helen's bedroom, unharmed and unrepentant; he does not understand why the world is angry with him.",
+          "note": "Aphrodite deposits [[Paris]] in [[Helen]]'s bedroom, unharmed and unrepentant; he does not understand why the world is angry with him.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
@@ -798,7 +812,7 @@
           "actor_type": "npc"
         },
         {
-          "id": "evt_3ac00c",
+          "id": "evt_f418ff",
           "session": 7,
           "note": "Consequence of Hector (ally): Hector is killed by Achilles \u2014 his body desecrated, Troy's future severed.",
           "visibility": "public",
@@ -835,7 +849,7 @@
       "name": "Helen",
       "role": "Most beautiful woman in the world, unwilling prize",
       "relationship": "neutral",
-      "description": "She watches the war from the walls of Troy, naming Greek heroes for Priam. Did she choose to go with Paris or was she taken? Homer leaves it deliberately unclear. She hates herself, or says she does. Priam is kind to her. She is not the cause of the war \u2014 she is its most visible wound.",
+      "description": "She watches the war from [[The Walls of Troy|the walls of Troy]], naming Greek heroes for [[Priam]]. Did she choose to go with [[Paris]] or was she taken? Homer leaves it deliberately unclear. She hates herself, or says she does. [[Priam]] is kind to her. She is not the cause of the war \u2014 she is its most visible wound.",
       "hidden": false,
       "factions": [
         "the_city_of_troy"
@@ -843,9 +857,9 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_1611fd",
+          "id": "evt_612f7f",
           "session": 2,
-          "note": "Helen is furious at Aphrodite for saving Paris; she knows she should go back to Menelaus and cannot; the goddess will not let her. She is trapped by beauty and by god.",
+          "note": "[[Helen]] is furious at Aphrodite for saving [[Paris]]; she knows she should go back to [[Menelaus]] and cannot; the goddess will not let her. She is trapped by beauty and by god.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 1,
@@ -858,7 +872,7 @@
       "name": "Apollo",
       "role": "God of sun and plague, champion of Troy",
       "relationship": "neutral",
-      "description": "The archer god. He sent the plague that opened the poem and has sheltered Troy throughout. He fights on the Trojan side openly, deflects spears from Hector, and finally guides Paris's arrow into Achilles' heel. The gods play by rules that are not human rules.",
+      "description": "The archer god. He sent the plague that opened the poem and has sheltered Troy throughout. He fights on the Trojan side openly, deflects spears from [[Hector]], and finally guides [[Paris]]'s arrow into [[Achilles]]' heel. The gods play by rules that are not human rules.",
       "hidden": true,
       "factions": [
         "the_divine_council"
@@ -866,9 +880,9 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_85292f",
+          "id": "evt_c28e27",
           "session": 1,
-          "note": "Consequence of Agamemnon (rival): Chryses, priest of Apollo, comes to ransom his daughter Chryseis; Agamemnon dismisses him with contempt and threats, dishonoring Apollo's servant.",
+          "note": "Consequence of Agamemnon (rival): Chryses, priest of [[Apollo]], comes to ransom his daughter Chryseis; [[Agamemnon]] dismisses him with contempt and threats, dishonoring [[Apollo]]'s servant.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 2,
@@ -882,20 +896,21 @@
           "actor_type": "npc"
         },
         {
-          "id": "evt_099af3",
+          "id": "evt_2728a2",
           "session": 1,
-          "note": "Apollo descends from Olympus and looses plague arrows into the Achaean camp; for nine days the pyres burn without ceasing as men and mules die.",
+          "note": "[[Apollo]] descends from Olympus and looses plague arrows into the Achaean camp; for nine days the pyres burn without ceasing as men and mules die.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
           "event_type": "other",
           "actor_id": "agamemnon",
-          "actor_type": "npc"
+          "actor_type": "npc",
+          "location_id": "the_achaean_camp"
         },
         {
-          "id": "evt_255f42",
+          "id": "evt_cef87b",
           "session": 1,
-          "note": "Consequence of Agamemnon (rival): Agamemnon returns Chryseis but seizes Briseis from Achilles as compensation; a calculated humiliation of the man he most needs and most resents.",
+          "note": "Consequence of Agamemnon (rival): [[Agamemnon]] returns Chryseis but seizes Briseis from [[Achilles]] as compensation; a calculated humiliation of the man he most needs and most resents.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 3,
@@ -909,9 +924,9 @@
           "actor_type": "npc"
         },
         {
-          "id": "evt_7b97bf",
+          "id": "evt_8d1621",
           "session": 6,
-          "note": "Apollo strikes Patroclus from behind on the battlefield, knocking away his helmet and snapping his spear; Euphorbus wounds him from behind; Hector drives in the killing blow.",
+          "note": "[[Apollo]] strikes [[Patroclus]] from behind on the battlefield, knocking away his helmet and snapping his spear; Euphorbus wounds him from behind; [[Hector]] drives in the killing blow.",
           "visibility": "dm_only",
           "polarity": "negative",
           "intensity": 3,
@@ -920,7 +935,7 @@
           "actor_type": "npc"
         },
         {
-          "id": "evt_af4b3c",
+          "id": "evt_87a023",
           "session": 7,
           "note": "Consequence of Hector (ally): Hector is killed by Achilles \u2014 his body desecrated, Troy's future severed.",
           "visibility": "public",
@@ -958,7 +973,7 @@
       "name": "Athena",
       "role": "Goddess of wisdom and war, patron of the Greeks",
       "relationship": "ally",
-      "description": "She appears to Achilles in Book 1 to stop him from killing Agamemnon. She walks beside Diomedes during his aristeia. She tricks Hector into standing to face Achilles by disguising herself as his brother. She is the most active divine presence in the poem.",
+      "description": "She appears to [[Achilles]] in Book 1 to stop him from killing [[Agamemnon]]. She walks beside [[Diomedes]] during his aristeia. She tricks [[Hector]] into standing to face [[Achilles]] by disguising herself as his brother. She is the most active divine presence in the poem.",
       "hidden": true,
       "factions": [
         "the_divine_council"
@@ -966,9 +981,9 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_651b32",
+          "id": "evt_12e3df",
           "session": 7,
-          "note": "Consequence of Achilles (ally): Achilles returns to battle in new divine armor; the Trojans rout at the sight of him. He kills everything in his path. The river Scamander runs red.",
+          "note": "Consequence of Achilles (ally): [[Achilles]] returns to battle in new divine armor; [[The City of Troy|the Trojans]] rout at the sight of him. He kills everything in his path. The river Scamander runs red.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 3,
@@ -1004,7 +1019,7 @@
       "name": "Thetis",
       "role": "Sea-nymph, mother of Achilles",
       "relationship": "ally",
-      "description": "Achilles' divine mother. She knows he is fated to die young and has spent his life trying to delay it. She persuades Zeus to favor the Trojans while Achilles withdraws, which leads to Patroclus's death. Her grief and Achilles' grief mirror each other across the poem.",
+      "description": "[[Achilles]]' divine mother. She knows he is fated to die young and has spent his life trying to delay it. She persuades Zeus to favor the Trojans while [[Achilles]] withdraws, which leads to [[Patroclus]]'s death. Her grief and [[Achilles]]' grief mirror each other across the poem.",
       "hidden": true,
       "factions": [
         "the_divine_council"
@@ -1012,27 +1027,27 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_d9f7ab",
+          "id": "evt_260460",
           "session": 1,
-          "note": "Thetis rises from the sea and holds her weeping son; she promises to go to Zeus. She knows he will die young. She grants his wish anyway.",
+          "note": "[[Thetis]] rises from the sea and holds her weeping son; she promises to go to Zeus. She knows he will die young. She grants his wish anyway.",
           "visibility": "dm_only",
           "polarity": "positive",
           "intensity": 2,
           "event_type": "other"
         },
         {
-          "id": "evt_734b31",
+          "id": "evt_b11282",
           "session": 7,
-          "note": "Thetis goes to Hephaestus and commissions new armor for her son; she knows she is equipping him for his death.",
+          "note": "[[Thetis]] goes to Hephaestus and commissions new armor for her son; she knows she is equipping him for his death.",
           "visibility": "dm_only",
           "polarity": "negative",
           "intensity": 2,
           "event_type": "other"
         },
         {
-          "id": "evt_15e7e0",
+          "id": "evt_d6d734",
           "session": 7,
-          "note": "Consequence of Achilles (ally): Achilles returns to battle in new divine armor; the Trojans rout at the sight of him. He kills everything in his path. The river Scamander runs red.",
+          "note": "Consequence of Achilles (ally): [[Achilles]] returns to battle in new divine armor; [[The City of Troy|the Trojans]] rout at the sight of him. He kills everything in his path. The river Scamander runs red.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 3,

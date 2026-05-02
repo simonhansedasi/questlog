@@ -64,7 +64,7 @@
       <span style="color:{% if c.polarity == 'positive' %}#7ec87e{% elif c.polarity == 'negative' %}#e05c5c{% else %}var(--muted){% endif %}; font-size:0.72rem; flex-shrink:0; min-width:22px;">
         {% if c.polarity == 'positive' %}+{% elif c.polarity == 'negative' %}−{% endif %}{{ c.intensity }}
       </span>
-      <span style="flex:1;">{{ c.note }}</span>
+      <span style="flex:1;">{{ c.note | wikilinks(slug, link_npcs, link_factions, link_locations) }}</span>
       <span style="font-size:0.68rem; font-family:monospace; color:{% if c._cumulative > 0 %}#7ec87e{% elif c._cumulative < 0 %}#e05c5c{% else %}var(--muted){% endif %}; opacity:0.7; flex-shrink:0; margin-left:4px;" title="running total">
         {% if c._cumulative > 0 %}+{% endif %}{{ c._cumulative }}
       </span>
@@ -117,7 +117,7 @@
 
 {% if faction.description %}
 <div class="card mt-8">
-  <p>{{ faction.description | wikilinks(slug, link_npcs, link_factions) }}</p>
+  <p>{{ faction.description | wikilinks(slug, link_npcs, link_factions, link_locations) }}</p>
 </div>
 {% endif %}
 
@@ -196,7 +196,7 @@
             {% if entry.polarity == 'positive' %}+{% elif entry.polarity == 'negative' %}−{% endif %}{{ entry.intensity }}
           </span>
           {% endif %}
-          <span class="log-entry-note">{{ entry.note }}</span>
+          <span class="log-entry-note">{{ entry.note | wikilinks(slug, link_npcs, link_factions, link_locations, party) }}</span>
           {% if is_dm and vis == 'dm_only' %}<span style="color:var(--muted); font-size:0.7rem; margin-left:6px; font-style:italic;">DM only</span>{% endif %}
           {% if is_dm and vis == 'restricted' %}<span style="color:var(--purple); font-size:0.7rem; margin-left:6px; font-style:italic;">restricted</span>{% endif %}
           {% if is_dm and entry.actor_id %}
@@ -379,8 +379,11 @@
   <h3 style="color:var(--muted); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:12px;">{{ terms.log_verb }} Interaction</h3>
   <form method="POST" action="/{{ slug }}/dm/faction/{{ faction.id }}/log" style="display:flex; flex-direction:column; gap:8px;">
     <div style="display:flex; gap:8px; flex-wrap:wrap;">
-      <input type="number" name="session" placeholder="Session #" min="1" value="{{ current_session }}"
-             style="{{ input_style }} width:90px; flex-shrink:0;">
+      <div style="display:flex; flex-direction:column; gap:2px; flex-shrink:0;">
+        <label style="color:var(--muted); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">{{ terms.session }}</label>
+        <input type="number" name="session" placeholder="#" min="1" value="{{ current_session }}"
+               style="{{ input_style }} width:90px;">
+      </div>
       <select name="polarity" style="{{ input_style }} width:130px; flex-shrink:0;">
         <option value="">— tone —</option>
         <option value="positive">positive</option>
@@ -396,10 +399,17 @@
              style="{{ input_style }} width:180px; flex-shrink:0;">
     </div>
     <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+      <label style="color:var(--muted); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; flex-shrink:0;">Caused by</label>
       <select name="actor_id"
               onchange="this.form.actor_type.value = this.options[this.selectedIndex].dataset.type || ''"
               style="{{ input_style }} width:auto; flex-shrink:0; flex-grow:1; max-width:200px;">
         <option value="">— actor (optional) —</option>
+        <option value="{{ meta.observer_name or terms.cast_label }}" data-type="party">{{ terms.cast_label }} (whole group)</option>
+        {% if party %}
+        <optgroup label="{{ terms.cast_label }} — individual">
+          {% for char in party %}<option value="{{ char.name }}" data-type="char">{{ char.name }}</option>{% endfor %}
+        </optgroup>
+        {% endif %}
         {% if world_npcs %}<optgroup label="{{ terms.npcs }}">
           {% for n in world_npcs %}<option value="{{ n.id }}" data-type="npc">{{ n.name }}</option>{% endfor %}
         </optgroup>{% endif %}
