@@ -1062,10 +1062,12 @@ def log_character(slug, char_name, session, note, polarity=None, intensity=None,
 
 def log_party_group(slug, session, note, polarity=None, intensity=None, event_type=None,
                     visibility="public", actor_id=None, actor_type=None, actor_dm_only=False,
-                    location_id=None):
+                    location_id=None, party_name=None):
     data = _load(slug, "campaign.json")
     event_id = "evt_" + secrets.token_hex(3)
     entry = {"id": event_id, "session": session, "note": note, "visibility": visibility}
+    if party_name:
+        entry["party_name"] = party_name
     if polarity in ("positive", "neutral", "negative"):
         entry["polarity"] = polarity
         entry["intensity"] = int(intensity) if intensity in (1, 2, 3) else 1

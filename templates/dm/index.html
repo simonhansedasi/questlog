@@ -798,6 +798,7 @@ function dismissRipple(rid) {
 
 var _proposalData = {{ (saved_proposals.proposals if saved_proposals and saved_proposals.proposals else []) | tojson }};
 var _partyChars = {{ party | map(attribute='name') | list | tojson }};
+var _partyName = {{ (meta.party_name or 'The Party') | tojson }};
 if (_proposalData.length) {
   renderProposals(_proposalData, {{ saved_proposals.session if saved_proposals and saved_proposals.session else 'null' }});
 }
@@ -873,10 +874,12 @@ function renderProposals(proposals, sessionN) {
 
   // Build actor dropdown: existing entities + proposed (unknown) entities from this parse
   const _existingEntities = typeof _allEntities !== 'undefined' ? _allEntities : [];
+  const _entitySelectOptions = _existingEntities.filter(e => !e.actor_only);
   const _seenNames = new Set(_existingEntities.map(e => e.name.toLowerCase()));
   const _proposedActors = [];
   proposals.forEach(p => {
-    if (!p.entity_id && p.entity_name && !_seenNames.has(p.entity_name.toLowerCase())) {
+    const _isPG = p.entity_type === 'party_group' || p.entity_type === 'party';
+    if (!p.entity_id && p.entity_name && !_seenNames.has(p.entity_name.toLowerCase()) && !_isPG) {
       _seenNames.add(p.entity_name.toLowerCase());
       _proposedActors.push({ id: `__proposed__:${p.entity_name}`, name: `${p.entity_name} (new)`, type: p.entity_type || 'npc' });
     }
@@ -885,9 +888,10 @@ function renderProposals(proposals, sessionN) {
 
   list.innerHTML = proposals.map((p, i) => {
     const isShip = p.entity_type === 'ship';
+    const isPartyGroup = p.entity_type === 'party_group' || p.entity_type === 'party';
     const col = isShip ? '#5ba4cf' : (polarityColor[p.polarity] || 'var(--border)');
-    const knownId = (p.entity_id || isShip) ? '' : ' style="color:#d97706;"';
-    const unknownBadge = (p.entity_id || isShip) ? '' : '<span style="color:#d97706; font-size:0.68rem; font-weight:700; margin-left:4px;">unknown entity</span>';
+    const knownId = (p.entity_id || isShip || isPartyGroup) ? '' : ' style="color:#d97706;"';
+    const unknownBadge = (p.entity_id || isShip || isPartyGroup) ? '' : '<span style="color:#d97706; font-size:0.68rem; font-weight:700; margin-left:4px;">unknown entity</span>';
     const shipBadge = isShip ? '<span style="color:#5ba4cf; font-size:0.68rem; font-weight:700; margin-left:4px;">ship log</span>' : '';
     const conflictBadge = p.conflict ? '<span style="color:#e05c5c; font-size:0.68rem; font-weight:700; margin-left:4px;" title="This may contradict the entity\'s known state — review before committing">⚠ conflict</span>' : '';
     const borderCol = p.conflict ? '#e05c5c' : col;
@@ -898,8 +902,11 @@ function renderProposals(proposals, sessionN) {
         <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
           <select onchange="(function(s){const opt=s.options[s.selectedIndex]; _proposalData[${i}].entity_id=opt.dataset.id||null; _proposalData[${i}].entity_name=opt.dataset.name||s.value; _proposalData[${i}].entity_type=opt.dataset.type||'npc';})(this)"
                   style="background:var(--surface); border:1px solid var(--border); color:var(--text); font-weight:700; border-radius:3px; padding:2px 6px; font-size:0.83rem; cursor:pointer; max-width:200px;">
-            <option value="" data-id="${p.entity_id||''}" data-name="${p.entity_name}" data-type="${p.entity_type||'npc'}" selected>${p.entity_name}${p.entity_id?'':' ⚠'}</option>
-            ${_allEntities.map(e => `<option value="${e.id}" data-id="${e.id}" data-name="${e.name}" data-type="${e.type}">${e.name} (${e.type})</option>`).join('')}
+            ${isPartyGroup
+              ? `<option value="" data-id="" data-name="${_partyName}" data-type="party_group" selected>${_partyName} (party log)</option>`
+              : `<option value="" data-id="${p.entity_id||''}" data-name="${p.entity_name||''}" data-type="${p.entity_type||'npc'}" selected>${p.entity_name||'?'}${p.entity_id?'':' ⚠'}</option>`
+            }
+            ${_entitySelectOptions.map(e => `<option value="${e.id}" data-id="${e.id}" data-name="${e.name}" data-type="${e.type}">${e.name} (${e.type})</option>`).join('')}
           </select>
           ${shipBadge}${conflictBadge}
           <select class="prop-pol-sel" onchange="_setPropPol(${i}, this.value)"
@@ -946,7 +953,7 @@ function renderProposals(proposals, sessionN) {
                    style="accent-color:var(--purple);"> Secret actor
           </label>
         </div>
-        ${(!p.entity_id && !isShip) ? `<div style="display:flex; align-items:center; gap:8px;"><p style="color:#7ec87e; font-size:0.7rem; margin:0;">New entity — will be created on commit.</p><label style="display:flex; align-items:center; gap:4px; font-size:0.68rem; color:var(--muted); cursor:pointer; white-space:nowrap;"><input type="checkbox" ${p.entity_hidden?'checked':''} onchange="_proposalData[${i}].entity_hidden=this.checked" style="accent-color:var(--gold);"> Hidden</label></div>` : ''}
+        ${(!p.entity_id && !isShip && !isPartyGroup) ? `<div style="display:flex; align-items:center; gap:8px;"><p style="color:#7ec87e; font-size:0.7rem; margin:0;">New entity — will be created on commit.</p><label style="display:flex; align-items:center; gap:4px; font-size:0.68rem; color:var(--muted); cursor:pointer; white-space:nowrap;"><input type="checkbox" ${p.entity_hidden?'checked':''} onchange="_proposalData[${i}].entity_hidden=this.checked" style="accent-color:var(--gold);"> Hidden</label></div>` : ''}
         ${_partyChars.length ? `<div style="display:flex; gap:3px; flex-wrap:wrap; align-items:center;">
           <span style="color:var(--muted); font-size:0.68rem; flex-shrink:0;">Seen by:</span>
           ${_partyChars.map(name => {
@@ -2802,16 +2809,15 @@ function rfEvtDelete(btn) {
       <label style="{{ label_style }}">Description</label>
       <textarea name="description" rows="2" style="{{ input_style }} resize:vertical; font-family:inherit;">{{ meta.description }}</textarea>
     </div>
-    {% if not meta.mode or meta.mode == 'ttrpg' %}
     <div style="display:flex; flex-direction:column; gap:4px;">
       <label style="{{ label_style }}">{{ terms.cast_label }} Name</label>
       <input type="text" name="party_name" value="{{ meta.party_name or terms.cast_label }}" placeholder="{{ terms.cast_label }}" style="{{ input_style }}">
+      <p style="color:var(--muted); font-size:0.72rem; margin:2px 0 0 0;">The protagonist group. Appears in the party log and relationship scores.</p>
     </div>
-    {% endif %}
     <div style="display:flex; flex-direction:column; gap:4px;">
-      <label style="{{ label_style }}">Observer Name</label>
-      <input type="text" name="observer_name" value="{{ meta.observer_name or '' }}" placeholder="e.g. The Party, The Reader, The Community" style="{{ input_style }}">
-      <p style="color:var(--muted); font-size:0.72rem; margin:2px 0 0 0;">Whose POV do relationship scores reflect? Shown on all event log badges.</p>
+      <label style="{{ label_style }}">Neutral Observer Name</label>
+      <input type="text" name="observer_name" value="{{ meta.observer_name or '' }}" placeholder="e.g. The Internet, Posterity, The Reader" style="{{ input_style }}">
+      <p style="color:var(--muted); font-size:0.72rem; margin:2px 0 0 0;">Moral blank page. Judges who caused harm or aid based on the &ldquo;Caused By&rdquo; field. Never affected by events.</p>
     </div>
     <div style="display:flex; flex-direction:column; gap:4px;">
       <label style="{{ label_style }}">{{ terms.dm or 'DM' }} PIN</label>

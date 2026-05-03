@@ -929,9 +929,22 @@ def party(slug):
     characters = db.get_party(slug, include_hidden=is_dm)
     npcs = db.get_npcs(slug, include_hidden=is_dm)
     factions = db.get_factions(slug, include_hidden=is_dm)
+    locations = db.get_locations(slug, include_hidden=is_dm)
     current_session = db.get_current_session(slug)
     npc_names = {n["id"]: n["name"] for n in npcs}
     faction_names = {f["id"]: f["name"] for f in factions}
+    party_display_name = meta.get("party_name") or "The Party"
+    def _resolve_actor(e):
+        actor = e.get("actor_id", "")
+        atype = e.get("actor_type", "")
+        if atype == "npc":
+            return npc_names.get(actor, actor)
+        elif atype == "faction":
+            return faction_names.get(actor, actor)
+        elif actor:
+            return actor
+        return None
+
     for char in characters:
         char["_conditions"] = db.get_character_conditions(
             slug, char["name"], include_hidden=is_dm, include_resolved=False
@@ -939,20 +952,25 @@ def party(slug):
         raw_log = char.get("log", [])
         visible = db.get_visible_log(raw_log, is_dm=is_dm)
         for e in visible:
-            actor = e.get("actor_id", "")
-            atype = e.get("actor_type", "")
-            if atype == "npc":
-                e["_actor_name"] = npc_names.get(actor, actor)
-            elif atype == "faction":
-                e["_actor_name"] = faction_names.get(actor, actor)
-            elif actor:
-                e["_actor_name"] = actor
-            else:
-                e["_actor_name"] = None
+            e["_actor_name"] = _resolve_actor(e)
         char["_log"] = list(reversed(visible))
+
+    # Combined party timeline: group events + individual character events
+    raw_group = [e for e in meta.get("party_group_log", [])
+                 if not e.get("deleted") and (is_dm or e.get("visibility", "public") != "dm_only")]
+    party_log = []
+    for e in raw_group:
+        party_log.append({**e, "_source": e.get("party_name") or party_display_name,
+                          "_source_type": "group", "_actor_name": _resolve_actor(e)})
+    for char in characters:
+        for e in char.get("_log", []):
+            party_log.append({**e, "_source": char["name"], "_source_type": "character"})
+    party_log.sort(key=lambda e: (e.get("session", 0), e.get("id", "")), reverse=True)
+
     return render_template("party.html", meta=meta, characters=characters, slug=slug,
-                           is_player=is_player, npcs=npcs, factions=factions,
-                           viewer=viewer, current_session=current_session)
+                           is_dm=is_dm, is_player=is_player, npcs=npcs, factions=factions,
+                           locations=locations, viewer=viewer, current_session=current_session,
+                           party_log=party_log, party_display_name=party_display_name)
 
 
 @app.route("/<slug>/assets")
@@ -1251,6 +1269,40 @@ def world_graph_data(slug):
         sessions = [e.get("session", 0) for e in entity.get("log", [])]
         return (max(sessions) if sessions else 0) <= cutoff
 
+    # Neutral-observer moral score: net harm/benefit each entity has caused as actor_id.
+    # Only counts direct DM-logged events — excludes ripples (auto-propagation) and
+    # self-actor entries (pre-"caused by" AI convention where actor_id == log owner).
+    _actor_net = {}
+    def _tally_actor(entries, self_id=None):
+        for _e in entries:
+            if _e.get("deleted"):
+                continue
+            _aid = _e.get("actor_id")
+            if not _aid:
+                continue
+            if self_id and _aid == self_id:
+                continue
+            if _e.get("ripple_source"):
+                continue
+            if not is_dm and _vis(_e) != "public":
+                continue
+            _pol = _e.get("polarity")
+            _int = float(_e.get("intensity") or 1)
+            if _pol == "negative":
+                _actor_net[_aid] = _actor_net.get(_aid, 0) - _int
+            elif _pol == "positive":
+                _actor_net[_aid] = _actor_net.get(_aid, 0) + _int
+
+    for _entity in list(npcs) + list(factions):
+        _tally_actor(_branch_filter(_entity.get("log", [])), self_id=_entity["id"])
+    _tally_actor(_branch_filter(meta.get("party_group_log", [])))
+
+    def _moral_rel(net):
+        if net >= 6:  return "allied"
+        if net >= 3:  return "friendly"
+        if net > -3:  return "neutral"
+        return "hostile"
+
     for npc in npcs:
         # When time-scrubbing or in a branch, skip entities not yet introduced
         time_log = [e for e in _branch_filter(npc.get("log", [])) if not e.get("deleted")]
@@ -1274,6 +1326,8 @@ def world_graph_data(slug):
             "has_conflict": bool(rel.get("has_conflict")),
             "formal_relationship": rel.get("formal_relationship"),
             "personal_relationship": rel.get("personal_relationship"),
+            "moral_rel": _moral_rel(_actor_net.get(npc["id"], 0)),
+            "moral_score": round(_actor_net.get(npc["id"], 0), 1),
         }})
         for edge in npc.get("relations", []):
             tid = edge.get("target")
@@ -1371,6 +1425,8 @@ def world_graph_data(slug):
             "has_conflict": bool(frel.get("has_conflict")),
             "formal_relationship": frel.get("formal_relationship"),
             "personal_relationship": frel.get("personal_relationship"),
+            "moral_rel": _moral_rel(_actor_net.get(faction["id"], 0)),
+            "moral_score": round(_actor_net.get(faction["id"], 0), 1),
         }})
         for edge in faction.get("relations", []):
             tid = edge.get("target")
@@ -2106,8 +2162,9 @@ def dm(slug):
     relation_suggestions = db.get_relation_suggestions(slug)
     pending_ripples = db.get_pending_ripples(slug)
     party = db.get_party(slug)
+    _party_display_name = meta.get("party_name") or "The Party"
     all_entities = (
-        [{"id": "_party", "name": "The Party", "type": "party"}] +
+        [{"id": "_party", "name": _party_display_name, "type": "party", "actor_only": True}] +
         [{"id": n["id"], "name": n["name"], "type": "npc"} for n in db.get_npcs(slug, include_hidden=True)] +
         [{"id": f["id"], "name": f["name"], "type": "faction"} for f in db.get_factions(slug, include_hidden=True)] +
         [{"id": db.slugify(c["name"]), "name": c["name"], "type": "char"} for c in party]
@@ -2200,6 +2257,8 @@ def dm_quick_log(slug):
     location_id = request.form.get("location_id") or None
     is_ajax = bool(request.form.get("ajax"))
     active_branch_id = session.get(f"branch_{slug}") or None
+    _meta_ql = load(slug, "campaign.json")
+    _party_name_ql = _meta_ql.get("party_name") or "The Party"
     if ":" in entity:
         entity_type, entity_id = entity.split(":", 1)
         witnesses = request.form.getlist("witnesses")
@@ -2276,7 +2335,7 @@ def dm_quick_log(slug):
             db.log_party_group(slug, session_n, note, polarity=polarity,
                                intensity=intensity, event_type=event_type, visibility=visibility,
                                actor_id=actor_id, actor_type=actor_type, actor_dm_only=actor_dm_only,
-                               location_id=location_id)
+                               location_id=location_id, party_name=_party_name_ql)
             if not is_ajax:
                 flash("Logged", "success")
         elif entity_type == "location" and note:
@@ -2456,10 +2515,15 @@ def dm_propose_entries(slug):
             rel_suggestions = f_relations.result()
         party_names = {c["name"].lower() for c in party}
         proposals = [p for p in proposals if (p.get("entity_name") or "").lower() not in party_names]
-        # Resolve actor names for display
+        # Normalize party_group proposals and resolve actor names for display
+        _party_display = meta.get("party_name") or "The Party"
         entity_names = {n["id"]: n["name"] for n in npcs}
         entity_names.update({f["id"]: f["name"] for f in factions})
         for p in proposals:
+            if p.get("entity_type") in ("party_group", "party"):
+                p["entity_type"] = "party_group"
+                p["entity_id"] = None
+                p["entity_name"] = _party_display
             if p.get("actor_id"):
                 p["actor_name"] = entity_names.get(p["actor_id"], p["actor_id"])
         new_cursor = cursor + len(full_notes[cursor:])
@@ -2533,6 +2597,8 @@ def dm_commit_proposals(slug):
     db.clear_proposals(slug)
     active_branch_id = session.get(f"branch_{slug}") or None
 
+    meta = load(slug, "campaign.json")
+    _party_name_cp = meta.get("party_name") or "The Party"
     npc_by_name = {n["name"].lower(): n["id"] for n in db.get_npcs(slug, include_hidden=True)}
     faction_by_name = {f["name"].lower(): f["id"] for f in db.get_factions(slug, include_hidden=True)}
     condition_by_name = {c["name"].lower(): c["id"] for c in db.get_conditions(slug, include_hidden=True, include_resolved=True)}
@@ -2548,7 +2614,7 @@ def dm_commit_proposals(slug):
         if (entry.get("entity_name") or "").strip().lower() in party_names:
             continue
         etype = entry.get("entity_type", "npc")
-        if entry.get("entity_id") or etype in ("ship", "condition"):
+        if entry.get("entity_id") or etype in ("ship", "condition", "location", "party", "party_group"):
             continue
         name = (entry.get("entity_name") or "").strip()
         if not name:
@@ -2634,7 +2700,7 @@ def dm_commit_proposals(slug):
             committed += 1
             continue
 
-        if not entity_id:
+        if not entity_id and entity_type not in ("party_group",):
             name = (entry.get("entity_name") or "").strip()
             if not name:
                 continue
@@ -2682,10 +2748,11 @@ def dm_commit_proposals(slug):
         axis = entry.get("axis") or None
         if discrete:
             visibility = "dm_only"
-        if entity_type == "party" or entity_id == "_party":
+        if entity_type in ("party", "party_group") or entity_id == "_party":
             src_evt = db.log_party_group(slug, session_n, note, polarity=polarity,
                                          intensity=intensity, event_type=event_type, visibility=visibility,
-                                         actor_id=actor_id, actor_type=actor_type)
+                                         actor_id=actor_id, actor_type=actor_type,
+                                         party_name=_party_name_cp)
         elif entity_type == "faction" or entity_id in faction_by_name.values():
             src_evt = db.log_faction(slug, entity_id, session_n, note, polarity=polarity,
                                      intensity=intensity, event_type=event_type, visibility=visibility,
@@ -2778,7 +2845,7 @@ def dm_import_session_commit(slug):
         if (entry.get("entity_name") or "").strip().lower() in party_names:
             continue
         etype = entry.get("entity_type", "npc")
-        if entry.get("entity_id") or etype in ("ship", "condition"):
+        if entry.get("entity_id") or etype in ("ship", "condition", "location", "party", "party_group"):
             continue
         name = (entry.get("entity_name") or "").strip()
         if not name:
@@ -3075,6 +3142,20 @@ def dm_import_session(slug):
                 db.apply_ripple(slug, entity_id, "condition", session_n, note, polarity, intensity,
                                 entry.get("event_type"), visibility=entry.get("visibility", "public"),
                                 source_event_id=src_evt)
+            committed += 1
+            continue
+
+        if entity_type in ("party", "party_group") or entity_id == "_party":
+            polarity = entry.get("polarity") or None
+            intensity = int(entry.get("intensity") or 1)
+            event_type = entry.get("event_type") or None
+            visibility = entry.get("visibility", "public")
+            actor_id = entry.get("actor_id") or None
+            actor_type = entry.get("actor_type") or None
+            db.log_party_group(slug, session_n, note, polarity=polarity,
+                               intensity=intensity, event_type=event_type, visibility=visibility,
+                               actor_id=actor_id, actor_type=actor_type,
+                               party_name=meta.get("party_name") or "The Party")
             committed += 1
             continue
 

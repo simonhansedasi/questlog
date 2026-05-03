@@ -40,7 +40,8 @@
     <select id="perspective-select" onchange="applyPerspective(this.value)"
             style="background:var(--surface2); border:1px solid var(--border); color:var(--text);
                    border-radius:4px; padding:2px 6px; font-size:0.75rem; cursor:pointer;">
-      <option value="party">Party / Narrator</option>
+      <option value="neutral_observer">Neutral Observer</option>
+      <option value="party">Party</option>
     </select>
   </label>
   <span style="font-size:0.72rem; color:var(--muted);">
@@ -361,21 +362,39 @@ fetch(`/${slug}/world/graph-data`)
     // Store original relationship values before any perspective override
     cy.nodes().forEach(n => { origRels[n.id()] = n.data('relationship'); });
 
-    // Populate perspective selector with all NPC/faction/character nodes
+    // Populate perspective selector — party members first, then all entities
     const select = document.getElementById('perspective-select');
-    cy.nodes()
-      .filter(n => ['npc', 'faction', 'character'].includes(n.data('type')))
-      .sort((a, b) => a.data('label').localeCompare(b.data('label')))
-      .forEach(n => {
+    const charNodes = cy.nodes().filter(n => n.data('type') === 'character')
+      .sort((a, b) => a.data('label').localeCompare(b.data('label')));
+    const entityNodes = cy.nodes().filter(n => ['npc', 'faction'].includes(n.data('type')))
+      .sort((a, b) => a.data('label').localeCompare(b.data('label')));
+    if (charNodes.length) {
+      const grp = document.createElement('optgroup');
+      grp.label = 'Party Members';
+      charNodes.forEach(n => {
+        const opt = document.createElement('option');
+        opt.value = n.id();
+        opt.textContent = n.data('label');
+        grp.appendChild(opt);
+      });
+      select.appendChild(grp);
+    }
+    if (entityNodes.length) {
+      const grp = document.createElement('optgroup');
+      grp.label = 'Entities';
+      entityNodes.forEach(n => {
         const opt = document.createElement('option');
         opt.value = n.id();
         opt.textContent = n.data('label') + (n.data('type') === 'faction' ? ' ◻' : '');
-        select.appendChild(opt);
+        grp.appendChild(opt);
       });
+      select.appendChild(grp);
+    }
 
     cy.on('tap', 'node', function(e) { selectNode(e.target); });
     cy.on('tap', function(e) { if (e.target === cy) clearSelection(); });
     applyFilters();
+    applyPerspective('neutral_observer');
   })
   .catch(err => {
     const el = document.getElementById('cy-loading');
@@ -511,6 +530,16 @@ function edgeToRel(edge) {
 
 function applyPerspective(entityId) {
   if (!cy) return;
+
+  if (entityId === 'neutral_observer') {
+    cy.nodes().forEach(n => {
+      if (n.data('type') === 'party' || n.data('type') === 'character') return;
+      const moral = n.data('moral_rel') || 'neutral';
+      n.data('relationship', moral);
+      n.style('background-color', REL_COLOR[moral] || '#555');
+    });
+    return;
+  }
 
   if (entityId === 'party') {
     cy.nodes().forEach(n => {

@@ -147,7 +147,7 @@ fetch(`/${slug}/world/graph-data{% if as_of %}?as_of={{ as_of }}{% endif %}`)
       container: document.getElementById('cy'),
       elements: [...data.nodes, ...data.edges],
       style: [
-        { selector: 'node', style: { label:'data(label)', 'font-size':5, 'font-family':'monospace', color:'#c8cfe8', 'text-valign':'bottom', 'text-margin-y':1, width:'mapData(log_count,0,20,3,6)', height:'mapData(log_count,0,20,3,6)', 'background-color': ele => REL_COLOR[ele.data('relationship')]||'#555', 'border-width': ele => ele.data('hidden')?0.5:0, 'border-style': ele => ele.data('hidden')?'dashed':'solid', 'border-color':'#aaa', 'outline-width':0, 'overlay-opacity':0, 'underlay-opacity':0, 'transition-property':'opacity,border-width,border-color,background-color', 'transition-duration':'150ms' }},
+        { selector: 'node', style: { label:'data(label)', 'font-size':5, 'font-family':'monospace', color:'#c8cfe8', 'text-valign':'bottom', 'text-margin-y':1, width:'mapData(log_count,0,20,3,6)', height:'mapData(log_count,0,20,3,6)', 'background-color': ele => REL_COLOR[ele.data('moral_rel')]||REL_COLOR[ele.data('relationship')]||'#555', 'border-width': ele => ele.data('hidden')?0.5:0, 'border-style': ele => ele.data('hidden')?'dashed':'solid', 'border-color':'#aaa', 'outline-width':0, 'overlay-opacity':0, 'underlay-opacity':0, 'transition-property':'opacity,border-width,border-color,background-color', 'transition-duration':'150ms' }},
         { selector: 'node[type="faction"]', style: { shape:'round-rectangle' }},
         { selector: 'node[type="npc"]',     style: { shape:'ellipse' }},
         { selector: 'node[type="party"]',   style: { shape:'star', 'background-color':'#c9a227', width:14, height:14, 'font-size':6, color:'#c9a227', 'font-weight':'bold', 'z-index':20 }},
@@ -256,8 +256,9 @@ function selectNode(node) {
   document.getElementById('info-role').textContent = data.role || '';
   document.getElementById('info-last-note').textContent = data.last_note ? `"${data.last_note}"` : '';
   const badge = document.getElementById('info-rel-badge');
-  badge.textContent = data.relationship;
-  const c = REL_COLOR[data.relationship] || '#888';
+  const dispRel = data.moral_rel || data.relationship;
+  badge.textContent = dispRel;
+  const c = REL_COLOR[dispRel] || '#888';
   badge.style.cssText = `font-size:0.68rem;font-weight:700;padding:2px 6px;border-radius:3px;flex-shrink:0;margin-left:6px;background:${c}22;color:${c};border:1px solid ${c}44;`;
 
   let worldPath = null;
