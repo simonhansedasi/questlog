@@ -34,11 +34,13 @@ RippleForge is not a note-taking tool or character sheet replacement. It models 
 
 ### As a party game
 
-- **Pass-the-phone collaborative storytelling** — 30-minute session, 2–6 players, no prep
-- **Secret objectives** — each player gets a private mission that may conflict with the group's arc; relationship biases (trusts/suspects) add tension
-- **AI arc generation** — give the group a genre, place, and faction; the AI writes an arc with three open-ended leads (not linear steps)
-- **AI epilogue** — at the end, reveals everyone's secret missions and generates a prose epilogue
-- **World persists** — after the game, the campaign lives on as a full RippleForge world
+- **Pass-the-phone collaborative storytelling** — 30-minute session, 1–6 players, no prep
+- **Auto-generate scenario** — one tap gives the group a location, faction, characters, and an inciting incident to react to; or build it manually
+- **Named role archetypes** — each player is secretly assigned a role (Saboteur, Protector, Investigator, Opportunist, Loyalist, Impostor, Catalyst) with a private mission tailored to it
+- **Structured opening round** — every character logs their first reaction to the inciting incident before free play begins
+- **AI referee** — checks each action for consistency before it's committed; catches shortcuts and contradictions
+- **AI epilogue** — at the end, reveals everyone's secret role and mission; generates a prose epilogue
+- **World persists** — after the game, wikilinks are injected automatically and the campaign lives on as a full RippleForge world
 
 RippleForge does not invent narrative. AI proposes; Narrator approves; the world updates.
 
@@ -83,7 +85,7 @@ The Ashcroft Vein doubles as the demo source (`DEMO_SOURCE=ashford`).
 | Pro Monthly | $8/mo | 5 worlds + AI features |
 | Pro Annual | $76/yr (save $20) | 5 worlds + AI features |
 | World add-on | $1 one-time | +1 world (stacks) |
-| Party game | 1 free, then $2/game | Non-Pro users |
+| Party game | 3 free, then $2/game | Non-Pro users |
 
 Players (read-only share link) are always free. Only Narrator accounts pay.
 
@@ -156,8 +158,9 @@ Requires `ANTHROPIC_API_KEY` in `.env` at repo root. Uses `claude-haiku-4-5-2025
 | Commit parsed | `POST /<slug>/dm/session/commit_proposals` | Write approved entries + trigger ripples |
 | What happens next | `POST /<slug>/dm/world/futures` | Consequence projections from world state |
 | Commit futures | `POST /<slug>/dm/world/commit_futures` | Write as PROJECTED entries, returns world diff |
-| Party arc | `POST /<slug>/play/generate-arc` | Generate story arc + 3 open-ended leads |
-| Party secrets | `POST /<slug>/play/generate-secrets` | Generate per-character secret objectives |
+| Party scenario | `POST /<slug>/play/generate-scenario` | Generate location, faction, characters + inciting incident |
+| Party arc | `POST /<slug>/play/generate-arc` | Generate story arc + 3 open-ended leads; saves title as world name |
+| Party secrets | `POST /<slug>/play/generate-secrets` | Generate per-character role archetypes + secret objectives |
 | Party summary | `POST /<slug>/play/generate-summary` | Generate prose epilogue for done screen |
 
 All narrative AI routes require Narrator auth **and** `ai_enabled: true` (or `admin: true`). Party AI routes are unauthed (rate-limited).
@@ -213,7 +216,7 @@ campaigns/<slug>/
     quests.json
   dm/
     session.json       plan (markdown), notes
-    party_game.json    phase, genre, characters, place, faction, arc, history, secret_objectives
+    party_game.json    phase, genre, inciting_incident, characters, place, faction, arc{title,description,objectives[]}, history, secret_objectives[{role,...}]
   journal.json         {entries: [{session, date, recap}]}
   references.json
 ```
