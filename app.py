@@ -10,6 +10,7 @@ import json
 import os
 import re
 import sys
+import random
 import secrets
 import shutil
 import datetime
@@ -34,7 +35,9 @@ stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
 STRIPE_PUBLISHABLE_KEY = os.environ.get("STRIPE_PUBLISHABLE_KEY", "")
 STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_SIGNING_SECRET", "")
 STRIPE_PRICE_PRO = "price_1TS6sQHVw7SLO5uo3e0vIZZ3"
+STRIPE_PRICE_PRO_ANNUAL = "price_1TTWCKHVw7SLO5uofngMWjVK"
 STRIPE_PRICE_WORLD = "price_1TS6qIHVw7SLO5uoIpwNWs0n"
+STRIPE_PRICE_PARTY = "price_1TTW4AHVw7SLO5uowdfuAKHR"
 
 
 class PrefixMiddleware:
@@ -477,6 +480,8 @@ def login():
         if user and check_password_hash(user["password_hash"], password):
             session["user"] = username
             session["display_name"] = user.get("display_name", username)
+            if not user.get("onboarding_seen"):
+                return redirect(url_for("welcome"))
             return redirect(url_for("index"))
         error = "Invalid username or password."
     return render_template("login.html", error=error)
@@ -509,6 +514,7 @@ def auth_google_callback():
     if not username:
         username = next((u for u, d in users.items() if d.get("email") == email and email), None)
 
+    is_new_user = username is None
     if not username:
         # Derive a clean username from the email prefix
         base = re.sub(r'[^a-z0-9_]', '_', email.split("@")[0].lower())[:20] or "user"
@@ -534,6 +540,8 @@ def auth_google_callback():
     save_users(users)
     session["user"] = username
     session["display_name"] = users[username].get("display_name", username)
+    if is_new_user or not users[username].get("onboarding_seen"):
+        return redirect(url_for("welcome"))
     return redirect(url_for("index"))
 
 
@@ -607,6 +615,385 @@ def index():
 @app.route("/guide")
 def guide():
     return render_template("guide.html")
+
+
+@app.route("/<slug>/setup")
+@login_required
+def setup_wizard(slug):
+    _validate_slug(slug)
+    meta = load(slug, "campaign.json")
+    if meta.get("onboarding_mode") != "wizard":
+        abort(404)
+    if meta.get("owner") != session.get("user"):
+        abort(403)
+    npcs = db.get_npcs(slug, include_hidden=True)
+    return render_template("setup_wizard.html", slug=slug, meta=meta, npcs=npcs)
+
+
+@app.route("/<slug>/setup/step", methods=["POST"])
+@login_required
+@limiter.limit("120 per hour")
+def setup_wizard_step(slug):
+    _validate_slug(slug)
+    meta = load(slug, "campaign.json")
+    if meta.get("onboarding_mode") != "wizard":
+        abort(404)
+    if meta.get("owner") != session.get("user"):
+        abort(403)
+    data = request.get_json()
+    step = data.get("step")
+    value = (data.get("value") or "").strip()[:200]
+    if not value:
+        return jsonify({"error": "empty"}), 400
+
+    current_session = 1
+
+    if step == 0:
+        meta["name"] = value
+        meta["system"] = "Any"
+        (CAMPAIGNS / slug / "campaign.json").write_text(json.dumps(meta, indent=2))
+        return jsonify({"ok": True, "next_step": 1})
+
+    elif step == 1:
+        npc_id = db.slugify(value)
+        existing = [n["id"] for n in db.get_npcs(slug, include_hidden=True)]
+        if npc_id in existing:
+            npc_id = npc_id + "_2"
+        db.add_npc(slug, value, role="Character", relationship="neutral",
+                   description="", hidden=False)
+        return jsonify({"ok": True, "next_step": 2, "npc_id": db.slugify(value), "npc_name": value})
+
+    elif step == 2:
+        db.add_npc(slug, value, role="Character", relationship="neutral",
+                   description="", hidden=False)
+        return jsonify({"ok": True, "next_step": 3, "npc_id": db.slugify(value), "npc_name": value})
+
+    elif step == 3:
+        db.add_faction(slug, value, relationship="neutral", description="", hidden=False)
+        return jsonify({"ok": True, "next_step": 4})
+
+    elif step == 4:
+        db.add_location(slug, value, hidden=False)
+        return jsonify({"ok": True, "next_step": 5})
+
+    elif step == 5:
+        db.add_quest(slug, value, description=value, hidden=False, status="active")
+        return jsonify({"ok": True, "next_step": 6})
+
+    elif step == 6:
+        npc_id = data.get("npc_id", "")
+        db.log_npc(slug, npc_id, current_session, value,
+                   polarity="neutral", intensity=1, event_type="other", visibility="public")
+        return jsonify({"ok": True, "next_step": 7})
+
+    elif step == 7:
+        npc_id = data.get("npc_id", "")
+        db.log_npc(slug, npc_id, current_session, value,
+                   polarity="neutral", intensity=1, event_type="other", visibility="public")
+        return jsonify({"ok": True, "next_step": 8})
+
+    elif step == 8:
+        npc1_id = data.get("npc1_id", "")
+        npc2_id = data.get("npc2_id", "")
+        relation = data.get("relation", "ally")
+        if npc1_id and npc2_id and relation in ("ally", "rival"):
+            db.add_npc_relation(slug, npc1_id, npc2_id, "npc", relation, 0.8)
+            db.add_npc_relation(slug, npc2_id, npc1_id, "npc", relation, 0.8)
+        return jsonify({"ok": True, "done": True})
+
+    return jsonify({"error": "unknown step"}), 400
+
+
+def _party_game_access(slug):
+    """Load and return campaign meta for a party-mode campaign. No auth required."""
+    _validate_slug(slug)
+    meta = load(slug, "campaign.json")
+    if meta.get("onboarding_mode") != "party":
+        abort(404)
+    return meta
+
+
+@app.route("/<slug>/play")
+def party_play(slug):
+    meta = _party_game_access(slug)
+    game = db.get_party_game(slug)
+    # Gate second plays for non-Pro owners
+    owner = meta.get("owner")
+    if owner and not game.get("phase"):
+        users = load_users()
+        user = users.get(owner, {})
+        is_pro = user.get("subscription_status") in ("active", "trialing") or bool(user.get("ks_tier"))
+        if user.get("party_plays", 0) >= 1 and not is_pro:
+            try:
+                checkout = stripe.checkout.Session.create(
+                    payment_method_types=["card"],
+                    mode="subscription",
+                    line_items=[{"price": STRIPE_PRICE_PRO, "quantity": 1}],
+                    metadata={"username": owner},
+                    subscription_data={"trial_period_days": 14},
+                    success_url=request.host_url.rstrip("/") + f"/{slug}/play",
+                    cancel_url=request.host_url.rstrip("/") + url_for("index"),
+                )
+                return redirect(checkout.url)
+            except stripe.StripeError:
+                flash("Upgrade to Pro for unlimited Party Mode games.", "error")
+                return redirect(url_for("index"))
+    return render_template("party_play.html", slug=slug, meta=meta, game=game)
+
+
+@app.route("/<slug>/play/action", methods=["POST"])
+@limiter.limit("60 per hour")
+def party_play_action(slug):
+    meta = _party_game_access(slug)
+    data = request.get_json() or {}
+    action = data.get("action")
+    game = db.get_party_game(slug)
+    current_session = 1
+
+    if action == "init":
+        game = {
+            "phase": "setup",
+            "entities": {"characters": [], "factions": [], "locations": []},
+            "relations": [],
+            "history": [],
+        }
+        db.save_party_game(slug, game)
+        return jsonify({"ok": True, "phase": "setup"})
+
+    elif action == "add_entity":
+        entity_type = data.get("entity_type")
+        name = (data.get("name") or "").strip()[:100]
+        if not name:
+            return jsonify({"error": "Enter a name first."}), 400
+        entities = game.setdefault("entities", {"characters": [], "factions": [], "locations": []})
+
+        if entity_type == "character":
+            db.add_npc(slug, name, role="Character", relationship="neutral", description="", hidden=False)
+            entity_id = db.slugify(name)
+            if not any(e["id"] == entity_id for e in entities["characters"]):
+                entities["characters"].append({"id": entity_id, "name": name})
+        elif entity_type == "faction":
+            db.add_faction(slug, name, relationship="neutral", description="", hidden=False)
+            entity_id = db.slugify(name)
+            if not any(e["id"] == entity_id for e in entities["factions"]):
+                entities["factions"].append({"id": entity_id, "name": name})
+        elif entity_type == "location":
+            db.add_location(slug, name, hidden=False)
+            entity_id = db.slugify(name)
+            if not any(e["id"] == entity_id for e in entities["locations"]):
+                entities["locations"].append({"id": entity_id, "name": name})
+        else:
+            return jsonify({"error": "Unknown entity type."}), 400
+
+        hist = game.setdefault("history", [])
+        hist.append({"type": "add_entity", "entity_type": entity_type, "name": name})
+        db.save_party_game(slug, game)
+        return jsonify({"ok": True, "entities": game["entities"]})
+
+    elif action == "begin_play":
+        entities = game.get("entities", {})
+        if not entities.get("characters"):
+            return jsonify({"error": "Add at least one character first."}), 400
+        if not entities.get("factions"):
+            return jsonify({"error": "Add at least one group or organization first."}), 400
+        if not entities.get("locations"):
+            return jsonify({"error": "Add at least one place first."}), 400
+        genre = (data.get("genre") or "action-adventure").lower()
+        if genre not in ("action-adventure", "drama", "mystery"):
+            genre = "action-adventure"
+        game["genre"] = genre
+        game["phase"] = "arc"
+        db.save_party_game(slug, game)
+        return jsonify({"ok": True, "phase": "arc"})
+
+    elif action == "log_event":
+        source_id = (data.get("source_id") or "").strip()
+        source_type = data.get("source_type")
+        source_name = (data.get("source_name") or "").strip()
+        action_text = (data.get("action_text") or "").strip()[:500]
+        target_id = (data.get("target_id") or "").strip() or None
+        target_type = data.get("target_type") or None
+        target_name = (data.get("target_name") or "").strip()
+
+        if not source_id or not action_text:
+            return jsonify({"error": "Pick a source and describe the action."}), 400
+
+        actor_id = target_id if target_type in ("character", "faction") else None
+        actor_type = {"character": "npc", "faction": "faction"}.get(target_type or "")
+
+        if source_type == "character":
+            db.log_npc(slug, source_id, current_session, action_text,
+                       polarity="neutral", intensity=1, event_type="other", visibility="public",
+                       actor_id=actor_id, actor_type=actor_type)
+        elif source_type == "faction":
+            db.log_faction(slug, source_id, current_session, action_text,
+                           polarity="neutral", intensity=1, event_type="other", visibility="public",
+                           actor_id=actor_id, actor_type=actor_type)
+        else:
+            return jsonify({"error": "Invalid source type."}), 400
+
+        hist_entry = {"type": "log_event", "source": source_name, "action": action_text}
+        if target_name:
+            hist_entry["target"] = target_name
+        hist = game.setdefault("history", [])
+        hist.append(hist_entry)
+        game["history"] = hist[-20:]
+        db.save_party_game(slug, game)
+        return jsonify({"ok": True})
+
+    elif action == "formalize_relation":
+        id1 = (data.get("id1") or "").strip()
+        type1 = data.get("type1")
+        name1 = (data.get("name1") or "").strip()
+        id2 = (data.get("id2") or "").strip()
+        type2 = data.get("type2")
+        name2 = (data.get("name2") or "").strip()
+        relation = data.get("relation", "ally")
+        if relation not in ("ally", "rival"):
+            relation = "ally"
+
+        if not id1 or not id2 or id1 == id2:
+            return jsonify({"error": "Pick two different entities."}), 400
+
+        db_type1 = "npc" if type1 == "character" else "faction"
+        db_type2 = "npc" if type2 == "character" else "faction"
+
+        if type1 == "character":
+            db.add_npc_relation(slug, id1, id2, db_type2, relation, 0.8)
+        else:
+            db.add_faction_relation(slug, id1, id2, db_type2, relation, 0.8)
+        if type2 == "character":
+            db.add_npc_relation(slug, id2, id1, db_type1, relation, 0.8)
+        else:
+            db.add_faction_relation(slug, id2, id1, db_type1, relation, 0.8)
+
+        game.setdefault("relations", []).append({"a": name1, "b": name2, "relation": relation})
+        game.setdefault("history", []).append(
+            {"type": "formalize_relation", "a": name1, "b": name2, "relation": relation}
+        )
+        db.save_party_game(slug, game)
+        return jsonify({"ok": True})
+
+    return jsonify({"error": "unknown action"}), 400
+
+
+@app.route("/<slug>/play/referee", methods=["POST"])
+@limiter.limit("30 per hour")
+def party_referee(slug):
+    meta = _party_game_access(slug)
+    game = db.get_party_game(slug)
+    d = request.get_json() or {}
+    source_name = (d.get("source_name") or "Someone").strip()
+    action_text = (d.get("action_text") or "").strip()[:500]
+    target_name = (d.get("target_name") or "").strip()
+    if not action_text:
+        return jsonify({"ok": True, "warning": None})
+    history = [h for h in game.get("history", []) if h.get("type") == "log_event"]
+    relations = game.get("relations", [])
+    objectives = game.get("arc", {}).get("objectives", [])
+    campaign_name = meta.get("name") or "Our World"
+    result = ai.referee_party_action(campaign_name, history, source_name, action_text, target_name, relations, objectives)
+    return jsonify(result)
+
+
+@app.route("/<slug>/play/generate-arc", methods=["POST"])
+@limiter.limit("10 per hour")
+def party_generate_arc(slug):
+    meta = _party_game_access(slug)
+    game = db.get_party_game(slug)
+    if game.get("phase") != "arc":
+        return jsonify({"error": "not in arc phase"}), 400
+    campaign_name = meta.get("name") or "Our World"
+    entities = game.get("entities", {})
+    location_name = next((e["name"] for e in entities.get("locations", [])), "")
+    faction_name = next((e["name"] for e in entities.get("factions", [])), "")
+    arc = ai.generate_party_arc(
+        campaign_name,
+        entities,
+        location_name,
+        faction_name,
+        genre=game.get("genre", "action-adventure"),
+    )
+    objectives = arc.get("objectives", [])
+    game["arc"] = {
+        "description": arc.get("description", ""),
+        "objectives": objectives,
+        "completed": [False] * len(objectives),
+    }
+    game["phase"] = "arc"
+    # Persist arc as a quest so it appears in the world after the game
+    quest_title = (arc.get("description") or "The Party Arc")[:80]
+    db.add_quest(slug, quest_title, description=arc.get("description", ""), hidden=False)
+    quest_id = db.slugify(quest_title)
+    for obj in objectives:
+        db.add_objective(slug, quest_id, obj)
+    game["quest_id"] = quest_id
+    db.save_party_game(slug, game)
+    return jsonify({"ok": True, "arc": game["arc"], "phase": "arc"})
+
+
+@app.route("/<slug>/play/generate-secrets", methods=["POST"])
+@limiter.limit("10 per hour")
+def party_generate_secrets(slug):
+    meta = _party_game_access(slug)
+    game = db.get_party_game(slug)
+    if game.get("phase") not in ("arc", "secrets"):
+        return jsonify({"error": "wrong phase"}), 400
+    entities = game.get("entities", {})
+    characters = entities.get("characters", [])
+    arc = game.get("arc", {})
+    secrets = ai.generate_secret_objectives(
+        meta.get("name") or "Our World",
+        characters,
+        arc.get("description", ""),
+        game.get("genre", "action-adventure"),
+    )
+    game["secret_objectives"] = secrets
+    game["phase"] = "secrets"
+    db.save_party_game(slug, game)
+    return jsonify({"ok": True, "secret_objectives": secrets})
+
+
+@app.route("/<slug>/play/generate-summary", methods=["POST"])
+@limiter.limit("5 per hour")
+def party_generate_summary(slug):
+    meta = _party_game_access(slug)
+    game = db.get_party_game(slug)
+    result = ai.generate_party_summary(
+        meta.get("name") or "Our World",
+        game.get("history", []),
+        game.get("entities", {}).get("characters", []),
+        game.get("secret_objectives", []),
+        game.get("arc", {}),
+    )
+    return jsonify(result)
+
+
+@app.route("/<slug>/play/complete", methods=["POST"])
+@limiter.limit("5 per hour")
+def party_play_complete(slug):
+    meta = _party_game_access(slug)
+    game = db.get_party_game(slug)
+    completed = (request.get_json() or {}).get("completed", [])
+    if "arc" in game:
+        game["arc"]["completed"] = completed
+    game["phase"] = "done"
+    db.save_party_game(slug, game)
+    # Increment party_plays for the campaign owner
+    owner = meta.get("owner")
+    if owner:
+        users = load_users()
+        if owner in users:
+            users[owner]["party_plays"] = users[owner].get("party_plays", 0) + 1
+            save_users(users)
+    all_entries = db.get_all_log_entries(slug)
+    return jsonify({
+        "ok": True,
+        "world_url": f"/{slug}/world",
+        "events_logged": len(all_entries),
+        "characters": [{"name": p["npc_name"]} for p in game.get("players", [])],
+        "arc": game.get("arc", {}),
+    })
 
 
 @app.route("/wiki")
@@ -698,6 +1085,120 @@ def clone_campaign(slug):
     (dst / "campaign.json").write_text(json.dumps(new_meta, indent=2))
     session[f"dm_{new_slug}"] = True
     return redirect(url_for("dm", slug=new_slug))
+
+
+def _create_onboarding_campaign(username, onboarding_mode):
+    """Clone the blank 'example' template for wizard/party onboarding. Returns new slug or a Stripe redirect Response."""
+    src = CAMPAIGNS / "example"
+    if not src.exists():
+        return None
+    users = load_users()
+    user = users.get(username, {})
+    limit = user.get("world_limit", 1) + user.get("extra_worlds", 0)
+    if _user_world_count(username) >= limit:
+        try:
+            checkout = stripe.checkout.Session.create(
+                payment_method_types=["card"],
+                mode="payment",
+                line_items=[{"price": STRIPE_PRICE_WORLD, "quantity": 1}],
+                metadata={"username": username, "source_slug": "example", "template": "ttrpg"},
+                success_url=request.host_url.rstrip("/") + "/billing/world/success?session_id={CHECKOUT_SESSION_ID}",
+                cancel_url=request.host_url.rstrip("/") + url_for("index"),
+            )
+            return redirect(checkout.url)
+        except stripe.StripeError:
+            flash("World limit reached. Upgrade to create more worlds.", "error")
+            return redirect(url_for("index"))
+    new_slug = secrets.token_hex(4)
+    dst = CAMPAIGNS / new_slug
+    shutil.copytree(str(src), str(dst))
+    new_meta = json.loads((dst / "campaign.json").read_text())
+    new_meta["slug"] = new_slug
+    new_meta["owner"] = username
+    new_meta.pop("demo", None)
+    new_meta.pop("public", None)
+    new_meta["dm_pin"] = str(secrets.randbelow(9000) + 1000)
+    new_meta["created"] = datetime.date.today().isoformat()
+    if onboarding_mode == "party":
+        _PARTY_WORLD_NAMES = [
+            "The Gilded Accord", "The Ashen Crossing", "The Silver Threshold",
+            "The Ember Pact", "The Hollow Crown", "The Iron Convergence",
+            "The Pale Reckoning", "The Crimson Compact", "The Lost Meridian",
+            "The Fracture Point", "The Gray Covenant", "The Amber Dominion",
+            "The Verdant Ruin", "The Broken Meridian", "The Copper Clause",
+        ]
+        new_meta["name"] = random.choice(_PARTY_WORLD_NAMES)
+        new_meta["mode"] = "fiction"
+        tmpl = _BLANK_TEMPLATES["fiction"]
+        new_meta["terminology"] = {k: v for k, v in tmpl.items() if k != "observer_default"}
+        new_meta["observer_name"] = tmpl["observer_default"]
+    else:
+        new_meta["name"] = ""
+        new_meta["mode"] = "ttrpg"
+        new_meta["observer_name"] = "The Party"
+        new_meta.pop("terminology", None)
+    new_meta["description"] = ""
+    new_meta["system"] = "Party Mode" if onboarding_mode == "party" else ""
+    new_meta["party_name"] = ""
+    new_meta["onboarding_mode"] = onboarding_mode
+    (dst / "campaign.json").write_text(json.dumps(new_meta, indent=2))
+    session[f"dm_{new_slug}"] = True
+    return new_slug
+
+
+@app.route("/welcome")
+@login_required
+def welcome():
+    return render_template("welcome.html")
+
+
+@app.route("/welcome", methods=["POST"])
+@login_required
+def welcome_post():
+    choice = request.form.get("choice", "deepend")
+    username = session["user"]
+    users = load_users()
+    users[username]["onboarding_seen"] = True
+    save_users(users)
+
+    if choice == "wizard":
+        result = _create_onboarding_campaign(username, "wizard")
+        if isinstance(result, str):
+            return redirect(url_for("setup_wizard", slug=result))
+        return result or redirect(url_for("index"))
+
+    if choice == "party":
+        user_data = users.get(username, {})
+        is_pro = user_data.get("subscription_status") in ("active", "trialing") or bool(user_data.get("ks_tier"))
+
+        # Non-pro with free game already played → $2 one-time party game
+        if not is_pro and user_data.get("party_plays", 0) >= 1:
+            try:
+                checkout = stripe.checkout.Session.create(
+                    payment_method_types=["card"],
+                    mode="payment",
+                    line_items=[{"price": STRIPE_PRICE_PARTY, "quantity": 1}],
+                    metadata={"username": username},
+                    success_url=request.host_url.rstrip("/") + "/billing/party/success?session_id={CHECKOUT_SESSION_ID}",
+                    cancel_url=request.host_url.rstrip("/") + url_for("index"),
+                )
+                return redirect(checkout.url)
+            except stripe.StripeError:
+                flash("Could not start checkout. Try again.", "error")
+                return redirect(url_for("index"))
+
+        # World limit reached → Pro users: prompt to delete a world first
+        limit = user_data.get("world_limit", 1) + user_data.get("extra_worlds", 0)
+        if _user_world_count(username) >= limit:
+            flash("You've reached your world limit. Delete a world from your home screen to make room for a new party game.", "error")
+            return redirect(url_for("index"))
+
+        result = _create_onboarding_campaign(username, "party")
+        if isinstance(result, str):
+            return redirect(url_for("party_play", slug=result))
+        return result or redirect(url_for("index"))
+
+    return redirect(url_for("index"))
 
 
 @app.route("/demo/reset", methods=["GET", "POST"])
@@ -1124,11 +1625,11 @@ def get_ripple_chains(slug, include_hidden=False):
     all_events = {}
     for npc in npcs:
         for entry in npc.get("log", []):
-            if entry.get("id"):
+            if entry.get("id") and not entry.get("deleted"):
                 all_events[entry["id"]] = {"event": entry, "entity_name": npc["name"], "entity_id": npc["id"], "entity_type": "npc"}
     for faction in factions:
         for entry in faction.get("log", []):
-            if entry.get("id"):
+            if entry.get("id") and not entry.get("deleted"):
                 all_events[entry["id"]] = {"event": entry, "entity_name": faction["name"], "entity_id": faction["id"], "entity_type": "faction"}
 
     chains = {}
@@ -1196,7 +1697,11 @@ def ripple_chains(slug):
     meta = load(slug, "campaign.json")
     is_dm = bool(session.get(f"dm_{slug}"))
     chains = get_ripple_chains(slug, include_hidden=is_dm)
-    return render_template("ripples.html", meta=meta, slug=slug, chains=chains, is_dm=is_dm)
+    npcs = db.get_npcs(slug, include_hidden=is_dm)
+    factions = db.get_factions(slug, include_hidden=is_dm)
+    locations = db.get_locations(slug, include_hidden=is_dm)
+    return render_template("ripples.html", meta=meta, slug=slug, chains=chains, is_dm=is_dm,
+                           npcs=npcs, factions=factions, locations=locations)
 
 
 @app.route("/<slug>/world/graph")
@@ -1918,10 +2423,15 @@ def faction(slug, faction_id):
     backlinks = _get_backlinks(faction_obj["name"], faction_id, link_npcs, link_factions, link_locations)
     char_bonds = db.get_conditions_for_faction(slug, faction_id)
 
+    affiliated_chars = faction_obj.get("affiliated_chars", [])
+    faction_party_affiliated = faction_obj.get("party_affiliated", False)
+
     return render_template("faction.html", meta=meta, faction=faction_obj, slug=slug,
                            is_dm=is_dm, rel_data=rel_data,
                            current_session=db.get_current_session(slug),
                            affiliated_npcs=affiliated_npcs,
+                           affiliated_chars=affiliated_chars,
+                           faction_party_affiliated=faction_party_affiliated,
                            world_npcs=all_npcs, all_factions=all_factions, party=party,
                            ripple_chains=ripple_chains,
                            inter_entity=inter_entity,
@@ -2001,8 +2511,15 @@ def journal(slug):
     all_entries = db.get_journal(slug, include_deleted=is_dm)
     active = [e for e in all_entries if not e.get("deleted")]
     deleted = [e for e in all_entries if e.get("deleted")] if is_dm else []
+    npcs = db.get_npcs(slug, include_hidden=is_dm)
+    factions = db.get_factions(slug, include_hidden=is_dm)
+    locations = db.get_locations(slug, include_hidden=is_dm)
+    party = db.get_party(slug)
     entries_rendered = [
-        {**e, "idx": e["_raw_idx"], "recap_html": Markup(markdown.markdown(e.get("recap", ""), extensions=["nl2br"]))}
+        {**e, "idx": e["_raw_idx"], "recap_html": Markup(markdown.markdown(
+            str(wikilinks_filter(e.get("recap", ""), slug, npcs, factions, locations, party)),
+            extensions=["nl2br"]
+        ))}
         for e in reversed(active)
     ]
     deleted_rendered = [
@@ -2012,7 +2529,8 @@ def journal(slug):
     session_nums = {e["session"] for e in entries_rendered if "session" in e}
     deltas = {n: db.get_session_delta(slug, n) for n in session_nums}
     return render_template("journal.html", meta=meta, slug=slug, is_dm=is_dm,
-                           entries=entries_rendered, deltas=deltas, deleted=deleted_rendered)
+                           entries=entries_rendered, deltas=deltas, deleted=deleted_rendered,
+                           npcs=npcs, factions=factions, locations=locations, party=party)
 
 
 @app.route("/<slug>/dm/journal/post", methods=["POST"])
@@ -2614,7 +3132,13 @@ def dm_commit_proposals(slug):
         if (entry.get("entity_name") or "").strip().lower() in party_names:
             continue
         etype = entry.get("entity_type", "npc")
-        if entry.get("entity_id") or etype in ("ship", "condition", "location", "party", "party_group"):
+        if etype in ("ship", "condition", "location", "party", "party_group"):
+            continue
+        # Don't trust entity_id from AI for existence — check by name only
+        if entry.get("entity_id") and (
+            entry["entity_id"] in npc_by_name.values() or
+            entry["entity_id"] in faction_by_name.values()
+        ):
             continue
         name = (entry.get("entity_name") or "").strip()
         if not name:
@@ -2699,6 +3223,11 @@ def dm_commit_proposals(slug):
                             intensity=intensity, event_type=event_type, visibility=visibility)
             committed += 1
             continue
+
+        # If AI gave an entity_id that doesn't exist, discard it and fall back to name lookup
+        if entity_id and entity_type not in ("party_group", "ship", "condition", "location"):
+            if entity_id not in npc_by_name.values() and entity_id not in faction_by_name.values():
+                entity_id = None
 
         if not entity_id and entity_type not in ("party_group",):
             name = (entry.get("entity_name") or "").strip()
@@ -4091,6 +4620,28 @@ def dm_toggle_faction_hidden(slug, faction_id):
     return redirect(url_for("faction", slug=slug, faction_id=faction_id))
 
 
+@app.route("/<slug>/dm/faction/<faction_id>/toggle_party_affiliated", methods=["POST"])
+@dm_required
+def dm_toggle_faction_party_affiliated(slug, faction_id):
+    faction = next((f for f in db.get_factions(slug, include_hidden=True) if f["id"] == faction_id), None)
+    if faction:
+        db.set_faction_party_affiliated(slug, faction_id, not faction.get("party_affiliated", False))
+    next_url = request.form.get("next") or url_for("faction", slug=slug, faction_id=faction_id)
+    return redirect(next_url)
+
+
+@app.route("/<slug>/dm/faction/<faction_id>/toggle_char_member", methods=["POST"])
+@dm_required
+def dm_toggle_faction_char_member(slug, faction_id):
+    char_name = request.form.get("char_name", "").strip()
+    faction = next((f for f in db.get_factions(slug, include_hidden=True) if f["id"] == faction_id), None)
+    if faction and char_name:
+        currently = char_name in faction.get("affiliated_chars", [])
+        db.set_faction_char_member(slug, faction_id, char_name, not currently)
+    next_url = request.form.get("next") or url_for("faction", slug=slug, faction_id=faction_id)
+    return redirect(next_url)
+
+
 @app.route("/<slug>/dm/faction/<faction_id>/edit", methods=["POST"])
 @dm_required
 def dm_edit_faction(slug, faction_id):
@@ -4834,6 +5385,30 @@ def billing():
     )
 
 
+@app.route("/billing/checkout/pro-annual", methods=["POST"])
+@login_required
+def billing_checkout_pro_annual():
+    username = session["user"]
+    users = load_users()
+    user = users.get(username, {})
+    if user.get("subscription_status") == "active":
+        flash("You're already on Pro.", "info")
+        return redirect(url_for("billing"))
+    try:
+        checkout = stripe.checkout.Session.create(
+            payment_method_types=["card"],
+            mode="subscription",
+            line_items=[{"price": STRIPE_PRICE_PRO_ANNUAL, "quantity": 1}],
+            metadata={"username": username},
+            success_url=request.host_url.rstrip("/") + "/billing/pro/success?session_id={CHECKOUT_SESSION_ID}",
+            cancel_url=request.host_url.rstrip("/") + url_for("billing"),
+        )
+        return redirect(checkout.url)
+    except stripe.StripeError:
+        flash("Could not start checkout. Please try again.", "error")
+        return redirect(url_for("billing"))
+
+
 @app.route("/billing/checkout/pro", methods=["POST"])
 @login_required
 def billing_checkout_pro():
@@ -4930,6 +5505,29 @@ def billing_world_success():
     session[f"dm_{new_slug}"] = True
     flash("World created!", "success")
     return redirect(url_for("dm", slug=new_slug))
+
+
+@app.route("/billing/party/success")
+@login_required
+def billing_party_success():
+    session_id = request.args.get("session_id")
+    if not session_id:
+        abort(400)
+    try:
+        cs = stripe.checkout.Session.retrieve(session_id)
+    except stripe.StripeError:
+        abort(400)
+    if cs.payment_status != "paid":
+        flash("Payment not completed.", "error")
+        return redirect(url_for("index"))
+    username = getattr(cs.metadata, "username", None)
+    if username != session.get("user"):
+        abort(403)
+    result = _create_onboarding_campaign(username, "party")
+    if isinstance(result, str):
+        return redirect(url_for("party_play", slug=result))
+    flash("Payment received! You can now start your party game.", "success")
+    return redirect(url_for("index"))
 
 
 @app.route("/billing/portal", methods=["POST"])

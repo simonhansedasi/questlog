@@ -438,6 +438,32 @@ def set_faction_hidden(slug, faction_id, hidden):
     _save(slug, data, "world/factions.json")
 
 
+def set_faction_party_affiliated(slug, faction_id, value):
+    data = _load(slug, "world/factions.json")
+    for f in data.get("factions", []):
+        if f["id"] == faction_id:
+            if value:
+                f["party_affiliated"] = True
+            else:
+                f.pop("party_affiliated", None)
+    _save(slug, data, "world/factions.json")
+
+
+def set_faction_char_member(slug, faction_id, char_name, affiliated):
+    data = _load(slug, "world/factions.json")
+    for f in data.get("factions", []):
+        if f["id"] == faction_id:
+            members = f.setdefault("affiliated_chars", [])
+            if affiliated and char_name not in members:
+                members.append(char_name)
+            elif not affiliated and char_name in members:
+                members.remove(char_name)
+            if not f["affiliated_chars"]:
+                f.pop("affiliated_chars")
+            break
+    _save(slug, data, "world/factions.json")
+
+
 def delete_faction_log_entry(slug, faction_id, entry_idx):
     data = _load(slug, "world/factions.json")
     for f in data.get("factions", []):
@@ -1286,6 +1312,11 @@ def apply_ripple(slug, source_id, source_type, session_n, note, polarity, intens
                           polarity=rpolarity, intensity=rintensity,
                           event_type=event_type, visibility=visibility,
                           ripple_source=ripple_source)
+        elif target_type in ("char", "party"):
+            log_party_group(slug, session_n, rnote,
+                            polarity=rpolarity, intensity=rintensity,
+                            event_type=event_type, visibility=visibility,
+                            actor_id=source_id, actor_type=source_type)
         else:
             log_faction(slug, target_id, session_n, rnote,
                         polarity=rpolarity, intensity=rintensity,
@@ -1405,6 +1436,9 @@ def apply_ripple_scoped(slug, source_id, source_type, session_n, note, polarity,
         elif etype == "condition":
             log_condition(slug, eid, session_n, rnote, polarity=rpol, intensity=rint,
                           event_type=event_type, visibility=visibility, ripple_source=ripple_source)
+        elif etype in ("char", "party"):
+            log_party_group(slug, session_n, rnote, polarity=rpol, intensity=rint,
+                            event_type=event_type, visibility=visibility)
         else:
             log_faction(slug, eid, session_n, rnote, polarity=rpol, intensity=rint,
                         event_type=event_type, visibility=visibility, ripple_source=ripple_source)
@@ -2765,7 +2799,7 @@ def get_session_delta(slug, session_n, active_branch=None, all_branches=None):
     groups = []
     for npc in _load(slug, "world/npcs.json").get("npcs", []):
         visible = filter_log_for_branch(npc.get("log", []), active_branch, all_branches or [])
-        entries = [e for e in visible if e.get("session") == session_n]
+        entries = [e for e in visible if e.get("session") == session_n and not e.get("deleted")]
         if entries:
             groups.append({
                 "kind": "npc", "id": npc["id"], "name": npc["name"],
@@ -2776,7 +2810,7 @@ def get_session_delta(slug, session_n, active_branch=None, all_branches=None):
             })
     for faction in _load(slug, "world/factions.json").get("factions", []):
         visible = filter_log_for_branch(faction.get("log", []), active_branch, all_branches or [])
-        entries = [e for e in visible if e.get("session") == session_n]
+        entries = [e for e in visible if e.get("session") == session_n and not e.get("deleted")]
         if entries:
             groups.append({
                 "kind": "faction", "id": faction["id"], "name": faction["name"],
@@ -2786,7 +2820,7 @@ def get_session_delta(slug, session_n, active_branch=None, all_branches=None):
                 "entries": entries,
             })
     for condition in _load(slug, "world/conditions.json").get("conditions", []):
-        entries = [e for e in condition.get("log", []) if e.get("session") == session_n]
+        entries = [e for e in condition.get("log", []) if e.get("session") == session_n and not e.get("deleted")]
         if entries:
             groups.append({
                 "kind": "condition", "id": condition["id"], "name": condition["name"],
@@ -2794,6 +2828,26 @@ def get_session_delta(slug, session_n, active_branch=None, all_branches=None):
                 "rel_data": compute_condition_severity(condition, is_dm=True),
                 "entries": entries,
             })
+    for location in _load(slug, "world/locations.json").get("locations", []):
+        entries = [e for e in location.get("log", []) if e.get("session") == session_n and not e.get("deleted")]
+        if entries:
+            groups.append({
+                "kind": "location", "id": location["id"], "name": location["name"],
+                "role": location.get("role", ""),
+                "rel_data": {"relationship": "neutral", "trend": None, "computed": False},
+                "entries": entries,
+            })
+    meta = _load(slug, "campaign.json")
+    party_name = meta.get("party_name") or "The Party"
+    party_entries = [e for e in meta.get("party_group_log", [])
+                     if e.get("session") == session_n and not e.get("deleted")]
+    if party_entries:
+        groups.append({
+            "kind": "party", "id": "_party", "name": party_name,
+            "role": "",
+            "rel_data": {"relationship": "ally", "trend": None, "computed": False},
+            "entries": party_entries,
+        })
     groups.sort(key=lambda g: g["name"])
     return groups
 
@@ -2918,6 +2972,14 @@ def format_magnitude(magnitude):
     if t == "restricted":
         return "restricted"
     return magnitude.get("label", "")
+
+
+def get_party_game(slug):
+    return _load(slug, "dm/party_game.json")
+
+
+def save_party_game(slug, data):
+    _save(slug, data, "dm/party_game.json")
 
 
 def add_reference(slug, title, source, notes, columns, rows):

@@ -16,15 +16,29 @@ Try it: `https://rippleforge.gg/demo/`
 
 RippleForge is not a note-taking tool or character sheet replacement. It models **cause and effect** across a narrative world.
 
+### As a worldbuilding tool
+
 - **Ripple system** — log one event against any entity, and every connected character and faction updates automatically based on their relationship (allies share the impact, rivals feel the opposite)
 - **AI event parsing** — paste raw session notes, chapter summaries, or historical records; get structured log entries matched to known entities with polarity and intensity assigned
 - **Projected consequences** — AI reads every active tension in the world and forecasts what happens next; Narrator reviews, selects, commits
 - **World diff** — every commit shows a before/after snapshot: score changes, relationship label shifts, entries added
 - **Intelligence layer** — algorithmic ranked lists of active pressure, consequence risk, stale threads, and narrative gaps; no manual curation
+- **Branching timelines** — fork from any point and write alternate histories inside the same world; switch between timelines to compare how the graph diverges
+
+### As a writing assistant
+
+- **Dual-axis relationships** — formal and personal relationship axes that can conflict; rendered as separate arcs in the world graph
 - **Per-player fog of war** — each character knows only what they've witnessed; author can preview the world through any character's eyes
 - **Ripple chain view** — visual cause→effect chains showing every downstream consequence of any source event
-- **Dual-axis relationships** — entities (NPCs, factions, party members) can have a formal relationship that differs from a personal one; both are rendered as separate arcs in the graph so you can see the tension at a glance
-- **Branching timelines** — fork from any point and write alternate histories inside the same world; switch between timelines to compare how the graph diverges
+- **Session brief** — algorithmic pre-session intel: pending futures, active tensions, stale threads, narrative gaps
+
+### As a party game
+
+- **Pass-the-phone collaborative storytelling** — 30-minute session, 2–6 players, no prep
+- **Secret objectives** — each player gets a private mission that may conflict with the group's arc; relationship biases (trusts/suspects) add tension
+- **AI arc generation** — give the group a genre, place, and faction; the AI writes an arc with three open-ended leads (not linear steps)
+- **AI epilogue** — at the end, reveals everyone's secret missions and generates a prose epilogue
+- **World persists** — after the game, the campaign lives on as a full RippleForge world
 
 RippleForge does not invent narrative. AI proposes; Narrator approves; the world updates.
 
@@ -37,19 +51,21 @@ The AI role is constraint enforcement, not storytelling:
 - **Summarization** — compresses session notes into a chronicle
 - **Event parsing** — extracts discrete world events from freeform notes or text
 - **Consequence projection** — given current world state, predicts what logically follows
+- **Arc generation** — builds story arcs with open-ended leads for groups to pursue
 - **Narrator always approves** — nothing is written without explicit commit
 
 ---
 
 ## Starter Worlds
 
-Three cloneable demo campaigns show the system across domains:
+Six cloneable demo campaigns show the system across domains:
 
 | World | Domain | Sessions |
 |-------|--------|---------|
 | The Iliad | Epic fiction | 8 books |
 | The Book of Genesis | Biblical fiction | 15 |
-| World War II | Historical (1933-1945) | 12 |
+| World War II | Historical (1933–1945) | 12 |
+| Wars of the Roses | Historical | 9 periods |
 | The Ashcroft Vein | Original TTRPG fiction | 5 |
 | Paladin's Grace | Original TTRPG fiction | 4 |
 
@@ -59,25 +75,43 @@ The Ashcroft Vein doubles as the demo source (`DEMO_SOURCE=ashford`).
 
 ---
 
+## Pricing
+
+| Tier | Price | Worlds |
+|------|-------|--------|
+| Free | — | 1 world |
+| Pro Monthly | $8/mo | 5 worlds + AI features |
+| Pro Annual | $76/yr (save $20) | 5 worlds + AI features |
+| World add-on | $1 one-time | +1 world (stacks) |
+| Party game | 1 free, then $2/game | Non-Pro users |
+
+Players (read-only share link) are always free. Only Narrator accounts pay.
+
+14-day free trial on Pro Monthly.
+
+---
+
 ## User Accounts
 
-Username/password login for existing alpha testers. Google OAuth planned for public launch (replaces invite-gated signup).
+Google OAuth at `/auth/google` — no password required. Username derived from email prefix on first sign-in.
 
-Accounts stored in `users.json` at repo root with werkzeug pbkdf2-hashed passwords.
-
-```bash
-python3 -c "from werkzeug.security import generate_password_hash; print(generate_password_hash('yourpassword'))"
-```
+Username/password login still works for legacy accounts (`users.json`, werkzeug pbkdf2).
 
 ```json
 {
   "users": {
-    "username": { "password_hash": "<hash>", "display_name": "Display Name", "ai_enabled": true }
+    "username": {
+      "password_hash": "<hash>",
+      "display_name": "Display Name",
+      "ai_enabled": true,
+      "world_limit": 5,
+      "party_plays": 0
+    }
   }
 }
 ```
 
-**AI gate:** AI features (`/dm/session/recap`, `/dm/session/propose`, `/dm/world/futures`) require `ai_enabled: true` on the user account. New signups default to `false`. Kickstarter backers redeem a code at `/redeem` to unlock. Admin generates codes by tier at `/admin/ks-codes`.
+**AI gate:** AI features require `ai_enabled: true`. New signups default to `false`. Admin generates KS codes at `/admin/ks-codes`. Users redeem at `/redeem`.
 
 ---
 
@@ -91,13 +125,7 @@ Each world is a folder under `campaigns/<slug>/`. Three access modes:
 | Public (read-only) | `"public": true` | Nobody (Narrator login still works) |
 | Demo | `"demo_mode": true` | Everyone |
 
-### Starting a World
-
-From the index page: clone a Blank World or a starter template. Cloning copies the full folder, assigns ownership, and generates a unique slug.
-
-### Player/Reader Share Link
-
-Narrator dashboard → **Share Link**: generates a token URL. Readers browse read-only without an account.
+Three world modes: `ttrpg` | `fiction` | `historical`. Mode drives all UI labels and nav structure. Party games use `fiction` mode.
 
 ---
 
@@ -105,28 +133,15 @@ Narrator dashboard → **Share Link**: generates a token URL. Readers browse rea
 
 `/demo/` is a live writable copy of The Ashcroft Vein (original fiction, no third-party IP). Resets every 30 minutes.
 
-The demo includes a 4-step guided tour (world → ripples → AI tools → timeline forking) and an AI tools page at `/demo/ai`.
+The demo includes a 4-step guided tour and an AI tools page at `/demo/ai`.
 
-**Parse limit:** Visitors get 3 free live parses. Tracked via `demo_id` cookie (30-day) + `campaigns/demo_parse_counts.json`. Survives resets and new tabs.
+**Parse limit:** Visitors get 3 free live parses. Tracked via `demo_id` cookie (30-day).
 
 ---
 
 ## Narrator Mode
 
 Log in via the **Narrator** link in the nav. Each world has a Narrator PIN in `campaign.json`.
-
-Narrator dashboard (top to bottom):
-
-1. **World State** — intelligence grid: Active Pressure / Consequence Risk / Stale Threads / Narrative Gaps
-2. **What happens next? ✦** — AI projects 2–3 consequences from current world tensions; checkboxes + Commit writes them as `PROJECTED` log entries and shows a world diff
-3. **Session Tools** — plan (markdown) + notes; notes card has ✦ Generate Recap and ✦ Parse into Events
-4. **Proposed Events** — AI parse output; Narrator reviews/edits/rejects, Commit logs with full ripple propagation
-5. **Player Recap** — AI-generated chronicle recap; post to journal
-6. **Session Delta** — all events from session N grouped by entity
-7. **Quick Log** — inline logging with tone, weight, visibility, ripple checkbox
-8. **World / Ships / Add New / Share / Settings / Danger Zone**
-
-Danger Zone contains **Delete World** (not "Delete Campaign") — requires typing the world name to confirm.
 
 ---
 
@@ -141,16 +156,11 @@ Requires `ANTHROPIC_API_KEY` in `.env` at repo root. Uses `claude-haiku-4-5-2025
 | Commit parsed | `POST /<slug>/dm/session/commit_proposals` | Write approved entries + trigger ripples |
 | What happens next | `POST /<slug>/dm/world/futures` | Consequence projections from world state |
 | Commit futures | `POST /<slug>/dm/world/commit_futures` | Write as PROJECTED entries, returns world diff |
+| Party arc | `POST /<slug>/play/generate-arc` | Generate story arc + 3 open-ended leads |
+| Party secrets | `POST /<slug>/play/generate-secrets` | Generate per-character secret objectives |
+| Party summary | `POST /<slug>/play/generate-summary` | Generate prose epilogue for done screen |
 
-All AI routes require Narrator auth **and** `ai_enabled: true` on the user account (or `admin: true`).
-
-### Event parsing — entity types
-
-| entity_type | Commit behavior | Notes |
-|-------------|----------------|-------|
-| `npc` | `log_npc()` + ripple | Auto-creates hidden entity if unknown |
-| `faction` | `log_faction()` + ripple | Auto-creates hidden faction if unknown |
-| `ship` | `log_ship()` (matched by name) | No ripple; no auto-create |
+All narrative AI routes require Narrator auth **and** `ai_enabled: true` (or `admin: true`). Party AI routes are unauthed (rate-limited).
 
 ---
 
@@ -160,8 +170,12 @@ All AI routes require Narrator auth **and** `ai_enabled: true` on the user accou
 /                            Login page / My worlds (authenticated)
 /demo/                       Live writable demo
 /demo/ai                     AI tools demo page
-/demo/reset                  Force reset demo (POST)
 /share/<token>               Read-only via share link
+/welcome                     Party mode entry point (POST choice=party)
+/billing                     Subscription management
+/billing/checkout/pro        Stripe checkout — monthly Pro
+/billing/checkout/pro-annual Stripe checkout — annual Pro
+/billing/party/success       Post-payment redirect for $2 party game
 
 /<slug>/                     World home
 /<slug>/party                Cast roster
@@ -173,9 +187,9 @@ All AI routes require Narrator auth **and** `ai_enabled: true` on the user accou
 /<slug>/story                Quest / arc log
 /<slug>/journal              Session journal
 /<slug>/brief                Narrator briefing (full intelligence report)
+/<slug>/play                 Party game screen (setup/arc/secrets/play/done)
 
 /<slug>/dm                   Narrator dashboard
-/<slug>/dm/log               Post-session logging tool
 /<slug>/dm/login             Narrator PIN entry
 /<slug>/branch/create        Create alternate timeline branch (POST)
 /<slug>/branch/switch        Switch active branch (POST)
@@ -188,16 +202,18 @@ All AI routes require Narrator auth **and** `ai_enabled: true` on the user accou
 
 ```
 campaigns/<slug>/
-  campaign.json        name, system, slug, owner, dm_pin, share_token, demo, branches[]
+  campaign.json        name, system, slug, owner, dm_pin, share_token, mode, terminology, observer_name, branches[]
   party.json           characters: [{name, assigned_user, known_events, ...}]
   assets.json          currency, items, ships[{name, type, log[]}], stronghold
   world/
     npcs.json          npcs: [{id, name, role, relationship, log, hidden, factions, relations}]
     factions.json      factions: [{id, name, relationship, log, hidden, relations}]
+    locations.json     locations: [{id, name, role, description, log, hidden, dm_notes}]
   story/
     quests.json
   dm/
     session.json       plan (markdown), notes
+    party_game.json    phase, genre, characters, place, faction, arc, history, secret_objectives
   journal.json         {entries: [{session, date, recap}]}
   references.json
 ```
@@ -230,16 +246,7 @@ campaigns/<slug>/
 
 ### Relationship computation
 
-`compute_npc_relationship(npc)` — decay-weighted score from all polarity events (0.85^age per session). Score thresholds: `allied` (≥6), `friendly` (≥3), `neutral` (≥−3), `hostile` (<−3). Stored `relationship` field acts as score floor. `actor_id` is display context only — all entries count toward scoring regardless.
-
-Dual-axis: entries tagged `axis="formal"` or `axis="personal"` feed separate score buckets. When `formal_rel != personal_rel` and both non-null, `has_conflict=True` → two dashed conflict arcs in the graph.
-
-### Branch filtering
-
-When viewing branch X forked at session N:
-- Include main timeline entries where `session <= N` and no `branch` field
-- Include entries where `branch == X` (any session)
-- Exclude main timeline entries after session N
+`compute_npc_relationship(npc)` — decay-weighted score from all polarity events (0.85^age per session). Score thresholds: `allied` (≥6), `friendly` (≥3), `neutral` (≥−3), `hostile` (<−3). Stored `relationship` field acts as score floor.
 
 ---
 
@@ -256,19 +263,21 @@ Runs at `http://localhost:5052`.
 
 ---
 
-## Deploy (Raspberry Pi)
+## Deploy
 
+**Live site is on DigitalOcean (68.183.130.60). Edits happen on sbook. Two-step deploy:**
+
+**Step 1 — push sbook → Pi:**
 ```bash
-cd rippleforge && ./deploy.sh
+rsync -av --exclude='venv/' --exclude='campaigns/' --exclude='.env' \
+  /home/simonhans/coding/rippleforge/ simonhans@raspberrypi:/mnt/serverdrive/coding/rippleforge/
 ```
 
-`deploy.sh` rsyncs all non-data files (excludes `venv/`, `campaigns/`, `.env`) and restarts the service. For single-file deploys:
-
+**Step 2 — Pi → DO:**
 ```bash
-rsync -av --checksum <file> simonhans@raspberrypi:/mnt/serverdrive/coding/rippleforge/<relative-path>
-ssh simonhans@raspberrypi "sudo systemctl restart rippleforge"
+ssh simonhans@raspberrypi "cd /mnt/serverdrive/coding/rippleforge && ./deploy_do.sh"
 ```
 
-Always use the explicit `/mnt/serverdrive/` path, never `~/coding` (symlink).
+Skipping step 1 means `deploy_do.sh` pushes the Pi's stale copy — nothing new arrives on the live site.
 
 Systemd service: `/etc/systemd/system/rippleforge.service`. nginx routes `rippleforge.gg` → `127.0.0.1:5052`.

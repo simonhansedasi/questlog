@@ -1,14 +1,14 @@
 {% extends "base.html" %}
-{% block title %}RippleForge — Living World Tracker for Campaigns & Narrative{% endblock %}
+{% block title %}RippleForge — Worldbuilding, Writing & Collaborative Play{% endblock %}
 {% block meta %}
-<meta name="description" content="RippleForge tracks your world as a living relationship graph. Log one event and every connected character and faction reacts automatically. Rewind to any session, fork alternate timelines. For TTRPG campaigns, novels, historical timelines, and alternate histories.">
+<meta name="description" content="RippleForge is a causality engine for narrative — worldbuilding, writing, and collaborative play. Track characters, factions, and events in a living relationship graph. One event, automatic consequences across the whole world.">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   "name": "RippleForge",
   "url": "https://rippleforge.gg",
-  "description": "A living world tracker for narrative. Log one event and every connected character and faction updates automatically through a relationship graph. Rewind to any session, fork alternate timelines. Works for TTRPG campaigns, novels, historical timelines, and alternate histories.",
+  "description": "A causality engine for narrative — worldbuilding, writing, and collaborative play. Track characters, factions, and events in a living relationship graph. Log one event and the consequences propagate automatically across every connected entity.",
   "applicationCategory": "UtilitiesApplication",
   "applicationSubCategory": "Narrative and Worldbuilding Tool",
   "operatingSystem": "Web",
@@ -20,12 +20,12 @@
     "description": "Free demo — no account required"
   },
   "featureList": [
-    "Character and faction relationship graph",
+    "Living relationship graph — characters, factions, and locations all connected",
     "Automatic ripple propagation — one event, automatic consequences",
+    "AI writing assistant — reads your world history before suggesting what happens next",
+    "Collaborative party mode — pass-the-phone storytelling with AI referee",
     "Branching alternate timelines — fork history, compare divergence",
     "Time travel — view world state at any point in the timeline",
-    "Per-reader fog of war",
-    "Ripple chain visualization",
     "Domain-agnostic — TTRPG, fiction, historical analysis, alternate history"
   ],
   "screenshot": "https://rippleforge.gg/demo/",
@@ -48,7 +48,7 @@
       Log one event.<br>The whole world reacts.
     </h1>
     <p style="font-size:1.05rem; color:var(--muted); line-height:1.6; margin:0 auto 28px; max-width:520px;">
-      RippleForge tracks your world as a living relationship graph. Every character and faction is connected — log something that happens to one, and the consequences ripple outward automatically.
+      RippleForge tracks your world as a living relationship graph — built for worldbuilding, writing, and collaborative play. Log one event and the consequences propagate automatically across every connected character, faction, and place.
     </p>
     <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
       <a href="/demo/" style="background:var(--gold); color:#080a18; border-radius:5px; padding:11px 28px; font-size:0.95rem; font-weight:800; text-decoration:none; letter-spacing:0.01em;">
@@ -58,46 +58,54 @@
         How it works
       </a>
     </div>
-    <p style="color:var(--muted); font-size:0.78rem; margin:14px 0 0; opacity:0.7;">
-      The Ashcroft Vein — no account required
-    </p>
+    <p style="color:var(--muted); font-size:0.78rem; margin:14px 0 0; opacity:0.7;">No account required</p>
   </div>
 
-  <!-- Ripple System — lead card -->
+  <!-- Pillar 1 — Worldbuilder -->
   <div class="card" style="margin-bottom:16px; border-color:var(--purple)55;">
     <div style="display:flex; gap:16px; align-items:flex-start;">
-      <span style="font-size:1.4rem; flex-shrink:0; margin-top:2px;">⟳</span>
-      <div>
-        <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 8px 0;">The Ripple System</h3>
-        <p style="color:var(--muted); font-size:0.9rem; line-height:1.65; margin:0;">
-          Every NPC and faction lives in a relationship graph — allies, rivals, dependents. Log that the guild master was betrayed: his allies grow wary, his rivals sense an opportunity, the faction that backed him loses ground. One event, automatic consequences across the whole web. No prompts, no generation — pure cause and effect.
+      <span style="font-size:1.4rem; flex-shrink:0; margin-top:2px;">◎</span>
+      <div style="flex:1;">
+        <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 8px 0;">Build a living world</h3>
+        <p style="color:var(--muted); font-size:0.9rem; line-height:1.65; margin:0 0 12px 0;">
+          Characters, factions, and locations — all connected in a relationship graph with history, scores, and automatic consequences. Rewind to any moment in the timeline, fork alternate histories, and watch the graph diverge. Works for any setting.
         </p>
+        <div style="font-size:0.8rem; color:var(--muted);">
+          Live examples: &nbsp;
+          <a href="/share/k_21q-vg-gdASJMx1BkOLg" style="color:var(--gold); text-decoration:none;">The Iliad</a>
+          &nbsp;·&nbsp;
+          <a href="/share/ykIkx4uVDpWfMoq1CsA4bg" style="color:var(--gold); text-decoration:none;">Wars of the Roses</a>
+          &nbsp;·&nbsp;
+          <a href="/share/Et-R0afQCkhoo3KodsLFcg" style="color:var(--gold); text-decoration:none;">The Ashcroft Vein</a>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Time Travel -->
-  <div class="card" style="margin-bottom:16px;">
+  <!-- Pillar 2 — Writing assistant -->
+  <div class="card" style="margin-bottom:16px; border-color:var(--gold)55;">
     <div style="display:flex; gap:16px; align-items:flex-start;">
-      <span style="font-size:1.4rem; flex-shrink:0; margin-top:2px;">◷</span>
-      <div>
-        <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 8px 0;">Time Travel</h3>
-        <p style="color:var(--muted); font-size:0.9rem; line-height:1.65; margin:0;">
-          Rewind the world graph to any past session. See exactly who was alive, which factions held power, what relationships existed — before any given event changed things. Your whole history is navigable, not just the present state.
+      <span style="font-size:1.4rem; flex-shrink:0; margin-top:2px;">✦</span>
+      <div style="flex:1;">
+        <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 8px 0;">AI that reads before it writes</h3>
+        <p style="color:var(--muted); font-size:0.9rem; line-height:1.65; margin:0 0 12px 0;">
+          Paste your session notes — RippleForge identifies every character, event, and consequence, then updates the world graph automatically. The AI knows who was betrayed in session two. It reads your history before suggesting what happens next.
         </p>
+        <a href="/demo/ai" style="color:var(--gold); font-size:0.85rem; font-weight:600; text-decoration:none;">See it in action →</a>
       </div>
     </div>
   </div>
 
-  <!-- Timeline Forking -->
-  <div class="card" style="margin-bottom:40px; border-color:var(--gold)55;">
+  <!-- Pillar 3 — Party mode -->
+  <div class="card" style="margin-bottom:40px; border-color:#4caf5055;">
     <div style="display:flex; gap:16px; align-items:flex-start;">
-      <span style="font-size:1.4rem; flex-shrink:0; margin-top:2px;">⎇</span>
-      <div>
-        <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 8px 0;">Timeline Forking</h3>
-        <p style="color:var(--muted); font-size:0.9rem; line-height:1.65; margin:0;">
-          Rewind to any session and fork an alternate timeline without touching the original. What if your party took the bribe in session two? What if the treaty held? Branch, log events into the fork, and watch the relationship graph diverge from the main timeline.
+      <span style="font-size:1.4rem; flex-shrink:0; margin-top:2px;">⊕</span>
+      <div style="flex:1;">
+        <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 8px 0;">Collaborative story in 30 minutes</h3>
+        <p style="color:var(--muted); font-size:0.9rem; line-height:1.65; margin:0 0 12px 0;">
+          Pass a phone around the table. Players build characters, a place, and a faction together. The AI generates a story arc. Everyone takes turns logging what happens — an AI referee keeps the story honest. One game. One world that persists after.
         </p>
+        <a href="/welcome" style="color:#4caf50; font-size:0.85rem; font-weight:600; text-decoration:none;">Start a game →</a>
       </div>
     </div>
   </div>
@@ -106,13 +114,6 @@
   <div style="text-align:center; margin-bottom:40px;">
     <p style="font-size:1.1rem; font-weight:700; color:var(--text); font-style:italic; margin:0; opacity:0.8;">
       Do nothing. The world still moves.
-    </p>
-  </div>
-
-  <!-- Domain agnostic note -->
-  <div style="text-align:center; margin-bottom:16px; padding:18px 24px; background:var(--surface2); border-radius:8px; border:1px solid var(--border);">
-    <p style="color:var(--muted); font-size:0.85rem; line-height:1.6; margin:0;">
-      Works for any narrative — tabletop campaigns, novels, historical timelines, alternate histories. RippleForge tracks <em>events and consequences</em>, not game rules. No stats, no HP, no mechanics. Just cause and consequence.
     </p>
   </div>
 
@@ -125,10 +126,6 @@
 
   <!-- Footer CTAs -->
   <div style="text-align:center; display:flex; flex-direction:column; gap:10px; align-items:center;">
-    <a href="/demo/" style="background:var(--gold); color:#080a18; border-radius:5px; padding:10px 28px; font-size:0.92rem; font-weight:800; text-decoration:none;">
-      Try the demo — The Ashcroft Vein →
-    </a>
-    <p style="color:var(--muted); font-size:0.76rem; margin:4px 0 0;">Or browse read-only: <a href="/share/k_21q-vg-gdASJMx1BkOLg" style="color:var(--gold); text-decoration:none;">The Iliad</a> &nbsp;·&nbsp; <a href="/share/Et-R0afQCkhoo3KodsLFcg" style="color:var(--gold); text-decoration:none;">The Ashcroft Vein</a> &nbsp;·&nbsp; <a href="/share/ykIkx4uVDpWfMoq1CsA4bg" style="color:var(--gold); text-decoration:none;">Wars of the Roses</a></p>
     <div style="display:flex; gap:20px; font-size:0.82rem;">
       <a href="/login" style="color:var(--purple); font-weight:700; text-decoration:none;">Create a free account</a>
       <a href="/login" style="color:var(--muted); text-decoration:none;">Log in</a>

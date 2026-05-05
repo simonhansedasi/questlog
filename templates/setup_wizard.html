@@ -1,0 +1,243 @@
+{% extends "base.html" %}
+{% block title %}Getting Started — RippleForge{% endblock %}
+{% block content %}
+<div id="wizard" style="max-width:480px; margin:40px auto 0; padding:0 16px;">
+
+  <!-- Progress dots -->
+  <div style="display:flex; justify-content:center; gap:6px; margin-bottom:32px;" id="progress-dots">
+    {% for i in range(9) %}
+    <div class="dot" data-step="{{ i }}"
+         style="width:8px; height:8px; border-radius:50%; background:var(--border); transition:background 0.2s;"></div>
+    {% endfor %}
+  </div>
+
+  <!-- Step 0: World name -->
+  <div class="wstep" id="step-0">
+    <p style="color:var(--muted); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px;">Step 1 of 9</p>
+    <h2 style="font-size:1.4rem; font-weight:700; margin-bottom:6px;">What's your world called?</h2>
+    <p style="color:var(--muted); font-size:0.88rem; margin-bottom:20px;">Give it a name — a place, a time, a vibe.</p>
+    <input id="input-0" type="text" placeholder="e.g. The Shattered Coast, 1920s Chicago, The Thornwood…"
+           style="width:100%; box-sizing:border-box; background:var(--surface2); border:1px solid var(--border);
+                  color:var(--text); border-radius:6px; padding:14px 16px; font-size:1rem; font-family:inherit; margin-bottom:16px;">
+    <button onclick="submitStep(0)" class="wbtn">Next →</button>
+  </div>
+
+  <!-- Step 1: Character 1 -->
+  <div class="wstep" id="step-1" style="display:none;">
+    <p style="color:var(--muted); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px;">Step 2 of 9</p>
+    <h2 style="font-size:1.4rem; font-weight:700; margin-bottom:6px;">Name a character.</h2>
+    <p style="color:var(--muted); font-size:0.88rem; margin-bottom:20px;">Anyone interesting — a hero, a villain, a mysterious stranger.</p>
+    <input id="input-1" type="text" placeholder="e.g. Maren Vosk, Lord Ashcroft, Detective Raines…"
+           style="width:100%; box-sizing:border-box; background:var(--surface2); border:1px solid var(--border);
+                  color:var(--text); border-radius:6px; padding:14px 16px; font-size:1rem; font-family:inherit; margin-bottom:16px;">
+    <button onclick="submitStep(1)" class="wbtn">Next →</button>
+  </div>
+
+  <!-- Step 2: Character 2 -->
+  <div class="wstep" id="step-2" style="display:none;">
+    <p style="color:var(--muted); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px;">Step 3 of 9</p>
+    <h2 style="font-size:1.4rem; font-weight:700; margin-bottom:6px;">Name another character.</h2>
+    <p style="color:var(--muted); font-size:0.88rem; margin-bottom:20px;">Someone who'll interact with the first — a rival, an ally, a complication.</p>
+    <input id="input-2" type="text" placeholder="e.g. Governor Denn, Petra Calloway, The Pale Widow…"
+           style="width:100%; box-sizing:border-box; background:var(--surface2); border:1px solid var(--border);
+                  color:var(--text); border-radius:6px; padding:14px 16px; font-size:1rem; font-family:inherit; margin-bottom:16px;">
+    <button onclick="submitStep(2)" class="wbtn">Next →</button>
+  </div>
+
+  <!-- Step 3: Organization -->
+  <div class="wstep" id="step-3" style="display:none;">
+    <p style="color:var(--muted); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px;">Step 4 of 9</p>
+    <h2 style="font-size:1.4rem; font-weight:700; margin-bottom:6px;">Name a group or organization.</h2>
+    <p style="color:var(--muted); font-size:0.88rem; margin-bottom:20px;">A faction, guild, government body, family — any collective with its own agenda.</p>
+    <input id="input-3" type="text" placeholder="e.g. The Ironmasks, City Watch, House Ashcroft, The Circle…"
+           style="width:100%; box-sizing:border-box; background:var(--surface2); border:1px solid var(--border);
+                  color:var(--text); border-radius:6px; padding:14px 16px; font-size:1rem; font-family:inherit; margin-bottom:16px;">
+    <button onclick="submitStep(3)" class="wbtn">Next →</button>
+  </div>
+
+  <!-- Step 4: Place -->
+  <div class="wstep" id="step-4" style="display:none;">
+    <p style="color:var(--muted); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px;">Step 5 of 9</p>
+    <h2 style="font-size:1.4rem; font-weight:700; margin-bottom:6px;">Name a place.</h2>
+    <p style="color:var(--muted); font-size:0.88rem; margin-bottom:20px;">Somewhere things happen — a city, a tavern, a battlefield, a hidden room.</p>
+    <input id="input-4" type="text" placeholder="e.g. Ashcroft Mine, The Broken Crown, Irongate…"
+           style="width:100%; box-sizing:border-box; background:var(--surface2); border:1px solid var(--border);
+                  color:var(--text); border-radius:6px; padding:14px 16px; font-size:1rem; font-family:inherit; margin-bottom:16px;">
+    <button onclick="submitStep(4)" class="wbtn">Next →</button>
+  </div>
+
+  <!-- Step 5: Quest/arc -->
+  <div class="wstep" id="step-5" style="display:none;">
+    <p style="color:var(--muted); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px;">Step 6 of 9</p>
+    <h2 style="font-size:1.4rem; font-weight:700; margin-bottom:6px;">What's the central conflict?</h2>
+    <p style="color:var(--muted); font-size:0.88rem; margin-bottom:20px;">The driving tension — what everyone is working toward, against, or around.</p>
+    <input id="input-5" type="text" placeholder="e.g. Find the missing heir, Stop the coup, Uncover the conspiracy…"
+           style="width:100%; box-sizing:border-box; background:var(--surface2); border:1px solid var(--border);
+                  color:var(--text); border-radius:6px; padding:14px 16px; font-size:1rem; font-family:inherit; margin-bottom:16px;">
+    <button onclick="submitStep(5)" class="wbtn">Next →</button>
+  </div>
+
+  <!-- Step 6: First interaction -->
+  <div class="wstep" id="step-6" style="display:none;">
+    <p style="color:var(--muted); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px;">Step 7 of 9</p>
+    <h2 style="font-size:1.4rem; font-weight:700; margin-bottom:6px;">What did <span id="char1-name">Character 1</span> do?</h2>
+    <p style="color:var(--muted); font-size:0.88rem; margin-bottom:20px;">One thing that happened. Past tense, one sentence.</p>
+    <input id="input-6" type="text" placeholder="e.g. Refused to pay the toll and threatened the guards."
+           style="width:100%; box-sizing:border-box; background:var(--surface2); border:1px solid var(--border);
+                  color:var(--text); border-radius:6px; padding:14px 16px; font-size:1rem; font-family:inherit; margin-bottom:16px;">
+    <button onclick="submitStep(6)" class="wbtn">Next →</button>
+  </div>
+
+  <!-- Step 7: Second interaction -->
+  <div class="wstep" id="step-7" style="display:none;">
+    <p style="color:var(--muted); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px;">Step 8 of 9</p>
+    <h2 style="font-size:1.4rem; font-weight:700; margin-bottom:6px;">How did <span id="char2-name">Character 2</span> respond?</h2>
+    <p style="color:var(--muted); font-size:0.88rem; margin-bottom:20px;">One thing that happened next.</p>
+    <input id="input-7" type="text" placeholder="e.g. Reported the incident to the city council."
+           style="width:100%; box-sizing:border-box; background:var(--surface2); border:1px solid var(--border);
+                  color:var(--text); border-radius:6px; padding:14px 16px; font-size:1rem; font-family:inherit; margin-bottom:16px;">
+    <button onclick="submitStep(7)" class="wbtn">Next →</button>
+  </div>
+
+  <!-- Step 8: Formalize relationship -->
+  <div class="wstep" id="step-8" style="display:none;">
+    <p style="color:var(--muted); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px;">Step 9 of 9</p>
+    <h2 style="font-size:1.4rem; font-weight:700; margin-bottom:10px;">Are <span id="char1-name-b">they</span> and <span id="char2-name-b">them</span>…</h2>
+    <p style="color:var(--muted); font-size:0.88rem; margin-bottom:20px;">This formalizes the relationship in your world graph.</p>
+    <div style="display:flex; gap:12px; margin-bottom:20px;">
+      <label style="flex:1; display:flex; align-items:center; gap:10px; background:var(--surface2);
+                    border:2px solid var(--border); border-radius:6px; padding:14px 16px; cursor:pointer;">
+        <input type="radio" name="relation" value="ally" checked style="accent-color:var(--gold);">
+        <span style="font-size:0.95rem; color:#7ec87e; font-weight:600;">Friends / Allies</span>
+      </label>
+      <label style="flex:1; display:flex; align-items:center; gap:10px; background:var(--surface2);
+                    border:2px solid var(--border); border-radius:6px; padding:14px 16px; cursor:pointer;">
+        <input type="radio" name="relation" value="rival" style="accent-color:var(--gold);">
+        <span style="font-size:0.95rem; color:#e05c5c; font-weight:600;">Rivals / Enemies</span>
+      </label>
+    </div>
+    <button onclick="submitStep(8)" class="wbtn">Finalize →</button>
+  </div>
+
+  <!-- Done -->
+  <div class="wstep" id="step-done" style="display:none; text-align:center;">
+    <div style="font-size:2rem; margin-bottom:16px;">✦</div>
+    <h2 style="font-size:1.4rem; font-weight:700; margin-bottom:8px;">Your world is alive.</h2>
+    <p style="color:var(--muted); font-size:0.9rem; margin-bottom:28px;">Two characters, a faction, a place, a conflict — and their first interaction on record. The world graph awaits.</p>
+    <a id="world-link" href="#" class="wbtn" style="display:inline-block; text-decoration:none;">Explore your world →</a>
+  </div>
+
+  <p id="wiz-error" style="color:#e05c5c; font-size:0.85rem; margin-top:12px; display:none;"></p>
+</div>
+
+<style>
+.wbtn {
+  display:block; width:100%; padding:14px 20px; font-size:1rem; font-weight:700;
+  font-family:inherit; background:var(--gold); color:#080a18; border:none;
+  border-radius:6px; cursor:pointer; transition:opacity 0.15s;
+}
+.wbtn:hover { opacity:0.88; }
+.wbtn:disabled { opacity:0.4; cursor:default; }
+</style>
+
+<script>
+const SLUG = "{{ slug | e }}";
+let currentStep = 0;
+let npc1Id = "", npc1Name = "", npc2Id = "", npc2Name = "";
+
+function updateDots(step) {
+  document.querySelectorAll('.dot').forEach((d, i) => {
+    d.style.background = i < step ? 'var(--gold)' : (i === step ? 'var(--text)' : 'var(--border)');
+  });
+}
+
+function showStep(n) {
+  document.querySelectorAll('.wstep').forEach(el => el.style.display = 'none');
+  const el = document.getElementById(n === 'done' ? 'step-done' : `step-${n}`);
+  if (el) el.style.display = 'block';
+  if (typeof n === 'number') updateDots(n);
+  const input = document.getElementById(`input-${n}`);
+  if (input) setTimeout(() => input.focus(), 50);
+  document.getElementById('wiz-error').style.display = 'none';
+}
+
+function showError(msg) {
+  const el = document.getElementById('wiz-error');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+async function submitStep(step) {
+  const btn = document.querySelector(`#step-${step} .wbtn`);
+  if (btn) { btn.disabled = true; btn.textContent = '…'; }
+
+  let value = (document.getElementById(`input-${step}`)?.value || '').trim();
+  let body = { step, value };
+
+  if (step === 6) body.npc_id = npc1Id;
+  if (step === 7) body.npc_id = npc2Id;
+  if (step === 8) {
+    body.value = ''; // no text input on step 8
+    body.npc1_id = npc1Id;
+    body.npc2_id = npc2Id;
+    body.relation = document.querySelector('input[name="relation"]:checked')?.value || 'ally';
+  }
+
+  if (step !== 8 && !value) {
+    if (btn) { btn.disabled = false; btn.textContent = 'Next →'; }
+    showError('Please enter something first.');
+    return;
+  }
+
+  try {
+    const res = await fetch(`/${SLUG}/setup/step`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    const data = await res.json();
+    if (!res.ok || data.error) {
+      showError(data.error || 'Something went wrong. Try again.');
+      if (btn) { btn.disabled = false; btn.textContent = step === 8 ? 'Finalize →' : 'Next →'; }
+      return;
+    }
+
+    if (step === 1) { npc1Id = data.npc_id; npc1Name = data.npc_name; }
+    if (step === 2) { npc2Id = data.npc_id; npc2Name = data.npc_name; }
+
+    if (data.done) {
+      document.getElementById('world-link').href = `/${SLUG}/world`;
+      showStep('done');
+      updateDots(9);
+    } else {
+      currentStep = data.next_step;
+      if (currentStep === 6) {
+        document.querySelectorAll('#char1-name').forEach(el => el.textContent = npc1Name);
+      }
+      if (currentStep === 7) {
+        document.querySelectorAll('#char2-name').forEach(el => el.textContent = npc2Name);
+      }
+      if (currentStep === 8) {
+        document.querySelectorAll('#char1-name-b').forEach(el => el.textContent = npc1Name);
+        document.querySelectorAll('#char2-name-b').forEach(el => el.textContent = npc2Name);
+      }
+      showStep(currentStep);
+    }
+  } catch (e) {
+    showError('Network error. Please try again.');
+    if (btn) { btn.disabled = false; btn.textContent = step === 8 ? 'Finalize →' : 'Next →'; }
+  }
+}
+
+// Allow Enter key to advance
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && currentStep <= 7) {
+    const input = document.getElementById(`input-${currentStep}`);
+    if (document.activeElement === input) submitStep(currentStep);
+  }
+});
+
+showStep(0);
+updateDots(0);
+</script>
+{% endblock %}

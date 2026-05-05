@@ -40,8 +40,8 @@
     {% if visible_entries %}
     <div>
       <div style="margin-bottom:5px;">
-        <a href="/{{ slug }}/world/{{ group.kind }}/{{ group.id }}"
-           style="font-weight:700; color:var(--gold); font-size:0.8rem; text-decoration:none;">{{ group.name }}</a>
+        <a href="{% if group.kind == 'party' %}/{{ slug }}/party{% elif group.kind == 'location' %}/{{ slug }}/world/location/{{ group.id }}{% else %}/{{ slug }}/world/{{ group.kind }}/{{ group.id }}{% endif %}"
+           style="font-weight:700; color:{% if group.kind == 'party' %}var(--gold){% else %}var(--gold){% endif %}; font-size:0.8rem; text-decoration:none;">{{ group.name }}</a>
         {% if group.rel_data %}
         <span class="badge badge-{{ group.rel_data.relationship }}" style="font-size:0.62rem; padding:1px 5px; margin-left:6px;">{{ group.rel_data.relationship }}</span>
         {% if group.rel_data.trend == 'up' %}<span style="color:#7ec87e; font-size:0.72rem; margin-left:2px;">↑</span>
@@ -60,7 +60,7 @@
           </span>
           {% endif %}
           {% if entry.event_type %}<span style="color:var(--purple); font-size:0.65rem; font-weight:700; text-transform:uppercase; margin-right:3px;">{{ entry.event_type }}</span>{% endif %}
-          {{ entry.note }}
+          {{ entry.note | wikilinks(slug, npcs, factions, locations, party) }}
           {% if is_dm and vis == 'dm_only' %}<span style="color:var(--muted); font-size:0.62rem; margin-left:4px; font-style:italic;">DM only</span>{% endif %}
         </li>
         {% endfor %}

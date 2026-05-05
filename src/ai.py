@@ -9,6 +9,232 @@ load_dotenv()
 _client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
 
 
+_GENRE_GUIDES = {
+    "action-adventure": (
+        "Genre: action-adventure. High stakes, urgent physical conflict, a clear threat or antagonist. "
+        "The description should feel tense and exciting. Objectives should involve fighting, escaping, "
+        "recovering something, stopping someone, or surviving. Avoid artifacts and documents as the default."
+    ),
+    "drama": (
+        "Genre: drama. Character-driven, emotional conflict, personal stakes. "
+        "The description should feel intimate and morally complex. Objectives should revolve around "
+        "confronting, revealing, forgiving, betraying, or choosing between loyalties. "
+        "Focus on relationships between the named characters and what they stand to lose."
+    ),
+    "mystery": (
+        "Genre: mystery. Hidden truths, deception, investigation. "
+        "The description should feel shadowy and uncertain — something is not what it seems. "
+        "Objectives should involve uncovering, investigating, exposing, or solving. "
+        "Information is the currency; every lead raises a new question."
+    ),
+}
+
+
+def generate_party_arc(campaign_name, entities, location_name, faction_name, genre="action-adventure"):
+    """Generate a short party arc with a description and 3 objectives. Returns {description, objectives}."""
+    chars = entities.get("characters", []) if isinstance(entities, dict) else []
+    char_names = ", ".join(c["name"] for c in chars) if chars else "the group"
+    genre_guide = _GENRE_GUIDES.get(genre, _GENRE_GUIDES["action-adventure"])
+    system = f"""You are a narrative game master generating a short collaborative story arc for a party game.
+{genre_guide}
+Return ONLY a JSON object with exactly two keys:
+- "description": a 1-2 sentence mission statement, specific to the characters, place, and group provided
+- "objectives": an array of exactly 3 short strings — open-ended leads or paths, not sequential steps. Frame each as something to discover, decide, or pursue. Different characters might approach them differently or even work against each other on them.
+
+No other keys. No prose outside the JSON."""
+    user = f"""Campaign: {campaign_name or "Our World"}
+Characters: {char_names}
+Location: {location_name or "an unknown place"}
+Organization: {faction_name or "a mysterious group"}
+
+Generate the story arc JSON:"""
+    try:
+        message = _client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=512,
+            system=system,
+            messages=[
+                {"role": "user", "content": user},
+                {"role": "assistant", "content": "{"},
+            ]
+        )
+        raw = "{" + message.content[0].text
+        start = raw.find("{")
+        end = raw.rfind("}") + 1
+        result = json.loads(raw[start:end])
+        if "description" in result and "objectives" in result:
+            return result
+    except Exception:
+        pass
+    return {
+        "description": "Something stirs in the shadows. The group must act together before it's too late.",
+        "objectives": ["Discover the threat", "Confront the source", "Resolve the conflict"]
+    }
+
+
+def referee_party_action(campaign_name, history, source_name, action_text, target_name, relations, objectives=None):
+    """Check a proposed action against history, relationships, and arc objectives. Returns {ok, warning}."""
+    hist_lines = [
+        "- " + h["source"] + " — " + h["action"] + (f" (involving {h['target']})" if h.get("target") else "")
+        for h in history[-8:]
+    ]
+    rel_lines = [f"- {r['a']} and {r['b']}: {r['relation']}" for r in relations]
+    obj_lines = [f"{i+1}. {o}" for i, o in enumerate(objectives or [])]
+    target_clause = f" involving {target_name}" if target_name else ""
+
+    user_msg = "Campaign: " + campaign_name + "\n\n"
+    if obj_lines:
+        user_msg += (
+            "Story objectives (players must EARN these through specific events — "
+            "flag if the proposed action simply declares one complete without playing through it):\n"
+            + "\n".join(obj_lines) + "\n\n"
+        )
+    user_msg += (
+        "Established relationships:\n" + ("\n".join(rel_lines) if rel_lines else "None yet.") + "\n\n"
+        "Recent events:\n" + ("\n".join(hist_lines) if hist_lines else "No prior events.") + "\n\n"
+        f"Proposed action: {source_name} — {action_text}{target_clause}\n\n"
+        "Flag if this action: (1) simply declares a story objective done without a specific in-world event "
+        "(e.g. 'solved the mystery', 'completed the mission'), "
+        "(2) contradicts an established ally/rival relationship, or (3) exactly repeats a recent action. "
+        'Return only JSON: {"ok": true} or {"ok": false, "warning": "one brief sentence"}'
+    )
+    try:
+        message = _client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=150,
+            system=(
+                "You are a referee in a collaborative story game. "
+                "Flag three things: (1) players shortcutting story objectives by declaring them complete "
+                "rather than playing through specific events, (2) allies acting as enemies or vice versa, "
+                "(3) exact repetition of a recent action. "
+                "Permit all creative, specific, in-world actions freely. Return only valid JSON."
+            ),
+            messages=[
+                {"role": "user", "content": user_msg},
+                {"role": "assistant", "content": "{"},
+            ]
+        )
+        raw = "{" + message.content[0].text
+        result = json.loads(raw[:raw.rfind("}") + 1])
+        return {"ok": bool(result.get("ok", True)), "warning": result.get("warning")}
+    except Exception:
+        return {"ok": True, "warning": None}
+
+
+def generate_secret_objectives(campaign_name, characters, arc_description, genre="action-adventure"):
+    """Assign secret personal objectives and relationship biases to each character. Returns list of {character_id, character_name, objective, bias_target, bias_type}."""
+    if not characters:
+        return []
+    single = len(characters) == 1
+    char_lines = "\n".join(f"- id: {c['id']} | name: {c['name']}" for c in characters)
+    bias_rules = (
+        '- "bias_target": null\n- "bias_type": null'
+        if single else
+        '- "bias_target": name of exactly one OTHER character this character has a bias toward '
+        "(assign circularly if possible: A→B, B→C, C→A — no self-bias, each character points to a different target)\n"
+        '- "bias_type": "trusts" or "suspects"'
+    )
+    system = (
+        "You are assigning secret personal missions for a pass-the-phone party game. "
+        "Each character gets a private objective that may conflict with or complicate the group arc. "
+        "The best objectives make players feel both heroic and self-interested — someone protects the villain, "
+        "someone wants the prize for themselves, someone is quietly working against the group. "
+        "Make conflicts interesting and specific to the characters and arc provided.\n\n"
+        "Return ONLY a JSON array — one object per character:\n"
+        '- "character_id": exact id from the input list\n'
+        '- "character_name": the character\'s name\n'
+        '- "objective": 1-2 sentences of private mission — what this character secretly wants, '
+        "possibly in tension with the group's goals\n"
+        f"{bias_rules}\n\n"
+        "No other keys. No prose outside the JSON array."
+    )
+    user = (
+        f"Campaign: {campaign_name or 'Our World'}\n"
+        f"Genre: {genre}\n"
+        f"Arc: {arc_description or 'An adventure begins.'}\n\n"
+        f"Characters:\n{char_lines}\n\n"
+        "Assign each character a secret objective"
+        + ("." if single else " and a relationship bias toward one other character.")
+    )
+    parsed = []
+    try:
+        message = _client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=400,
+            system=system,
+            messages=[
+                {"role": "user", "content": user},
+                {"role": "assistant", "content": "["},
+            ]
+        )
+        parsed = _parse_json("[" + message.content[0].text)
+    except Exception:
+        pass
+    # Match returned entries to characters by character_id; fall back per character if missing
+    by_id = {e.get("character_id"): e for e in parsed if isinstance(e, dict) and e.get("character_id")}
+    result = []
+    for c in characters:
+        entry = by_id.get(c["id"])
+        if entry and entry.get("objective"):
+            result.append(entry)
+        else:
+            result.append({
+                "character_id": c["id"],
+                "character_name": c["name"],
+                "objective": "Protect your own interests above all else.",
+                "bias_target": None,
+                "bias_type": None,
+            })
+    return result
+
+
+def generate_party_summary(campaign_name, history, characters, secret_objectives, arc):
+    """Generate a brief narrative epilogue for a completed party game. Returns {summary: '...'}."""
+    hist_lines = [
+        "- " + h["source"] + " — " + h["action"] + (f" (involving {h['target']})" if h.get("target") else "")
+        for h in (history or [])[-10:]
+    ]
+    secret_lines = [
+        f"- {s['character_name']}: {s['objective']}"
+        for s in (secret_objectives or [])
+    ]
+    objectives = (arc or {}).get("objectives", [])
+    system = (
+        "You are writing a brief epilogue for a collaborative party game. "
+        "Write 2-3 sentences of flavourful narrative — past tense, specific to what actually happened. "
+        "Mention the characters by name. Note who got what they secretly wanted and who didn't — "
+        "without moralizing. Keep it evocative, not mechanical. "
+        'Return ONLY a JSON object: {"summary": "..."}. No prose outside the JSON.'
+    )
+    user = (
+        f"Campaign: {campaign_name or 'Our World'}\n"
+        f"Arc: {(arc or {}).get('description', 'An adventure unfolded.')}\n\n"
+        "Paths forward:\n" + ("\n".join(f"- {o}" for o in objectives) or "(none)") + "\n\n"
+        "What happened:\n" + ("\n".join(hist_lines) or "(no events logged)") + "\n\n"
+        "Secret objectives:\n" + ("\n".join(secret_lines) or "(none)") + "\n\n"
+        "Write the epilogue JSON:"
+    )
+    try:
+        message = _client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=256,
+            system=system,
+            messages=[
+                {"role": "user", "content": user},
+                {"role": "assistant", "content": "{"},
+            ]
+        )
+        raw = "{" + message.content[0].text
+        start = raw.find("{")
+        end = raw.rfind("}") + 1
+        result = json.loads(raw[start:end])
+        if "summary" in result:
+            return result
+    except Exception:
+        pass
+    return {"summary": "The story ended as all stories do — with some threads tied and others loose."}
+
+
 def _extract_array(raw):
     """Walk raw string to find and return the outermost [...] as parsed JSON. Returns [] on failure."""
     start = raw.find('[')
@@ -165,8 +391,10 @@ Core rules:
 - Entity disambiguation: if a name closely resembles an existing known entity (different title, nickname, minor spelling variation, e.g. "Guard Milo" vs "Milo the Guard"), use the known entity_id rather than treating it as a new entity.
 - Logic of the latest: if a note describes a state that seems to contradict a known entity's current state (e.g., location changed, alliance shifted), trust the new note. Do not create a duplicate entry.
 - Conflict detection: if a note describes something fundamentally impossible given known state (e.g., killing an NPC already known to be dead), still write the entry but set "conflict": true — it will be surfaced for DM review.
-- Party members are never individual entry subjects. Use entity_type "party_group" (entity_id: null) when an NPC or faction acts upon the whole party.
-- Notes must describe what concretely happened — past tense, one sentence. Not predictions, not future consequences, not interpretations. Wrap any known NPC or faction name mentioned in the note with [[double brackets]] using the entity's canonical name from the known lists (e.g. "[[Mister Blip]] issued equipment to the party"). Do not bracket party member names, locations, or unknown entities.
+- Party members are never individual entry subjects.
+- Party-directed events: when an NPC or faction acts UPON the party — gives, teaches, assists, attacks, deceives, instructs, rewards, threatens, heals, equips, or otherwise directs action at the party — log it as entity_type "party_group" with actor_id set to that NPC/faction. Do NOT create a separate NPC entry for the same event. The NPC's relationship score must not be affected by their own actions toward the party. Only log an event directly to an NPC when something happens TO that NPC (their plans are exposed, they are harmed, they gain or lose something, their status changes) — not when they are the one doing something.
+- When in doubt whether to log to the NPC or to the party: if the party is the recipient or target of the action, always prefer party_group.
+- Notes must describe what concretely happened — past tense, one sentence. Not predictions, not future consequences, not interpretations. Wrap any NPC or faction name mentioned in the note with [[double brackets]] — including new entities being introduced by this very entry (e.g. "[[Petty Officer Winston Ryeback]] was introduced to the party", "[[Mister Blip]] issued equipment to the party"). Do not bracket party member names or locations.
 - Conditions represent material world state (prices, access, danger, supply, conscription). Log a condition entry when notes describe that world state changing. For new conditions not in the known list, set entity_id: null and fill condition_meta.
 - Locations represent named places. Log a location entry when something physically happened at or to a known location — a battle in a town, a building discovered, a place destroyed or changed. Use entity_id from the Known Locations list. Do not create new locations (entity_id must match a known location or be omitted). Do not log a location merely because a scene is set there — only when something meaningfully changed at or about that place.
 - entity_type classification: use "faction" for any organization, institution, group, association, guild, government body, or collective that acts as a unit (e.g. HOA, city council, thieves guild, merchant company). Use "npc" only for named individuals. When ambiguous, prefer "faction".

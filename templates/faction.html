@@ -74,7 +74,7 @@
 </details>
 {% endif %}
 
-{% if affiliated_npcs %}
+{% if affiliated_npcs or faction_party_affiliated or affiliated_chars %}
 <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:10px;">
   <span style="color:var(--muted); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em;">Members:</span>
   {% for n in affiliated_npcs %}
@@ -84,6 +84,20 @@
             font-size:0.78rem; color:var(--text); text-decoration:none;
             {% if is_hidden_member %}opacity:0.6; border-style:dashed;{% endif %}">
     {{ n.name }}{% if is_hidden_member %} <span style="font-size:0.65rem; color:var(--muted);">(DM)</span>{% endif %}
+  </a>
+  {% endfor %}
+  {% if faction_party_affiliated %}
+  <a href="/{{ slug }}/party"
+     style="background:var(--surface2); border:1px solid var(--gold-dim); border-radius:4px; padding:2px 8px;
+            font-size:0.78rem; color:var(--gold); text-decoration:none;">
+    {{ meta.party_name or terms.cast_label }} <span style="font-size:0.65rem; opacity:0.7;">(whole group)</span>
+  </a>
+  {% endif %}
+  {% for char_name in affiliated_chars %}
+  <a href="/{{ slug }}/party"
+     style="background:var(--surface2); border:1px solid var(--gold-dim); border-radius:4px; padding:2px 8px;
+            font-size:0.78rem; color:var(--gold); text-decoration:none;">
+    {{ char_name }}
   </a>
   {% endfor %}
 </div>
@@ -167,9 +181,8 @@
     {% set vis = entry.visibility if entry.visibility is defined else ('dm_only' if entry.get('dm_only') else 'public') %}
     {% set is_ripple = entry.get('ripple_source') is not none %}
     {% set is_deleted = entry.get('deleted') %}
-    {% set show_deleted_ripple = is_dm and is_ripple and is_deleted %}
-    {% if ((is_dm or vis == 'public') and not is_deleted) or show_deleted_ripple %}
-    <li style="display:flex; flex-direction:column; gap:4px; {% if is_ripple %}border-left:2px solid var(--border); padding-left:8px; margin-left:6px;{% endif %}{% if is_deleted %}opacity:0.45;{% endif %}">
+    {% if (is_dm or vis == 'public') and not is_deleted %}
+    <li style="display:flex; flex-direction:column; gap:4px; {% if is_ripple %}border-left:2px solid var(--border); padding-left:8px; margin-left:6px;{% endif %}">
       <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
         <span>
           {% if is_ripple %}
@@ -262,14 +275,7 @@
             {% endfor %}
           </div>
           {% endif %}
-          {% if is_dm and is_deleted and is_ripple %}
-          <form method="POST" action="/{{ slug }}/dm/event/{{ entry.id }}/restore_ripple" style="flex-shrink:0;">
-            <input type="hidden" name="entity_type" value="faction">
-            <input type="hidden" name="entity_id" value="{{ faction.id }}">
-            <input type="hidden" name="next" value="/{{ slug }}/world/faction/{{ faction.id }}">
-            <button type="submit" style="background:none; border:1px solid var(--border); color:var(--muted); font-size:0.68rem; border-radius:3px; cursor:pointer; padding:1px 5px;" title="Restore this ripple">↺</button>
-          </form>
-          {% elif is_dm %}
+          {% if is_dm %}
           <form method="POST" action="/{{ slug }}/dm/faction/{{ faction.id }}/log/{{ (faction.log | length) - 1 - loop.index0 }}/delete" style="flex-shrink:0;">
             <button type="submit" style="background:none; border:none; color:var(--muted); font-size:0.8rem; cursor:pointer; padding:0 4px;">×</button>
           </form>
@@ -343,11 +349,31 @@
 
   <hr class="divider">
 
-  <form method="POST" action="/{{ slug }}/dm/faction/{{ faction.id }}/toggle_hidden" style="margin-bottom:4px;">
-    <button type="submit" style="background:{% if faction.hidden %}var(--gold){% else %}var(--surface2){% endif %}; color:{% if faction.hidden %}#080a18{% else %}var(--muted){% endif %}; border:1px solid {% if faction.hidden %}var(--gold){% else %}var(--border){% endif %}; border-radius:4px; padding:5px 14px; font-size:0.82rem; font-weight:700; cursor:pointer;">
-      {% if faction.hidden %}Reveal to Players{% else %}Hide from Players{% endif %}
-    </button>
-  </form>
+  <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+    <form method="POST" action="/{{ slug }}/dm/faction/{{ faction.id }}/toggle_hidden">
+      <button type="submit" style="background:{% if faction.hidden %}var(--gold){% else %}var(--surface2){% endif %}; color:{% if faction.hidden %}#080a18{% else %}var(--muted){% endif %}; border:1px solid {% if faction.hidden %}var(--gold){% else %}var(--border){% endif %}; border-radius:4px; padding:5px 14px; font-size:0.82rem; font-weight:700; cursor:pointer;">
+        {% if faction.hidden %}Reveal to Players{% else %}Hide from Players{% endif %}
+      </button>
+    </form>
+    {% if party %}
+    <form method="POST" action="/{{ slug }}/dm/faction/{{ faction.id }}/toggle_party_affiliated">
+      <input type="hidden" name="next" value="/{{ slug }}/world/faction/{{ faction.id }}">
+      <button type="submit" style="background:{% if faction_party_affiliated %}var(--gold){% else %}var(--surface2){% endif %}; color:{% if faction_party_affiliated %}#080a18{% else %}var(--muted){% endif %}; border:1px solid {% if faction_party_affiliated %}var(--gold){% else %}var(--border){% endif %}; border-radius:4px; padding:5px 14px; font-size:0.82rem; font-weight:700; cursor:pointer;">
+        {{ meta.party_name or terms.cast_label }}{% if faction_party_affiliated %} ★{% endif %}
+      </button>
+    </form>
+    {% for char in party %}
+    {% set char_affiliated = char.name in affiliated_chars %}
+    <form method="POST" action="/{{ slug }}/dm/faction/{{ faction.id }}/toggle_char_member">
+      <input type="hidden" name="char_name" value="{{ char.name }}">
+      <input type="hidden" name="next" value="/{{ slug }}/world/faction/{{ faction.id }}">
+      <button type="submit" style="background:{% if char_affiliated %}var(--gold){% else %}var(--surface2){% endif %}; color:{% if char_affiliated %}#080a18{% else %}var(--muted){% endif %}; border:1px solid {% if char_affiliated %}var(--gold){% else %}var(--border){% endif %}; border-radius:4px; padding:5px 14px; font-size:0.82rem; font-weight:700; cursor:pointer;">
+        {{ char.name }}{% if char_affiliated %} ★{% endif %}
+      </button>
+    </form>
+    {% endfor %}
+    {% endif %}
+  </div>
 
   <hr class="divider">
 
@@ -454,7 +480,10 @@
   {% if faction.relations %}
   <div style="display:flex; flex-direction:column; gap:6px; margin-bottom:10px;">
     {% for rel in faction.relations %}
-    {% set rname = (world_npcs | selectattr('id','equalto',rel.target) | map(attribute='name') | first) if rel.target_type == 'npc' else (all_factions | selectattr('id','equalto',rel.target) | map(attribute='name') | first) %}
+    {% if rel.target_type == 'npc' %}{% set rname = world_npcs | selectattr('id','equalto',rel.target) | map(attribute='name') | first %}
+    {% elif rel.target_type == 'faction' %}{% set rname = all_factions | selectattr('id','equalto',rel.target) | map(attribute='name') | first %}
+    {% elif rel.target_type == 'party' %}{% set rname = meta.party_name or terms.cast_label %}
+    {% else %}{% set rname = rel.target %}{% endif %}
     <div style="display:flex; align-items:center; gap:8px; font-size:0.82rem; flex-wrap:wrap;">
       <span style="color:{% if rel.relation == 'rival' %}#e05c5c{% else %}#7ec87e{% endif %}; font-weight:700; font-size:0.72rem; text-transform:uppercase;">{{ rel.relation }}</span>
       <span>{{ rname or rel.target }}</span>
@@ -473,6 +502,12 @@
       <div style="display:flex; flex-direction:column; gap:3px;">
         <label style="color:var(--muted); font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em;">Target</label>
         <select name="target_id" required style="{{ input_style }} min-width:140px;" onchange="this.form.target_type.value=this.options[this.selectedIndex].dataset.type">
+          {% if party %}
+          <optgroup label="{{ terms.cast_label }}">
+            <option value="_party" data-type="party">{{ meta.party_name or terms.cast_label }} (whole group)</option>
+            {% for char in party %}<option value="{{ char.name }}" data-type="char">{{ char.name }}</option>{% endfor %}
+          </optgroup>
+          {% endif %}
           {% if world_npcs %}
           <optgroup label="{{ terms.npcs }}">
             {% for n in world_npcs %}<option value="{{ n.id }}" data-type="npc">{{ n.name }}</option>{% endfor %}

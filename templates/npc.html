@@ -238,9 +238,8 @@ function rfFormalize(srcId, srcType, tgtId, tgtType, rel, rowId) {
     {% set show = is_dm or (vis == 'public') or (vis == 'restricted' and viewer_known_events is not none and entry.get('id') in viewer_known_events) %}
     {% set is_ripple = entry.get('ripple_source') is not none %}
     {% set is_deleted = entry.get('deleted') %}
-    {% set show_deleted_ripple = is_dm and is_ripple and is_deleted %}
-    {% if (show and not is_deleted) or show_deleted_ripple %}
-    <li style="display:flex; flex-direction:column; gap:4px; {% if is_ripple %}border-left:2px solid var(--border); padding-left:8px; margin-left:6px;{% endif %}{% if is_deleted %}opacity:0.45;{% endif %}">
+    {% if show and not is_deleted %}
+    <li style="display:flex; flex-direction:column; gap:4px; {% if is_ripple %}border-left:2px solid var(--border); padding-left:8px; margin-left:6px;{% endif %}">
       <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
         <span>
           {% if is_ripple %}
@@ -330,14 +329,7 @@ function rfFormalize(srcId, srcType, tgtId, tgtType, rel, rowId) {
             </div>
           </details>
           {% endif %}
-          {% if is_dm and is_deleted and is_ripple %}
-          <form method="POST" action="/{{ slug }}/dm/event/{{ entry.id }}/restore_ripple">
-            <input type="hidden" name="entity_type" value="npc">
-            <input type="hidden" name="entity_id" value="{{ npc.id }}">
-            <input type="hidden" name="next" value="/{{ slug }}/world/npc/{{ npc.id }}">
-            <button type="submit" style="background:none; border:1px solid var(--border); color:var(--muted); font-size:0.68rem; border-radius:3px; cursor:pointer; padding:1px 5px;" title="Restore this ripple">↺</button>
-          </form>
-          {% elif is_dm %}
+          {% if is_dm %}
           <form method="POST" action="/{{ slug }}/dm/npc/{{ npc.id }}/log/{{ (npc.log | length) - 1 - loop.index0 }}/delete">
             <button type="submit" style="background:none; border:none; color:var(--muted); font-size:0.8rem; cursor:pointer; padding:0 4px;">×</button>
           </form>
