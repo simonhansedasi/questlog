@@ -73,7 +73,7 @@
         {% if user_pro %}color:var(--purple); border:1px solid var(--purple); opacity:0.7;{% else %}color:var(--muted); border:1px solid var(--border);{% endif %}"
         title="Billing">{{ 'PRO' if user_pro else 'FREE' }}</a>
       {% endif %}
-      <a href="/account/password" style="color:var(--muted); font-size:0.8rem; text-decoration:none;" title="Change password">{{ session.get('user') }}</a>
+      <span style="color:var(--muted); font-size:0.8rem;">{{ session.get('user') }}</span>
       <form method="POST" action="/logout" style="display:inline;">
         <button type="submit"
                 style="background:none; border:1px solid var(--border); color:var(--muted);

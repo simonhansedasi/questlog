@@ -1,6 +1,5 @@
 from flask import Flask, render_template, abort, redirect, url_for, request, session, Response, jsonify, flash
 from markupsafe import Markup
-from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.middleware.proxy_fix import ProxyFix
 from functools import wraps
 from pathlib import Path
@@ -466,25 +465,11 @@ def campaigns():
 
 # ── Auth routes ───────────────────────────────────────────────────────────────
 
-@app.route("/login", methods=["GET", "POST"])
-@limiter.limit("10 per hour", methods=["POST"])
+@app.route("/login", methods=["GET"])
 def login():
     if session.get("user"):
         return redirect(url_for("index"))
-    error = None
-    if request.method == "POST":
-        username = request.form.get("username", "").strip().lower()
-        password = request.form.get("password", "")
-        users = load_users()
-        user = users.get(username)
-        if user and check_password_hash(user["password_hash"], password):
-            session["user"] = username
-            session["display_name"] = user.get("display_name", username)
-            if not user.get("onboarding_seen"):
-                return redirect(url_for("welcome"))
-            return redirect(url_for("index"))
-        error = "Invalid username or password."
-    return render_template("login.html", error=error)
+    return render_template("login.html")
 
 
 @app.route("/logout", methods=["POST"])
@@ -5320,19 +5305,6 @@ def admin_index():
     return render_template("admin/index.html", users=users, campaigns=all_campaigns)
 
 
-@app.route("/admin/user/<username>/password", methods=["POST"])
-@admin_required
-def admin_reset_password(username):
-    new_password = request.form.get("new_password", "").strip()
-    if len(new_password) < 6:
-        return redirect(url_for("admin_index"))
-    users = load_users()
-    if username not in users:
-        abort(404)
-    users[username]["password_hash"] = generate_password_hash(new_password)
-    save_users(users)
-    return redirect(url_for("admin_index"))
-
 
 @app.route("/admin/campaign/<slug>/pin", methods=["POST"])
 @admin_required
@@ -5350,30 +5322,6 @@ def admin_reset_dm_pin(slug):
 
 
 # ── Account routes ─────────────────────────────────────────────────────────────
-
-@app.route("/account/password", methods=["GET", "POST"])
-@login_required
-def account_password():
-    error = None
-    success = False
-    if request.method == "POST":
-        current = request.form.get("current_password", "")
-        new_pw = request.form.get("new_password", "").strip()
-        confirm = request.form.get("confirm_password", "").strip()
-        users = load_users()
-        username = session["user"]
-        user = users.get(username)
-        if not user or not check_password_hash(user["password_hash"], current):
-            error = "Current password is incorrect."
-        elif len(new_pw) < 6:
-            error = "New password must be at least 6 characters."
-        elif new_pw != confirm:
-            error = "Passwords do not match."
-        else:
-            users[username]["password_hash"] = generate_password_hash(new_pw)
-            save_users(users)
-            success = True
-    return render_template("account/password.html", error=error, success=success)
 
 
 # ── Billing routes ─────────────────────────────────────────────────────────────
