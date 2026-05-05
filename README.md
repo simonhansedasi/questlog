@@ -281,3 +281,8 @@ ssh simonhans@raspberrypi "cd /mnt/serverdrive/coding/rippleforge && ./deploy_do
 Skipping step 1 means `deploy_do.sh` pushes the Pi's stale copy — nothing new arrives on the live site.
 
 Systemd service: `/etc/systemd/system/rippleforge.service`. nginx routes `rippleforge.gg` → `127.0.0.1:5052`.
+
+
+## Stack
+
+Python, Flask, Jinja2, JavaScript, Cytoscape.js, Anthropic API, Stripe, SQLite, Gunicorn, nginx, DigitalOcean

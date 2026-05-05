@@ -1,32 +1,31 @@
 {% extends "base.html" %}
-{% block title %}RippleForge — Worldbuilding, Writing & Collaborative Play{% endblock %}
+{% block title %}RippleForge — Players decide. AI referees.{% endblock %}
 {% block meta %}
-<meta name="description" content="RippleForge is a causality engine for narrative — worldbuilding, writing, and collaborative play. Track characters, factions, and events in a living relationship graph. One event, automatic consequences across the whole world.">
+<meta name="description" content="RippleForge is a pass-the-phone storytelling game where everyone has a secret agenda, an AI referee keeps the world honest, and every game leaves a living world behind.">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   "name": "RippleForge",
   "url": "https://rippleforge.gg",
-  "description": "A causality engine for narrative — worldbuilding, writing, and collaborative play. Track characters, factions, and events in a living relationship graph. Log one event and the consequences propagate automatically across every connected entity.",
-  "applicationCategory": "UtilitiesApplication",
-  "applicationSubCategory": "Narrative and Worldbuilding Tool",
+  "description": "Pass-the-phone storytelling game with secret missions, AI referee, and a living world that persists after every game.",
+  "applicationCategory": "GameApplication",
+  "applicationSubCategory": "Collaborative Storytelling Game",
   "operatingSystem": "Web",
   "browserRequirements": "Requires a modern web browser",
   "offers": {
     "@type": "Offer",
     "price": "0",
     "priceCurrency": "USD",
-    "description": "Free demo — no account required"
+    "description": "3 free games — no account required to try"
   },
   "featureList": [
-    "Living relationship graph — characters, factions, and locations all connected",
-    "Automatic ripple propagation — one event, automatic consequences",
-    "AI writing assistant — reads your world history before suggesting what happens next",
-    "Collaborative party mode — pass-the-phone storytelling with AI referee",
-    "Branching alternate timelines — fork history, compare divergence",
-    "Time travel — view world state at any point in the timeline",
-    "Domain-agnostic — TTRPG, fiction, historical analysis, alternate history"
+    "Secret missions — every player has a hidden agenda",
+    "AI referee — keeps the world honest, enforces consequences",
+    "Living world — characters, factions, and events persist after the game",
+    "Pass-the-phone — no app, no setup, just a phone and people",
+    "1–6 players · 30 minutes · no prep",
+    "Worldbuilding mode — track characters, factions, and events across a living relationship graph"
   ],
   "screenshot": "https://rippleforge.gg/demo/",
   "author": {
@@ -45,67 +44,67 @@
   <!-- Hero -->
   <div style="text-align:center; margin-bottom:52px;">
     <h1 style="font-size:2.4rem; font-weight:800; color:var(--text); letter-spacing:-0.03em; margin:0 0 14px 0; line-height:1.15;">
-      Log one event.<br>The whole world reacts.
+      Players decide.<br>AI referees.
     </h1>
     <p style="font-size:1.05rem; color:var(--muted); line-height:1.6; margin:0 auto 28px; max-width:520px;">
-      RippleForge tracks your world as a living relationship graph — built for worldbuilding, writing, and collaborative play. Log one event and the consequences propagate automatically across every connected character, faction, and place.
+      A pass-the-phone storytelling game where everyone has a secret agenda, an AI referee keeps the world honest, and every session leaves a living world behind.
     </p>
-    <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
-      <a href="/demo/" style="background:var(--gold); color:#080a18; border-radius:5px; padding:11px 28px; font-size:0.95rem; font-weight:800; text-decoration:none; letter-spacing:0.01em;">
-        Try the demo →
+    <div style="display:flex; flex-direction:column; gap:10px; align-items:center;">
+      <a href="/welcome" style="background:#4caf50; color:#fff; border-radius:5px; padding:11px 28px; font-size:0.95rem; font-weight:800; text-decoration:none; letter-spacing:0.01em;">
+        Start a game →
       </a>
-      <a href="/guide" style="background:none; border:1px solid var(--border); color:var(--muted); border-radius:5px; padding:11px 20px; font-size:0.9rem; font-weight:600; text-decoration:none;">
-        How it works
+      <a href="/login" style="background:var(--surface2); color:var(--muted); border:1px solid var(--border); border-radius:5px; padding:11px 28px; font-size:0.95rem; font-weight:800; text-decoration:none; letter-spacing:0.01em;">
+        Build a world from scratch
       </a>
     </div>
-    <p style="color:var(--muted); font-size:0.78rem; margin:14px 0 0; opacity:0.7;">No account required</p>
+    <p style="color:var(--muted); font-size:0.78rem; margin:14px 0 0; opacity:0.7;">3 free games · 1–6 players · 30 min · no prep</p>
   </div>
 
-  <!-- Pillar 1 — Worldbuilder -->
-  <div class="card" style="margin-bottom:16px; border-color:var(--purple)55;">
+  <!-- Pillar 1 — The game -->
+  <div class="card" style="margin-bottom:16px; border-color:#4caf5055;">
     <div style="display:flex; gap:16px; align-items:flex-start;">
-      <span style="font-size:1.4rem; flex-shrink:0; margin-top:2px;">◎</span>
+      <span style="font-size:1.4rem; flex-shrink:0; margin-top:2px;">⊕</span>
       <div style="flex:1;">
-        <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 8px 0;">Build a living world</h3>
+        <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 8px 0;">Secret missions. Everyone has one.</h3>
         <p style="color:var(--muted); font-size:0.9rem; line-height:1.65; margin:0 0 12px 0;">
-          Characters, factions, and locations — all connected in a relationship graph with history, scores, and automatic consequences. Rewind to any moment in the timeline, fork alternate histories, and watch the graph diverge. Works for any setting.
+          Players build characters and set the scene together. The AI generates a story arc and assigns each player a secret role — Saboteur, Protector, Investigator, and more. Then you take turns logging what happens. Nobody knows who's working against them.
         </p>
-        <div style="font-size:0.8rem; color:var(--muted);">
-          Live examples: &nbsp;
-          <a href="/share/k_21q-vg-gdASJMx1BkOLg" style="color:var(--gold); text-decoration:none;">The Iliad</a>
-          &nbsp;·&nbsp;
-          <a href="/share/ykIkx4uVDpWfMoq1CsA4bg" style="color:var(--gold); text-decoration:none;">Wars of the Roses</a>
-          &nbsp;·&nbsp;
-          <a href="/share/Et-R0afQCkhoo3KodsLFcg" style="color:var(--gold); text-decoration:none;">The Ashcroft Vein</a>
-        </div>
+        <a href="/welcome" style="color:#4caf50; font-size:0.85rem; font-weight:600; text-decoration:none;">Start a game →</a>
       </div>
     </div>
   </div>
 
-  <!-- Pillar 2 — Writing assistant -->
+  <!-- Pillar 2 — The referee -->
   <div class="card" style="margin-bottom:16px; border-color:var(--gold)55;">
     <div style="display:flex; gap:16px; align-items:flex-start;">
       <span style="font-size:1.4rem; flex-shrink:0; margin-top:2px;">✦</span>
       <div style="flex:1;">
-        <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 8px 0;">AI that reads before it writes</h3>
+        <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 8px 0;">The referee never cheats.</h3>
         <p style="color:var(--muted); font-size:0.9rem; line-height:1.65; margin:0 0 12px 0;">
-          Paste your session notes — RippleForge identifies every character, event, and consequence, then updates the world graph automatically. The AI knows who was betrayed in session two. It reads your history before suggesting what happens next.
+          The AI doesn't write your story — it referees it. It flags shortcuts, catches contradictions, and propagates consequences automatically across every connected character, faction, and place. You make the choices. It makes sure they cost something.
         </p>
         <a href="/demo/ai" style="color:var(--gold); font-size:0.85rem; font-weight:600; text-decoration:none;">See it in action →</a>
       </div>
     </div>
   </div>
 
-  <!-- Pillar 3 — Party mode -->
-  <div class="card" style="margin-bottom:40px; border-color:#4caf5055;">
+  <!-- Pillar 3 — The world -->
+  <div class="card" style="margin-bottom:40px; border-color:var(--purple)55;">
     <div style="display:flex; gap:16px; align-items:flex-start;">
-      <span style="font-size:1.4rem; flex-shrink:0; margin-top:2px;">⊕</span>
+      <span style="font-size:1.4rem; flex-shrink:0; margin-top:2px;">◎</span>
       <div style="flex:1;">
-        <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 8px 0;">Collaborative story in 30 minutes</h3>
+        <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 8px 0;">Every game builds a real world.</h3>
         <p style="color:var(--muted); font-size:0.9rem; line-height:1.65; margin:0 0 12px 0;">
-          Pass a phone around the table. Players build characters, a place, and a faction together. The AI generates a story arc. Everyone takes turns logging what happens — an AI referee keeps the story honest. One game. One world that persists after.
+          When the game ends, the world persists — characters linked, factions mapped, events logged in a living relationship graph. Continue it in a second session, hand the keys to a GM, or build one from scratch for a TTRPG campaign, novel, or historical timeline.
         </p>
-        <a href="/welcome" style="color:#4caf50; font-size:0.85rem; font-weight:600; text-decoration:none;">Start a game →</a>
+        <div style="font-size:0.8rem; color:var(--muted);">
+          Live examples: &nbsp;
+          <a href="/share/lWCM3d_UBnofZj2oOMGYrA" style="color:var(--gold); text-decoration:none;">The Iliad</a>
+          &nbsp;·&nbsp;
+          <a href="/share/bYMWgkQ7outprihXXZxD_Q" style="color:var(--gold); text-decoration:none;">Wars of the Roses</a>
+          &nbsp;·&nbsp;
+          <a href="/share/9LmpZhDY0X5S55TcNj6sQA" style="color:var(--gold); text-decoration:none;">The Ashcroft Vein</a>
+        </div>
       </div>
     </div>
   </div>
@@ -113,7 +112,7 @@
   <!-- Hook line -->
   <div style="text-align:center; margin-bottom:40px;">
     <p style="font-size:1.1rem; font-weight:700; color:var(--text); font-style:italic; margin:0; opacity:0.8;">
-      Do nothing. The world still moves.
+      Players decide. The world remembers.
     </p>
   </div>
 

@@ -27,6 +27,7 @@ def _w(rel_path, content):
 
 # ── Campaign metadata ──────────────────────────────────────────────────────────
 _w("campaign.json", {
+    "slug": SLUG,
     "name": "The Hartstone Compact",
     "system": "TTRPG — any system",
     "owner": "demo",

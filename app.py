@@ -723,7 +723,7 @@ def party_play(slug):
         users = load_users()
         user = users.get(owner, {})
         is_pro = user.get("subscription_status") in ("active", "trialing") or bool(user.get("ks_tier"))
-        if user.get("party_plays", 0) >= 1 and not is_pro:
+        if user.get("party_plays", 0) >= 3 and not is_pro:
             try:
                 checkout = stripe.checkout.Session.create(
                     payment_method_types=["card"],
@@ -802,6 +802,7 @@ def party_play_action(slug):
         if genre not in ("action-adventure", "drama", "mystery"):
             genre = "action-adventure"
         game["genre"] = genre
+        game["inciting_incident"] = (data.get("inciting_incident") or "").strip()[:300]
         game["phase"] = "arc"
         db.save_party_game(slug, game)
         return jsonify({"ok": True, "phase": "arc"})
@@ -877,6 +878,23 @@ def party_play_action(slug):
     return jsonify({"error": "unknown action"}), 400
 
 
+@app.route("/<slug>/play/generate-scenario", methods=["POST"])
+@limiter.limit("10 per hour")
+def party_generate_scenario(slug):
+    _party_game_access(slug)
+    game = db.get_party_game(slug)
+    if game.get("phase") not in ("setup", None, ""):
+        return jsonify({"error": "can only generate scenario during setup"}), 400
+    data = request.get_json() or {}
+    genre = (data.get("genre") or "action-adventure").lower()
+    if genre not in ("action-adventure", "drama", "mystery"):
+        genre = "action-adventure"
+    count = int(data.get("count") or 3)
+    count = max(1, min(6, count))
+    result = ai.generate_party_scenario(genre, count)
+    return jsonify({"ok": True, "scenario": result})
+
+
 @app.route("/<slug>/play/referee", methods=["POST"])
 @limiter.limit("30 per hour")
 def party_referee(slug):
@@ -913,6 +931,7 @@ def party_generate_arc(slug):
         location_name,
         faction_name,
         genre=game.get("genre", "action-adventure"),
+        inciting_incident=game.get("inciting_incident", ""),
     )
     objectives = arc.get("objectives", [])
     game["arc"] = {
@@ -921,6 +940,11 @@ def party_generate_arc(slug):
         "completed": [False] * len(objectives),
     }
     game["phase"] = "arc"
+    if arc.get("title"):
+        meta_path = CAMPAIGNS / slug / "campaign.json"
+        campaign_meta = json.loads(meta_path.read_text())
+        campaign_meta["name"] = arc["title"]
+        meta_path.write_text(json.dumps(campaign_meta, indent=2))
     # Persist arc as a quest so it appears in the world after the game
     quest_title = (arc.get("description") or "The Party Arc")[:80]
     db.add_quest(slug, quest_title, description=arc.get("description", ""), hidden=False)
@@ -929,7 +953,7 @@ def party_generate_arc(slug):
         db.add_objective(slug, quest_id, obj)
     game["quest_id"] = quest_id
     db.save_party_game(slug, game)
-    return jsonify({"ok": True, "arc": game["arc"], "phase": "arc"})
+    return jsonify({"ok": True, "arc": game["arc"], "phase": "arc", "title": arc.get("title", "")})
 
 
 @app.route("/<slug>/play/generate-secrets", methods=["POST"])
@@ -986,6 +1010,7 @@ def party_play_complete(slug):
         if owner in users:
             users[owner]["party_plays"] = users[owner].get("party_plays", 0) + 1
             save_users(users)
+    db.inject_wikilinks_into_world(slug)
     all_entries = db.get_all_log_entries(slug)
     return jsonify({
         "ok": True,
@@ -1120,14 +1145,7 @@ def _create_onboarding_campaign(username, onboarding_mode):
     new_meta["dm_pin"] = str(secrets.randbelow(9000) + 1000)
     new_meta["created"] = datetime.date.today().isoformat()
     if onboarding_mode == "party":
-        _PARTY_WORLD_NAMES = [
-            "The Gilded Accord", "The Ashen Crossing", "The Silver Threshold",
-            "The Ember Pact", "The Hollow Crown", "The Iron Convergence",
-            "The Pale Reckoning", "The Crimson Compact", "The Lost Meridian",
-            "The Fracture Point", "The Gray Covenant", "The Amber Dominion",
-            "The Verdant Ruin", "The Broken Meridian", "The Copper Clause",
-        ]
-        new_meta["name"] = random.choice(_PARTY_WORLD_NAMES)
+        new_meta["name"] = ""
         new_meta["mode"] = "fiction"
         tmpl = _BLANK_TEMPLATES["fiction"]
         new_meta["terminology"] = {k: v for k, v in tmpl.items() if k != "observer_default"}
@@ -1172,7 +1190,7 @@ def welcome_post():
         is_pro = user_data.get("subscription_status") in ("active", "trialing") or bool(user_data.get("ks_tier"))
 
         # Non-pro with free game already played → $2 one-time party game
-        if not is_pro and user_data.get("party_plays", 0) >= 1:
+        if not is_pro and user_data.get("party_plays", 0) >= 3:
             try:
                 checkout = stripe.checkout.Session.create(
                     payment_method_types=["card"],

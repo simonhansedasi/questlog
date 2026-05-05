@@ -243,6 +243,15 @@
     <h2 class="party-heading">Each player, add your character.</h2>
     <p class="party-sub">Pass the phone around. One character per person — that's who you play and who gets a secret mission. Add a place and a group to set the scene. Need more characters? Add them anytime. Anyone can drive any character during the game.</p>
 
+    <div style="display:flex; align-items:center; gap:16px; margin-bottom:20px;">
+      <span style="font-size:0.82rem; color:var(--muted); font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">Players</span>
+      <div style="display:flex; align-items:center; gap:0;">
+        <button onclick="adjustPlayerCount(-1)" style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px 0 0 4px; padding:6px 14px; font-size:1.1rem; cursor:pointer; line-height:1;">−</button>
+        <span id="player-count-display" style="background:var(--surface2); border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding:6px 18px; font-size:1rem; font-weight:700; color:var(--text); min-width:44px; text-align:center;">3</span>
+        <button onclick="adjustPlayerCount(1)" style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:0 4px 4px 0; padding:6px 14px; font-size:1.1rem; cursor:pointer; line-height:1;">+</button>
+      </div>
+    </div>
+
     <div style="background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:16px; margin-bottom:20px;">
       <div class="entity-row">
         <span class="entity-row-label">People</span>
@@ -270,6 +279,11 @@
       </div>
     </div>
 
+    <div style="text-align:center; margin:16px 0 4px; color:var(--muted); font-size:0.8rem; letter-spacing:0.04em;">— or —</div>
+    <button class="party-btn secondary" id="generate-scenario-btn" onclick="generateScenario()" style="margin-bottom:4px;">Generate a scenario for me →</button>
+    <div id="generate-scenario-loading" style="display:none; text-align:center; padding:10px 0; color:var(--muted); font-size:0.85rem;">
+      <span style="animation:spin 1.5s linear infinite; display:inline-block;">✦</span> Building your scenario…
+    </div>
     <p id="setup-error" class="error-msg"></p>
 
     <div class="ready-section" id="ready-section" style="display:none;">
@@ -288,6 +302,7 @@
       <p style="color:var(--muted);">Weaving your story arc…</p>
     </div>
     <div id="arc-result" style="display:none;">
+      <h2 id="arc-title" class="party-heading" style="margin-bottom:6px; display:none;"></h2>
       <p class="party-label">Your mission</p>
       <p id="arc-description" style="font-size:1.05rem; font-weight:600; line-height:1.5; margin-bottom:20px;"></p>
       <p class="party-label">Possible paths forward</p>
@@ -311,6 +326,7 @@
         <button class="party-btn" onclick="revealSecret()">I have it →</button>
       </div>
       <div id="secrets-reveal" style="display:none;">
+        <div id="secrets-role" style="display:none; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:var(--gold); margin-bottom:6px;"></div>
         <p class="party-label">YOUR MISSION</p>
         <p id="secrets-objective" style="font-size:1.05rem; font-weight:700; line-height:1.5; margin:0 0 24px;"></p>
         <div id="secrets-bias" style="display:none; background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:14px 16px; margin-bottom:24px;">
@@ -321,6 +337,19 @@
         <button class="party-btn danger" onclick="skipSecrets()" style="margin-top:8px;">Skip secret missions</button>
       </div>
     </div>
+  </div>
+
+  <!-- Phase: Opening Round -->
+  <div class="phase" id="phase-opening">
+    <p class="party-label">Opening round</p>
+    <div id="opening-incident" style="background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:14px 16px; margin-bottom:20px; font-size:0.95rem; font-style:italic; line-height:1.55; color:var(--muted);"></div>
+    <p id="opening-progress" class="party-label"></p>
+    <h2 id="opening-char-name" class="party-heading" style="margin-bottom:6px;"></h2>
+    <p id="opening-prompt" class="party-sub" style="margin-bottom:16px;"></p>
+    <textarea class="party-input" id="opening-text" rows="3" placeholder="What does your character do first?" style="resize:none;" maxlength="500"></textarea>
+    <p id="opening-error" class="error-msg"></p>
+    <button class="party-btn" onclick="submitOpeningAction()">Log it →</button>
+    <button class="party-btn danger" onclick="skipOpeningRound()" style="margin-top:8px;">Skip opening round</button>
   </div>
 
   <!-- Phase: Play -->
@@ -463,11 +492,13 @@
 <script>
 const SLUG = {{ slug | tojson }};
 const GAME = {{ game | tojson }};
+const CAMPAIGN_NAME = {{ meta.name | tojson }};
 
 let gameState = GAME || {};
 let currentAddType = 'character';
 let pendingEvent = null;
 let selectedGenre = 'action-adventure';
+let playerCount = 3;
 let secretsIndex = 0;
 
 // ── timer ─────────────────────────────────────────────────────────────────────
@@ -708,7 +739,11 @@ async function submitSetupEntity() {
 async function beginPlay() {
   clearError('setup-error');
   try {
-    const data = await post('/play/action', { action: 'begin_play', genre: selectedGenre });
+    const data = await post('/play/action', {
+      action: 'begin_play',
+      genre: selectedGenre,
+      inciting_incident: gameState.inciting_incident || '',
+    });
     if (data.error) { showError('setup-error', data.error); return; }
     gameState.phase = 'arc';
     showPhase('phase-arc');
@@ -754,6 +789,13 @@ function revealSecret() {
   const secrets = gameState.secret_objectives || [];
   const char = chars[secretsIndex];
   const secret = secrets.find(s => s.character_id === char.id) || {};
+  const roleEl = document.getElementById('secrets-role');
+  if (secret.role) {
+    roleEl.textContent = secret.role;
+    roleEl.style.display = 'block';
+  } else {
+    roleEl.style.display = 'none';
+  }
   document.getElementById('secrets-objective').textContent = secret.objective || 'Look after your own interests above all else.';
   const biasEl = document.getElementById('secrets-bias');
   if (secret.bias_target && secret.bias_type) {
@@ -771,7 +813,7 @@ function nextSecret() {
   const chars = getEntities().characters;
   secretsIndex++;
   if (secretsIndex >= chars.length) {
-    startPlay();
+    startOpeningRound();
   } else {
     document.getElementById('secrets-reveal').style.display = 'none';
     showSecretPassScreen(secretsIndex);
@@ -779,6 +821,102 @@ function nextSecret() {
 }
 
 function skipSecrets() {
+  startOpeningRound();
+}
+
+// ── setup: auto-generate scenario ────────────────────────────────────────────
+
+function adjustPlayerCount(delta) {
+  playerCount = Math.min(6, Math.max(1, playerCount + delta));
+  document.getElementById('player-count-display').textContent = playerCount;
+}
+
+async function submitSetupEntityDirect(type, name) {
+  const data = await post('/play/action', { action: 'add_entity', entity_type: type, name });
+  if (data.entities) gameState.entities = data.entities;
+}
+
+async function applyScenario(scenario) {
+  const adds = [];
+  for (const name of (scenario.characters || [])) adds.push(submitSetupEntityDirect('character', name));
+  if (scenario.location) adds.push(submitSetupEntityDirect('location', scenario.location));
+  if (scenario.faction) adds.push(submitSetupEntityDirect('faction', scenario.faction));
+  await Promise.all(adds);
+  if (scenario.inciting_incident) gameState.inciting_incident = scenario.inciting_incident;
+  refreshEntityChips();
+}
+
+async function generateScenario() {
+  const btn = document.getElementById('generate-scenario-btn');
+  const loading = document.getElementById('generate-scenario-loading');
+  btn.disabled = true;
+  loading.style.display = 'block';
+  clearError('setup-error');
+  try {
+    const data = await post('/play/generate-scenario', { genre: selectedGenre, count: playerCount });
+    if (data.error) { showError('setup-error', data.error); return; }
+    if (data.scenario) await applyScenario(data.scenario);
+  } catch (e) {
+    showError('setup-error', 'Something went wrong. Try again.');
+  } finally {
+    btn.disabled = false;
+    loading.style.display = 'none';
+  }
+}
+
+// ── opening round ─────────────────────────────────────────────────────────────
+
+let openingIndex = 0;
+
+function startOpeningRound() {
+  const chars = getEntities().characters;
+  const incident = gameState.inciting_incident || '';
+  if (!chars.length || !incident) { startPlay(); return; }
+  openingIndex = 0;
+  showOpeningScreen(0);
+}
+
+function showOpeningScreen(index) {
+  const chars = getEntities().characters;
+  const incident = gameState.inciting_incident || '';
+  document.getElementById('opening-incident').textContent = incident;
+  document.getElementById('opening-progress').textContent = `${index + 1} of ${chars.length}`;
+  document.getElementById('opening-char-name').textContent = chars[index].name;
+  document.getElementById('opening-prompt').textContent = `Pass to ${chars[index].name}. What do you do first?`;
+  document.getElementById('opening-text').value = '';
+  clearError('opening-error');
+  showPhase('phase-opening');
+}
+
+async function submitOpeningAction() {
+  const chars = getEntities().characters;
+  const char = chars[openingIndex];
+  const text = document.getElementById('opening-text').value.trim();
+  if (!text) { showError('opening-error', 'Write something first.'); return; }
+  clearError('opening-error');
+  try {
+    await post('/play/action', {
+      action: 'log_event',
+      source_id: char.id,
+      source_type: 'character',
+      source_name: char.name,
+      action_text: text,
+    });
+    const hist = gameState.history || [];
+    hist.push({ type: 'log_event', source: char.name, action: text });
+    gameState.history = hist.slice(-20);
+    openingIndex++;
+    if (openingIndex >= chars.length) {
+      startPlay();
+    } else {
+      showOpeningScreen(openingIndex);
+    }
+  } catch (e) {
+    showError('opening-error', 'Something went wrong. Try again.');
+  }
+}
+
+function skipOpeningRound() {
   startPlay();
 }
 
@@ -797,8 +935,14 @@ async function generateArc() {
   if (!data || data.error || !data.arc) {
     document.getElementById('arc-description').textContent = 'Your story begins. Make it happen.';
     document.getElementById('arc-objectives').innerHTML = '';
+    document.getElementById('arc-title').style.display = 'none';
   } else {
     gameState.arc = data.arc;
+    if (data.title) {
+      const titleEl = document.getElementById('arc-title');
+      titleEl.textContent = data.title;
+      titleEl.style.display = '';
+    }
     document.getElementById('arc-description').textContent = data.arc.description;
     document.getElementById('arc-objectives').innerHTML = data.arc.objectives.map((o, i) =>
       `<div class="obj-row"><span style="color:var(--gold);font-weight:700;flex-shrink:0;">${i+1}.</span><span style="font-size:0.92rem;">${o}</span></div>`
@@ -1112,7 +1256,8 @@ function buildDoneSecrets() {
   if (!secrets.length) return;
   document.getElementById('done-secrets-list').innerHTML = secrets.map(s => `
     <div style="background:var(--surface2); border:1px solid var(--border); border-radius:6px; padding:12px 14px; margin-bottom:8px;">
-      <p style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--muted); margin:0 0 4px;">${s.character_name}</p>
+      <p style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:var(--muted); margin:0 0 2px;">${s.character_name}</p>
+      ${s.role ? `<p style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--gold); margin:0 0 6px;">${s.role}</p>` : ''}
       <p style="font-size:0.88rem; margin:0; line-height:1.5;">${s.objective}</p>
       ${s.bias_target ? `<p style="font-size:0.78rem; color:var(--muted); margin:6px 0 0;">→ ${s.bias_type === 'trusts' ? 'Trusted' : 'Suspected'}: ${s.bias_target}</p>` : ''}
     </div>`).join('');
@@ -1165,6 +1310,11 @@ async function saveGame() {
     showPhase('phase-arc');
     if (gameState.arc && gameState.arc.description) {
       document.getElementById('arc-loading').style.display = 'none';
+      if (CAMPAIGN_NAME) {
+        const titleEl = document.getElementById('arc-title');
+        titleEl.textContent = CAMPAIGN_NAME;
+        titleEl.style.display = '';
+      }
       document.getElementById('arc-description').textContent = gameState.arc.description;
       document.getElementById('arc-objectives').innerHTML = (gameState.arc.objectives || []).map((o, i) =>
         `<div class="obj-row"><span style="color:var(--gold);font-weight:700;flex-shrink:0;">${i+1}.</span><span style="font-size:0.92rem;">${o}</span></div>`

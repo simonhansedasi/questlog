@@ -5,6 +5,22 @@
 <h1 class="page-title">RippleForge</h1>
 <p class="subtitle">Welcome back, {{ session.get('display_name', session.get('user')) }}</p>
 
+<!-- Party Mode — forefront -->
+<div style="background:var(--surface2); border:1px solid #4caf5044; border-radius:10px; padding:24px; margin-bottom:32px;">
+  <p style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:#4caf50; margin:0 0 8px 0;">Players decide · AI referees</p>
+  <h2 style="font-size:1.25rem; font-weight:800; color:var(--text); margin:0 0 8px 0;">Start a Party Game</h2>
+  <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0 0 18px 0;">Pass the phone. Everyone picks a character and gets a secret mission. The AI generates your story arc and referees every move. One game, one world — 30 minutes, no prep.</p>
+  <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+    <form method="POST" action="/welcome">
+      <input type="hidden" name="choice" value="party">
+      <button type="submit" style="background:#4caf50; color:#fff; border:none; border-radius:5px; padding:10px 22px; font-size:0.9rem; font-weight:800; cursor:pointer; letter-spacing:0.01em;">
+        Start a game &#8594;
+      </button>
+    </form>
+    <span style="font-size:0.78rem; color:var(--muted);">3 free games · 1–6 players</span>
+  </div>
+</div>
+
 {% if my_campaigns %}
 <h2 class="section-title">My Worlds</h2>
 <div class="card-grid mb-8">
@@ -20,9 +36,9 @@
 </div>
 {% else %}
 <div style="background:var(--surface2); border:1px solid var(--purple); border-radius:8px; padding:20px 24px; margin-bottom:32px; max-width:560px;">
-  <p style="color:var(--text); font-size:0.95rem; font-weight:700; margin:0 0 6px 0;">Welcome to RippleForge.</p>
+  <p style="color:var(--text); font-size:0.95rem; font-weight:700; margin:0 0 6px 0;">No worlds yet.</p>
   <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0 0 14px 0;">
-    Start by creating a world below, then add your NPCs and factions. The <strong>Quick Start Guide</strong> walks you through the first session in five steps.
+    Start with a party game above, or create a world below and add NPCs and factions. The <strong>Quick Start Guide</strong> walks you through the first session in five steps.
   </p>
   <a href="/guide" style="color:var(--gold); font-size:0.88rem; font-weight:700; text-decoration:none;">Read the Quick Start Guide →</a>
 </div>
@@ -59,22 +75,6 @@
 
 {% set blank = demo_campaigns | selectattr('slug', 'eq', 'example') | list %}
 {% set starter_campaigns = demo_campaigns | rejectattr('slug', 'eq', 'example') | list %}
-
-<h2 class="section-title mt-8">Party Mode</h2>
-<p class="text-muted text-sm" style="margin-bottom:20px;">Build a world together, generate a story arc, and pass the phone. One free game.</p>
-<div style="max-width:360px; margin-bottom:32px;">
-  <div class="campaign-card" style="border-color:#4caf5055;">
-    <h2 style="color:#4caf50;">Start a Party Game</h2>
-    <div class="system">Collaborative &middot; Pass-the-phone &middot; 30 min</div>
-    <p class="text-sm text-muted" style="margin-bottom:16px;">Players build characters, a place, and a faction together. The AI generates a story arc with three beats. Everyone takes turns logging what happens — an AI referee keeps the story honest. The world persists after.</p>
-    <form method="POST" action="/welcome">
-      <input type="hidden" name="choice" value="party">
-      <button type="submit" style="background:#4caf50; color:#fff; border:none; border-radius:4px; padding:7px 16px; font-size:0.85rem; font-weight:700; cursor:pointer; letter-spacing:0.01em;">
-        Start a Party Game &#8594;
-      </button>
-    </form>
-  </div>
-</div>
 
 {% if blank %}
 <h2 class="section-title mt-8">Start from Scratch</h2>

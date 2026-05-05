@@ -26,6 +26,7 @@ def _w(rel_path, content):
     (CAMP_DIR / rel_path).write_text(json.dumps(content, indent=2))
 
 _w("campaign.json", {
+    "slug": SLUG,
     "name": "World War II",
     "system": "History — 1933–1945",
     "owner": "demo",

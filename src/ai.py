@@ -30,22 +30,24 @@ _GENRE_GUIDES = {
 }
 
 
-def generate_party_arc(campaign_name, entities, location_name, faction_name, genre="action-adventure"):
-    """Generate a short party arc with a description and 3 objectives. Returns {description, objectives}."""
+def generate_party_arc(campaign_name, entities, location_name, faction_name, genre="action-adventure", inciting_incident=""):
+    """Generate a short party arc with a title, description, and 3 objectives. Returns {title, description, objectives}."""
     chars = entities.get("characters", []) if isinstance(entities, dict) else []
     char_names = ", ".join(c["name"] for c in chars) if chars else "the group"
     genre_guide = _GENRE_GUIDES.get(genre, _GENRE_GUIDES["action-adventure"])
     system = f"""You are a narrative game master generating a short collaborative story arc for a party game.
 {genre_guide}
-Return ONLY a JSON object with exactly two keys:
+Return ONLY a JSON object with exactly three keys:
+- "title": a 2-5 word evocative name for this specific story — drawn from the location, group, or central conflict. Should feel like a chapter title or film title, not a generic fantasy phrase.
 - "description": a 1-2 sentence mission statement, specific to the characters, place, and group provided
 - "objectives": an array of exactly 3 short strings — open-ended leads or paths, not sequential steps. Frame each as something to discover, decide, or pursue. Different characters might approach them differently or even work against each other on them.
 
 No other keys. No prose outside the JSON."""
+    incident_line = f"\nInciting incident: {inciting_incident}" if inciting_incident else ""
     user = f"""Campaign: {campaign_name or "Our World"}
 Characters: {char_names}
 Location: {location_name or "an unknown place"}
-Organization: {faction_name or "a mysterious group"}
+Organization: {faction_name or "a mysterious group"}{incident_line}
 
 Generate the story arc JSON:"""
     try:
@@ -67,9 +69,46 @@ Generate the story arc JSON:"""
     except Exception:
         pass
     return {
+        "title": location_name or faction_name or "The Unnamed Hour",
         "description": "Something stirs in the shadows. The group must act together before it's too late.",
         "objectives": ["Discover the threat", "Confront the source", "Resolve the conflict"]
     }
+
+
+def generate_party_scenario(genre="action-adventure", count=3):
+    """Generate a ready-to-play scenario: characters, location, faction, inciting incident. Returns {characters, location, faction, inciting_incident}."""
+    genre_guide = _GENRE_GUIDES.get(genre, _GENRE_GUIDES["action-adventure"])
+    system = f"""You are generating a ready-to-play scenario for a pass-the-phone party game.
+{genre_guide}
+Return ONLY a JSON object with exactly four keys:
+- "characters": array of exactly {count} character names — specific, distinct, no titles or epithets. Just names. Mix of implied roles without stating them.
+- "location": a single evocative place name — specific enough to be a real setting, not a vague region.
+- "faction": a single organization or group name — makes the setting feel inhabited.
+- "inciting_incident": one sentence, past tense, active voice. Something just happened that demands a response. Specific. The kind of line that makes someone say "wait, what?" CRITICAL: do not name any of the generated characters in this sentence — the incident happens to the world, not to specific people. All characters must be free to respond to it.
+
+No other keys. No prose outside the JSON."""
+    try:
+        message = _client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=300,
+            system=system,
+            messages=[
+                {"role": "user", "content": f"Genre: {genre}\nPlayers: {count}\n\nGenerate a complete party scenario:"},
+                {"role": "assistant", "content": "{"},
+            ]
+        )
+        raw = "{" + message.content[0].text
+        start = raw.find("{")
+        end = raw.rfind("}") + 1
+        result = json.loads(raw[start:end])
+        return {
+            "characters": result.get("characters") or [],
+            "location": result.get("location") or "",
+            "faction": result.get("faction") or "",
+            "inciting_incident": result.get("inciting_incident") or "",
+        }
+    except Exception:
+        return {"characters": [], "location": "", "faction": "", "inciting_incident": ""}
 
 
 def referee_party_action(campaign_name, history, source_name, action_text, target_name, relations, objectives=None):
@@ -121,12 +160,30 @@ def referee_party_action(campaign_name, history, source_name, action_text, targe
         return {"ok": True, "warning": None}
 
 
+_ROLES = ["Saboteur", "Protector", "Investigator", "Opportunist", "Loyalist", "Impostor", "Catalyst"]
+
+_ROLE_GUIDES = {
+    "Saboteur": "wants to prevent the group's success — but has a sympathetic personal reason, not pure villainy.",
+    "Protector": "believes one specific character (or the group) must not be harmed, even at personal cost.",
+    "Impostor": "hiding a false identity or allegiance. Wants to reach the end without being exposed.",
+    "Opportunist": "doesn't care about the group's goal — wants something for themselves that this situation makes possible.",
+    "Investigator": "privately knows or suspects something others don't. Wants to confirm and control that truth.",
+    "Catalyst": "needs a specific dramatic event to happen. Doesn't care who causes it or how.",
+    "Loyalist": "completely committed to another character or faction, to a fault. Their mission is that entity's interest.",
+}
+
+
 def generate_secret_objectives(campaign_name, characters, arc_description, genre="action-adventure"):
-    """Assign secret personal objectives and relationship biases to each character. Returns list of {character_id, character_name, objective, bias_target, bias_type}."""
+    """Assign secret roles, objectives, and relationship biases to each character. Returns list of {character_id, character_name, role, objective, bias_target, bias_type}."""
     if not characters:
         return []
+    roles = [_ROLES[i % len(_ROLES)] for i in range(len(characters))]
     single = len(characters) == 1
-    char_lines = "\n".join(f"- id: {c['id']} | name: {c['name']}" for c in characters)
+    char_lines = "\n".join(
+        f"- id: {c['id']} | name: {c['name']} | role: {roles[i]}"
+        for i, c in enumerate(characters)
+    )
+    role_desc_block = "\n".join(f"- {role}: {desc}" for role, desc in _ROLE_GUIDES.items())
     bias_rules = (
         '- "bias_target": null\n- "bias_type": null'
         if single else
@@ -135,16 +192,17 @@ def generate_secret_objectives(campaign_name, characters, arc_description, genre
         '- "bias_type": "trusts" or "suspects"'
     )
     system = (
-        "You are assigning secret personal missions for a pass-the-phone party game. "
-        "Each character gets a private objective that may conflict with or complicate the group arc. "
-        "The best objectives make players feel both heroic and self-interested — someone protects the villain, "
-        "someone wants the prize for themselves, someone is quietly working against the group. "
-        "Make conflicts interesting and specific to the characters and arc provided.\n\n"
+        "You are assigning secret personal missions for a pass-the-phone party game.\n\n"
+        "Each character has been assigned a dramatic role. Write their objective to fit that role's personality "
+        "and conflict style — but make it specific to THIS arc, these characters, and this genre. "
+        "Never state the role name in the objective text itself.\n\n"
+        "Role personalities:\n"
+        f"{role_desc_block}\n\n"
         "Return ONLY a JSON array — one object per character:\n"
         '- "character_id": exact id from the input list\n'
         '- "character_name": the character\'s name\n'
-        '- "objective": 1-2 sentences of private mission — what this character secretly wants, '
-        "possibly in tension with the group's goals\n"
+        '- "role": the assigned role from the input (exact string)\n'
+        '- "objective": 1-2 sentences — what they secretly want, specific to this arc. Do not name the role.\n'
         f"{bias_rules}\n\n"
         "No other keys. No prose outside the JSON array."
     )
@@ -152,15 +210,15 @@ def generate_secret_objectives(campaign_name, characters, arc_description, genre
         f"Campaign: {campaign_name or 'Our World'}\n"
         f"Genre: {genre}\n"
         f"Arc: {arc_description or 'An adventure begins.'}\n\n"
-        f"Characters:\n{char_lines}\n\n"
-        "Assign each character a secret objective"
+        f"Characters (with assigned roles):\n{char_lines}\n\n"
+        "Assign each character a secret objective that fits their role"
         + ("." if single else " and a relationship bias toward one other character.")
     )
     parsed = []
     try:
         message = _client.messages.create(
             model="claude-haiku-4-5-20251001",
-            max_tokens=400,
+            max_tokens=512,
             system=system,
             messages=[
                 {"role": "user", "content": user},
@@ -170,17 +228,19 @@ def generate_secret_objectives(campaign_name, characters, arc_description, genre
         parsed = _parse_json("[" + message.content[0].text)
     except Exception:
         pass
-    # Match returned entries to characters by character_id; fall back per character if missing
     by_id = {e.get("character_id"): e for e in parsed if isinstance(e, dict) and e.get("character_id")}
     result = []
-    for c in characters:
+    for i, c in enumerate(characters):
         entry = by_id.get(c["id"])
         if entry and entry.get("objective"):
+            if not entry.get("role"):
+                entry["role"] = roles[i]
             result.append(entry)
         else:
             result.append({
                 "character_id": c["id"],
                 "character_name": c["name"],
+                "role": roles[i],
                 "objective": "Protect your own interests above all else.",
                 "bias_target": None,
                 "bias_type": None,

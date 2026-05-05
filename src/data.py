@@ -2982,6 +2982,65 @@ def save_party_game(slug, data):
     _save(slug, data, "dm/party_game.json")
 
 
+def inject_wikilinks_into_world(slug):
+    """Post-process all world text fields to add [[Name]] wikilinks for known entities."""
+    npcs = get_npcs(slug)
+    factions = get_factions(slug)
+    locations = get_locations(slug)
+    party = get_party(slug)
+
+    all_names = sorted(
+        {n["name"] for n in npcs}
+        | {f["name"] for f in factions}
+        | {l["name"] for l in locations}
+        | {c["name"] for c in party},
+        key=len, reverse=True,
+    )
+
+    def _inject(text, skip_name=None):
+        if not text or not text.strip():
+            return text
+        parts = re.split(r'(\[\[[^\]]+\]\])', text)
+        result = []
+        for i, part in enumerate(parts):
+            if i % 2 == 1:
+                result.append(part)
+            else:
+                for name in all_names:
+                    if skip_name and name.lower() == skip_name.lower():
+                        continue
+                    part = re.sub(r'\b' + re.escape(name) + r'\b', f'[[{name}]]', part, flags=re.IGNORECASE)
+                result.append(part)
+        return ''.join(result)
+
+    npc_data = _load(slug, "world/npcs.json")
+    for npc in npc_data.get("npcs", []):
+        npc["description"] = _inject(npc.get("description", ""), skip_name=npc["name"])
+        if npc.get("dm_notes"):
+            npc["dm_notes"] = _inject(npc["dm_notes"], skip_name=npc["name"])
+        for entry in npc.get("log", []):
+            entry["note"] = _inject(entry.get("note", ""))
+    _save(slug, npc_data, "world/npcs.json")
+
+    faction_data = _load(slug, "world/factions.json")
+    for faction in faction_data.get("factions", []):
+        faction["description"] = _inject(faction.get("description", ""), skip_name=faction["name"])
+        if faction.get("dm_notes"):
+            faction["dm_notes"] = _inject(faction["dm_notes"], skip_name=faction["name"])
+        for entry in faction.get("log", []):
+            entry["note"] = _inject(entry.get("note", ""))
+    _save(slug, faction_data, "world/factions.json")
+
+    location_data = _load(slug, "world/locations.json")
+    for loc in location_data.get("locations", []):
+        loc["description"] = _inject(loc.get("description", ""), skip_name=loc["name"])
+        if loc.get("dm_notes"):
+            loc["dm_notes"] = _inject(loc["dm_notes"], skip_name=loc["name"])
+        for entry in loc.get("log", []):
+            entry["note"] = _inject(entry.get("note", ""))
+    _save(slug, location_data, "world/locations.json")
+
+
 def add_reference(slug, title, source, notes, columns, rows):
     data = _load(slug, "references.json")
     data.setdefault("references", []).append({
