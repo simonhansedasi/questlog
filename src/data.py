@@ -2975,7 +2975,13 @@ def format_magnitude(magnitude):
 
 
 def get_party_game(slug):
-    return _load(slug, "dm/party_game.json")
+    try:
+        return _load(slug, "dm/party_game.json")
+    except (json.JSONDecodeError, ValueError):
+        # File was corrupted by concurrent writes — reset to blank setup state
+        blank = {"phase": "setup", "entities": {"characters": [], "factions": [], "locations": []}, "relations": [], "history": []}
+        _save(slug, blank, "dm/party_game.json")
+        return blank
 
 
 def save_party_game(slug, data):

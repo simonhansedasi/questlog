@@ -837,11 +837,11 @@ async function submitSetupEntityDirect(type, name) {
 }
 
 async function applyScenario(scenario) {
-  const adds = [];
-  for (const name of (scenario.characters || [])) adds.push(submitSetupEntityDirect('character', name));
-  if (scenario.location) adds.push(submitSetupEntityDirect('location', scenario.location));
-  if (scenario.faction) adds.push(submitSetupEntityDirect('faction', scenario.faction));
-  await Promise.all(adds);
+  for (const name of (scenario.characters || [])) {
+    await submitSetupEntityDirect('character', name);
+  }
+  if (scenario.location) await submitSetupEntityDirect('location', scenario.location);
+  if (scenario.faction) await submitSetupEntityDirect('faction', scenario.faction);
   if (scenario.inciting_incident) gameState.inciting_incident = scenario.inciting_incident;
   refreshEntityChips();
 }

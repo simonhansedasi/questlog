@@ -250,9 +250,10 @@ def generate_secret_objectives(campaign_name, characters, arc_description, genre
 
 def generate_party_summary(campaign_name, history, characters, secret_objectives, arc):
     """Generate a brief narrative epilogue for a completed party game. Returns {summary: '...'}."""
+    log_events = [h for h in (history or []) if h.get("type") == "log_event" and h.get("source") and h.get("action")]
     hist_lines = [
         "- " + h["source"] + " — " + h["action"] + (f" (involving {h['target']})" if h.get("target") else "")
-        for h in (history or [])[-10:]
+        for h in log_events[-10:]
     ]
     secret_lines = [
         f"- {s['character_name']}: {s['objective']}"
