@@ -215,6 +215,8 @@
       margin-bottom: 20px;
       font-size: 0.83rem;
       color: var(--muted);
+      max-height: 220px;
+      overflow-y: auto;
     }
     .history-item {
       padding: 5px 0;
@@ -370,7 +372,7 @@
       <div id="arc-play-objectives"></div>
     </div>
 
-    <!-- History feed (last 3 events) -->
+    <!-- History feed (all events, newest first) -->
     <div class="history-feed" id="history-feed" style="display:none;"></div>
 
     <div id="turn-indicator" style="display:none; text-align:center; margin-bottom:20px; padding:12px 16px; background:var(--surface2); border:1px solid var(--border); border-radius:8px;">
@@ -493,6 +495,7 @@
 const SLUG = {{ slug | tojson }};
 const GAME = {{ game | tojson }};
 const CAMPAIGN_NAME = {{ meta.name | tojson }};
+const SERVER_PLAY_STARTED = (GAME || {}).play_started_at || null;
 
 let gameState = GAME || {};
 let currentAddType = 'character';
@@ -509,7 +512,10 @@ let timerInterval = null;
 
 function startTimer() {
   if (!localStorage.getItem(TIMER_KEY)) {
-    localStorage.setItem(TIMER_KEY, Date.now());
+    const fallback = SERVER_PLAY_STARTED
+      ? new Date(SERVER_PLAY_STARTED + 'Z').getTime()
+      : Date.now();
+    localStorage.setItem(TIMER_KEY, fallback);
   }
   clearInterval(timerInterval);
   timerInterval = setInterval(tickTimer, 500);
@@ -651,13 +657,25 @@ function renderChips(id, items) {
 }
 
 function refreshHistoryFeed() {
-  const hist = (gameState.history || []).filter(h => h.type === 'log_event').slice(-3);
+  const hist = gameState.history || [];
   const feed = document.getElementById('history-feed');
   if (!hist.length) { feed.style.display = 'none'; return; }
   feed.style.display = 'block';
-  feed.innerHTML = hist.map(h =>
-    `<div class="history-item"><strong>${h.source}</strong> — ${h.action}${h.target ? ` <em>(${h.target})</em>` : ''}</div>`
-  ).join('');
+  feed.innerHTML = hist.map(h => {
+    let line = '';
+    if (h.type === 'log_event') {
+      line = `<strong>${h.source}</strong> — ${h.action}${h.target ? ` <em>(${h.target})</em>` : ''}`;
+    } else if (h.type === 'add_entity') {
+      const label = h.entity_type === 'character' ? 'joined' : h.entity_type === 'location' ? 'place added' : 'group added';
+      line = `<strong>${h.name}</strong> — ${label}`;
+    } else if (h.type === 'formalize_relation') {
+      line = `<strong>${h.a}</strong> + <strong>${h.b}</strong> — ${h.relation === 'ally' ? 'allied' : 'rivals'}`;
+    } else {
+      return '';
+    }
+    return `<div class="history-item">${line}</div>`;
+  }).join('');
+  feed.scrollTop = feed.scrollHeight;
 }
 
 function setGenre(g) {
@@ -870,8 +888,7 @@ let openingIndex = 0;
 
 function startOpeningRound() {
   const chars = getEntities().characters;
-  const incident = gameState.inciting_incident || '';
-  if (!chars.length || !incident) { startPlay(); return; }
+  if (!chars.length) { startPlay(); return; }
   openingIndex = 0;
   showOpeningScreen(0);
 }
@@ -879,7 +896,9 @@ function startOpeningRound() {
 function showOpeningScreen(index) {
   const chars = getEntities().characters;
   const incident = gameState.inciting_incident || '';
-  document.getElementById('opening-incident').textContent = incident;
+  const incidentEl = document.getElementById('opening-incident');
+  incidentEl.textContent = incident;
+  incidentEl.style.display = incident ? 'block' : 'none';
   document.getElementById('opening-progress').textContent = `${index + 1} of ${chars.length}`;
   document.getElementById('opening-char-name').textContent = chars[index].name;
   document.getElementById('opening-prompt').textContent = `Pass to ${chars[index].name}. What do you do first?`;
@@ -997,6 +1016,9 @@ function advanceTurn() {
 }
 
 function startPlay() {
+  if (gameState.phase !== 'play') {
+    post('/play/action', { action: 'start_play' }).catch(() => {});
+  }
   gameState.phase = 'play';
   if (!gameState.current_player_index) gameState.current_player_index = 0;
   refreshDropdowns();
@@ -1170,6 +1192,7 @@ async function submitPlayEntity() {
     if (!gameState.history) gameState.history = [];
     gameState.history.push({ type: 'add_entity', entity_type: currentAddType, name });
     refreshDropdowns();
+    refreshHistoryFeed();
     hideActions();
     advanceTurn();
     showFlash(`✓ Added ${currentAddType}: ${name}`);
@@ -1210,6 +1233,7 @@ async function formalizeRelation() {
     gameState.relations.push({ a: e1.name, b: e2.name, relation });
     if (!gameState.history) gameState.history = [];
     gameState.history.push({ type: 'formalize_relation', a: e1.name, b: e2.name, relation });
+    refreshHistoryFeed();
     hideActions();
     advanceTurn();
     const relWord = relation === 'ally' ? 'allies' : 'rivals';

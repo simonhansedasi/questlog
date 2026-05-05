@@ -301,7 +301,7 @@ def inject_viewer_character():
         user_ai_enabled = bool(u.get("ai_enabled") or u.get("admin"))
         user_pro = u.get("subscription_status") == "active"
         worlds_used = _user_world_count(session["user"])
-        worlds_limit = u.get("world_limit", 1) + u.get("extra_worlds", 0)
+        worlds_limit = u.get("world_limit", 3) + u.get("extra_worlds", 0)
     # can_write: True for owner/members/DMs and demo; False for share-link-only viewers
     can_write = is_demo
     if not can_write and slug:
@@ -515,7 +515,7 @@ def auth_google_callback():
             "google_sub": google_sub,
             "created_at": datetime.datetime.utcnow().isoformat(),
             "ai_enabled": False,
-            "world_limit": 1,
+            "world_limit": 3,
         }
     else:
         # Keep google_sub and email up to date on existing account
@@ -594,6 +594,10 @@ def index():
     my_campaigns = [c for c in all_campaigns if c.get("owner") == username and not c.get("demo")]
     member_campaigns = [c for c in all_campaigns if username in c.get("members", []) and c.get("owner") != username and not c.get("demo")]
     demo_campaigns = [c for c in all_campaigns if c.get("demo")]
+    for c in my_campaigns:
+        if c.get("onboarding_mode") == "party":
+            _g = db.get_party_game(c["slug"])
+            c["party_phase"] = _g.get("phase")
     return render_template("index.html", my_campaigns=my_campaigns, member_campaigns=member_campaigns, demo_campaigns=demo_campaigns)
 
 
@@ -792,6 +796,19 @@ def party_play_action(slug):
         db.save_party_game(slug, game)
         return jsonify({"ok": True, "phase": "arc"})
 
+    elif action == "start_play":
+        if game.get("phase") in ("arc", "secrets"):
+            game["phase"] = "play"
+            game["play_started_at"] = datetime.datetime.utcnow().isoformat()
+            db.save_party_game(slug, game)
+            owner = meta.get("owner")
+            if owner:
+                _users = load_users()
+                if owner in _users:
+                    _users[owner]["party_plays"] = _users[owner].get("party_plays", 0) + 1
+                    save_users(_users)
+        return jsonify({"ok": True})
+
     elif action == "log_event":
         source_id = (data.get("source_id") or "").strip()
         source_type = data.get("source_type")
@@ -988,13 +1005,6 @@ def party_play_complete(slug):
         game["arc"]["completed"] = completed
     game["phase"] = "done"
     db.save_party_game(slug, game)
-    # Increment party_plays for the campaign owner
-    owner = meta.get("owner")
-    if owner:
-        users = load_users()
-        if owner in users:
-            users[owner]["party_plays"] = users[owner].get("party_plays", 0) + 1
-            save_users(users)
     db.inject_wikilinks_into_world(slug)
     all_entries = db.get_all_log_entries(slug)
     return jsonify({
@@ -1051,7 +1061,7 @@ def clone_campaign(slug):
     if username:
         users = load_users()
         user = users.get(username, {})
-        limit = user.get("world_limit", 1) + user.get("extra_worlds", 0)
+        limit = user.get("world_limit", 3) + user.get("extra_worlds", 0)
         if _user_world_count(username) >= limit:
             template = request.form.get("template", "ttrpg")
             dm_pin = request.form.get("dm_pin", "")
@@ -1104,7 +1114,7 @@ def _create_onboarding_campaign(username, onboarding_mode):
         return None
     users = load_users()
     user = users.get(username, {})
-    limit = user.get("world_limit", 1) + user.get("extra_worlds", 0)
+    limit = user.get("world_limit", 3) + user.get("extra_worlds", 0)
     if _user_world_count(username) >= limit:
         try:
             checkout = stripe.checkout.Session.create(
@@ -1191,7 +1201,7 @@ def welcome_post():
                 return redirect(url_for("index"))
 
         # World limit reached → Pro users: prompt to delete a world first
-        limit = user_data.get("world_limit", 1) + user_data.get("extra_worlds", 0)
+        limit = user_data.get("world_limit", 3) + user_data.get("extra_worlds", 0)
         if _user_world_count(username) >= limit:
             flash("You've reached your world limit. Delete a world from your home screen to make room for a new party game.", "error")
             return redirect(url_for("index"))
@@ -1403,6 +1413,10 @@ def campaign(slug):
     meta = load(slug, "campaign.json")
     if not meta:
         abort(404)
+    if meta.get("onboarding_mode") == "party":
+        _g = db.get_party_game(slug)
+        if _g.get("phase") != "done":
+            return redirect(url_for("party_play", slug=slug))
     is_dm = bool(session.get(f"dm_{slug}"))
     party = db.get_party(slug, include_hidden=is_dm)
     quests = db.get_quests(slug, include_hidden=is_dm)
@@ -1492,6 +1506,10 @@ def world(slug):
     r = campaign_access(slug)
     if r: return r
     meta = load(slug, "campaign.json")
+    if meta and meta.get("onboarding_mode") == "party":
+        _g = db.get_party_game(slug)
+        if _g.get("phase") != "done":
+            return redirect(url_for("party_play", slug=slug))
     is_dm = bool(session.get(f"dm_{slug}")) or (session.get("user") == meta.get("owner"))
     npcs = db.get_npcs(slug, include_hidden=is_dm)
     factions = db.get_factions(slug, include_hidden=is_dm)
@@ -2665,6 +2683,10 @@ def dm(slug):
     meta = load(slug, "campaign.json")
     if not meta:
         abort(404)
+    if meta.get("onboarding_mode") == "party":
+        _g = db.get_party_game(slug)
+        if _g.get("phase") != "done":
+            return redirect(url_for("party_play", slug=slug))
     branches = db.get_branches(slug)
     active_branch_id = session.get(f"branch_{slug}")
     active_branch = next((b for b in branches if b["id"] == active_branch_id), None)
@@ -5340,7 +5362,7 @@ def billing():
         import datetime as _dt
         cancel_date = _dt.datetime.utcfromtimestamp(period_end_ts).strftime("%B %-d, %Y")
     used = _user_world_count(username)
-    limit = user.get("world_limit", 1) + user.get("extra_worlds", 0)
+    limit = user.get("world_limit", 3) + user.get("extra_worlds", 0)
     return render_template("billing.html",
         is_pro=is_pro,
         cancel_at_period_end=cancel_at_period_end,
@@ -5418,11 +5440,11 @@ def billing_pro_success():
     u["subscription_status"] = "active"
     u["stripe_customer_id"] = cs.customer
     u["stripe_subscription_id"] = cs.subscription.id if cs.subscription else None
-    u["world_limit"] = 5
+    u["world_limit"] = 10
     u["ai_enabled"] = True
     users[username] = u
     save_users(users)
-    flash("Welcome to Pro! You now have 5 worlds and AI features unlocked.", "success")
+    flash("Welcome to Pro! You now have 10 worlds and AI features unlocked.", "success")
     return redirect(url_for("index"))
 
 
@@ -5543,7 +5565,7 @@ def stripe_webhook():
                 u["cancel_at_period_end"] = cancel_at_period_end
                 u["subscription_period_end"] = current_period_end
                 if status not in ("active", "trialing"):
-                    u["world_limit"] = 1
+                    u["world_limit"] = 3
                     u["cancel_at_period_end"] = False
                 save_users(users)
                 break
