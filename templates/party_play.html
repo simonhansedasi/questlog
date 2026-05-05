@@ -390,11 +390,11 @@
     <div class="action-panel" id="action-event">
       <p class="party-label">Log an event</p>
       <select class="party-input" id="event-source">
-        <option value="">Who is this about?…</option>
+        <option value="">Who does this affect?…</option>
       </select>
       <textarea class="party-input" id="event-text" rows="3" placeholder="What happened? One thing, past tense."></textarea>
       <select class="party-input" id="event-target">
-        <option value="">Involving or caused by whom? (optional)</option>
+        <option value="">Who caused it? (optional)</option>
       </select>
       <div class="referee-ok" id="referee-ok">✓ <span id="referee-ok-text">Good to go.</span></div>
       <div class="referee-warn" id="referee-warn">
@@ -625,8 +625,8 @@ function populateSelect(id, items, placeholder) {
 }
 
 function refreshDropdowns() {
-  populateSelect('event-source', getSources(), 'Who is this about?…');
-  populateSelect('event-target', getAllForTarget(), 'Involving or caused by whom? (optional)');
+  populateSelect('event-source', getSources(), 'Who does this affect?…');
+  populateSelect('event-target', getAllForTarget(), 'Who caused it? (optional)');
   populateSelect('rel-entity1', getSources(), 'First entity…');
   populateSelect('rel-entity2', getSources(), 'Second entity…');
 }
