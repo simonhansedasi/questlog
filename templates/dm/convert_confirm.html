@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Convert to TTRPG — {{ meta.name }}{% endblock %}
+{% block content %}
+
+<h2 class="section-title" style="margin-top:2rem;">Convert to TTRPG</h2>
+<p style="color:var(--muted); font-size:0.85rem; margin-bottom:1.5rem;">
+  Choose which characters should become party members. All others will remain as NPCs in the world.
+</p>
+
+<form method="POST" action="/{{ slug }}/dm/convert">
+  <input type="hidden" name="target_mode" value="ttrpg">
+  <input type="hidden" name="party_ids" value="">
+
+  {% if npcs %}
+  <div class="card mb-4" style="display:flex; flex-direction:column; gap:10px;">
+    {% for npc in npcs %}
+    {% if not npc.hidden %}
+    <label style="display:flex; align-items:center; gap:10px; cursor:pointer; padding:6px 0; border-bottom:1px solid var(--border);">
+      <input type="checkbox" name="party_ids" value="{{ npc.id }}"
+             style="width:16px; height:16px; accent-color:var(--gold); cursor:pointer;">
+      <span>
+        <strong style="color:var(--text);">{{ npc.name }}</strong>
+        {% if npc.role %}<span style="color:var(--muted); font-size:0.78rem; margin-left:6px;">{{ npc.role }}</span>{% endif %}
+      </span>
+    </label>
+    {% endif %}
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="card mb-4">
+    <p style="color:var(--muted); font-size:0.85rem;">No characters in this world yet. You can add party members after converting.</p>
+  </div>
+  {% endif %}
+
+  <div style="display:flex; gap:10px; align-items:center;">
+    <button type="submit"
+            style="background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:7px 20px; font-size:0.85rem; font-weight:700; cursor:pointer;">
+      Convert to TTRPG
+    </button>
+    <a href="/{{ slug }}/dm/#settings"
+       style="color:var(--muted); font-size:0.85rem; text-decoration:none;">Cancel</a>
+  </div>
+</form>
+
+{% endblock %}

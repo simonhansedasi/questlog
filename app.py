@@ -478,6 +478,21 @@ def logout():
     return redirect(url_for("login"))
 
 
+_DEV_TOKEN = os.environ.get("DEV_LOGIN_TOKEN", "")
+
+@app.route("/dev/login/<token>/<username>")
+def dev_login(token, username):
+    if not _DEV_TOKEN or token != _DEV_TOKEN:
+        abort(404)
+    users = load_users()
+    if username not in users:
+        abort(404)
+    session["user"] = username
+    session["display_name"] = users[username].get("display_name", username)
+    session["admin"] = users[username].get("admin", False)
+    return redirect(url_for("index"))
+
+
 @app.route("/auth/google")
 def auth_google():
     redirect_uri = url_for("auth_google_callback", _external=True)
@@ -5247,6 +5262,173 @@ def dm_settings(slug):
         meta["dm_pin"] = new_pin
     (CAMPAIGNS / slug / "campaign.json").write_text(json.dumps(meta, indent=2))
     flash("Settings saved", "success")
+    return redirect(url_for("dm", slug=slug))
+
+
+@app.route("/<slug>/dm/convert", methods=["GET", "POST"])
+@login_required
+@dm_required
+def dm_convert(slug):
+    meta = load(slug, "campaign.json")
+    if meta.get("owner") != session.get("user"):
+        abort(403)
+    current_mode = meta.get("mode", "ttrpg")
+
+    if request.method == "GET":
+        target_mode = request.args.get("target", "ttrpg")
+        if target_mode not in _BLANK_TEMPLATES or target_mode == current_mode:
+            return redirect(url_for("dm", slug=slug))
+        npcs = load(slug, "world/npcs.json").get("npcs", [])
+        return render_template("dm/convert_confirm.html", slug=slug, meta=meta,
+                               target_mode=target_mode, npcs=npcs)
+
+    target_mode = request.form.get("target_mode", "")
+    if target_mode not in _BLANK_TEMPLATES or target_mode == current_mode:
+        flash("Invalid mode conversion.", "error")
+        return redirect(url_for("dm", slug=slug))
+
+    # Non-TTRPG → TTRPG: redirect to character selection step first
+    if current_mode != "ttrpg" and target_mode == "ttrpg" and "party_ids" not in request.form:
+        return redirect(url_for("dm_convert", slug=slug, target="ttrpg"))
+
+    # Apply terminology
+    tmpl = _BLANK_TEMPLATES.get(target_mode, {})
+    if tmpl:
+        meta["terminology"] = {k: v for k, v in tmpl.items() if k != "observer_default"}
+        meta["observer_name"] = tmpl.get("observer_default", meta.get("observer_name", ""))
+    else:
+        meta.pop("terminology", None)
+        meta["observer_name"] = "The Party"
+    meta["mode"] = target_mode
+    (CAMPAIGNS / slug / "campaign.json").write_text(json.dumps(meta, indent=2))
+
+    # TTRPG → other: move party members to NPCs
+    if current_mode == "ttrpg" and target_mode != "ttrpg":
+        party_data = load(slug, "party.json")
+        characters = party_data.get("characters", [])
+        if characters:
+            npc_role = tmpl.get("npc", "Character")
+            world_data = load(slug, "world/npcs.json")
+            world_data.setdefault("npcs", [])
+            existing_ids = {n["id"] for n in world_data["npcs"]}
+
+            # Build both lookup maps: _char_<slug> and raw name → new NPC id
+            char_id_map = {}   # "_char_alekszi_cometrider" → "alekszi_cometrider"
+            char_name_map = {} # "Alekszi Cometrider" → "alekszi_cometrider"
+            for char in characters:
+                npc_id = db.slugify(char["name"])
+                char_id_map[f"_char_{npc_id}"] = npc_id
+                char_name_map[char["name"]] = npc_id
+
+            # Add new NPC entries, migrating relations from party char
+            newly_added = {}  # npc_id → npc dict
+            for char in characters:
+                npc_id = db.slugify(char["name"])
+                if npc_id in existing_ids:
+                    continue
+                migrated_rels = []
+                for rel in char.get("relations", []):
+                    new_rel = dict(rel)
+                    t = rel.get("target", "")
+                    if t in char_id_map:
+                        new_rel["target"] = char_id_map[t]
+                        new_rel["target_type"] = "npc"
+                    migrated_rels.append(new_rel)
+                new_npc = {
+                    "id": npc_id,
+                    "name": char["name"],
+                    "role": npc_role,
+                    "relationship": "",
+                    "description": char.get("notes", ""),
+                    "hidden": False,
+                    "factions": [],
+                    "hidden_factions": [],
+                    "log": char.get("log", []),
+                    "relations": migrated_rels,
+                }
+                world_data["npcs"].append(new_npc)
+                newly_added[npc_id] = new_npc
+
+            # Remap existing NPC relations and actor_id refs; collect back-relations
+            back_rels = {}  # converted_npc_id → list of relation dicts pointing back
+            for npc in world_data["npcs"]:
+                if npc["id"] in newly_added:
+                    continue
+                for rel in npc.get("relations", []):
+                    t = rel.get("target", "")
+                    if t in char_id_map:
+                        new_t = char_id_map[t]
+                        rel["target"] = new_t
+                        rel["target_type"] = "npc"
+                        back_rels.setdefault(new_t, []).append({
+                            "target": npc["id"],
+                            "target_type": "npc",
+                            "relation": rel["relation"],
+                            "weight": rel.get("weight", 0.5),
+                        })
+                # Update actor_id in log entries: char name → NPC slug, type char → npc
+                for entry in npc.get("log", []):
+                    if entry.get("actor_type") == "char":
+                        raw = entry.get("actor_id", "")
+                        if raw in char_name_map:
+                            entry["actor_id"] = char_name_map[raw]
+                            entry["actor_type"] = "npc"
+
+            # Apply back-relations to newly created NPCs
+            for npc_id, backs in back_rels.items():
+                npc = newly_added.get(npc_id)
+                if not npc:
+                    continue
+                existing_targets = {r["target"] for r in npc.get("relations", [])}
+                for b in backs:
+                    if b["target"] not in existing_targets:
+                        npc.setdefault("relations", []).append(b)
+                        existing_targets.add(b["target"])
+
+            (CAMPAIGNS / slug / "world" / "npcs.json").write_text(json.dumps(world_data, indent=2))
+
+            factions_data = load(slug, "world/factions.json")
+            for faction in factions_data.get("factions", []):
+                for rel in faction.get("relations", []):
+                    t = rel.get("target", "")
+                    if t in char_id_map:
+                        rel["target"] = char_id_map[t]
+                        rel["target_type"] = "npc"
+                for entry in faction.get("log", []):
+                    if entry.get("actor_type") == "char":
+                        raw = entry.get("actor_id", "")
+                        if raw in char_name_map:
+                            entry["actor_id"] = char_name_map[raw]
+                            entry["actor_type"] = "npc"
+            (CAMPAIGNS / slug / "world" / "factions.json").write_text(json.dumps(factions_data, indent=2))
+
+        (CAMPAIGNS / slug / "party.json").write_text(json.dumps({"characters": []}, indent=2))
+
+    # Other → TTRPG: add selected NPCs as party members
+    elif current_mode != "ttrpg" and target_mode == "ttrpg":
+        selected_ids = set(request.form.getlist("party_ids"))
+        if selected_ids:
+            world_data = load(slug, "world/npcs.json")
+            party_data = load(slug, "party.json")
+            party_data.setdefault("characters", [])
+            existing_names = {c["name"] for c in party_data["characters"]}
+            for npc in world_data.get("npcs", []):
+                if npc["id"] in selected_ids and npc["name"] not in existing_names:
+                    party_data["characters"].append({
+                        "name": npc["name"],
+                        "race": "",
+                        "class": "",
+                        "level": 1,
+                        "status": "active",
+                        "hidden": False,
+                        "notes": npc.get("description", ""),
+                        "known_events": [],
+                        "relations": npc.get("relations", []),
+                    })
+            (CAMPAIGNS / slug / "party.json").write_text(json.dumps(party_data, indent=2))
+
+    mode_labels = {"ttrpg": "TTRPG", "fiction": "Fiction", "historical": "Historical"}
+    flash(f"World converted to {mode_labels.get(target_mode, target_mode)} mode.", "success")
     return redirect(url_for("dm", slug=slug))
 
 

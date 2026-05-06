@@ -2833,6 +2833,48 @@ function rfEvtDelete(btn) {
   </form>
 </div>
 
+<h2 class="section-title mt-8">Convert Template</h2>
+<div class="card mb-4">
+  {% set mode_labels = {"ttrpg": "TTRPG", "fiction": "Fiction", "historical": "Historical"} %}
+  {% set current_mode = meta.mode or "ttrpg" %}
+  <p style="color:var(--muted); font-size:0.82rem; margin-bottom:12px;">
+    Currently: <strong style="color:var(--text);">{{ mode_labels[current_mode] }}</strong> —
+    Switch to a different template. Terminology updates immediately.
+    {% if current_mode == "ttrpg" %}Party members will be moved to the world as characters.{% endif %}
+    {% if current_mode != "ttrpg" %}You'll choose which characters become party members.{% endif %}
+  </p>
+  <form method="POST" action="/{{ slug }}/dm/convert" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+    <select name="target_mode" id="convert-mode-select"
+            style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:6px 10px; font-size:0.85rem;">
+      {% for mode, label in mode_labels.items() %}
+        {% if mode != current_mode %}
+          <option value="{{ mode }}">{{ label }}</option>
+        {% endif %}
+      {% endfor %}
+    </select>
+    <button type="submit"
+            style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:6px 16px; font-size:0.85rem; font-weight:600; cursor:pointer;">
+      Convert
+    </button>
+    <span id="convert-hint" style="color:var(--muted); font-size:0.78rem;"></span>
+  </form>
+  <script>
+    (function(){
+      var sel = document.getElementById('convert-mode-select');
+      var hint = document.getElementById('convert-hint');
+      var currentMode = {{ current_mode | tojson }};
+      var hints = {
+        ttrpg: "You'll choose which characters become party members.",
+        fiction: currentMode === 'ttrpg' ? "Party members will become Characters." : "Only terminology changes — no data affected.",
+        historical: currentMode === 'ttrpg' ? "Party members will become Figures." : "Only terminology changes — no data affected.",
+      };
+      function update(){ hint.textContent = hints[sel.value] || ''; }
+      sel.addEventListener('change', update);
+      update();
+    })();
+  </script>
+</div>
+
 <h2 class="section-title mt-8" style="color:#e05c5c;">Danger Zone</h2>
 <div class="card" style="border-color:#e05c5c33;">
   <p class="text-muted text-sm" style="margin-bottom:12px;">Permanently delete this world and all its data. This cannot be undone.</p>
