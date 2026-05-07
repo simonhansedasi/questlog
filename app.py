@@ -17,6 +17,7 @@ import markdown
 import uuid
 import zipfile
 import io
+import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from urllib.parse import urlparse
 from authlib.integrations.flask_client import OAuth
@@ -129,6 +130,59 @@ def _user_world_count(username):
         if meta.get("owner") == username and not meta.get("demo_mode") and not meta.get("demo"):
             count += 1
     return count
+
+
+_stats_cache = {"data": None, "ts": 0.0}
+
+def _compute_site_stats():
+    now = time.time()
+    if _stats_cache["data"] and now - _stats_cache["ts"] < 300:
+        return _stats_cache["data"]
+
+    try:
+        all_users = json.loads(USERS_FILE.read_text()).get("users", {})
+        user_count = sum(1 for u in all_users.values() if u.get("google_sub"))
+    except Exception:
+        user_count = 0
+
+    world_count = 0
+    char_count = 0
+    for d in CAMPAIGNS.iterdir():
+        if not d.is_dir():
+            continue
+        cf = d / "campaign.json"
+        if not cf.exists():
+            continue
+        try:
+            meta = json.loads(cf.read_text())
+        except Exception:
+            continue
+        if meta.get("demo") or meta.get("demo_mode"):
+            continue
+        world_count += 1
+        try:
+            npcs_file = d / "world" / "npcs.json"
+            if npcs_file.exists():
+                char_count += len(json.loads(npcs_file.read_text()).get("npcs", []))
+        except Exception:
+            pass
+        try:
+            party_file = d / "party.json"
+            if party_file.exists():
+                char_count += len(json.loads(party_file.read_text()).get("characters", []))
+        except Exception:
+            pass
+
+    stats = {
+        "users": f"{user_count:,}",
+        "worlds": f"{world_count:,}",
+        "characters": f"{char_count:,}",
+    }
+    _stats_cache["data"] = stats
+    _stats_cache["ts"] = now
+    return stats
+
+
 INVITES_FILE = Path(__file__).parent / "invites.json"
 
 
@@ -603,7 +657,7 @@ def admin_generate_invite():
 @app.route("/")
 def index():
     if not session.get("user"):
-        return render_template("landing.html")
+        return render_template("landing.html", stats=_compute_site_stats())
     username = session["user"]
     all_campaigns = campaigns()
     my_campaigns = [c for c in all_campaigns if c.get("owner") == username and not c.get("demo")]
