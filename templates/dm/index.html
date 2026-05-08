@@ -2161,9 +2161,12 @@ function rfEvtDelete(btn) {
           {% for rel in char.relations %}
           {% set rname = (npcs | selectattr('id','equalto',rel.target) | map(attribute='name') | first)
                       or (factions | selectattr('id','equalto',rel.target) | map(attribute='name') | first)
+                      or (all_party_chars | selectattr('name', 'defined') | selectattr('name', '!=', '') | list | map(attribute='name') | select('equalto', rel.target | replace('_char_','') | replace('_',' ')) | first)
                       or rel.target %}
+          {% set rel_display = rel.formal_relation ~ '/' ~ rel.personal_relation if rel.formal_relation and rel.personal_relation else (rel.relation or rel.formal_relation or 'ally') %}
+          {% set rel_color = '#e05c5c' if 'rival' in rel_display else '#7ec87e' %}
           <div style="display:flex; align-items:center; gap:8px; font-size:0.8rem;">
-            <span style="color:{% if rel.relation == 'rival' %}#e05c5c{% else %}#7ec87e{% endif %}; font-weight:700; font-size:0.68rem; text-transform:uppercase; min-width:34px;">{{ rel.relation }}</span>
+            <span style="color:{{ rel_color }}; font-weight:700; font-size:0.68rem; text-transform:uppercase; min-width:34px;">{{ rel_display }}</span>
             <span style="flex:1;">{{ rname }}</span>
             <span style="color:var(--muted); font-size:0.7rem;">{{ rel.weight }}×</span>
             <form method="POST" action="/{{ slug }}/dm/character/{{ char.name | urlencode }}/relation/{{ rel.target }}/delete"
@@ -2190,11 +2193,20 @@ function rfEvtDelete(btn) {
             {% if factions %}<optgroup label="{{ terms.factions }}">{% for f in factions %}<option value="{{ f.id }}" data-type="faction">{{ f.name }}</option>{% endfor %}</optgroup>{% endif %}
           </select>
           <input type="hidden" name="target_type" value="char">
-          <select name="relation" style="{{ inp }} width:80px;">
-            <option value="rival">rival</option>
-            <option value="ally">ally</option>
-            <option value="contact">contact</option>
-          </select>
+          <div style="display:flex; flex-direction:column; gap:1px;">
+            <label style="color:var(--muted); font-size:0.6rem; text-transform:uppercase; letter-spacing:0.04em;">Formal</label>
+            <select name="formal_relation" style="{{ inp }} width:72px;">
+              <option value="ally" selected>ally</option>
+              <option value="rival">rival</option>
+            </select>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:1px;">
+            <label style="color:var(--muted); font-size:0.6rem; text-transform:uppercase; letter-spacing:0.04em;">Personal</label>
+            <select name="personal_relation" style="{{ inp }} width:72px;">
+              <option value="ally" selected>ally</option>
+              <option value="rival">rival</option>
+            </select>
+          </div>
           <select name="weight" style="{{ inp }} width:100px;">
             <option value="0.25">weak 0.25×</option>
             <option value="0.5" selected>mod 0.5×</option>

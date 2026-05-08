@@ -1810,13 +1810,19 @@ def reveal_event(slug, event_id, char_name):
     _save(slug, data, "party.json")
 
 
-def add_character_relation(slug, char_name, target_id, target_type, relation, weight):
+def add_character_relation(slug, char_name, target_id, target_type, relation, weight,
+                           formal_relation=None, personal_relation=None):
     data = _load_party(slug)
     for c in _all_chars(data):
         if c["name"] == char_name:
             rels = [r for r in c.get("relations", []) if r.get("target") != target_id]
-            rels.append({"target": target_id, "target_type": target_type,
-                         "relation": relation, "weight": float(weight)})
+            entry = {"target": target_id, "target_type": target_type, "weight": float(weight)}
+            if formal_relation and personal_relation and formal_relation != personal_relation:
+                entry["formal_relation"] = formal_relation
+                entry["personal_relation"] = personal_relation
+            else:
+                entry["relation"] = formal_relation or relation
+            rels.append(entry)
             c["relations"] = rels
     _save(slug, data, "party.json")
 
