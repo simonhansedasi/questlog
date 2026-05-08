@@ -30,6 +30,30 @@
   {% endif %}
 </div>
 
+<!-- Async campaign banner -->
+{% if async_campaign and async_campaign.phase == 'active' and async_visible %}
+{% set ac_players = async_campaign.players or [] %}
+{% set ac_idx = async_campaign.current_player_index or 0 %}
+{% set ac_current = ac_players[ac_idx] if ac_players and ac_idx < ac_players | length else none %}
+<div class="card mb-4" style="border-color:var(--gold)55; padding:14px 18px; margin-bottom:20px;">
+  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+    <div>
+      <span style="font-size:0.72rem; color:var(--gold); font-weight:700; text-transform:uppercase; letter-spacing:0.09em;">
+        Campaign in progress — Turn {{ async_campaign.turn_number or 1 }}
+      </span>
+      <p style="margin:4px 0 0; color:var(--text); font-size:0.9rem; font-weight:600;">
+        {% if ac_current %}Now: {{ ac_current.character_name }}{% endif %}
+      </p>
+    </div>
+    <a href="/{{ slug }}/campaign"
+       style="background:var(--gold); color:#000; border-radius:5px; padding:7px 16px;
+              font-size:0.88rem; font-weight:700; text-decoration:none; white-space:nowrap;">
+      Go to your turn →
+    </a>
+  </div>
+</div>
+{% endif %}
+
 <!-- Previously on... -->
 {% if latest_journal %}
 <div class="card mb-4" style="border-color:var(--gold-dim);">

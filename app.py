@@ -27,6 +27,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from src import data as db
 from src import ai
 from src import importer as vault_importer
+from src import email as mail
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -183,6 +184,61 @@ def _compute_site_stats():
     return stats
 
 
+def _advance_turn(slug, campaign_name, game, action_text="", events_logged=0, skipped=False):
+    players = game.get("players", [])
+    if not players:
+        return
+    current = players[game.get("current_player_index", 0)]
+    game.setdefault("history", []).append({
+        "turn": game.get("turn_number", 1),
+        "username": current["username"],
+        "character_name": current.get("character_name", ""),
+        "action_text": action_text,
+        "committed_at": datetime.datetime.utcnow().isoformat(),
+        "events_logged": events_logged,
+        "skipped": skipped,
+    })
+    game["turn_number"] = game.get("turn_number", 1) + 1
+    game["current_player_index"] = (game.get("current_player_index", 0) + 1) % len(players)
+    game["turn_started_at"] = datetime.datetime.utcnow().isoformat()
+    db.save_async_campaign(slug, game)
+    next_player = players[game["current_player_index"]]
+    if next_player.get("email"):
+        base = request.host_url.rstrip("/")
+        mail.send_turn_notification(
+            next_player["email"],
+            next_player.get("character_name", ""),
+            campaign_name,
+            f"{base}/{slug}/campaign",
+        )
+
+
+def _check_async_deadline(slug, game, meta):
+    if game.get("phase") != "active":
+        return
+    turn_started_str = game.get("turn_started_at")
+    if not turn_started_str:
+        return
+    deadline_hours = game.get("deadline_hours", 24)
+    try:
+        turn_started = datetime.datetime.fromisoformat(turn_started_str)
+    except ValueError:
+        return
+    if datetime.datetime.utcnow() <= turn_started + datetime.timedelta(hours=deadline_hours):
+        return
+    players = game.get("players", [])
+    if not players:
+        return
+    current = players[game.get("current_player_index", 0)]
+    if current.get("email"):
+        mail.send_skip_notification(
+            current["email"],
+            current.get("character_name", ""),
+            meta.get("name") or "Your Campaign",
+        )
+    _advance_turn(slug, meta.get("name") or "Your Campaign", game, skipped=True)
+
+
 INVITES_FILE = Path(__file__).parent / "invites.json"
 
 
@@ -196,6 +252,10 @@ def _validate_slug(slug):
 def compute_rel_filter(npc, is_dm=True):
     return db.compute_npc_relationship(npc, is_dm=is_dm)
 
+
+@app.template_filter("slugify")
+def slugify_filter(text):
+    return db.slugify(text or "")
 
 @app.template_filter("wikilinks")
 def wikilinks_filter(text, slug, npcs, factions, locations=None, party=None):
@@ -217,8 +277,10 @@ def wikilinks_filter(text, slug, npcs, factions, locations=None, party=None):
         inner = m.group(1)
         if '|' in inner:
             entity, display = inner.split('|', 1)
+            entity = entity.strip()
+            display = display.strip()
         else:
-            entity = display = inner
+            entity = display = inner.strip()
         key = entity.lower()
         if key in lookup:
             etype, eid = lookup[key]
@@ -478,7 +540,12 @@ def dm_required(f):
     @wraps(f)
     def decorated(slug, *args, **kwargs):
         if not session.get(f"dm_{slug}"):
-            return redirect(url_for("dm_login", slug=slug))
+            # Auto-grant for campaign owner without a redirect
+            meta = load(slug, "campaign.json")
+            if meta and session.get("user") == meta.get("owner"):
+                session[f"dm_{slug}"] = True
+            else:
+                return redirect(url_for("dm_login", slug=slug))
         return f(slug, *args, **kwargs)
     return decorated
 
@@ -528,7 +595,10 @@ def login():
 
 @app.route("/logout", methods=["POST"])
 def logout():
+    next_url = request.args.get("next", "").strip()
     session.clear()
+    if next_url and next_url.startswith("/"):
+        session["post_login_next"] = next_url
     return redirect(url_for("login"))
 
 
@@ -592,8 +662,11 @@ def auth_google_callback():
         users[username].setdefault("email", email)
 
     save_users(users)
+    next_url = session.pop("post_login_next", None)
     session["user"] = username
     session["display_name"] = users[username].get("display_name", username)
+    if next_url and next_url.startswith("/"):
+        return redirect(next_url)
     if is_new_user or not users[username].get("onboarding_seen"):
         return redirect(url_for("welcome"))
     return redirect(url_for("index"))
@@ -663,10 +736,13 @@ def index():
     my_campaigns = [c for c in all_campaigns if c.get("owner") == username and not c.get("demo")]
     member_campaigns = [c for c in all_campaigns if username in c.get("members", []) and c.get("owner") != username and not c.get("demo")]
     demo_campaigns = [c for c in all_campaigns if c.get("demo")]
-    for c in my_campaigns:
+    for c in my_campaigns + member_campaigns:
         if c.get("onboarding_mode") == "party":
             _g = db.get_party_game(c["slug"])
             c["party_phase"] = _g.get("phase")
+        _ag = db.get_async_campaign(c["slug"])
+        if _ag and _ag.get("phase") in ("recruiting", "active"):
+            c["async_phase"] = _ag.get("phase")
     return render_template("index.html", my_campaigns=my_campaigns, member_campaigns=member_campaigns, demo_campaigns=demo_campaigns)
 
 
@@ -1214,18 +1290,682 @@ def _create_onboarding_campaign(username, onboarding_mode):
         tmpl = _BLANK_TEMPLATES["fiction"]
         new_meta["terminology"] = {k: v for k, v in tmpl.items() if k != "observer_default"}
         new_meta["observer_name"] = tmpl["observer_default"]
+    elif onboarding_mode == "campaign":
+        new_meta["name"] = ""
+        new_meta["mode"] = "fiction"
+        tmpl = _BLANK_TEMPLATES["fiction"]
+        new_meta["terminology"] = {k: v for k, v in tmpl.items() if k != "observer_default"}
+        new_meta["observer_name"] = tmpl["observer_default"]
     else:
         new_meta["name"] = ""
         new_meta["mode"] = "ttrpg"
         new_meta["observer_name"] = "The Party"
         new_meta.pop("terminology", None)
     new_meta["description"] = ""
-    new_meta["system"] = "Party Mode" if onboarding_mode == "party" else ""
+    if onboarding_mode == "party":
+        new_meta["system"] = "Party Mode"
+    elif onboarding_mode == "campaign":
+        new_meta["system"] = "Campaign Mode"
+    else:
+        new_meta["system"] = ""
     new_meta["party_name"] = ""
     new_meta["onboarding_mode"] = onboarding_mode
     (dst / "campaign.json").write_text(json.dumps(new_meta, indent=2))
     session[f"dm_{new_slug}"] = True
     return new_slug
+
+
+# ── Async Campaign Mode ────────────────────────────────────────────────────────
+
+def _sync_campaign_character(slug, char_name):
+    """Create a world NPC for a campaign player character if one doesn't exist yet."""
+    if not char_name:
+        return
+    existing = db.get_npcs(slug, include_hidden=True)
+    if any(n["name"].lower() == char_name.lower() for n in existing):
+        return
+    db.add_npc(slug, char_name, role="Character", relationship="protagonist",
+               description="", hidden=False, dm_notes="")
+
+@app.route("/<slug>/campaign/lobby")
+@dm_required
+def async_campaign_lobby(slug):
+    r = campaign_access(slug)
+    if r: return r
+    meta = load(slug, "campaign.json")
+    if not meta:
+        abort(404)
+    game = db.get_async_campaign(slug)
+    if not game:
+        game = {"phase": "setup", "players": [], "invite_tokens": {},
+                "history": [], "turn_number": 1, "current_player_index": 0, "deadline_hours": 24}
+        db.save_async_campaign(slug, game)
+    if game.get("phase") == "active":
+        _check_async_deadline(slug, game, meta)
+        game = db.get_async_campaign(slug)
+    players = game.get("players", [])
+    invite_tokens = game.get("invite_tokens", {})
+    # Only unclaimed invites go in the pending list; claimed ones already appear in players
+    pending_invites = [{**inv, "token": tok} for tok, inv in invite_tokens.items() if not inv.get("claimed_by")]
+    # Token lookup keyed by username so the template can render Remove for joined players
+    player_tokens = {inv["claimed_by"]: tok for tok, inv in invite_tokens.items() if inv.get("claimed_by")}
+    all_claimed = all(inv.get("claimed_by") for inv in invite_tokens.values()) if invite_tokens else True
+    all_named = all(p.get("character_name") for p in players) if players else False
+    gm_player = next((p for p in players if p.get("username") == meta.get("owner")), None)
+    can_start = game.get("phase") == "recruiting" and all_claimed and all_named and bool(players)
+    return render_template("async_lobby.html", slug=slug, meta=meta, game=game,
+                           players=players, pending_invites=pending_invites,
+                           player_tokens=player_tokens,
+                           can_start=can_start, all_claimed=all_claimed,
+                           all_named=all_named, gm_player=gm_player)
+
+
+@app.route("/<slug>/campaign/invite", methods=["POST"])
+@dm_required
+def async_campaign_invite(slug):
+    r = campaign_access(slug)
+    if r: return r
+    meta = load(slug, "campaign.json")
+    game = db.get_async_campaign(slug)
+    if not game:
+        game = {"phase": "setup", "players": [], "invite_tokens": {},
+                "history": [], "turn_number": 1, "current_player_index": 0, "deadline_hours": 24}
+    action = request.form.get("action", "setup_emails")
+    username = session["user"]
+
+    if action == "setup_emails":
+        other_emails = [e.strip().lower() for e in request.form.getlist("emails") if e.strip() and "@" in e.strip()]
+        include_self = request.form.get("include_self") == "1"
+        story_mode = request.form.get("story_mode", "ai")
+        genre = request.form.get("genre", "adventure")
+        deadline_hours = max(1, min(168, int(request.form.get("deadline_hours", 24) or 24)))
+
+        total_players = len(other_emails) + (1 if include_self else 0)
+        if total_players == 0:
+            flash("Add at least one player to continue.", "error")
+            return redirect(url_for("async_campaign_lobby", slug=slug))
+
+        all_users_data = load_users()
+        base = request.host_url.rstrip("/")
+        inviter = all_users_data.get(username, {}).get("display_name", username)
+        self_email = all_users_data.get(username, {}).get("email", "")
+        campaign_name = meta.get("name") or "Our Campaign"
+
+        def email_display(addr):
+            return addr.split("@")[0] if "@" in addr else addr
+
+        if story_mode == "manual":
+            title = request.form.get("arc_title", "").strip()[:120]
+            hook = request.form.get("arc_hook", "").strip()[:800]
+            paths = [request.form.get(f"arc_path_{i}", "").strip()[:200] for i in range(1, 4)]
+            arc_data = {"title": title or campaign_name, "description": hook, "objectives": [p for p in paths if p]}
+            if title:
+                meta["name"] = title
+                (CAMPAIGNS / slug / "campaign.json").write_text(json.dumps(meta, indent=2))
+        else:
+            all_emails_list = ([self_email + "||self"] if include_self else []) + \
+                              [e + "||invite" for e in other_emails]
+            placeholder_chars = [{"id": f"player_{i+1}", "name": email_display(e.split("||")[0])}
+                                  for i, e in enumerate(all_emails_list) if e.split("||")[0]]
+            try:
+                arc_data = ai.generate_party_arc(campaign_name, placeholder_chars,
+                                                 "an untamed world", "the powers that be", genre, "")
+            except Exception:
+                arc_data = {"title": campaign_name, "description": "", "objectives": []}
+
+        game["phase"] = "recruiting"
+        game["genre"] = genre
+        game["deadline_hours"] = deadline_hours
+        game["arc"] = arc_data
+        game["invite_tokens"] = {}
+        game["players"] = []
+
+        slot = 0
+        if include_self:
+            char_id = f"player_{slot + 1}"
+            game["players"].append({
+                "username": username,
+                "email": self_email,
+                "character_id": char_id,
+                "character_name": "",
+                "secret": {},
+                "turn_order": slot,
+                "last_action_at": None,
+            })
+            slot += 1
+
+        for email_addr in other_emails:
+            char_id = f"player_{slot + 1}"
+            token = secrets.token_urlsafe(12)
+            game["invite_tokens"][token] = {
+                "email": email_addr,
+                "character_id": char_id,
+                "character_name": "",
+                "secret": {},
+                "claimed_by": None,
+                "created_at": datetime.datetime.utcnow().isoformat(),
+            }
+            mail.send_invite(email_addr, campaign_name, inviter, f"{base}/{slug}/campaign/join/{token}")
+            slot += 1
+
+        db.save_async_campaign(slug, game)
+        msg = "Campaign created!"
+        if other_emails:
+            msg += f" Invites sent to {len(other_emails)} player{'s' if len(other_emails) != 1 else ''}."
+        if include_self:
+            msg += " Name your character below to get ready."
+        flash(msg, "success")
+
+    return redirect(url_for("async_campaign_lobby", slug=slug))
+
+
+@app.route("/<slug>/campaign/arc", methods=["POST"])
+@dm_required
+def async_campaign_arc(slug):
+    _validate_slug(slug)
+    r = campaign_access(slug)
+    if r: return r
+    meta = load(slug, "campaign.json")
+    game = db.get_async_campaign(slug)
+    if not game:
+        abort(404)
+    campaign_name = meta.get("name") or "Our Campaign"
+    action = request.form.get("action", "manual")
+
+    if action == "generate":
+        genre = game.get("genre", "adventure")
+        players = game.get("players", [])
+        chars = [{"id": p["character_id"],
+                  "name": p.get("character_name") or p.get("email", "").split("@")[0]}
+                 for p in players]
+        for tok in game.get("invite_tokens", {}).values():
+            if not tok.get("claimed_by"):
+                chars.append({"id": tok["character_id"],
+                               "name": tok.get("character_name") or tok["email"].split("@")[0]})
+        try:
+            arc_data = ai.generate_party_arc(campaign_name, chars,
+                                             "an untamed world", "the powers that be", genre, "")
+        except Exception:
+            flash("AI generation failed. Try again.", "error")
+            return redirect(url_for("async_campaign_lobby", slug=slug))
+    else:
+        title = request.form.get("arc_title", "").strip()[:120]
+        hook = request.form.get("arc_hook", "").strip()[:800]
+        paths = [request.form.get(f"arc_path_{i}", "").strip()[:200] for i in range(1, 4)]
+        arc_data = {"title": title or campaign_name, "description": hook, "objectives": [p for p in paths if p]}
+
+    if arc_data.get("title") and arc_data["title"] != campaign_name:
+        meta["name"] = arc_data["title"]
+        (CAMPAIGNS / slug / "campaign.json").write_text(json.dumps(meta, indent=2))
+    game["arc"] = arc_data
+    db.save_async_campaign(slug, game)
+    flash("Story updated.", "success")
+    return redirect(url_for("async_campaign_lobby", slug=slug))
+
+
+@app.route("/<slug>/campaign/roles", methods=["POST"])
+@dm_required
+def async_campaign_roles(slug):
+    _validate_slug(slug)
+    r = campaign_access(slug)
+    if r: return r
+    meta = load(slug, "campaign.json")
+    game = db.get_async_campaign(slug)
+    if not game:
+        abort(404)
+    players = game.get("players", [])
+    action = request.form.get("action", "save")
+    campaign_name = meta.get("name") or "Our Campaign"
+
+    if action == "generate":
+        genre = game.get("genre", "adventure")
+        arc_desc = game.get("arc", {}).get("description", "")
+        eligible = [p for p in players
+                    if not p.get("secret", {}).get("role") and not p.get("role_skipped")]
+        if not eligible:
+            flash("All players already have roles or have opted out.", "info")
+            return redirect(url_for("async_campaign_lobby", slug=slug))
+        chars = [{"id": p["character_id"],
+                  "name": p.get("character_name") or p.get("email", "").split("@")[0]}
+                 for p in eligible]
+        try:
+            secrets_list = ai.generate_secret_objectives(campaign_name, chars, arc_desc, genre)
+        except Exception:
+            flash("AI generation failed. Try again.", "error")
+            return redirect(url_for("async_campaign_lobby", slug=slug))
+        secrets_by_id = {s["character_id"]: s for s in secrets_list}
+        for p in players:
+            if p["character_id"] in secrets_by_id:
+                p["secret"] = secrets_by_id[p["character_id"]]
+                p.pop("role_skipped", None)
+    else:
+        _ROLES = ["Saboteur", "Protector", "Investigator", "Opportunist", "Loyalist", "Impostor", "Catalyst"]
+        for p in players:
+            cid = p["character_id"]
+            role = request.form.get(f"role_{cid}", "none").strip()
+            if role not in _ROLES:
+                p["secret"] = {}
+                p["role_skipped"] = True
+            else:
+                p.pop("role_skipped", None)
+                objective = request.form.get(f"objective_{cid}", "").strip()[:500]
+                bias_target = request.form.get(f"bias_target_{cid}", "").strip()
+                bias_type = request.form.get(f"bias_type_{cid}", "").strip()[:60]
+                p["secret"] = {
+                    "character_id": cid,
+                    "character_name": p.get("character_name", ""),
+                    "role": role,
+                    "objective": objective,
+                    "bias_target": bias_target if bias_target else None,
+                    "bias_type": bias_type if bias_type else None,
+                }
+
+    db.save_async_campaign(slug, game)
+    flash("Roles saved.", "success")
+    return redirect(url_for("async_campaign_lobby", slug=slug))
+
+
+@app.route("/<slug>/campaign/join/<token>", methods=["GET", "POST"])
+@login_required
+def async_campaign_join(slug, token):
+    _validate_slug(slug)
+    meta = load(slug, "campaign.json")
+    if not meta:
+        abort(404)
+    game = db.get_async_campaign(slug)
+    if not game:
+        abort(404)
+    invite = game.get("invite_tokens", {}).get(token)
+    if not invite:
+        flash("This invite link is invalid.", "error")
+        return redirect(url_for("index"))
+    username = session["user"]
+
+    # Check claimed state
+    if invite.get("claimed_by"):
+        if invite["claimed_by"] == username:
+            return redirect(url_for("async_campaign_play", slug=slug))
+        flash("This invite has already been claimed.", "error")
+        return redirect(url_for("index"))
+
+    # Email check first — before "already in campaign" so wrong-account users see a clear message
+    all_users = load_users()
+    user_email = all_users.get(username, {}).get("email", "").lower()
+    invite_email = invite.get("email", "").lower()
+    if user_email != invite_email:
+        return render_template("async_join.html", slug=slug, meta=meta, token=token,
+                               invite=invite, arc=game.get("arc", {}), wrong_account=True)
+
+    if any(p["username"] == username for p in game.get("players", [])):
+        flash("You're already in this campaign.", "info")
+        return redirect(url_for("async_campaign_play", slug=slug))
+
+    if request.method == "POST":
+        char_name = request.form.get("character_name", "").strip()[:60]
+        if not char_name:
+            flash("Enter a character name to continue.", "error")
+            return render_template("async_join.html", slug=slug, meta=meta, token=token,
+                                   invite=invite, arc=game.get("arc", {}))
+        invite["character_name"] = char_name
+        invite["claimed_by"] = username
+        players = game.setdefault("players", [])
+        players.append({
+            "username": username,
+            "email": invite["email"],
+            "character_id": invite["character_id"],
+            "character_name": char_name,
+            "secret": invite.get("secret", {}),
+            "turn_order": len(players),
+            "last_action_at": None,
+        })
+        db.save_async_campaign(slug, game)
+        _sync_campaign_character(slug, char_name)
+        meta_path = CAMPAIGNS / slug / "campaign.json"
+        members = meta.get("members", [])
+        if username not in members:
+            members.append(username)
+            meta["members"] = members
+            meta_path.write_text(json.dumps(meta, indent=2))
+        return redirect(url_for("async_campaign_play", slug=slug))
+
+    return render_template("async_join.html", slug=slug, meta=meta, token=token,
+                           invite=invite, arc=game.get("arc", {}))
+
+
+@app.route("/<slug>/campaign/name", methods=["POST"])
+@login_required
+def async_campaign_name(slug):
+    _validate_slug(slug)
+    game = db.get_async_campaign(slug)
+    if not game:
+        abort(404)
+    username = session["user"]
+    char_name = request.form.get("character_name", "").strip()[:60]
+    if char_name:
+        for p in game.get("players", []):
+            if p["username"] == username and not p.get("character_name"):
+                p["character_name"] = char_name
+                _sync_campaign_character(slug, char_name)
+                break
+        db.save_async_campaign(slug, game)
+    phase = game.get("phase", "setup")
+    if phase in ("setup", "recruiting"):
+        return redirect(url_for("async_campaign_lobby", slug=slug))
+    return redirect(url_for("async_campaign_play", slug=slug))
+
+
+@app.route("/<slug>/campaign/start", methods=["POST"])
+@dm_required
+def async_campaign_start(slug):
+    r = campaign_access(slug)
+    if r: return r
+    meta = load(slug, "campaign.json")
+    game = db.get_async_campaign(slug)
+    if not game:
+        flash("Set up the campaign first.", "error")
+        return redirect(url_for("async_campaign_lobby", slug=slug))
+    players = game.get("players", [])
+    if not players:
+        flash("Add at least one player before starting.", "error")
+        return redirect(url_for("async_campaign_lobby", slug=slug))
+
+    campaign_name = meta.get("name") or "Our Campaign"
+    game["phase"] = "active"
+    game["turn_number"] = 1
+    game["current_player_index"] = 0
+    game["turn_started_at"] = datetime.datetime.utcnow().isoformat()
+    db.save_async_campaign(slug, game)
+
+    _all_users = load_users()
+    _owner = meta.get("owner", "")
+    if _owner in _all_users:
+        _all_users[_owner]["party_plays"] = _all_users[_owner].get("party_plays", 0) + 1
+        save_users(_all_users)
+    first = players[0]
+    base = request.host_url.rstrip("/")
+    if first.get("email"):
+        mail.send_turn_notification(first["email"], first.get("character_name", ""),
+                                    campaign_name, f"{base}/{slug}/campaign")
+    flash("Campaign started! The first player has been notified.", "success")
+    return redirect(url_for("async_campaign_play", slug=slug))
+
+
+@app.route("/<slug>/campaign")
+@login_required
+def async_campaign_play(slug):
+    r = campaign_access(slug)
+    if r: return r
+    meta = load(slug, "campaign.json")
+    if not meta:
+        abort(404)
+    game = db.get_async_campaign(slug)
+    if not game:
+        return redirect(url_for("async_campaign_lobby", slug=slug))
+    _check_async_deadline(slug, game, meta)
+    game = db.get_async_campaign(slug)
+    username = session["user"]
+    players = game.get("players", [])
+    is_dm = bool(session.get(f"dm_{slug}"))
+    is_player = any(p["username"] == username for p in players)
+    if not is_player and not is_dm:
+        abort(403)
+    phase = game.get("phase", "recruiting")
+    current_index = game.get("current_player_index", 0)
+    current_player = players[current_index] if players and current_index < len(players) else None
+    is_my_turn = bool(current_player and current_player["username"] == username)
+    my_player = next((p for p in players if p["username"] == username), None)
+    deadline_str = None
+    if phase == "active" and game.get("turn_started_at"):
+        deadline_hours = game.get("deadline_hours", 24)
+        try:
+            turn_started = datetime.datetime.fromisoformat(game["turn_started_at"])
+            deadline_str = (turn_started + datetime.timedelta(hours=deadline_hours)).isoformat()
+        except ValueError:
+            pass
+    npcs = db.get_npcs(slug, include_hidden=False)
+    factions = db.get_factions(slug, include_hidden=False)
+    locations = db.get_locations(slug, include_hidden=False)
+    return render_template("async_play.html", slug=slug, meta=meta, game=game,
+                           phase=phase, players=players, current_player=current_player,
+                           is_my_turn=is_my_turn, my_player=my_player, is_dm=is_dm,
+                           deadline_str=deadline_str, npcs=npcs, factions=factions,
+                           locations=locations)
+
+
+@app.route("/<slug>/campaign/submit", methods=["POST"])
+@login_required
+def async_campaign_submit(slug):
+    r = campaign_access(slug)
+    if r: return r
+    meta = load(slug, "campaign.json")
+    if not meta:
+        abort(404)
+    game = db.get_async_campaign(slug)
+    if not game or game.get("phase") != "active":
+        flash("No active campaign.", "error")
+        return redirect(url_for("campaign", slug=slug))
+    username = session["user"]
+    players = game.get("players", [])
+    current_index = game.get("current_player_index", 0)
+    current_player = players[current_index] if players else None
+    if not current_player or current_player["username"] != username:
+        flash("It's not your turn.", "error")
+        return redirect(url_for("async_campaign_play", slug=slug))
+    all_users = load_users()
+    owner = meta.get("owner", "")
+    owner_data = all_users.get(owner, {})
+    if not owner_data.get("ai_enabled") and not owner_data.get("admin"):
+        flash("The campaign GM needs an AI-enabled account to process turns.", "error")
+        return redirect(url_for("async_campaign_play", slug=slug))
+    action_text = (request.form.get("action_text") or "").strip()[:1000]
+    if not action_text:
+        flash("Write something before submitting.", "error")
+        return redirect(url_for("async_campaign_play", slug=slug))
+    campaign_name = meta.get("name") or "Our Campaign"
+    session_n = db.get_current_session(slug) or 1
+
+    # Ensure all player characters exist as world entities before calling AI
+    for p in players:
+        if p.get("character_name"):
+            _sync_campaign_character(slug, p["character_name"])
+
+    npcs = db.get_npcs(slug, include_hidden=True)
+    factions = db.get_factions(slug, include_hidden=True)
+    locations = db.get_locations(slug, include_hidden=True)
+    try:
+        proposals = ai.propose_log_entries(action_text, campaign_name, session_n,
+                                           npcs, factions, party=[], ships=[], conditions=[],
+                                           locations=locations)
+    except Exception as exc:
+        flash(f"AI processing failed — turn recorded without world events. ({exc})", "error")
+        _advance_turn(slug, campaign_name, game, action_text=action_text, events_logged=0)
+        return redirect(url_for("async_campaign_play", slug=slug))
+
+    npc_by_name = {n["name"].lower(): n["id"] for n in npcs}
+    faction_by_name = {f["name"].lower(): f["id"] for f in factions}
+    location_by_name = {loc["name"].lower(): loc["id"] for loc in locations}
+
+    # Pre-pass: create any new NPC/faction entities the AI named but that don't exist yet
+    for entry in (proposals or []):
+        etype = entry.get("entity_type", "npc")
+        if etype not in ("npc", "faction"):
+            continue
+        name = (entry.get("entity_name") or "").strip()
+        if not name:
+            continue
+        name_lower = name.lower()
+        rel = "friendly" if entry.get("polarity") == "positive" else "hostile" if entry.get("polarity") == "negative" else "neutral"
+        if etype == "faction" and name_lower not in faction_by_name:
+            db.add_faction(slug, name, rel, description="", hidden=False)
+            faction_by_name[name_lower] = db.slugify(name)
+        elif etype == "npc" and name_lower not in npc_by_name and name_lower not in faction_by_name:
+            db.add_npc(slug, name, role="", relationship=rel, description="", hidden=False, factions=[])
+            npc_by_name[name_lower] = db.slugify(name)
+
+    events_logged = 0
+    for entry in (proposals or []):
+        note = (entry.get("note") or "").strip()
+        if not note:
+            continue
+        entity_type = entry.get("entity_type", "npc")
+        entity_name = (entry.get("entity_name") or "").strip().lower()
+        # Resolve entity_id by name lookup (more reliable than AI-returned ID on sparse worlds)
+        if entity_type == "npc":
+            entity_id = npc_by_name.get(entity_name) or entry.get("entity_id")
+        elif entity_type == "faction":
+            entity_id = faction_by_name.get(entity_name) or entry.get("entity_id")
+        elif entity_type == "location":
+            entity_id = location_by_name.get(entity_name) or entry.get("entity_id")
+        else:
+            entity_id = entry.get("entity_id")
+        if not entity_id:
+            continue
+        polarity = entry.get("polarity")
+        intensity = entry.get("intensity", 1)
+        evt_type = entry.get("event_type", "other")
+        visibility = entry.get("visibility", "public")
+        actor_id = entry.get("actor_id")
+        actor_type = entry.get("actor_type")
+        src_evt = None
+        try:
+            if entity_type == "npc":
+                src_evt = db.log_npc(slug, entity_id, session_n, note, polarity, intensity,
+                                      evt_type, visibility, actor_id=actor_id, actor_type=actor_type)
+            elif entity_type == "faction":
+                src_evt = db.log_faction(slug, entity_id, session_n, note, polarity, intensity,
+                                          evt_type, visibility, actor_id=actor_id, actor_type=actor_type)
+            elif entity_type == "location":
+                src_evt = db.log_location(slug, entity_id, session_n, note, visibility,
+                                           polarity, intensity, evt_type,
+                                           actor_id=actor_id, actor_type=actor_type)
+        except Exception:
+            continue
+        if polarity and entity_id and src_evt:
+            try:
+                db.apply_ripple(slug, entity_id, entity_type, session_n, note,
+                                polarity, intensity, evt_type, visibility, source_event_id=src_evt)
+            except Exception:
+                pass
+        events_logged += 1
+    _advance_turn(slug, campaign_name, game, action_text=action_text, events_logged=events_logged)
+    flash(f"Turn submitted — {events_logged} event{'s' if events_logged != 1 else ''} logged to the world.", "success")
+    return redirect(url_for("async_campaign_play", slug=slug))
+
+
+@app.route("/<slug>/campaign/leave", methods=["POST"])
+@login_required
+def async_campaign_leave(slug):
+    _validate_slug(slug)
+    game = db.get_async_campaign(slug)
+    if not game or game.get("phase") not in ("recruiting",):
+        flash("You can only leave during the recruiting phase.", "error")
+        return redirect(url_for("async_campaign_play", slug=slug))
+    username = session["user"]
+    meta = load(slug, "campaign.json")
+    meta_path = CAMPAIGNS / slug / "campaign.json"
+
+    # Pre-join decline: token submitted but player hasn't claimed yet
+    token = request.form.get("token", "").strip()
+    if token:
+        invite = game.get("invite_tokens", {}).get(token)
+        if invite and not invite.get("claimed_by"):
+            del game["invite_tokens"][token]
+            db.save_async_campaign(slug, game)
+            flash("Invitation declined.", "success")
+            return redirect(url_for("index"))
+
+    # Post-join leave: remove from players list
+    before = len(game.get("players", []))
+    game["players"] = [p for p in game.get("players", []) if p["username"] != username]
+    if len(game["players"]) == before:
+        flash("You're not in this campaign.", "error")
+        return redirect(url_for("index"))
+    # Reset invite token so GM can re-invite
+    for tok in game.get("invite_tokens", {}).values():
+        if tok.get("claimed_by") == username:
+            tok["claimed_by"] = None
+            tok["character_name"] = None
+            break
+    db.save_async_campaign(slug, game)
+    # Remove from campaign members
+    members = meta.get("members", [])
+    if username in members:
+        members.remove(username)
+        meta["members"] = members
+        meta_path.write_text(json.dumps(meta, indent=2))
+    flash("You've left the campaign.", "success")
+    return redirect(url_for("index"))
+
+
+@app.route("/<slug>/campaign/remove", methods=["POST"])
+@dm_required
+def async_campaign_remove(slug):
+    _validate_slug(slug)
+    game = db.get_async_campaign(slug)
+    if not game or game.get("phase") not in ("recruiting",):
+        flash("Can only remove players during recruiting.", "error")
+        return redirect(url_for("async_campaign_lobby", slug=slug))
+    meta = load(slug, "campaign.json")
+    token = request.form.get("token", "").strip()
+    if not token or token not in game.get("invite_tokens", {}):
+        flash("Invalid invite.", "error")
+        return redirect(url_for("async_campaign_lobby", slug=slug))
+    invite = game["invite_tokens"][token]
+    claimed_by = invite.get("claimed_by")
+    # Remove player from players list if they've joined
+    if claimed_by:
+        game["players"] = [p for p in game.get("players", []) if p["username"] != claimed_by]
+        # Remove from campaign members
+        meta_path = CAMPAIGNS / slug / "campaign.json"
+        members = meta.get("members", [])
+        if claimed_by in members:
+            members.remove(claimed_by)
+            meta["members"] = members
+            meta_path.write_text(json.dumps(meta, indent=2))
+    del game["invite_tokens"][token]
+    db.save_async_campaign(slug, game)
+    flash("Removed.", "success")
+    return redirect(url_for("async_campaign_lobby", slug=slug))
+
+
+@app.route("/<slug>/campaign/skip", methods=["POST"])
+@login_required
+def async_campaign_skip(slug):
+    r = campaign_access(slug)
+    if r: return r
+    meta = load(slug, "campaign.json")
+    game = db.get_async_campaign(slug)
+    if not game or game.get("phase") != "active":
+        return redirect(url_for("async_campaign_play", slug=slug))
+    username = session["user"]
+    players = game.get("players", [])
+    current_index = game.get("current_player_index", 0)
+    current_player = players[current_index] if players else None
+    is_dm = bool(session.get(f"dm_{slug}"))
+    is_current = bool(current_player and current_player["username"] == username)
+    if not is_dm and not is_current:
+        abort(403)
+    if current_player and current_player.get("email"):
+        mail.send_skip_notification(current_player["email"],
+                                    current_player.get("character_name", ""),
+                                    meta.get("name") or "Our Campaign")
+    _advance_turn(slug, meta.get("name") or "Our Campaign", game, skipped=True)
+    flash("Turn skipped.", "success")
+    return redirect(url_for("async_campaign_play", slug=slug))
+
+
+@app.route("/<slug>/campaign/end", methods=["POST"])
+@dm_required
+def async_campaign_end(slug):
+    _validate_slug(slug)
+    game = db.get_async_campaign(slug)
+    if not game or game.get("phase") != "active":
+        return redirect(url_for("async_campaign_play", slug=slug))
+    game["phase"] = "done"
+    game["ended_at"] = datetime.datetime.utcnow().isoformat()
+    db.save_async_campaign(slug, game)
+    flash("Campaign ended. The world is yours to explore.", "success")
+    return redirect(url_for("campaign", slug=slug))
 
 
 @app.route("/welcome")
@@ -1278,6 +2018,34 @@ def welcome_post():
         result = _create_onboarding_campaign(username, "party")
         if isinstance(result, str):
             return redirect(url_for("party_play", slug=result))
+        return result or redirect(url_for("index"))
+
+    if choice == "campaign":
+        user_data = users.get(username, {})
+        is_pro = user_data.get("subscription_status") in ("active", "trialing") or bool(user_data.get("ks_tier"))
+
+        if not is_pro and user_data.get("party_plays", 0) >= 3:
+            try:
+                checkout = stripe.checkout.Session.create(
+                    payment_method_types=["card"],
+                    mode="payment",
+                    line_items=[{"price": STRIPE_PRICE_PARTY, "quantity": 1}],
+                    metadata={"username": username},
+                    success_url=request.host_url.rstrip("/") + "/billing/party/success?session_id={CHECKOUT_SESSION_ID}",
+                    cancel_url=request.host_url.rstrip("/") + url_for("index"),
+                )
+                return redirect(checkout.url)
+            except stripe.StripeError:
+                flash("Could not start checkout. Try again.", "error")
+                return redirect(url_for("index"))
+
+        limit = user_data.get("world_limit", 3) + user_data.get("extra_worlds", 0)
+        if _user_world_count(username) >= limit:
+            flash("You've reached your world limit. Delete a world to make room.", "error")
+            return redirect(url_for("index"))
+        result = _create_onboarding_campaign(username, "campaign")
+        if isinstance(result, str):
+            return redirect(url_for("async_campaign_lobby", slug=result))
         return result or redirect(url_for("index"))
 
     return redirect(url_for("index"))
@@ -1356,7 +2124,7 @@ def demo_ai_propose():
     npcs = db.get_npcs("demo", include_hidden=True)
     factions = db.get_factions("demo", include_hidden=True)
     locations = db.get_locations("demo", include_hidden=True)
-    party = db.get_party("demo")
+    party = db.get_all_party_characters("demo")
     try:
         proposals = ai.propose_log_entries(notes, meta.get("name", "Demo"), current_session, npcs, factions, party=party, locations=locations)
     except Exception:
@@ -1486,8 +2254,24 @@ def campaign(slug):
         _g = db.get_party_game(slug)
         if _g.get("phase") != "done":
             return redirect(url_for("party_play", slug=slug))
+    # Redirect to campaign while async campaign is active or recruiting
+    _async_game = db.get_async_campaign(slug)
+    if _async_game and _async_game.get("phase") in ("recruiting", "active"):
+        _username = session.get("user")
+        _is_owner = _username == meta.get("owner")
+        _is_dm = bool(session.get(f"dm_{slug}")) or _is_owner
+        _players = _async_game.get("players", [])
+        _is_player = any(p["username"] == _username for p in _players)
+        if _is_dm or _is_player:
+            if _is_owner:
+                session[f"dm_{slug}"] = True  # grant DM session so lobby's @dm_required passes
+            if _async_game.get("phase") == "active":
+                return redirect(url_for("async_campaign_play", slug=slug))
+            else:
+                return redirect(url_for("async_campaign_lobby", slug=slug) if _is_dm
+                                else url_for("async_campaign_play", slug=slug))
     is_dm = bool(session.get(f"dm_{slug}"))
-    party = db.get_party(slug, include_hidden=is_dm)
+    party = db.get_all_party_characters(slug, include_hidden=is_dm)
     quests = db.get_quests(slug, include_hidden=is_dm)
     active = [q for q in quests if q["status"] == "active"]
     journal_entries = db.get_journal(slug)
@@ -1498,11 +2282,19 @@ def campaign(slug):
     npcs = db.get_npcs(slug, include_hidden=is_dm)
     factions = db.get_factions(slug, include_hidden=is_dm)
     current_session = db.get_current_session(slug)
+    async_campaign = db.get_async_campaign(slug)
+    username = session.get("user")
+    async_visible = False
+    if async_campaign and async_campaign.get("phase") == "active":
+        players = async_campaign.get("players", [])
+        async_visible = is_dm or any(p["username"] == username for p in players)
     return render_template("campaign.html", meta=meta, party=party, active=active, slug=slug,
                            latest_journal=latest_journal,
                            current_session=current_session,
                            recent_entities=db.get_recent_entities(slug, current_session),
-                           npc_count=len(npcs), faction_count=len(factions))
+                           npc_count=len(npcs), faction_count=len(factions),
+                           async_campaign=async_campaign, async_visible=async_visible,
+                           is_dm=is_dm)
 
 
 @app.route("/<slug>/party")
@@ -1513,7 +2305,9 @@ def party(slug):
     is_dm = bool(session.get(f"dm_{slug}"))
     is_player = bool(session.get("user")) and not is_dm
     viewer = session.get("user")
-    characters = db.get_party(slug, include_hidden=is_dm)
+    parties = db.get_parties(slug)
+    selected_party_id = request.args.get("party", parties[0]["id"] if parties else "default")
+    characters = db.get_party(slug, party_id=selected_party_id, include_hidden=is_dm)
     npcs = db.get_npcs(slug, include_hidden=is_dm)
     factions = db.get_factions(slug, include_hidden=is_dm)
     locations = db.get_locations(slug, include_hidden=is_dm)
@@ -1557,7 +2351,8 @@ def party(slug):
     return render_template("party.html", meta=meta, characters=characters, slug=slug,
                            is_dm=is_dm, is_player=is_player, npcs=npcs, factions=factions,
                            locations=locations, viewer=viewer, current_session=current_session,
-                           party_log=party_log, party_display_name=party_display_name)
+                           party_log=party_log, party_display_name=party_display_name,
+                           parties=parties, selected_party_id=selected_party_id)
 
 
 @app.route("/<slug>/assets")
@@ -1646,10 +2441,11 @@ def world(slug):
     for c in conditions:
         c["_severity"] = db.compute_condition_severity(c, is_dm=is_dm)
     locations = db.get_locations(slug, include_hidden=is_dm)
+    party = db.get_all_party_characters(slug, include_hidden=is_dm)
     return render_template("world.html", meta=meta, npcs=npcs, factions=factions,
                            conditions=conditions, locations=locations, slug=slug, is_dm=is_dm,
                            as_of=as_of, max_session=max_session,
-                           branches=branches, active_branch=active_branch)
+                           branches=branches, active_branch=active_branch, party=party)
 
 
 @app.route("/<slug>/branch/create", methods=["POST"])
@@ -1710,7 +2506,7 @@ def branch_delete(slug):
 def get_ripple_chains(slug, include_hidden=False):
     npcs = db.get_npcs(slug, include_hidden=include_hidden)
     factions = db.get_factions(slug, include_hidden=include_hidden)
-    party = db.get_party(slug, include_hidden=True)
+    party = db.get_all_party_characters(slug, include_hidden=True)
 
     all_events = {}
     for npc in npcs:
@@ -1846,7 +2642,7 @@ def world_graph_data(slug):
             return True
         return bool(_branch_filter(entity.get("log", [])))
 
-    party = db.get_party(slug, include_hidden=is_dm)
+    party = db.get_all_party_characters(slug, include_hidden=is_dm)
     known_ids = ({n["id"] for n in npcs if _entity_visible(n)} |
                  {f["id"] for f in factions if _entity_visible(f)} |
                  {f"_char_{db.slugify(c['name'])}" for c in party})
@@ -2103,9 +2899,19 @@ def world_graph_data(slug):
                 "weight": min(1.0, abs(score) / 4),
             }})
 
-    # ── Party hub + characters ────────────────────────────────────────────────
+    # ── Party hub(s) + characters ─────────────────────────────────────────────
     meta = load(slug, "campaign.json")
     party_name = meta.get("party_name") or "Party"
+    _parties_data = db.get_parties(slug)
+    _multi_party = len(_parties_data) > 1
+    # Map char name → hub node id so character edges connect to the right star
+    _char_hub = {}
+    for _pg in _parties_data:
+        _phub = f"_party_{_pg['id']}" if _multi_party else "_party"
+        for _pc in _pg.get("characters", []):
+            _char_hub[_pc["name"]] = _phub
+    _default_hub = f"_party_{_parties_data[0]['id']}" if _multi_party else "_party"
+
     if party:
         # Build reverse lookup: event_id → entity_id so character known_events
         # can be translated into entity connections
@@ -2119,39 +2925,43 @@ def world_graph_data(slug):
                 if entry.get("id"):
                     event_to_entity[entry["id"]] = faction["id"]
 
-        nodes.append({"data": {
-            "id": "_party",
-            "label": party_name,
-            "type": "party",
-            "relationship": "allied",
-            "score": 0,
-            "hidden": False,
-            "log_count": 0,
-            "role": "",
-            "last_note": "",
-        }})
-
-        # Party hub → explicit party_relations (DM-set, not auto-generated from logs)
+        # Emit one star hub per party group
         _rel_map = {"ally": "friendly", "rival": "hostile"}
-        for pr in meta.get("party_relations", []):
-            tid = pr.get("target")
-            if not tid or tid not in known_ids:
-                continue
-            key = frozenset(["_party", tid])
-            if key not in seen_edges:
-                seen_edges.add(key)
-                edges.append({"data": {
-                    "id": f"_party__{tid}",
-                    "source": "_party",
-                    "target": tid,
-                    "relation": "party_contact",
-                    "relationship": _rel_map.get(pr.get("relation", "ally"), "neutral"),
-                    "weight": float(pr.get("weight", 0.5)),
-                }})
+        for _pg in _parties_data:
+            _phub = f"_party_{_pg['id']}" if _multi_party else "_party"
+            _hub_label = _pg["name"] if _multi_party else party_name
+            nodes.append({"data": {
+                "id": _phub,
+                "label": _hub_label,
+                "type": "party",
+                "relationship": "allied",
+                "score": 0,
+                "hidden": False,
+                "log_count": 0,
+                "role": "",
+                "last_note": "",
+            }})
+            # Party hub → explicit party_relations
+            for pr in meta.get("party_relations", []):
+                tid = pr.get("target")
+                if not tid or tid not in known_ids:
+                    continue
+                key = frozenset([_phub, tid])
+                if key not in seen_edges:
+                    seen_edges.add(key)
+                    edges.append({"data": {
+                        "id": f"{_phub}__{tid}",
+                        "source": _phub,
+                        "target": tid,
+                        "relation": "party_contact",
+                        "relationship": _rel_map.get(pr.get("relation", "ally"), "neutral"),
+                        "weight": float(pr.get("weight", 0.5)),
+                    }})
 
         # Individual character nodes + their known_event connections
         for char in party:
             cid = f"_char_{db.slugify(char['name'])}"
+            _phub = _char_hub.get(char["name"], _default_hub)
             nodes.append({"data": {
                 "id": cid,
                 "label": char["name"],
@@ -2165,8 +2975,8 @@ def world_graph_data(slug):
                 "last_note": "",
             }})
             edges.append({"data": {
-                "id": f"_party__{cid}",
-                "source": "_party",
+                "id": f"{_phub}__{cid}",
+                "source": _phub,
                 "target": cid,
                 "relation": "member",
                 "weight": 0.8,
@@ -2270,12 +3080,12 @@ def world_graph_data(slug):
     for npc in npcs:
         if not npc.get("party_affiliate"):
             continue
-        key = frozenset(["_party", npc["id"]])
+        key = frozenset([_default_hub, npc["id"]])
         if key not in seen_edges:
             seen_edges.add(key)
             edges.append({"data": {
-                "id": f"_party__{npc['id']}__affiliate",
-                "source": "_party",
+                "id": f"{_default_hub}__{npc['id']}__affiliate",
+                "source": _default_hub,
                 "target": npc["id"],
                 "relation": "party_affiliate",
                 "weight": 0.9,
@@ -2343,7 +3153,7 @@ def world_graph_data(slug):
         aid = entry.get("actor_id")
         if not aid or aid not in known_ids:
             continue
-        _add_acted_edge(aid, "_party", entry.get("polarity"), entry.get("actor_dm_only", False))
+        _add_acted_edge(aid, _default_hub, entry.get("polarity"), entry.get("actor_dm_only", False))
 
     return jsonify({"nodes": nodes, "edges": edges})
 
@@ -2373,7 +3183,7 @@ def npc(slug, npc_id):
         if viewer_character:
             viewer_known_events = set(viewer_character.get("known_events", []))
 
-    party = db.get_party(slug) if is_dm else []
+    party = db.get_all_party_characters(slug) if is_dm else []
     factions = db.get_factions(slug) if is_dm else []
     world_npcs = db.get_npcs(slug) if is_dm else []
 
@@ -2480,7 +3290,7 @@ def faction(slug, faction_id):
         or (is_dm and faction_id in n.get("hidden_factions", []))
     ]
     all_factions = db.get_factions(slug, include_hidden=is_dm)
-    party = db.get_party(slug) if is_dm else []
+    party = db.get_all_party_characters(slug) if is_dm else []
 
     ripple_chains = {}
     if is_dm:
@@ -2547,7 +3357,7 @@ def location(slug, location_id):
     link_npcs = db.get_npcs(slug, include_hidden=is_dm)
     link_factions = db.get_factions(slug, include_hidden=is_dm)
     link_locations = db.get_locations(slug, include_hidden=is_dm)
-    party = db.get_party(slug)
+    party = db.get_all_party_characters(slug)
     backlinks = _get_backlinks(loc_obj["name"], location_id, link_npcs, link_factions, link_locations)
     # Collect events from other entities tagged at this location
     tagged_here = []
@@ -2604,7 +3414,7 @@ def journal(slug):
     npcs = db.get_npcs(slug, include_hidden=is_dm)
     factions = db.get_factions(slug, include_hidden=is_dm)
     locations = db.get_locations(slug, include_hidden=is_dm)
-    party = db.get_party(slug)
+    party = db.get_all_party_characters(slug)
     entries_rendered = [
         {**e, "idx": e["_raw_idx"], "recap_html": Markup(markdown.markdown(
             str(wikilinks_filter(e.get("recap", ""), slug, npcs, factions, locations, party)),
@@ -2774,12 +3584,22 @@ def dm(slug):
     relation_suggestions = db.get_relation_suggestions(slug)
     pending_ripples = db.get_pending_ripples(slug)
     party = db.get_party(slug)
+    parties = db.get_parties(slug)
+    all_party_chars = db.get_all_party_characters(slug, include_hidden=True)
+    if len(parties) > 1:
+        _char_group = {c["name"]: p["name"] for p in parties for c in p.get("characters", [])}
+        for _c in all_party_chars:
+            _c["_group_name"] = _char_group.get(_c["name"], "")
     _party_display_name = meta.get("party_name") or "The Party"
+    _multi_party = len(parties) > 1
     all_entities = (
-        [{"id": "_party", "name": _party_display_name, "type": "party", "actor_only": True}] +
+        ([{"id": f"_party_{p['id']}" if _multi_party else "_party",
+           "name": p["name"] if _multi_party else _party_display_name,
+           "type": "party", "actor_only": True} for p in parties] if parties else
+         [{"id": "_party", "name": _party_display_name, "type": "party", "actor_only": True}]) +
         [{"id": n["id"], "name": n["name"], "type": "npc"} for n in db.get_npcs(slug, include_hidden=True)] +
         [{"id": f["id"], "name": f["name"], "type": "faction"} for f in db.get_factions(slug, include_hidden=True)] +
-        [{"id": db.slugify(c["name"]), "name": c["name"], "type": "char"} for c in party]
+        [{"id": db.slugify(c["name"]), "name": c["name"], "type": "char"} for c in all_party_chars]
     )
     all_users_data = load_users()
     members = meta.get("members", [])
@@ -2849,7 +3669,9 @@ def dm(slug):
                            all_entities=all_entities,
                            branches=branches,
                            active_branch=active_branch,
-                           all_log_entries=all_log_entries)
+                           all_log_entries=all_log_entries,
+                           parties=parties,
+                           all_party_chars=all_party_chars)
 
 
 @app.route("/<slug>/dm/log/quick", methods=["POST"])
@@ -2944,10 +3766,16 @@ def dm_quick_log(slug):
             if not is_ajax:
                 flash("Logged", "success")
         elif entity_type == "party_group" and note:
+            if entity_id and entity_id != "_party":
+                _ql_parties = db.get_parties(slug)
+                _ql_pg = next((p for p in _ql_parties if p["id"] == entity_id), None)
+                _ql_pname = _ql_pg["name"] if _ql_pg else _party_name_ql
+            else:
+                _ql_pname = _party_name_ql
             db.log_party_group(slug, session_n, note, polarity=polarity,
                                intensity=intensity, event_type=event_type, visibility=visibility,
                                actor_id=actor_id, actor_type=actor_type, actor_dm_only=actor_dm_only,
-                               location_id=location_id, party_name=_party_name_ql)
+                               location_id=location_id, party_name=_ql_pname)
             if not is_ajax:
                 flash("Logged", "success")
         elif entity_type == "location" and note:
@@ -3000,7 +3828,7 @@ def dm_entity_panel(slug, entity_type, entity_id):
             "session": current_session, "entries": [], "relations": relations,
         })
     if entity_type == "character":
-        char = next((c for c in db.get_party(slug) if c["name"] == entity_id), None)
+        char = next((c for c in db.get_all_party_characters(slug) if c["name"] == entity_id), None)
         if not char:
             return jsonify({"error": "Not found"}), 404
         relations = []
@@ -3033,7 +3861,7 @@ def dm_entity_panel(slug, entity_type, entity_id):
                           "weight": rel.get("weight", 0.5)})
     char_relations = []
     if entity_type == "npc":
-        for char in db.get_party(slug):
+        for char in db.get_all_party_characters(slug):
             for rel in char.get("relations", []):
                 if rel.get("target") == entity_id:
                     char_relations.append({"char_name": char["name"],
@@ -3112,7 +3940,7 @@ def dm_propose_entries(slug):
     npcs = db.get_npcs(slug, include_hidden=True)
     factions = db.get_factions(slug, include_hidden=True)
     locations = db.get_locations(slug, include_hidden=True)
-    party = db.get_party(slug)
+    party = db.get_all_party_characters(slug)
     ships = db.get_assets(slug).get("ships", [])
     conditions = db.get_conditions(slug, include_hidden=True, include_resolved=False)
     causal_context = db.build_causal_context(slug, current_session)
@@ -3215,7 +4043,7 @@ def dm_commit_proposals(slug):
     faction_by_name = {f["name"].lower(): f["id"] for f in db.get_factions(slug, include_hidden=True)}
     condition_by_name = {c["name"].lower(): c["id"] for c in db.get_conditions(slug, include_hidden=True, include_resolved=True)}
     location_by_name = {loc["name"].lower(): loc["id"] for loc in db.get_locations(slug, include_hidden=True)}
-    party_names = {c["name"].lower() for c in db.get_party(slug)}
+    party_names = {c["name"].lower() for c in db.get_all_party_characters(slug)}
 
     committed = 0
     created = []
@@ -3365,6 +4193,7 @@ def dm_commit_proposals(slug):
         actor_id = entry.get("actor_id") or None
         actor_type = entry.get("actor_type") or None
         actor_dm_only = bool(entry.get("actor_dm_only"))
+        location_id = entry.get("location_id") or None
         if actor_id and actor_id.startswith("__proposed__:"):
             proposed_name = actor_id[13:].lower()
             actor_id = npc_by_name.get(proposed_name) or faction_by_name.get(proposed_name) or None
@@ -3375,17 +4204,17 @@ def dm_commit_proposals(slug):
             src_evt = db.log_party_group(slug, session_n, note, polarity=polarity,
                                          intensity=intensity, event_type=event_type, visibility=visibility,
                                          actor_id=actor_id, actor_type=actor_type,
-                                         party_name=_party_name_cp)
+                                         location_id=location_id, party_name=_party_name_cp)
         elif entity_type == "faction" or entity_id in faction_by_name.values():
             src_evt = db.log_faction(slug, entity_id, session_n, note, polarity=polarity,
                                      intensity=intensity, event_type=event_type, visibility=visibility,
                                      actor_id=actor_id, actor_type=actor_type, actor_dm_only=actor_dm_only,
-                                     branch=active_branch_id, axis=axis)
+                                     branch=active_branch_id, axis=axis, location_id=location_id)
         else:
             src_evt = db.log_npc(slug, entity_id, session_n, note, polarity=polarity,
                                  intensity=intensity, event_type=event_type, visibility=visibility,
                                  actor_id=actor_id, actor_type=actor_type, actor_dm_only=actor_dm_only,
-                                 branch=active_branch_id, axis=axis)
+                                 branch=active_branch_id, axis=axis, location_id=location_id)
         if polarity:
             if discrete:
                 entity_name = (entry.get("entity_name") or "").strip() or entity_id
@@ -3426,7 +4255,7 @@ def dm_import_session_propose(slug):
 
     npcs = db.get_npcs(slug, include_hidden=True)
     factions = db.get_factions(slug, include_hidden=True)
-    party = db.get_party(slug)
+    party = db.get_all_party_characters(slug)
     causal_context = db.build_causal_context(slug, session_n)
 
     try:
@@ -3458,7 +4287,7 @@ def dm_import_session_commit(slug):
     npc_by_name = {n["name"].lower(): n["id"] for n in db.get_npcs(slug, include_hidden=True)}
     faction_by_name = {f["name"].lower(): f["id"] for f in db.get_factions(slug, include_hidden=True)}
     condition_by_name = {c["name"].lower(): c["id"] for c in db.get_conditions(slug, include_hidden=True, include_resolved=True)}
-    party_names = {c["name"].lower() for c in db.get_party(slug)}
+    party_names = {c["name"].lower() for c in db.get_all_party_characters(slug)}
 
     committed = 0
     created = []
@@ -3705,7 +4534,7 @@ def dm_import_session(slug):
 
     npcs = db.get_npcs(slug, include_hidden=True)
     factions = db.get_factions(slug, include_hidden=True)
-    party = db.get_party(slug)
+    party = db.get_all_party_characters(slug)
 
     causal_context = db.build_causal_context(slug, session_n)
     try:
@@ -4015,6 +4844,7 @@ def dm_add_objective(slug, quest_id):
 def dm_add_character(slug):
     meta = load(slug, "campaign.json")
     if request.method == "POST":
+        raw_session = request.form.get("session_joined", "").strip()
         db.add_character(
             slug,
             name=request.form["name"].strip(),
@@ -4023,9 +4853,51 @@ def dm_add_character(slug):
             level=request.form.get("level", 1),
             notes=request.form.get("notes", "").strip(),
             hidden="hidden" in request.form,
+            party_id=request.form.get("party_id") or None,
+            session=int(raw_session) if raw_session.isdigit() else None,
         )
         return redirect(url_for("dm", slug=slug))
-    return render_template("dm/add_character.html", meta=meta, slug=slug)
+    parties = db.get_parties(slug)
+    current_session = db.get_current_session(slug) or 1
+    return render_template("dm/add_character.html", meta=meta, slug=slug, parties=parties,
+                           current_session=current_session)
+
+
+@app.route("/<slug>/dm/party/create", methods=["POST"])
+@dm_required
+def dm_create_party(slug):
+    name = request.form.get("name", "").strip()
+    if not name:
+        flash("Party name is required.", "error")
+        return redirect(url_for("party", slug=slug))
+    db.add_party(slug, name)
+    return redirect(url_for("party", slug=slug))
+
+
+@app.route("/<slug>/dm/party/<party_id>/rename", methods=["POST"])
+@dm_required
+def dm_rename_party(slug, party_id):
+    name = request.form.get("name", "").strip()
+    if not name:
+        flash("Party name is required.", "error")
+        return redirect(url_for("party", slug=slug))
+    db.rename_party(slug, party_id, name)
+    return redirect(url_for("party", slug=slug, party=party_id))
+
+
+@app.route("/<slug>/dm/party/<party_id>/delete", methods=["POST"])
+@dm_required
+def dm_delete_party(slug, party_id):
+    parties = db.get_parties(slug)
+    if len(parties) <= 1:
+        flash("Cannot delete the last group.", "error")
+        return redirect(url_for("party", slug=slug))
+    target = next((p for p in parties if p["id"] == party_id), None)
+    if target and target.get("characters"):
+        flash("Remove all characters from this group before deleting it.", "error")
+        return redirect(url_for("party", slug=slug, party=party_id))
+    db.delete_party(slug, party_id)
+    return redirect(url_for("party", slug=slug))
 
 
 @app.route("/<slug>/assets/currency", methods=["POST"])
@@ -4336,10 +5208,25 @@ def dm_edit_log_event_ajax(slug):
     entity_id = data.get("entity_id", "")
     if not event_id or not entity_type:
         return jsonify({"error": "missing fields"}), 400
+    actor_id = data.get("actor_id") or None
+    location_id = data.get("location_id") or None
     db.edit_log_entry(slug, entity_id, entity_type, event_id,
                       note=data.get("note") or None,
                       polarity=data.get("polarity") or "",
-                      intensity=data.get("intensity"))
+                      intensity=data.get("intensity"),
+                      visibility=data.get("visibility") or None,
+                      actor_id=actor_id,
+                      actor_type=data.get("actor_type") or None,
+                      location_id=location_id,
+                      clear_actor=data.get("clear_actor", False),
+                      clear_location=data.get("clear_location", False))
+    event_id_str = event_id
+    witnesses_add = data.get("witnesses_add") or []
+    witnesses_remove = data.get("witnesses_remove") or []
+    for char_name in witnesses_add:
+        db.reveal_event(slug, event_id_str, char_name)
+    for char_name in witnesses_remove:
+        db.unreveal_event(slug, event_id_str, char_name)
     return jsonify({"ok": True})
 
 
@@ -4370,7 +5257,11 @@ def dm_move_log_entry(slug, event_id):
 @app.route("/<slug>/dm/session/discard_proposals", methods=["POST"])
 @dm_required
 def dm_discard_proposals(slug):
+    saved = db.get_proposals(slug)
+    pending_cursor = saved.get("parse_cursor")
     db.clear_proposals(slug)
+    if pending_cursor is not None:
+        db.set_notes_parse_cursor(slug, pending_cursor)
     return ("", 204)
 
 
@@ -4537,7 +5428,7 @@ def dm_delete_quest_log(slug, quest_id, idx):
 @app.route("/<slug>/dm/character/<char_name>/toggle_hidden", methods=["POST"])
 @dm_required
 def dm_toggle_character_hidden(slug, char_name):
-    chars = db.get_party(slug)
+    chars = db.get_all_party_characters(slug)
     char = next((c for c in chars if c["name"] == char_name), None)
     if char:
         db.set_character_hidden(slug, char_name, not char.get("hidden", False))
@@ -4549,7 +5440,7 @@ def dm_toggle_character_hidden(slug, char_name):
 @app.route("/<slug>/dm/character/<char_name>/toggle_dead", methods=["POST"])
 @dm_required
 def dm_toggle_character_dead(slug, char_name):
-    chars = db.get_party(slug)
+    chars = db.get_all_party_characters(slug)
     char = next((c for c in chars if c["name"] == char_name), None)
     if char:
         db.set_character_dead(slug, char_name, not char.get("dead", False))
@@ -5085,7 +5976,7 @@ def dm_witness_npc_event(slug, npc_id, event_id):
     char_name = (data or {}).get("char_name", "").strip()
     if not char_name:
         return jsonify({"error": "char_name required"}), 400
-    party = db.get_party(slug)
+    party = db.get_all_party_characters(slug)
     char = next((c for c in party if c["name"] == char_name), None)
     if not char:
         return jsonify({"error": "Character not found"}), 404
@@ -5104,7 +5995,7 @@ def dm_witness_faction_event(slug, faction_id, event_id):
     char_name = (data or {}).get("char_name", "").strip()
     if not char_name:
         return jsonify({"error": "char_name required"}), 400
-    party = db.get_party(slug)
+    party = db.get_all_party_characters(slug)
     char = next((c for c in party if c["name"] == char_name), None)
     if not char:
         return jsonify({"error": "Character not found"}), 404

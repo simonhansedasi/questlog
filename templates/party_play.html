@@ -281,11 +281,6 @@
       </div>
     </div>
 
-    <div style="text-align:center; margin:16px 0 4px; color:var(--muted); font-size:0.8rem; letter-spacing:0.04em;">— or —</div>
-    <button class="party-btn secondary" id="generate-scenario-btn" onclick="generateScenario()" style="margin-bottom:4px;">Generate a scenario for me →</button>
-    <div id="generate-scenario-loading" style="display:none; text-align:center; padding:10px 0; color:var(--muted); font-size:0.85rem;">
-      <span style="animation:spin 1.5s linear infinite; display:inline-block;">✦</span> Building your scenario…
-    </div>
     <p id="setup-error" class="error-msg"></p>
 
     <div class="ready-section" id="ready-section" style="display:none;">
@@ -375,15 +370,48 @@
     <!-- History feed (all events, newest first) -->
     <div class="history-feed" id="history-feed" style="display:none;"></div>
 
-    <div id="turn-indicator" style="display:none; text-align:center; margin-bottom:20px; padding:12px 16px; background:var(--surface2); border:1px solid var(--border); border-radius:8px;">
+    <div id="turn-indicator" style="display:none; text-align:center; margin-bottom:12px; padding:12px 16px; background:var(--surface2); border:1px solid var(--border); border-radius:8px;">
       <p style="margin:0; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted);">Now</p>
       <p id="turn-name" style="margin:4px 0 0; font-size:1.3rem; font-weight:800; color:var(--gold); letter-spacing:-0.01em;"></p>
     </div>
+    <div id="secret-peek-wrap" style="margin-bottom:16px;"></div>
     <p class="party-label">What happens next?</p>
     <h2 class="party-heading" style="margin-bottom:20px;">Choose an action.</h2>
 
+    <!-- Hold my Hand wizard — top-level, shown before action panels -->
+    <div id="hmh-wizard" style="display:none; background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:20px; margin-bottom:16px;">
+      <div id="hmh-step1">
+        <p style="font-weight:700; color:var(--text); margin:0 0 14px; font-size:0.92rem;">What kind of thing happens?</p>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+          <button onclick="hmhPickType('talk')" class="party-btn secondary" style="padding:10px; text-align:left;">Talk / Argue</button>
+          <button onclick="hmhPickType('fight')" class="party-btn secondary" style="padding:10px; text-align:left;">Fight / Confront</button>
+          <button onclick="hmhPickType('help')" class="party-btn secondary" style="padding:10px; text-align:left;">Help / Aid</button>
+          <button onclick="hmhPickType('discover')" class="party-btn secondary" style="padding:10px; text-align:left;">Discover</button>
+          <button onclick="hmhPickType('travel')" class="party-btn secondary" style="padding:10px; text-align:left;">Travel / Move</button>
+          <button onclick="hmhPickType('other')" class="party-btn secondary" style="padding:10px; text-align:left;">Other</button>
+        </div>
+      </div>
+      <div id="hmh-step2" style="display:none;">
+        <p style="font-weight:700; color:var(--text); margin:0 0 10px; font-size:0.92rem;">Who or what is involved? <span style="font-weight:400; color:var(--muted); font-size:0.82rem;">(optional)</span></p>
+        <select id="hmh-entity" class="party-input" style="margin-bottom:12px;"></select>
+        <button onclick="hmhStep2Next()" class="party-btn" style="margin-bottom:0;">Next →</button>
+      </div>
+      <div id="hmh-step3" style="display:none;">
+        <p style="font-weight:700; color:var(--text); margin:0 0 14px; font-size:0.92rem;">How does it go?</p>
+        <div style="display:flex; gap:10px;">
+          <button onclick="hmhPickOutcome('well')" class="party-btn secondary" style="flex:1; color:#4caf50; border-color:#4caf5044;">Well</button>
+          <button onclick="hmhPickOutcome('mixed')" class="party-btn secondary" style="flex:1;">Mixed</button>
+          <button onclick="hmhPickOutcome('badly')" class="party-btn secondary" style="flex:1; color:#e05c5c; border-color:#e05c5c44;">Badly</button>
+        </div>
+      </div>
+      <div style="margin-top:14px; text-align:right;">
+        <button onclick="closeHMH()" style="background:none; border:none; color:var(--muted); font-size:0.82rem; cursor:pointer; font-family:inherit;">Cancel</button>
+      </div>
+    </div>
+
     <div id="action-btns">
-      <button class="party-btn" onclick="showAction('event')">Make something happen →</button>
+      <button class="party-btn" onclick="openHMH()">Hold my Hand →</button>
+      <button class="party-btn secondary" onclick="showAction('event')">Make something happen</button>
       <button class="party-btn secondary" onclick="showAction('entity')">Add to the world</button>
       <button class="party-btn secondary" onclick="showAction('relation')">Formalize a relationship</button>
     </div>
@@ -818,7 +846,7 @@ function revealSecret() {
   const biasEl = document.getElementById('secrets-bias');
   if (secret.bias_target && secret.bias_type) {
     document.getElementById('secrets-bias-text').textContent =
-      `You ${secret.bias_type === 'trusts' ? 'trust' : 'suspect'} ${secret.bias_target}.`;
+      `Toward ${secret.bias_target}: ${secret.bias_type}.`;
     biasEl.style.display = 'block';
   } else {
     biasEl.style.display = 'none';
@@ -975,7 +1003,9 @@ function renderArcPanel() {
   const panel = document.getElementById('arc-play-panel');
   if (!arc || !arc.objectives || !arc.objectives.length) { panel.style.display = 'none'; return; }
   panel.style.display = 'block';
-  document.getElementById('arc-play-desc').textContent = arc.description || '';
+  const incident = gameState.inciting_incident || '';
+  const desc = arc.description || '';
+  document.getElementById('arc-play-desc').textContent = incident ? (incident + (desc ? '\n\n' + desc : '')) : desc;
   const completed = arc.completed || arc.objectives.map(() => false);
   document.getElementById('arc-play-objectives').innerHTML =
     '<p class="party-label" style="margin-bottom:8px;">Possible paths forward</p>' +
@@ -1006,6 +1036,7 @@ function renderTurnIndicator() {
   const char = chars[gameState.current_player_index % chars.length];
   document.getElementById('turn-name').textContent = char.name;
   el.style.display = 'block';
+  renderSecretPeek();
 }
 
 function advanceTurn() {
@@ -1013,6 +1044,30 @@ function advanceTurn() {
   if (!chars.length) return;
   gameState.current_player_index = ((gameState.current_player_index || 0) + 1) % chars.length;
   renderTurnIndicator();
+}
+
+function renderSecretPeek() {
+  const wrap = document.getElementById('secret-peek-wrap');
+  if (!wrap) return;
+  const chars = getEntities().characters;
+  const secrets = gameState.secret_objectives || [];
+  if (!secrets.length || !chars.length) { wrap.innerHTML = ''; return; }
+  const char = chars[(gameState.current_player_index || 0) % chars.length];
+  const secret = secrets.find(s => s.character_id === char.id) || {};
+  if (!secret.objective) { wrap.innerHTML = ''; return; }
+  const roleHtml = secret.role
+    ? `<p style="font-size:0.72rem;font-weight:800;color:var(--gold);text-transform:uppercase;letter-spacing:0.06em;margin:0 0 6px 0;">The ${secret.role}</p>` : '';
+  const biasHtml = secret.bias_target && secret.bias_type
+    ? `<p style="color:var(--muted);font-size:0.8rem;margin:8px 0 0;">Toward <strong style="color:var(--text);">${secret.bias_target}</strong>: <em>${secret.bias_type}</em>.</p>` : '';
+  wrap.innerHTML = `<details>
+    <summary style="cursor:pointer;font-size:0.78rem;color:var(--gold);font-weight:700;list-style:none;padding:6px 0;">▸ ${char.name}'s secret mission</summary>
+    <div style="margin-top:8px;background:var(--surface2);border:1px solid var(--gold)44;border-radius:6px;padding:14px 16px;">
+      ${roleHtml}
+      <p style="color:var(--text);font-size:0.88rem;line-height:1.6;margin:0 0 4px 0;">${secret.objective}</p>
+      ${biasHtml}
+      <p style="margin:10px 0 0;font-size:0.72rem;color:var(--muted);opacity:0.7;">Don't show anyone else this screen.</p>
+    </div>
+  </details>`;
 }
 
 function startPlay() {
@@ -1027,6 +1082,78 @@ function startPlay() {
   renderTurnIndicator();
   startTimer();
   showPhase('phase-play');
+}
+
+// ── Hold my Hand wizard ───────────────────────────────────────────────────────
+
+let hmhType = '';
+
+function openHMH() {
+  document.getElementById('hmh-wizard').style.display = 'block';
+  document.getElementById('action-btns').style.display = 'none';
+  ['action-event', 'action-entity', 'action-relation'].forEach(id =>
+    document.getElementById(id).style.display = 'none');
+  document.getElementById('hmh-step1').style.display = 'block';
+  document.getElementById('hmh-step2').style.display = 'none';
+  document.getElementById('hmh-step3').style.display = 'none';
+  const { characters, locations, factions } = getEntities();
+  const chars = characters;
+  const currentChar = chars[(gameState.current_player_index || 0) % (chars.length || 1)];
+  const sel = document.getElementById('hmh-entity');
+  sel.innerHTML = '<option value="">— anyone / nothing specific —</option>';
+  characters.filter(c => !currentChar || c.name !== currentChar.name).forEach(c =>
+    sel.insertAdjacentHTML('beforeend', `<option value="${c.name}">${c.name}</option>`)
+  );
+  locations.forEach(l => sel.insertAdjacentHTML('beforeend', `<option value="${l.name}">${l.name}</option>`));
+  factions.forEach(f => sel.insertAdjacentHTML('beforeend', `<option value="${f.name}">${f.name}</option>`));
+}
+function closeHMH() {
+  document.getElementById('hmh-wizard').style.display = 'none';
+  document.getElementById('action-btns').style.display = 'block';
+}
+function hmhPickType(type) {
+  hmhType = type;
+  const chars = getEntities().characters;
+  const currentChar = chars[(gameState.current_player_index || 0) % (chars.length || 1)];
+  if (type === 'other') {
+    closeHMH();
+    showAction('event');
+    document.getElementById('event-text').value = (currentChar ? currentChar.name : '') + ' — ';
+    document.getElementById('event-text').focus();
+    return;
+  }
+  document.getElementById('hmh-step1').style.display = 'none';
+  document.getElementById('hmh-step2').style.display = 'block';
+}
+function hmhStep2Next() {
+  document.getElementById('hmh-step2').style.display = 'none';
+  document.getElementById('hmh-step3').style.display = 'block';
+}
+const hmhTemplates = {
+  talk:     (c, e, o) => `${c} spoke with ${e || 'someone'} — it went ${o}.`,
+  fight:    (c, e, o) => `${c} confronted ${e || 'someone'} — the encounter went ${o}.`,
+  help:     (c, e, o) => `${c} aided ${e || 'someone'} — the effort went ${o}.`,
+  discover: (c, e, o) => `${c} investigated ${e || 'something'} — the discovery went ${o}.`,
+  travel:   (c, e, o) => `${c} traveled to ${e || 'a new location'} — the journey went ${o}.`,
+};
+const hmhOutcomes = { well: 'well', mixed: 'in a complicated direction', badly: 'badly' };
+function hmhPickOutcome(key) {
+  const chars = getEntities().characters;
+  const currentChar = chars[(gameState.current_player_index || 0) % (chars.length || 1)];
+  const charName = currentChar ? currentChar.name : '';
+  const entity = document.getElementById('hmh-entity').value;
+  const tmpl = hmhTemplates[hmhType];
+  const text = tmpl ? tmpl(charName, entity, hmhOutcomes[key]) : charName + ' — ';
+  closeHMH();
+  showAction('event');
+  document.getElementById('event-text').value = text;
+  if (entity) {
+    const srcSel = document.getElementById('event-source');
+    for (const opt of srcSel.options) {
+      if (opt.text === entity) { srcSel.value = opt.value; break; }
+    }
+  }
+  document.getElementById('event-text').focus();
 }
 
 // ── play phase ────────────────────────────────────────────────────────────────
@@ -1055,6 +1182,7 @@ function hideActions() {
   document.getElementById('rel-entity1').value = '';
   document.getElementById('rel-entity2').value = '';
   document.querySelectorAll('input[name="rel-type"]').forEach(r => { r.checked = r.value === 'ally'; });
+  closeHMH();
   resetRefereePanel();
 }
 

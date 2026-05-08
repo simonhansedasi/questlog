@@ -61,6 +61,23 @@ def _save(slug, data, *parts):
     p.write_text(json.dumps(data, indent=2))
 
 
+def _load_party(slug):
+    """Load party.json, auto-migrating old flat {characters:[]} format to {parties:[...]}."""
+    data = _load(slug, "party.json")
+    if "characters" in data and "parties" not in data:
+        data = {"parties": [{"id": "default", "name": "The Party", "characters": data["characters"]}]}
+        _save(slug, data, "party.json")
+    elif "parties" not in data:
+        data = {"parties": [{"id": "default", "name": "The Party", "characters": []}]}
+        _save(slug, data, "party.json")
+    return data
+
+
+def _all_chars(data):
+    """Return flat list of all character dicts across all parties (references, not copies)."""
+    return [c for p in data.get("parties", []) for c in p.get("characters", [])]
+
+
 def slugify(name):
     return re.sub(r"[^a-z0-9]+", "_", name.lower()).strip("_")
 
@@ -677,10 +694,12 @@ def get_inter_faction_relations(slug):
 
     for npc in _load(slug, "world/npcs.json").get("npcs", []):
         for entry in npc.get("log", []):
-            _register(npc["id"], entry)
+            if not entry.get("deleted"):
+                _register(npc["id"], entry)
     for faction in _load(slug, "world/factions.json").get("factions", []):
         for entry in faction.get("log", []):
-            _register(faction["id"], entry)
+            if not entry.get("deleted"):
+                _register(faction["id"], entry)
 
     results = []
     for (a_id, b_id), entries in pair_entries.items():
@@ -737,7 +756,7 @@ def get_inter_entity_relations(slug, max_session=None, branch_id=None, fork_poin
             key = tuple(sorted([faction["id"], actor_id]))
             pair_entries.setdefault(key, []).append(entry)
 
-    for char in _load(slug, "party.json").get("characters", []):
+    for char in _all_chars(_load_party(slug)):
         char_id = char["name"]
         entity_types[char_id] = "char"
         for entry in char.get("log", []):
@@ -1038,16 +1057,64 @@ def log_quest(slug, quest_id, session, note):
 
 # ── Party ─────────────────────────────────────────────────────────────────────
 
-def get_party(slug, include_hidden=True):
-    chars = _load(slug, "party.json").get("characters", [])
-    if not include_hidden:
-        chars = [c for c in chars if not c.get("hidden", False)]
-    return chars
+def get_parties(slug):
+    """Return list of party dicts: [{id, name, characters:[...]}, ...]."""
+    return _load_party(slug)["parties"]
 
 
-def add_character(slug, name, race, char_class, level, notes="", hidden=False):
-    data = _load(slug, "party.json")
-    data.setdefault("characters", []).append({
+def get_party(slug, party_id=None, include_hidden=True):
+    """Return characters for one party (first party if party_id=None)."""
+    parties = get_parties(slug)
+    if party_id:
+        party = next((p for p in parties if p["id"] == party_id), None) or (parties[0] if parties else {"characters": []})
+    else:
+        party = parties[0] if parties else {"characters": []}
+    chars = party.get("characters", [])
+    return chars if include_hidden else [c for c in chars if not c.get("hidden", False)]
+
+
+def get_all_party_characters(slug, include_hidden=True):
+    """Return all characters across all parties."""
+    data = _load_party(slug)
+    chars = _all_chars(data)
+    return chars if include_hidden else [c for c in chars if not c.get("hidden", False)]
+
+
+def add_party(slug, name):
+    data = _load_party(slug)
+    base_id = slugify(name) or f"party_{len(data['parties'])+1}"
+    party_id = base_id
+    existing = {p["id"] for p in data["parties"]}
+    n = 2
+    while party_id in existing:
+        party_id = f"{base_id}_{n}"; n += 1
+    data["parties"].append({"id": party_id, "name": name, "characters": []})
+    _save(slug, data, "party.json")
+    return party_id
+
+
+def rename_party(slug, party_id, name):
+    data = _load_party(slug)
+    for p in data["parties"]:
+        if p["id"] == party_id:
+            p["name"] = name
+            break
+    _save(slug, data, "party.json")
+
+
+def delete_party(slug, party_id):
+    data = _load_party(slug)
+    data["parties"] = [p for p in data["parties"] if p["id"] != party_id]
+    _save(slug, data, "party.json")
+
+
+def add_character(slug, name, race, char_class, level, notes="", hidden=False, party_id=None, session=None):
+    data = _load_party(slug)
+    if party_id:
+        target = next((p for p in data["parties"] if p["id"] == party_id), None) or data["parties"][0]
+    else:
+        target = data["parties"][0]
+    char = {
         "name": name,
         "race": race,
         "class": char_class,
@@ -1056,16 +1123,19 @@ def add_character(slug, name, race, char_class, level, notes="", hidden=False):
         "hidden": hidden,
         "notes": notes,
         "known_events": [],
-    })
+    }
+    if session is not None:
+        char["session_joined"] = int(session)
+    target.setdefault("characters", []).append(char)
     _save(slug, data, "party.json")
 
 
 def log_character(slug, char_name, session, note, polarity=None, intensity=None,
                   event_type=None, visibility="public", actor_id=None, actor_type=None,
                   actor_dm_only=False, location_id=None):
-    data = _load(slug, "party.json")
+    data = _load_party(slug)
     event_id = "evt_" + secrets.token_hex(3)
-    for char in data.get("characters", []):
+    for char in _all_chars(data):
         if char["name"] == char_name:
             entry = {"id": event_id, "session": session, "note": note, "visibility": visibility}
             if polarity in ("positive", "neutral", "negative"):
@@ -1113,30 +1183,31 @@ def log_party_group(slug, session, note, polarity=None, intensity=None, event_ty
 
 
 def set_character_hidden(slug, char_name, hidden):
-    data = _load(slug, "party.json")
-    for c in data.get("characters", []):
+    data = _load_party(slug)
+    for c in _all_chars(data):
         if c["name"] == char_name:
             c["hidden"] = hidden
     _save(slug, data, "party.json")
 
 
 def set_character_dead(slug, char_name, dead):
-    data = _load(slug, "party.json")
-    for c in data.get("characters", []):
+    data = _load_party(slug)
+    for c in _all_chars(data):
         if c["name"] == char_name:
             c["dead"] = dead
     _save(slug, data, "party.json")
 
 
 def delete_character(slug, char_name):
-    data = _load(slug, "party.json")
-    data["characters"] = [c for c in data.get("characters", []) if c["name"] != char_name]
+    data = _load_party(slug)
+    for p in data["parties"]:
+        p["characters"] = [c for c in p.get("characters", []) if c["name"] != char_name]
     _save(slug, data, "party.json")
 
 
 def update_character(slug, char_name, level=None, status=None, notes=None, new_name=None, factions=None):
-    data = _load(slug, "party.json")
-    for char in data.get("characters", []):
+    data = _load_party(slug)
+    for char in _all_chars(data):
         if char["name"] == char_name:
             if level is not None:
                 char["level"] = int(level)
@@ -1531,39 +1602,47 @@ def backfill_relation_ripples(slug, source_id, source_type, target_id, target_ty
 
 
 def edit_log_entry(slug, entity_id, entity_type, event_id, note=None, polarity=None,
-                   intensity=None, visibility=None):
+                   intensity=None, visibility=None, actor_id=None, actor_type=None,
+                   location_id=None, clear_actor=False, clear_location=False):
     """Edit a log entry by its UUID."""
+    def _apply(entry):
+        if note is not None:
+            entry["note"] = note
+        if polarity in ("positive", "neutral", "negative"):
+            entry["polarity"] = polarity
+            if intensity is not None:
+                entry["intensity"] = max(1, min(3, int(intensity)))
+        elif polarity == "":
+            entry.pop("polarity", None)
+            entry.pop("intensity", None)
+        if visibility in ("public", "restricted", "dm_only"):
+            entry["visibility"] = visibility
+        if actor_id:
+            entry["actor_id"] = actor_id
+            if actor_type:
+                entry["actor_type"] = actor_type
+        elif clear_actor:
+            entry.pop("actor_id", None)
+            entry.pop("actor_type", None)
+        if location_id:
+            entry["location_id"] = location_id
+        elif clear_location:
+            entry.pop("location_id", None)
+
     if entity_type == "party":
         data = _load(slug, "campaign.json")
         for entry in data.get("party_group_log", []):
             if entry.get("id") == event_id:
-                if note is not None:
-                    entry["note"] = note
-                if polarity in ("positive", "neutral", "negative"):
-                    entry["polarity"] = polarity
-                elif polarity == "":
-                    entry.pop("polarity", None)
-                    entry.pop("intensity", None)
-                if intensity is not None and polarity in ("positive", "neutral", "negative"):
-                    entry["intensity"] = max(1, min(3, int(intensity)))
-                if visibility in ("public", "restricted", "dm_only"):
-                    entry["visibility"] = visibility
+                _apply(entry)
         _save(slug, data, "campaign.json")
         return
     if entity_type == "character":
-        data = _load(slug, "party.json")
-        for char in data.get("characters", []):
+        data = _load_party(slug)
+        for char in _all_chars(data):
             if char["name"] == entity_id:
                 for entry in char.get("log", []):
                     if entry.get("id") == event_id:
-                        if note is not None:
-                            entry["note"] = note
-                        if polarity in ("positive", "neutral", "negative"):
-                            entry["polarity"] = polarity
-                        if intensity is not None:
-                            entry["intensity"] = max(1, min(3, int(intensity)))
-                        if visibility in ("public", "restricted", "dm_only"):
-                            entry["visibility"] = visibility
+                        _apply(entry)
         _save(slug, data, "party.json")
         return
     if entity_type == "npc":
@@ -1578,14 +1657,7 @@ def edit_log_entry(slug, entity_id, entity_type, event_id, note=None, polarity=N
         if entity["id"] == entity_id:
             for entry in entity.get("log", []):
                 if entry.get("id") == event_id:
-                    if note is not None:
-                        entry["note"] = note
-                    if polarity in ("positive", "neutral", "negative"):
-                        entry["polarity"] = polarity
-                    if intensity is not None:
-                        entry["intensity"] = max(1, min(3, int(intensity)))
-                    if visibility in ("public", "restricted", "dm_only"):
-                        entry["visibility"] = visibility
+                    _apply(entry)
     _save(slug, data, file_key)
 
 
@@ -1600,8 +1672,8 @@ def delete_log_entry_by_id(slug, entity_id, entity_type, event_id):
                 return True
         return False
     if entity_type == "character":
-        data = _load(slug, "party.json")
-        for char in data.get("characters", []):
+        data = _load_party(slug)
+        for char in _all_chars(data):
             if char["name"] == entity_id:
                 for entry in char.get("log", []):
                     if entry.get("id") == event_id:
@@ -1729,8 +1801,8 @@ def undo_ripple_chain(slug, source_event_id):
 
 def reveal_event(slug, event_id, char_name):
     """Add event_id to a character's known_events list."""
-    data = _load(slug, "party.json")
-    for c in data.get("characters", []):
+    data = _load_party(slug)
+    for c in _all_chars(data):
         if c["name"] == char_name:
             known = c.setdefault("known_events", [])
             if event_id not in known:
@@ -1739,8 +1811,8 @@ def reveal_event(slug, event_id, char_name):
 
 
 def add_character_relation(slug, char_name, target_id, target_type, relation, weight):
-    data = _load(slug, "party.json")
-    for c in data.get("characters", []):
+    data = _load_party(slug)
+    for c in _all_chars(data):
         if c["name"] == char_name:
             rels = [r for r in c.get("relations", []) if r.get("target") != target_id]
             rels.append({"target": target_id, "target_type": target_type,
@@ -1750,8 +1822,8 @@ def add_character_relation(slug, char_name, target_id, target_type, relation, we
 
 
 def remove_character_relation(slug, char_name, target_id):
-    data = _load(slug, "party.json")
-    for c in data.get("characters", []):
+    data = _load_party(slug)
+    for c in _all_chars(data):
         if c["name"] == char_name:
             c["relations"] = [r for r in c.get("relations", []) if r.get("target") != target_id]
     _save(slug, data, "party.json")
@@ -1759,8 +1831,8 @@ def remove_character_relation(slug, char_name, target_id):
 
 def unreveal_event(slug, event_id, char_name):
     """Remove event_id from a character's known_events list."""
-    data = _load(slug, "party.json")
-    for c in data.get("characters", []):
+    data = _load_party(slug)
+    for c in _all_chars(data):
         if c["name"] == char_name:
             known = c.get("known_events", [])
             if event_id in known:
@@ -1769,8 +1841,8 @@ def unreveal_event(slug, event_id, char_name):
 
 
 def assign_character_user(slug, char_name, username):
-    data = _load(slug, "party.json")
-    for c in data.get("characters", []):
+    data = _load_party(slug)
+    for c in _all_chars(data):
         if c["name"] == char_name:
             if username:
                 c["assigned_user"] = username
@@ -1781,7 +1853,7 @@ def assign_character_user(slug, char_name, username):
 
 def get_player_character(slug, username):
     """Return the character assigned to this username in this campaign, or None."""
-    for c in _load(slug, "party.json").get("characters", []):
+    for c in _all_chars(_load_party(slug)):
         if c.get("assigned_user") == username:
             return c
     return None
@@ -1790,7 +1862,7 @@ def get_player_character(slug, username):
 # ── Character Conditions ──────────────────────────────────────────────────────
 
 def get_character_conditions(slug, char_name, include_hidden=True, include_resolved=False):
-    for char in _load(slug, "party.json").get("characters", []):
+    for char in _all_chars(_load_party(slug)):
         if char["name"] == char_name:
             conds = char.get("conditions", [])
             if not include_hidden:
@@ -1804,8 +1876,8 @@ def get_character_conditions(slug, char_name, include_hidden=True, include_resol
 def add_character_condition(slug, char_name, name, category, description,
                             acquired_session, linked_npc_id=None, linked_faction_id=None,
                             hidden=False):
-    data = _load(slug, "party.json")
-    for char in data.get("characters", []):
+    data = _load_party(slug)
+    for char in _all_chars(data):
         if char["name"] == char_name:
             cond = {
                 "id": str(uuid.uuid4())[:8],
@@ -1825,8 +1897,8 @@ def add_character_condition(slug, char_name, name, category, description,
 
 
 def resolve_character_condition(slug, char_name, cond_id):
-    data = _load(slug, "party.json")
-    for char in data.get("characters", []):
+    data = _load_party(slug)
+    for char in _all_chars(data):
         if char["name"] == char_name:
             for cond in char.get("conditions", []):
                 if cond["id"] == cond_id:
@@ -1835,8 +1907,8 @@ def resolve_character_condition(slug, char_name, cond_id):
 
 
 def toggle_character_condition_hidden(slug, char_name, cond_id):
-    data = _load(slug, "party.json")
-    for char in data.get("characters", []):
+    data = _load_party(slug)
+    for char in _all_chars(data):
         if char["name"] == char_name:
             for cond in char.get("conditions", []):
                 if cond["id"] == cond_id:
@@ -1845,8 +1917,8 @@ def toggle_character_condition_hidden(slug, char_name, cond_id):
 
 
 def delete_character_condition(slug, char_name, cond_id):
-    data = _load(slug, "party.json")
-    for char in data.get("characters", []):
+    data = _load_party(slug)
+    for char in _all_chars(data):
         if char["name"] == char_name:
             char["conditions"] = [c for c in char.get("conditions", []) if c["id"] != cond_id]
     _save(slug, data, "party.json")
@@ -1855,7 +1927,7 @@ def delete_character_condition(slug, char_name, cond_id):
 def get_conditions_for_npc(slug, npc_id):
     """Returns [(char_name, condition)] for all active conditions linked to this NPC."""
     results = []
-    for char in _load(slug, "party.json").get("characters", []):
+    for char in _all_chars(_load_party(slug)):
         for cond in char.get("conditions", []):
             if cond.get("linked_npc_id") == npc_id and not cond.get("resolved", False):
                 results.append((char["name"], cond))
@@ -1865,7 +1937,7 @@ def get_conditions_for_npc(slug, npc_id):
 def get_conditions_for_faction(slug, faction_id):
     """Returns [(char_name, condition)] for all active conditions linked to this faction."""
     results = []
-    for char in _load(slug, "party.json").get("characters", []):
+    for char in _all_chars(_load_party(slug)):
         for cond in char.get("conditions", []):
             if cond.get("linked_faction_id") == faction_id and not cond.get("resolved", False):
                 results.append((char["name"], cond))
@@ -1878,7 +1950,7 @@ def get_condition_alerts(slug, is_dm=True):
     npcs = {n["id"]: n for n in get_npcs(slug, include_hidden=is_dm)}
     factions = {f["id"]: f for f in get_factions(slug, include_hidden=is_dm)}
     alerts = []
-    for char in _load(slug, "party.json").get("characters", []):
+    for char in _all_chars(_load_party(slug)):
         for cond in char.get("conditions", []):
             if cond.get("resolved") or cond.get("hidden"):
                 continue
@@ -2270,7 +2342,7 @@ def generate_session_brief(slug):
     # Party stakes — active character conditions
     npcs = {n["id"]: n["name"] for n in get_npcs(slug, include_hidden=True)}
     factions = {f["id"]: f["name"] for f in get_factions(slug, include_hidden=True)}
-    party = _load(slug, "party.json").get("characters", [])
+    party = _all_chars(_load_party(slug))
     stake_lines = []
     for char in party:
         for cond in char.get("conditions", []):
@@ -2682,7 +2754,7 @@ def get_dm_intelligence(slug, current_session, active_branch=None, all_branches=
     for entity in list(npcs) + list(factions):
         is_npc = "class" not in entity and "relationship" in entity
         kind = "npc" if entity in npcs else "faction"
-        log = filter_log_for_branch(entity.get("log", []), active_branch, all_branches or [])
+        log = [e for e in filter_log_for_branch(entity.get("log", []), active_branch, all_branches or []) if not e.get("deleted")]
         rel = compute_npc_relationship(entity, is_dm=True) if kind == "npc" else {
             "relationship": entity.get("relationship", "unknown"),
             "trend": None, "computed": False, "score": None,
@@ -2870,7 +2942,7 @@ def get_all_log_entries(slug):
         for entry in condition.get("log", []):
             if not entry.get("deleted"):
                 entries.append({"source": condition["name"], "type": "Condition", "entity_id": condition.get("id",""), **entry})
-    for char in _load(slug, "party.json").get("characters", []):
+    for char in _all_chars(_load_party(slug)):
         for entry in char.get("log", []):
             if not entry.get("deleted"):
                 entries.append({"source": char["name"], "type": "Character", "entity_id": char["name"], **entry})
@@ -2986,6 +3058,14 @@ def get_party_game(slug):
 
 def save_party_game(slug, data):
     _save(slug, data, "dm/party_game.json")
+
+
+def get_async_campaign(slug):
+    return _load(slug, "dm/async_campaign.json")
+
+
+def save_async_campaign(slug, data):
+    _save(slug, data, "dm/async_campaign.json")
 
 
 def inject_wikilinks_into_world(slug):

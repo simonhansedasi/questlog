@@ -3,11 +3,60 @@
 {% block content %}
 
 <h1 class="page-title">{{ terms.cast_label }}</h1>
-<p class="subtitle">{{ meta.name }}{% if is_dm %} &mdash; <a href="/{{ slug }}/dm/party/add">+ Add {{ terms.cast_label }} Member</a>{% endif %}</p>
+<p class="subtitle">{{ meta.name }}</p>
 
 {% set input_style = "background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:5px 9px; font-size:0.82rem;" %}
 {% set btn_style = "background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:5px 14px; font-size:0.82rem; font-weight:700; cursor:pointer;" %}
 {% set label_style = "color:var(--muted); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;" %}
+
+{% if meta.mode == 'ttrpg' and (parties | length > 1 or is_dm) %}
+<div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-bottom:20px;">
+  {% for p in parties %}
+  {% set is_sel = p.id == selected_party_id %}
+  <a href="/{{ slug }}/party?party={{ p.id }}"
+     style="padding:5px 14px; border-radius:4px; font-size:0.82rem; font-weight:700; text-decoration:none;
+            background:{% if is_sel %}var(--gold){% else %}var(--surface2){% endif %};
+            color:{% if is_sel %}#080a18{% else %}var(--muted){% endif %};
+            border:1px solid {% if is_sel %}var(--gold){% else %}var(--border){% endif %};">
+    {{ p.name }}{% if p.characters | length %} <span style="font-size:0.7rem; opacity:0.7;">({{ p.characters | length }})</span>{% endif %}
+  </a>
+  {% endfor %}
+  {% if is_dm %}
+  <button onclick="document.getElementById('add-party-form').style.display='flex'; this.style.display='none';"
+          style="padding:5px 12px; border-radius:4px; font-size:0.82rem; border:1px dashed var(--border); background:none; color:var(--muted); cursor:pointer;">＋ Add Group</button>
+  <form id="add-party-form" method="POST" action="/{{ slug }}/dm/party/create"
+        style="display:none; align-items:center; gap:6px;">
+    <input type="text" name="name" placeholder="Group name" required style="{{ input_style }}">
+    <button type="submit" style="{{ btn_style }}">Create</button>
+  </form>
+  {% endif %}
+</div>
+
+{% if is_dm %}
+{% set sel_party = parties | selectattr('id', 'equalto', selected_party_id) | first %}
+{% if sel_party %}
+<div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:16px;">
+  <a href="/{{ slug }}/dm/party/add?party_id={{ selected_party_id }}" style="font-size:0.8rem; color:var(--gold); text-decoration:none; padding:4px 10px; border:1px solid var(--gold-dim); border-radius:4px;">+ Add Character</a>
+  <button onclick="document.getElementById('rename-party-form').style.display='flex'; this.style.display='none';"
+          style="font-size:0.8rem; background:none; border:1px solid var(--border); color:var(--muted); border-radius:4px; padding:4px 10px; cursor:pointer;">Rename</button>
+  <form id="rename-party-form" method="POST" action="/{{ slug }}/dm/party/{{ selected_party_id }}/rename"
+        style="display:none; align-items:center; gap:6px;">
+    <input type="text" name="name" value="{{ sel_party.name }}" required style="{{ input_style }}">
+    <button type="submit" style="{{ btn_style }}">Save</button>
+  </form>
+  {% if parties | length > 1 %}
+  <form method="POST" action="/{{ slug }}/dm/party/{{ selected_party_id }}/delete"
+        onsubmit="return confirm('Delete this group? Characters must be removed first.');">
+    <button type="submit" style="font-size:0.8rem; background:none; border:1px solid #e05c5c; color:#e05c5c; border-radius:4px; padding:4px 10px; cursor:pointer;">Delete Group</button>
+  </form>
+  {% endif %}
+</div>
+{% endif %}
+{% endif %}
+
+{% elif is_dm %}
+<p style="margin-bottom:16px;"><a href="/{{ slug }}/dm/party/add" style="color:var(--gold); font-size:0.85rem;">+ Add {{ terms.cast_label }} Member</a></p>
+{% endif %}
 
 {% set cat_colors = {
   'wound': '#e05c5c',
@@ -21,7 +70,7 @@
 {% if not characters %}
 <div class="card" style="padding:40px 24px; text-align:center;">
   {% if is_dm %}
-  <p class="text-muted">No characters yet. <a href="/{{ slug }}/dm/party/add">Add one.</a></p>
+  <p class="text-muted">No characters yet. <a href="/{{ slug }}/dm/party/add{% if meta.mode == 'ttrpg' and parties | length > 1 %}?party_id={{ selected_party_id }}{% endif %}">Add one.</a></p>
   {% else %}
   <p class="text-muted">The party roster is empty.</p>
   {% endif %}
