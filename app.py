@@ -287,7 +287,7 @@ def wikilinks_filter(text, slug, npcs, factions, locations=None, party=None):
             if etype == 'location':
                 return f'<a href="/{slug}/world/location/{eid}" class="wikilink">{Markup.escape(display)}</a>'
             if etype == 'party':
-                return f'<a href="/{slug}/party" class="wikilink">{Markup.escape(display)}</a>'
+                return f'<a href="/{slug}/party/char/{eid}" class="wikilink">{Markup.escape(display)}</a>'
             return f'<a href="/{slug}/world/{etype}/{eid}" class="wikilink">{Markup.escape(display)}</a>'
         return str(Markup.escape(display))
 
@@ -2385,7 +2385,75 @@ def party(slug):
                            is_dm=is_dm, is_player=is_player, npcs=npcs, factions=factions,
                            locations=locations, viewer=viewer, current_session=current_session,
                            party_log=party_log, party_display_name=party_display_name,
-                           parties=parties, selected_party_id=selected_party_id)
+                           parties=parties, selected_party_id=selected_party_id,
+                           all_party_chars=all_chars_for_actor)
+
+
+@app.route("/<slug>/party/char/<char_slug>")
+def char_page(slug, char_slug):
+    r = campaign_access(slug)
+    if r: return r
+    meta = load(slug, "campaign.json")
+    is_dm = bool(session.get(f"dm_{slug}")) or (session.get("user") == meta.get("owner"))
+    is_player = bool(session.get("user")) and not is_dm
+    viewer = session.get("user")
+    all_chars = db.get_all_party_characters(slug, include_hidden=is_dm)
+    char = next((c for c in all_chars if db.slugify(c["name"]) == char_slug), None)
+    if not char:
+        abort(404)
+    if char.get("hidden") and not is_dm:
+        abort(404)
+    npcs = db.get_npcs(slug, include_hidden=is_dm)
+    factions = db.get_factions(slug, include_hidden=is_dm)
+    locations = db.get_locations(slug, include_hidden=is_dm)
+    npc_names = {n["id"]: n["name"] for n in npcs}
+    faction_names = {f["id"]: f["name"] for f in factions}
+    def _resolve_actor(e):
+        actor = e.get("actor_id", "")
+        atype = e.get("actor_type", "")
+        if atype == "npc": return npc_names.get(actor, actor)
+        if atype == "faction": return faction_names.get(actor, actor)
+        return actor or None
+    raw_log = char.get("log", [])
+    visible = db.get_visible_log(raw_log, is_dm=is_dm)
+    for e in visible:
+        e["_actor_name"] = _resolve_actor(e)
+    char["_log"] = list(reversed(visible))
+    char["_conditions"] = db.get_character_conditions(slug, char["name"], include_hidden=is_dm, include_resolved=False)
+    _actor_npcs = db.get_npcs(slug, include_hidden=is_dm)
+    _actor_facs = db.get_factions(slug, include_hidden=is_dm)
+    _actor_locs = db.get_locations(slug, include_hidden=is_dm)
+    _cname = char["name"]
+    _cslug = db.slugify(_cname)
+    _al = []
+    for _n in _actor_npcs:
+        for _e in db.get_visible_log(_n.get("log", []), is_dm=is_dm):
+            _aid = _e.get("actor_id") or ""
+            if _aid == _cname or _aid == _cslug:
+                _al.append({**_e, "_target_name": _n["name"], "_target_id": _n["id"], "_target_type": "npc"})
+    for _f in _actor_facs:
+        for _e in db.get_visible_log(_f.get("log", []), is_dm=is_dm):
+            _aid = _e.get("actor_id") or ""
+            if _aid == _cname or _aid == _cslug:
+                _al.append({**_e, "_target_name": _f["name"], "_target_id": _f["id"], "_target_type": "faction"})
+    for _loc in _actor_locs:
+        for _e in db.get_visible_log(_loc.get("log", []), is_dm=is_dm):
+            _aid = _e.get("actor_id") or ""
+            if _aid == _cname or _aid == _cslug:
+                _al.append({**_e, "_target_name": _loc["name"], "_target_id": _loc["id"], "_target_type": "location"})
+    for _pc in all_chars:
+        if _pc["name"] == _cname:
+            continue
+        for _e in db.get_visible_log(_pc.get("log", []), is_dm=is_dm):
+            _aid = _e.get("actor_id") or ""
+            if _aid == _cname or _aid == _cslug:
+                _al.append({**_e, "_target_name": _pc["name"], "_target_id": db.slugify(_pc["name"]), "_target_type": "char"})
+    char["_actor_log"] = sorted(_al, key=lambda e: e.get("session", 0), reverse=True)
+    current_session = db.get_current_session(slug)
+    return render_template("char.html", meta=meta, char=char, slug=slug,
+                           is_dm=is_dm, is_player=is_player, viewer=viewer,
+                           npcs=npcs, factions=factions, locations=locations,
+                           all_party_chars=all_chars, current_session=current_session)
 
 
 @app.route("/<slug>/assets")
@@ -2475,6 +2543,25 @@ def world(slug):
         c["_severity"] = db.compute_condition_severity(c, is_dm=is_dm)
     locations = db.get_locations(slug, include_hidden=is_dm)
     party = db.get_all_party_characters(slug, include_hidden=is_dm)
+
+    # Build _actor_log for each NPC: events on other entities where this NPC was the actor
+    _scan_targets = (
+        [(n, "npc") for n in npcs] +
+        [(f, "faction") for f in factions] +
+        [(loc, "location") for loc in locations] +
+        [(pc, "char") for pc in party]
+    )
+    for _npc in npcs:
+        _al = []
+        for _ent, _etype in _scan_targets:
+            if _etype == "npc" and _ent["id"] == _npc["id"]:
+                continue
+            _tid = db.slugify(_ent["name"]) if _etype == "char" else _ent.get("id", "")
+            for _e in db.get_visible_log(_ent.get("log", []), is_dm=is_dm):
+                if _e.get("actor_id") == _npc["id"]:
+                    _al.append({**_e, "_target_name": _ent["name"], "_target_id": _tid, "_target_type": _etype})
+        _npc["_actor_log"] = sorted(_al, key=lambda e: e.get("session", 0), reverse=True)
+
     return render_template("world.html", meta=meta, npcs=npcs, factions=factions,
                            conditions=conditions, locations=locations, slug=slug, is_dm=is_dm,
                            as_of=as_of, max_session=max_session,
@@ -3207,9 +3294,15 @@ def npc(slug, npc_id):
     meta = load(slug, "campaign.json")
     is_dm = bool(session.get(f"dm_{slug}")) or (session.get("user") == meta.get("owner"))
     is_player = bool(session.get("user")) and not is_dm
-    npc_obj = next((n for n in db.get_npcs(slug, include_hidden=is_dm) if n["id"] == npc_id), None)
+    npc_obj = next((n for n in db.get_npcs(slug, include_hidden=True) if n["id"] == npc_id), None)
     if not npc_obj:
         abort(404)
+    npc_hidden = npc_obj.get("hidden", False)
+    # Hidden NPCs: non-DM can still view if there are public actor-caused events to show;
+    # strip the NPC's own log to only visible entries for non-DM viewers.
+    if npc_hidden and not is_dm:
+        npc_obj = dict(npc_obj)
+        npc_obj["log"] = db.get_visible_log(npc_obj.get("log", []), is_dm=False)
 
     # Branch context — filter log to fork_point
     branches = db.get_branches(slug)
@@ -3288,22 +3381,29 @@ def npc(slug, npc_id):
     backlinks = _get_backlinks(npc_obj["name"], npc_id, link_npcs, link_factions, link_locations)
 
     actor_logs = []
-    if is_dm:
-        for _n in db.get_npcs(slug, include_hidden=True):
-            if _n["id"] == npc_id:
-                continue
-            for _e in _n.get("log", []):
-                if _e.get("actor_id") == npc_id:
-                    actor_logs.append({**_e, "_target_name": _n["name"], "_target_id": _n["id"], "_target_type": "npc"})
-        for _f in db.get_factions(slug, include_hidden=True):
-            for _e in _f.get("log", []):
-                if _e.get("actor_id") == npc_id:
-                    actor_logs.append({**_e, "_target_name": _f["name"], "_target_id": _f["id"], "_target_type": "faction"})
-        for _loc in db.get_locations(slug, include_hidden=True):
-            for _e in _loc.get("log", []):
-                if _e.get("actor_id") == npc_id:
-                    actor_logs.append({**_e, "_target_name": _loc["name"], "_target_id": _loc["id"], "_target_type": "location"})
-        actor_logs.sort(key=lambda e: e.get("session", 0), reverse=True)
+    for _n in db.get_npcs(slug, include_hidden=is_dm):
+        if _n["id"] == npc_id:
+            continue
+        for _e in db.get_visible_log(_n.get("log", []), is_dm=is_dm):
+            if _e.get("actor_id") == npc_id:
+                actor_logs.append({**_e, "_target_name": _n["name"], "_target_id": _n["id"], "_target_type": "npc"})
+    for _f in db.get_factions(slug, include_hidden=is_dm):
+        for _e in db.get_visible_log(_f.get("log", []), is_dm=is_dm):
+            if _e.get("actor_id") == npc_id:
+                actor_logs.append({**_e, "_target_name": _f["name"], "_target_id": _f["id"], "_target_type": "faction"})
+    for _loc in db.get_locations(slug, include_hidden=is_dm):
+        for _e in db.get_visible_log(_loc.get("log", []), is_dm=is_dm):
+            if _e.get("actor_id") == npc_id:
+                actor_logs.append({**_e, "_target_name": _loc["name"], "_target_id": _loc["id"], "_target_type": "location"})
+    for _pc in db.get_all_party_characters(slug, include_hidden=is_dm):
+        for _e in db.get_visible_log(_pc.get("log", []), is_dm=is_dm):
+            if _e.get("actor_id") == npc_id:
+                actor_logs.append({**_e, "_target_name": _pc["name"], "_target_id": db.slugify(_pc["name"]), "_target_type": "char"})
+    actor_logs.sort(key=lambda e: e.get("session", 0), reverse=True)
+
+    # If NPC is hidden and viewer is not DM, only render if there's public content to show
+    if npc_hidden and not is_dm and not actor_logs and not npc_obj.get("log"):
+        abort(404)
 
     return render_template("npc.html", meta=meta, npc=npc_obj, slug=slug,
                            is_dm=is_dm, is_player=is_player,
@@ -3385,22 +3485,25 @@ def faction(slug, faction_id):
     char_bonds = db.get_conditions_for_faction(slug, faction_id)
 
     actor_logs = []
-    if is_dm:
-        for _n in db.get_npcs(slug, include_hidden=True):
-            for _e in _n.get("log", []):
-                if _e.get("actor_id") == faction_id and _e.get("actor_type") == "faction":
-                    actor_logs.append({**_e, "_target_name": _n["name"], "_target_id": _n["id"], "_target_type": "npc"})
-        for _f in db.get_factions(slug, include_hidden=True):
-            if _f["id"] == faction_id:
-                continue
-            for _e in _f.get("log", []):
-                if _e.get("actor_id") == faction_id and _e.get("actor_type") == "faction":
-                    actor_logs.append({**_e, "_target_name": _f["name"], "_target_id": _f["id"], "_target_type": "faction"})
-        for _loc in db.get_locations(slug, include_hidden=True):
-            for _e in _loc.get("log", []):
-                if _e.get("actor_id") == faction_id:
-                    actor_logs.append({**_e, "_target_name": _loc["name"], "_target_id": _loc["id"], "_target_type": "location"})
-        actor_logs.sort(key=lambda e: e.get("session", 0), reverse=True)
+    for _n in db.get_npcs(slug, include_hidden=is_dm):
+        for _e in db.get_visible_log(_n.get("log", []), is_dm=is_dm):
+            if _e.get("actor_id") == faction_id:
+                actor_logs.append({**_e, "_target_name": _n["name"], "_target_id": _n["id"], "_target_type": "npc"})
+    for _f in db.get_factions(slug, include_hidden=is_dm):
+        if _f["id"] == faction_id:
+            continue
+        for _e in db.get_visible_log(_f.get("log", []), is_dm=is_dm):
+            if _e.get("actor_id") == faction_id:
+                actor_logs.append({**_e, "_target_name": _f["name"], "_target_id": _f["id"], "_target_type": "faction"})
+    for _loc in db.get_locations(slug, include_hidden=is_dm):
+        for _e in db.get_visible_log(_loc.get("log", []), is_dm=is_dm):
+            if _e.get("actor_id") == faction_id:
+                actor_logs.append({**_e, "_target_name": _loc["name"], "_target_id": _loc["id"], "_target_type": "location"})
+    for _pc in db.get_all_party_characters(slug, include_hidden=is_dm):
+        for _e in db.get_visible_log(_pc.get("log", []), is_dm=is_dm):
+            if _e.get("actor_id") == faction_id:
+                actor_logs.append({**_e, "_target_name": _pc["name"], "_target_id": db.slugify(_pc["name"]), "_target_type": "char"})
+    actor_logs.sort(key=lambda e: e.get("session", 0), reverse=True)
 
     affiliated_chars = faction_obj.get("affiliated_chars", [])
     faction_party_affiliated = faction_obj.get("party_affiliated", False)

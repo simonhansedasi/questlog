@@ -114,7 +114,7 @@
         {% if is_dm and cond.hidden %}<span class="badge" style="background:var(--surface2); color:var(--muted); font-size:0.65rem;">Hidden</span>{% endif %}
         <span style="color:var(--muted); font-size:0.68rem; margin-left:auto;">S{{ cond.acquired_session }}</span>
       </div>
-      {% if cond.description %}<p style="margin:3px 0 0 0; font-size:0.78rem; color:var(--text-dim);">{{ cond.description | wikilinks(slug, npcs, factions, locations) }}</p>{% endif %}
+      {% if cond.description %}<p style="margin:3px 0 0 0; font-size:0.78rem; color:var(--text-dim);">{{ cond.description | wikilinks(slug, npcs, factions, locations, all_party_chars) }}</p>{% endif %}
     </div>
     {% endfor %}
   </div>
@@ -131,7 +131,7 @@
       <span style="color:{% if entry.polarity == 'positive' %}#7ec87e{% else %}#e05c5c{% endif %}; font-size:0.7rem; font-weight:700; margin-right:3px;">{% if entry.polarity == 'positive' %}+{% else %}−{% endif %}{{ entry.intensity }}</span>
       {% endif %}
       {% if entry._actor_name and (is_dm or not entry.get('actor_dm_only')) %}<span style="color:var(--purple); font-size:0.7rem; font-style:italic;">⤷ {{ entry._actor_name }}</span> {% endif %}
-      <span style="color:var(--text-dim);">{{ entry.note | wikilinks(slug, npcs, factions, locations) }}</span>
+      <span style="color:var(--text-dim);">{{ entry.note | wikilinks(slug, npcs, factions, locations, all_party_chars) }}</span>
     </li>
     {% endif %}{% endfor %}
   </ul>
@@ -155,7 +155,7 @@
     <span style="color:var(--muted); font-size:0.7rem; font-style:italic; margin-right:3px;">→
       {% if entry._target_type != 'char' %}<a href="/{{ slug }}/world/{{ entry._target_type }}/{{ entry._target_id }}" style="color:var(--gold-dim); text-decoration:none;">{{ entry._target_name }}</a>{% else %}{{ entry._target_name }}{% endif %}
     </span>
-    <span style="color:var(--text-dim);">{{ entry.note | wikilinks(slug, npcs, factions, locations) }}</span>
+    <span style="color:var(--text-dim);">{{ entry.note | wikilinks(slug, npcs, factions, locations, all_party_chars) }}</span>
   </li>
   {% endif %}{% endfor %}
   </ul>
@@ -312,7 +312,7 @@
       {% if entry.event_type %}<span style="color:var(--purple); font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; margin-right:3px;">{{ entry.event_type }}</span>{% endif %}
       {% if entry.polarity and entry.polarity != 'neutral' %}<span style="color:{% if entry.polarity == 'positive' %}#7ec87e{% else %}#e05c5c{% endif %}; font-size:0.7rem; font-weight:700; margin-right:3px;">{% if entry.polarity == 'positive' %}+{% else %}−{% endif %}{{ entry.intensity }}</span>{% endif %}
       {% if entry._actor_name and (is_dm or not entry.get('actor_dm_only')) %}<span style="color:var(--gold-dim); font-size:0.7rem; font-style:italic;">⤷ {{ entry._actor_name }}</span> {% endif %}
-      <span style="color:var(--text-dim);">{{ entry.note | wikilinks(slug, npcs, factions, locations) }}</span>
+      <span style="color:var(--text-dim);">{{ entry.note | wikilinks(slug, npcs, factions, locations, all_party_chars) }}</span>
       {% if vis == 'dm_only' and is_dm %}<span style="color:var(--muted); font-size:0.65rem; margin-left:4px;">[DM]</span>{% endif %}
     </li>
     {% endif %}
