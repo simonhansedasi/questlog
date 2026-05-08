@@ -3067,11 +3067,12 @@ def world_graph_data(slug):
                         "dm_only": is_dm_edge,
                     }})
                 else:
+                    _eff_rel = rel.get("relation") or rel.get("formal_relation") or "ally"
                     edges.append({"data": {
                         "id": edge_id,
                         "source": cid, "target": tid,
                         "relation": "char_relation",
-                        "relationship": _rel_color_map.get(rel.get("relation", "ally"), "neutral"),
+                        "relationship": _rel_color_map.get(_eff_rel, "neutral"),
                         "weight": float(rel.get("weight", 0.5)),
                         "dm_only": is_dm_edge,
                     }})
@@ -3111,14 +3112,18 @@ def world_graph_data(slug):
             "interaction": True,
         }})
 
-    # ── NPC/faction actor → character diamond (NPC caused event on char) ──────
+    # ── NPC/faction/char actor → character diamond ────────────────────────────
     for char in party:
         cid = f"_char_{db.slugify(char['name'])}"
         for entry in char.get("log", []):
             if entry.get("deleted"):
                 continue
             aid = entry.get("actor_id")
-            if not aid or aid not in known_ids:
+            if not aid:
+                continue
+            if entry.get("actor_type") == "char":
+                aid = f"_char_{db.slugify(aid)}"
+            if aid not in known_ids or aid == cid:
                 continue
             _add_acted_edge(aid, cid, entry.get("polarity"), entry.get("actor_dm_only", False))
 
@@ -3151,7 +3156,11 @@ def world_graph_data(slug):
         if entry.get("deleted"):
             continue
         aid = entry.get("actor_id")
-        if not aid or aid not in known_ids:
+        if not aid:
+            continue
+        if entry.get("actor_type") == "char":
+            aid = f"_char_{db.slugify(aid)}"
+        if aid not in known_ids:
             continue
         _add_acted_edge(aid, _default_hub, entry.get("polarity"), entry.get("actor_dm_only", False))
 
@@ -4232,7 +4241,11 @@ def dm_commit_proposals(slug):
         committed += 1
 
     if pending_cursor is not None:
-        db.set_notes_parse_cursor(slug, pending_cursor)
+        current_notes = db.get_session_notes(slug)
+        if pending_cursor <= len(current_notes):
+            db.set_notes_parse_cursor(slug, pending_cursor)
+        else:
+            db.reset_notes_parse_cursor(slug)
 
     cond_alerts = [
         {"char_name": a["char_name"], "condition_name": a["condition"]["name"],
@@ -5261,7 +5274,11 @@ def dm_discard_proposals(slug):
     pending_cursor = saved.get("parse_cursor")
     db.clear_proposals(slug)
     if pending_cursor is not None:
-        db.set_notes_parse_cursor(slug, pending_cursor)
+        current_notes = db.get_session_notes(slug)
+        if pending_cursor <= len(current_notes):
+            db.set_notes_parse_cursor(slug, pending_cursor)
+        else:
+            db.reset_notes_parse_cursor(slug)
     return ("", 204)
 
 
@@ -5952,9 +5969,12 @@ def dm_add_char_own_relation(slug, char_name):
     target_id = request.form.get("target_id", "").strip()
     target_type = request.form.get("target_type", "npc")
     relation = request.form.get("relation", "ally")
+    formal_relation = request.form.get("formal_relation", "").strip() or None
+    personal_relation = request.form.get("personal_relation", "").strip() or None
     weight = float(request.form.get("weight", 0.5))
     if target_id:
-        db.add_character_relation(slug, char_name, target_id, target_type, relation, weight)
+        db.add_character_relation(slug, char_name, target_id, target_type, relation, weight,
+                                  formal_relation=formal_relation, personal_relation=personal_relation)
     if request.form.get("ajax"):
         return jsonify({"ok": True})
     return redirect(url_for("dm", slug=slug))
