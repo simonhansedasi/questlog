@@ -526,10 +526,9 @@ Return ONLY a JSON array. No prose before or after. Each element:
     - positive: actor helped, aided, or benefited this entity
     - neutral: actor interacted without clear harm or benefit
   - For conditions: negative = situation worsening, positive = situation improving
-- Inter-entity events — GENERATE TWO ENTRIES: when an NPC or faction acts upon another NPC/faction and the party did not cause it, generate one entry for each entity involved:
-  1. Entry on the AFFECTED entity: actor_id = acting entity's id, polarity = what the actor did (negative if harmed, positive if helped)
-  2. Entry on the ACTING entity: actor_id = null, polarity = party's relationship change with the actor (often neutral or null)
-  Example — Steve (NPC) rejects Cheryl (NPC)'s friendly overture: entry on Cheryl (actor_id=steve, polarity="negative") + entry on Steve (actor_id=null, polarity="neutral"). Do NOT collapse these into one entry.
+- Inter-entity events — generate TWO entries ONLY when the two perspectives are meaningfully different: when an NPC or faction acts upon another NPC/faction and the party did not cause it, generate a second entry on the acting entity ONLY IF the acting entity's polarity would differ from the affected entity's polarity, OR if the party's view of the actor changed in a way worth recording (non-null polarity). If both entries would share the same polarity (e.g., both negative in a pure combat exchange), generate ONLY ONE entry on the AFFECTED entity with actor_id set — the actor_id already captures who did it without a noisy mirror entry.
+  Example where TWO entries are appropriate — Steve (NPC) rejects Cheryl (NPC)'s friendly overture: entry on Cheryl (actor_id=steve, polarity="negative") + entry on Steve (actor_id=null, polarity="neutral" — party's view of Steve as dismissive). Different polarities, both worth recording.
+  Example where ONE entry suffices — Ghoul attacks Louis: ONE entry on Louis (actor_id=ghoul_id, polarity="negative"). Do NOT add a second entry on the Ghoul — it attacked, which is already captured by actor_id. The Ghoul entry would also be negative, adding nothing.
 - Reputation spread — GENERATE THREE ENTRIES: when an NPC reports, warns, or gossips about a party character to a faction or NPC, generate:
   1. Entry on the faction/NPC being informed: actor_id = reporting NPC, polarity = negative (they now have bad intel about the character)
   2. Entry on the reported character: actor_id = faction/NPC id, actor_type = their type, polarity = negative (their reputation with that group is now damaged)

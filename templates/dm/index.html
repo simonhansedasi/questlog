@@ -875,7 +875,7 @@ function renderProposals(proposals, sessionN) {
 
   // Build actor dropdown: existing entities + proposed (unknown) entities from this parse
   const _existingEntities = typeof _allEntities !== 'undefined' ? _allEntities : [];
-  const _entitySelectOptions = _existingEntities.filter(e => !e.actor_only);
+  const _entitySelectOptions = _existingEntities.filter(e => !e.actor_only && e.type !== 'char');
   const _entityById = {};
   _entitySelectOptions.forEach(e => { _entityById[e.id] = e; });
   const _seenNames = new Set(_existingEntities.map(e => e.name.toLowerCase()));
@@ -2215,6 +2215,49 @@ function rfEvtDelete(btn) {
           </select>
           <button type="submit" style="background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:5px 12px; font-size:0.78rem; font-weight:700; cursor:pointer;">Add</button>
         </form>
+
+        {# Character log entries #}
+        {% set _clog = char.get('log', []) | sort(attribute='session', reverse=True) %}
+        {% set _cal = char_actor_logs.get(char.name, []) %}
+        {% if _clog %}
+        <p style="color:var(--muted); font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin:12px 0 4px 0;">Events on {{ char.name }}</p>
+        <ul style="list-style:none; margin:0 0 8px 0; padding:0; display:flex; flex-direction:column; gap:4px;">
+        {% for evt in _clog %}
+        {% set _pc = '#7ec87e' if evt.polarity == 'positive' else '#e05c5c' if evt.polarity == 'negative' else 'var(--muted)' %}
+        <li style="padding:5px 8px; background:var(--surface); border-radius:4px; border-left:3px solid {{ _pc }};">
+          <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-bottom:2px;">
+            <span style="color:var(--muted); font-size:0.68rem;">S{{ evt.session }}</span>
+            {% if evt.polarity %}<span style="color:{{ _pc }}; font-size:0.68rem; font-weight:700;">{{ evt.polarity }}</span>{% endif %}
+            {% if evt.actor_id %}<span style="color:var(--muted); font-size:0.68rem;">by {{ evt.actor_id }}</span>{% endif %}
+            {% if evt.visibility == 'dm_only' %}<span style="color:var(--purple); font-size:0.65rem;">{{ terms.dm }} only</span>{% endif %}
+          </div>
+          <span style="color:var(--text); font-size:0.8rem;">{{ evt.note }}</span>
+        </li>
+        {% endfor %}
+        </ul>
+        {% endif %}
+        {% if _cal %}
+        <p style="color:var(--muted); font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin:{% if not _clog %}12px{% else %}0{% endif %} 0 4px 0;">Events Caused by {{ char.name }}</p>
+        <ul style="list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:4px;">
+        {% for evt in _cal %}
+        {% set _pc = '#7ec87e' if evt.polarity == 'positive' else '#e05c5c' if evt.polarity == 'negative' else 'var(--muted)' %}
+        <li style="padding:5px 8px; background:var(--surface); border-radius:4px; border-left:3px solid {{ _pc }};">
+          <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-bottom:2px;">
+            <span style="color:var(--muted); font-size:0.68rem;">S{{ evt.session }}</span>
+            {% if evt.polarity %}<span style="color:{{ _pc }}; font-size:0.68rem; font-weight:700;">{{ evt.polarity }}</span>{% endif %}
+            <span style="color:var(--muted); font-size:0.68rem;">on</span>
+            {% if evt._target_type != 'char' %}
+            <a href="/{{ slug }}/world/{{ evt._target_type }}/{{ evt._target_id }}" style="color:var(--gold); font-size:0.75rem; font-weight:600; text-decoration:none;">{{ evt._target_name }}</a>
+            {% else %}
+            <span style="color:var(--gold); font-size:0.75rem; font-weight:600;">{{ evt._target_name }}</span>
+            {% endif %}
+            {% if evt.visibility == 'dm_only' %}<span style="color:var(--purple); font-size:0.65rem;">{{ terms.dm }} only</span>{% endif %}
+          </div>
+          <span style="color:var(--text); font-size:0.8rem;">{{ evt.note }}</span>
+        </li>
+        {% endfor %}
+        </ul>
+        {% endif %}
       </div>
     </div>
     {% endfor %}

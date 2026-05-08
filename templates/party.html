@@ -142,6 +142,28 @@
   <p class="text-muted text-sm" style="margin-bottom:0;">No interactions logged yet.</p>
   {% endif %}
 
+  {% if char.get('_actor_log') %}
+  <p style="color:var(--muted); font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin:10px 0 4px 0;">Events Caused by {{ char.name }}</p>
+  <ul class="log-list" style="margin-bottom:0;">
+  {% for entry in char._actor_log %}{% if loop.index0 < 4 %}
+  {% set _pc = '#7ec87e' if entry.polarity == 'positive' else '#e05c5c' if entry.polarity == 'negative' else 'var(--muted)' %}
+  <li style="font-size:0.82rem;">
+    <span class="log-session">{{ terms.session }} {{ entry.session }}</span>
+    {% if entry.polarity and entry.polarity != 'neutral' %}
+    <span style="color:{{ _pc }}; font-size:0.7rem; font-weight:700; margin-right:3px;">{% if entry.polarity == 'positive' %}+{% else %}−{% endif %}{{ entry.intensity }}</span>
+    {% endif %}
+    <span style="color:var(--muted); font-size:0.7rem; font-style:italic; margin-right:3px;">→
+      {% if entry._target_type != 'char' %}<a href="/{{ slug }}/world/{{ entry._target_type }}/{{ entry._target_id }}" style="color:var(--gold-dim); text-decoration:none;">{{ entry._target_name }}</a>{% else %}{{ entry._target_name }}{% endif %}
+    </span>
+    <span style="color:var(--text-dim);">{{ entry.note | wikilinks(slug, npcs, factions, locations) }}</span>
+  </li>
+  {% endif %}{% endfor %}
+  </ul>
+  {% if char._actor_log | length > 4 %}
+  <p style="font-size:0.72rem; color:var(--muted); margin:4px 0 0 0;">+{{ char._actor_log | length - 4 }} more</p>
+  {% endif %}
+  {% endif %}
+
   {% if is_dm or is_my_char %}
   <details style="margin-top:12px;">
     <summary style="list-style:none; cursor:pointer; color:var(--gold-dim); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">

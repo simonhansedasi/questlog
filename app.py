@@ -2326,6 +2326,11 @@ def party(slug):
             return actor
         return None
 
+    all_chars_for_actor = db.get_all_party_characters(slug, include_hidden=is_dm)
+    _actor_npcs  = db.get_npcs(slug, include_hidden=is_dm)
+    _actor_facs  = db.get_factions(slug, include_hidden=is_dm)
+    _actor_locs  = db.get_locations(slug, include_hidden=is_dm)
+
     for char in characters:
         char["_conditions"] = db.get_character_conditions(
             slug, char["name"], include_hidden=is_dm, include_resolved=False
@@ -2335,6 +2340,34 @@ def party(slug):
         for e in visible:
             e["_actor_name"] = _resolve_actor(e)
         char["_log"] = list(reversed(visible))
+
+        _cname = char["name"]
+        _cslug = db.slugify(_cname)
+        _al = []
+        for _n in _actor_npcs:
+            for _e in db.get_visible_log(_n.get("log", []), is_dm=is_dm):
+                _aid = _e.get("actor_id") or ""
+                if _aid == _cname or _aid == _cslug:
+                    _al.append({**_e, "_target_name": _n["name"], "_target_id": _n["id"], "_target_type": "npc"})
+        for _f in _actor_facs:
+            for _e in db.get_visible_log(_f.get("log", []), is_dm=is_dm):
+                _aid = _e.get("actor_id") or ""
+                if _aid == _cname or _aid == _cslug:
+                    _al.append({**_e, "_target_name": _f["name"], "_target_id": _f["id"], "_target_type": "faction"})
+        for _loc in _actor_locs:
+            for _e in db.get_visible_log(_loc.get("log", []), is_dm=is_dm):
+                _aid = _e.get("actor_id") or ""
+                if _aid == _cname or _aid == _cslug:
+                    _al.append({**_e, "_target_name": _loc["name"], "_target_id": _loc["id"], "_target_type": "location"})
+        for _oc in all_chars_for_actor:
+            if _oc["name"] == _cname:
+                continue
+            for _e in db.get_visible_log(_oc.get("log", []), is_dm=is_dm):
+                _aid = _e.get("actor_id") or ""
+                if _aid == _cname or _aid == _cslug:
+                    _al.append({**_e, "_target_name": _oc["name"], "_target_id": db.slugify(_oc["name"]), "_target_type": "char"})
+        _al.sort(key=lambda e: e.get("session", 0), reverse=True)
+        char["_actor_log"] = _al
 
     # Combined party timeline: group events + individual character events
     raw_group = [e for e in meta.get("party_group_log", [])
@@ -3254,6 +3287,24 @@ def npc(slug, npc_id):
     link_locations = db.get_locations(slug, include_hidden=is_dm)
     backlinks = _get_backlinks(npc_obj["name"], npc_id, link_npcs, link_factions, link_locations)
 
+    actor_logs = []
+    if is_dm:
+        for _n in db.get_npcs(slug, include_hidden=True):
+            if _n["id"] == npc_id:
+                continue
+            for _e in _n.get("log", []):
+                if _e.get("actor_id") == npc_id:
+                    actor_logs.append({**_e, "_target_name": _n["name"], "_target_id": _n["id"], "_target_type": "npc"})
+        for _f in db.get_factions(slug, include_hidden=True):
+            for _e in _f.get("log", []):
+                if _e.get("actor_id") == npc_id:
+                    actor_logs.append({**_e, "_target_name": _f["name"], "_target_id": _f["id"], "_target_type": "faction"})
+        for _loc in db.get_locations(slug, include_hidden=True):
+            for _e in _loc.get("log", []):
+                if _e.get("actor_id") == npc_id:
+                    actor_logs.append({**_e, "_target_name": _loc["name"], "_target_id": _loc["id"], "_target_type": "location"})
+        actor_logs.sort(key=lambda e: e.get("session", 0), reverse=True)
+
     return render_template("npc.html", meta=meta, npc=npc_obj, slug=slug,
                            is_dm=is_dm, is_player=is_player,
                            viewer_known_events=effective_known_events,
@@ -3269,7 +3320,8 @@ def npc(slug, npc_id):
                            all_factions=all_factions_full,
                            link_npcs=link_npcs, link_factions=link_factions,
                            link_locations=link_locations,
-                           backlinks=backlinks)
+                           backlinks=backlinks,
+                           actor_logs=actor_logs)
 
 
 @app.route("/<slug>/world/faction/<faction_id>")
@@ -3332,6 +3384,24 @@ def faction(slug, faction_id):
     backlinks = _get_backlinks(faction_obj["name"], faction_id, link_npcs, link_factions, link_locations)
     char_bonds = db.get_conditions_for_faction(slug, faction_id)
 
+    actor_logs = []
+    if is_dm:
+        for _n in db.get_npcs(slug, include_hidden=True):
+            for _e in _n.get("log", []):
+                if _e.get("actor_id") == faction_id and _e.get("actor_type") == "faction":
+                    actor_logs.append({**_e, "_target_name": _n["name"], "_target_id": _n["id"], "_target_type": "npc"})
+        for _f in db.get_factions(slug, include_hidden=True):
+            if _f["id"] == faction_id:
+                continue
+            for _e in _f.get("log", []):
+                if _e.get("actor_id") == faction_id and _e.get("actor_type") == "faction":
+                    actor_logs.append({**_e, "_target_name": _f["name"], "_target_id": _f["id"], "_target_type": "faction"})
+        for _loc in db.get_locations(slug, include_hidden=True):
+            for _e in _loc.get("log", []):
+                if _e.get("actor_id") == faction_id:
+                    actor_logs.append({**_e, "_target_name": _loc["name"], "_target_id": _loc["id"], "_target_type": "location"})
+        actor_logs.sort(key=lambda e: e.get("session", 0), reverse=True)
+
     affiliated_chars = faction_obj.get("affiliated_chars", [])
     faction_party_affiliated = faction_obj.get("party_affiliated", False)
 
@@ -3348,7 +3418,8 @@ def faction(slug, faction_id):
                            link_npcs=link_npcs, link_factions=link_factions,
                            link_locations=link_locations,
                            backlinks=backlinks,
-                           char_bonds=char_bonds)
+                           char_bonds=char_bonds,
+                           actor_logs=actor_logs)
 
 
 @app.route("/<slug>/world/location/<location_id>")
@@ -3599,6 +3670,38 @@ def dm(slug):
         _char_group = {c["name"]: p["name"] for p in parties for c in p.get("characters", [])}
         for _c in all_party_chars:
             _c["_group_name"] = _char_group.get(_c["name"], "")
+    _char_actor_npcs = db.get_npcs(slug, include_hidden=True)
+    _char_actor_factions = db.get_factions(slug, include_hidden=True)
+    _char_actor_locs = db.get_locations(slug, include_hidden=True)
+    char_actor_logs = {}
+    for _char in all_party_chars:
+        _cname = _char["name"]
+        _cslug = db.slugify(_cname)
+        _al = []
+        for _n in _char_actor_npcs:
+            for _e in _n.get("log", []):
+                _aid = _e.get("actor_id") or ""
+                if _aid == _cname or _aid == _cslug:
+                    _al.append({**_e, "_target_name": _n["name"], "_target_id": _n["id"], "_target_type": "npc"})
+        for _f in _char_actor_factions:
+            for _e in _f.get("log", []):
+                _aid = _e.get("actor_id") or ""
+                if _aid == _cname or _aid == _cslug:
+                    _al.append({**_e, "_target_name": _f["name"], "_target_id": _f["id"], "_target_type": "faction"})
+        for _loc in _char_actor_locs:
+            for _e in _loc.get("log", []):
+                _aid = _e.get("actor_id") or ""
+                if _aid == _cname or _aid == _cslug:
+                    _al.append({**_e, "_target_name": _loc["name"], "_target_id": _loc["id"], "_target_type": "location"})
+        for _oc in all_party_chars:
+            if _oc["name"] == _cname:
+                continue
+            for _e in _oc.get("log", []):
+                _aid = _e.get("actor_id") or ""
+                if _aid == _cname or _aid == _cslug:
+                    _al.append({**_e, "_target_name": _oc["name"], "_target_id": db.slugify(_oc["name"]), "_target_type": "char"})
+        _al.sort(key=lambda e: e.get("session", 0), reverse=True)
+        char_actor_logs[_cname] = _al
     _party_display_name = meta.get("party_name") or "The Party"
     _multi_party = len(parties) > 1
     all_entities = (
@@ -3680,7 +3783,8 @@ def dm(slug):
                            active_branch=active_branch,
                            all_log_entries=all_log_entries,
                            parties=parties,
-                           all_party_chars=all_party_chars)
+                           all_party_chars=all_party_chars,
+                           char_actor_logs=char_actor_logs)
 
 
 @app.route("/<slug>/dm/log/quick", methods=["POST"])
@@ -4052,7 +4156,7 @@ def dm_commit_proposals(slug):
     faction_by_name = {f["name"].lower(): f["id"] for f in db.get_factions(slug, include_hidden=True)}
     condition_by_name = {c["name"].lower(): c["id"] for c in db.get_conditions(slug, include_hidden=True, include_resolved=True)}
     location_by_name = {loc["name"].lower(): loc["id"] for loc in db.get_locations(slug, include_hidden=True)}
-    party_names = {c["name"].lower() for c in db.get_all_party_characters(slug)}
+    char_by_name = {c["name"].lower(): c["name"] for c in db.get_all_party_characters(slug, include_hidden=True)}
 
     committed = 0
     created = []
@@ -4060,10 +4164,8 @@ def dm_commit_proposals(slug):
 
     # Pre-pass: create all new NPC/faction entities first so actor references resolve correctly
     for entry in data["entries"]:
-        if (entry.get("entity_name") or "").strip().lower() in party_names:
-            continue
         etype = entry.get("entity_type", "npc")
-        if etype in ("ship", "condition", "location", "party", "party_group"):
+        if etype in ("ship", "condition", "location", "party", "party_group", "char"):
             continue
         # Don't trust entity_id from AI for existence — check by name only
         if entry.get("entity_id") and (
@@ -4092,10 +4194,10 @@ def dm_commit_proposals(slug):
                 created.append({"name": name, "type": "npc", "id": db.slugify(name)})
 
     for entry in data["entries"]:
-        if (entry.get("entity_name") or "").strip().lower() in party_names:
-            continue
         entity_id = entry.get("entity_id")
         entity_type = entry.get("entity_type", "npc")
+        if entity_type in ("char", "party", "party_group"):
+            continue
         note = entry.get("note", "").strip()
         if not note:
             continue
@@ -4171,6 +4273,23 @@ def dm_commit_proposals(slug):
                 entity_id = npc_by_name.get(name_lower) or faction_by_name.get(name_lower)
 
             if not entity_id:
+                # Don't create ghost NPCs for known party characters
+                if entity_type != "faction" and char_by_name.get(name_lower):
+                    char_canon = char_by_name[name_lower]
+                    _session_n = int(entry.get("session") or current_session)
+                    _polarity = entry.get("polarity") or None
+                    _intensity = int(entry.get("intensity") or 1)
+                    _event_type = entry.get("event_type") or None
+                    _visibility = entry.get("visibility", "public")
+                    _actor_id = entry.get("actor_id") or None
+                    _actor_type = entry.get("actor_type") or None
+                    if _actor_id and _actor_id.startswith("__proposed__:"):
+                        _pname = _actor_id[13:].lower()
+                        _actor_id = npc_by_name.get(_pname) or faction_by_name.get(_pname) or None
+                    db.log_character(slug, char_canon, _session_n, note, polarity=_polarity, intensity=_intensity,
+                                     event_type=_event_type, visibility=_visibility, actor_id=_actor_id, actor_type=_actor_type)
+                    committed += 1
+                    continue
                 polarity_hint = entry.get("polarity") or ""
                 rel = "friendly" if polarity_hint == "positive" else "hostile" if polarity_hint == "negative" else "neutral"
                 new_id = db.slugify(name)
