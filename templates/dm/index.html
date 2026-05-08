@@ -62,7 +62,7 @@
 {% for _f in factions %}{% if _f.log %}{% set _gs.has_events = true %}{% endif %}{% endfor %}
 {% set _gs_nc = npcs | length %}
 {% set _gs_fc = factions | length %}
-{% set _gs_pc = party | length %}
+{% set _gs_pc = all_party_chars | length %}
 {% set _gs_lc = locations | length %}
 {% set _gs_ttrpg = meta.mode not in ('fiction', 'historical') %}
 
@@ -797,8 +797,9 @@ function dismissRipple(rid) {
 })();
 
 var _proposalData = {{ (saved_proposals.proposals if saved_proposals and saved_proposals.proposals else []) | tojson }};
-var _partyChars = {{ party | map(attribute='name') | list | tojson }};
+var _partyChars = {{ all_party_chars | map(attribute='name') | list | tojson }};
 var _partyName = {{ (meta.party_name or 'The Party') | tojson }};
+var _locationOptions = {{ locations | tojson }};
 if (_proposalData.length) {
   renderProposals(_proposalData, {{ saved_proposals.session if saved_proposals and saved_proposals.session else 'null' }});
 }
@@ -897,6 +898,7 @@ function renderProposals(proposals, sessionN) {
     const shipBadge = isShip ? '<span style="color:#5ba4cf; font-size:0.68rem; font-weight:700; margin-left:4px;">ship log</span>' : '';
     const conflictBadge = p.conflict ? '<span style="color:#e05c5c; font-size:0.68rem; font-weight:700; margin-left:4px;" title="This may contradict the entity\'s known state — review before committing">⚠ conflict</span>' : '';
     const borderCol = p.conflict ? '#e05c5c' : col;
+    const locHtml = _locationOptions.length ? '<div style="display:flex; align-items:center; gap:8px;"><span style="color:var(--muted); font-size:0.68rem; white-space:nowrap;">At</span><select onchange="_proposalData[' + i + '].location_id=this.value||null" style="background:var(--surface); border:1px solid var(--border); color:var(--text); border-radius:3px; padding:1px 5px; font-size:0.72rem; cursor:pointer; flex:1; min-width:120px;"><option value="">— no location —</option>' + _locationOptions.map(function(l){ return '<option value="' + l.id + '"' + ((p.location_id||'') === l.id ? ' selected' : '') + '>' + l.name + '</option>'; }).join('') + '</select></div>' : '';
     return `<div id="prop-card-${i}" style="display:flex; gap:10px; align-items:flex-start; background:var(--surface2);
                        border:1px solid var(--border); border-left:3px solid ${borderCol}; border-radius:5px; padding:10px 12px;">
       <input type="checkbox" id="prop-${i}" checked style="margin-top:3px; accent-color:var(--gold); flex-shrink:0;">
@@ -953,6 +955,7 @@ function renderProposals(proposals, sessionN) {
                    style="accent-color:var(--purple);"> Secret actor
           </label>
         </div>
+        ${locHtml}
         ${(!p.entity_id && !isShip && !isPartyGroup) ? `<div style="display:flex; align-items:center; gap:8px;"><p style="color:#7ec87e; font-size:0.7rem; margin:0;">New entity — will be created on commit.</p><label style="display:flex; align-items:center; gap:4px; font-size:0.68rem; color:var(--muted); cursor:pointer; white-space:nowrap;"><input type="checkbox" ${p.entity_hidden?'checked':''} onchange="_proposalData[${i}].entity_hidden=this.checked" style="accent-color:var(--gold);"> Hidden</label></div>` : ''}
         ${_partyChars.length ? `<div style="display:flex; gap:3px; flex-wrap:wrap; align-items:center;">
           <span style="color:var(--muted); font-size:0.68rem; flex-shrink:0;">Seen by:</span>
@@ -1048,6 +1051,7 @@ function commitProposals(slug) {
       actor_type: p.actor_type || null,
       actor_dm_only: !!p.actor_dm_only,
       entity_hidden: !!p.entity_hidden,
+      location_id: p.location_id || null,
     }));
   if (!entries.length) {
     document.getElementById('commit-status').textContent = 'Nothing to commit.';
@@ -1606,10 +1610,14 @@ function generateBrief() {
           {% for f in factions %}<option value="faction:{{ f.id }}">{{ f.name }}</option>{% endfor %}
         </optgroup>
         {% endif %}
-        {% if party %}
+        {% if all_party_chars %}
         <optgroup label="{{ terms.cast_label }}">
-          <option value="party_group:_party">The Party (all)</option>
-          {% for char in party %}<option value="party:{{ char.name }}">{{ char.name }}</option>{% endfor %}
+          {% if parties | length > 1 %}
+          {% for p in parties %}<option value="party_group:{{ p.id }}">{{ p.name }} (group)</option>{% endfor %}
+          {% else %}
+          <option value="party_group:_party">{{ (meta.party_name or 'The Party') }} (all)</option>
+          {% endif %}
+          {% for char in all_party_chars %}<option value="party:{{ char.name }}">{{ char.name }}</option>{% endfor %}
         </optgroup>
         {% endif %}
         {% if conditions %}
@@ -1633,15 +1641,19 @@ function generateBrief() {
                        border-radius:4px; padding:6px 10px; font-size:0.85rem; min-width:160px;"
                 onchange="(function(s){document.getElementById('quick-actor-type').value=s.options[s.selectedIndex].dataset.type||''})(this)">
           <option value="" data-type="">— nobody specific —</option>
+          {% if parties | length > 1 %}
+          {% for p in parties %}<option value="{{ p.name }}" data-type="party">{{ p.name }}</option>{% endfor %}
+          {% else %}
           <option value="{{ meta.observer_name or terms.cast_label }}" data-type="party">{{ terms.cast_label }} (whole group)</option>
+          {% endif %}
           {% if npcs %}
           <optgroup label="{{ terms.npcs }}">
             {% for npc in npcs %}<option value="{{ npc.id }}" data-type="npc">{{ npc.name }}</option>{% endfor %}
           </optgroup>
           {% endif %}
-          {% if party %}
+          {% if all_party_chars %}
           <optgroup label="{{ terms.cast_label }} — individual">
-            {% for char in party %}<option value="{{ char.name }}" data-type="char">{{ char.name }}</option>{% endfor %}
+            {% for char in all_party_chars %}<option value="{{ char.name }}" data-type="char">{{ char.name }}</option>{% endfor %}
           </optgroup>
           {% endif %}
           {% if factions %}
@@ -1730,10 +1742,10 @@ function generateBrief() {
       <option value="dm_only">{{ terms.dm }} only</option>
     </select>
   </div>
-  {% if party %}
+  {% if all_party_chars %}
   <div style="display:flex; align-items:center; gap:12px; margin-top:4px; flex-wrap:wrap;">
     <span style="color:var(--muted); font-size:0.75rem;">Seen by:</span>
-    {% for char in party %}
+    {% for char in all_party_chars %}
     <label style="display:flex; align-items:center; gap:3px; font-size:0.75rem; color:var(--muted); cursor:pointer; white-space:nowrap;">
       <input type="checkbox" name="witnesses" value="{{ char.name }}" form="quick-log-form" style="accent-color:var(--gold);">
       {{ char.name }}
@@ -1848,7 +1860,7 @@ function generateBrief() {
                     style="background:none; border:none; color:var(--muted); padding:0 4px; font-size:0.7rem; cursor:pointer; opacity:0.5;" title="Delete">×</button>
           </span>
         </div>
-        <div id="evtnote-{{ e.id }}" style="font-size:0.8rem; color:var(--text-dim); margin-top:1px; padding-left:2px;">{{ e.note | wikilinks(slug, npcs, factions, locations, party) }}</div>
+        <div id="evtnote-{{ e.id }}" style="font-size:0.8rem; color:var(--text-dim); margin-top:1px; padding-left:2px;">{{ e.note | wikilinks(slug, npcs, factions, locations, all_party_chars) }}</div>
         <div id="evtedit-{{ e.id }}" style="display:none; flex-direction:column; gap:5px; margin-top:6px;">
           <textarea id="evtinput-{{ e.id }}" rows="2"
                     style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:4px 8px; font-size:0.8rem; width:100%; box-sizing:border-box; resize:vertical; font-family:inherit;">{{ e.note }}</textarea>
@@ -1866,6 +1878,41 @@ function generateBrief() {
               <option value="2"{{ ' selected' if e.intensity == 2 }}>x2</option>
               <option value="3"{{ ' selected' if e.intensity == 3 }}>x3</option>
             </select>
+            <select id="evtvis-{{ e.id }}"
+                    style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:2px 7px; font-size:0.75rem;">
+              <option value="public"{{ ' selected' if vis == 'public' }}>public</option>
+              <option value="dm_only"{{ ' selected' if vis == 'dm_only' }}>{{ terms.dm }} only</option>
+            </select>
+          </div>
+          <div style="display:flex; gap:5px; align-items:center; flex-wrap:wrap;">
+            <span style="color:var(--muted); font-size:0.7rem;">Caused by</span>
+            <select id="evtactor-{{ e.id }}" data-cur-type="{{ e.actor_type or '' }}"
+                    style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:2px 7px; font-size:0.75rem; flex:1; min-width:120px;">
+              <option value="" data-type="">— nobody —</option>
+              {% if npcs %}<optgroup label="{{ terms.npcs }}">{% for n in npcs %}<option value="{{ n.id }}" data-type="npc"{{ ' selected' if e.actor_id == n.id }}>{{ n.name }}</option>{% endfor %}</optgroup>{% endif %}
+              {% if factions %}<optgroup label="{{ terms.factions }}">{% for f in factions %}<option value="{{ f.id }}" data-type="faction"{{ ' selected' if e.actor_id == f.id }}>{{ f.name }}</option>{% endfor %}</optgroup>{% endif %}
+              {% if all_party_chars %}<optgroup label="{{ terms.cast_label }}">{% for c in all_party_chars %}<option value="{{ c.name }}" data-type="char"{{ ' selected' if e.actor_id == c.name }}>{{ c.name }}</option>{% endfor %}</optgroup>{% endif %}
+            </select>
+            <span style="color:var(--muted); font-size:0.7rem;">At</span>
+            <select id="evtloc-{{ e.id }}"
+                    style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:2px 7px; font-size:0.75rem; flex:1; min-width:120px;">
+              <option value="">— no location —</option>
+              {% for l in locations %}<option value="{{ l.id }}"{{ ' selected' if e.location_id == l.id }}>{{ l.name }}</option>{% endfor %}
+            </select>
+          </div>
+          {% if all_party_chars %}
+          <div style="display:flex; gap:4px; align-items:center; flex-wrap:wrap;">
+            <span style="color:var(--muted); font-size:0.7rem; flex-shrink:0;">Seen by</span>
+            {% for c in all_party_chars %}
+            <label style="display:flex; align-items:center; gap:3px; font-size:0.7rem; color:var(--muted); cursor:pointer;">
+              <input type="checkbox" id="evtwit-{{ e.id }}-{{ c.name | urlencode }}"
+                     value="{{ c.name }}" {{ 'checked' if e.id in (c.known_events or []) }}
+                     style="accent-color:var(--gold);">{{ c.name }}
+            </label>
+            {% endfor %}
+          </div>
+          {% endif %}
+          <div style="display:flex; gap:5px;">
             <button onclick="rfEvtSave('{{ e.id }}','{{ e.entity_id }}','{{ e.type | lower }}')"
                     style="background:var(--purple); color:#fff; border:none; border-radius:4px; padding:2px 10px; font-size:0.75rem; font-weight:700; cursor:pointer;">Save</button>
             <button onclick="rfEvtCancelEdit('{{ e.id }}')"
@@ -1896,6 +1943,9 @@ function rfEvtEdit(btn) {
   if (ps) ps.value = btn.dataset.polarity || '';
   var is = document.getElementById('evtint-' + id);
   if (is) is.value = btn.dataset.intensity || 1;
+  document.querySelectorAll('[id^="evtwit-' + id + '-"]').forEach(function(cb) {
+    cb.dataset.initial = cb.checked ? 'true' : 'false';
+  });
 }
 function rfEvtCancelEdit(id) {
   var ed = document.getElementById('evtedit-' + id);
@@ -1905,14 +1955,45 @@ function rfEvtSave(id, entityId, entityType) {
   var note = (document.getElementById('evtinput-' + id) || {}).value || '';
   var polarity = (document.getElementById('evtpol-' + id) || {}).value || '';
   var intensity = +((document.getElementById('evtint-' + id) || {}).value || 1);
+  var visibility = (document.getElementById('evtvis-' + id) || {}).value || 'public';
+  var actorSel = document.getElementById('evtactor-' + id);
+  var actor_id = null, actor_type = null, clear_actor = false;
+  if (actorSel) {
+    if (actorSel.value) {
+      actor_id = actorSel.value;
+      var actorOpt = actorSel.options[actorSel.selectedIndex];
+      actor_type = actorOpt ? (actorOpt.dataset.type || null) : null;
+    } else {
+      clear_actor = true;
+    }
+  }
+  var locSel = document.getElementById('evtloc-' + id);
+  var location_id = locSel && locSel.value ? locSel.value : null;
+  var clear_location = locSel ? !locSel.value : false;
+  var witnesses_add = [], witnesses_remove = [];
+  document.querySelectorAll('[id^="evtwit-' + id + '-"]').forEach(function(cb) {
+    var was = cb.dataset.initial === 'true';
+    if (cb.checked && !was) witnesses_add.push(cb.value);
+    if (!cb.checked && was) witnesses_remove.push(cb.value);
+  });
   fetch('/{{ slug }}/dm/log/event/edit', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({event_id: id, entity_id: entityId, entity_type: entityType, note: note, polarity: polarity, intensity: intensity})
+    body: JSON.stringify({
+      event_id: id, entity_id: entityId, entity_type: entityType,
+      note: note, polarity: polarity, intensity: intensity,
+      visibility: visibility,
+      actor_id: actor_id, actor_type: actor_type, clear_actor: clear_actor,
+      location_id: location_id, clear_location: clear_location,
+      witnesses_add: witnesses_add, witnesses_remove: witnesses_remove
+    })
   }).then(function(r){ return r.json(); }).then(function(d) {
     if (d.ok) {
       var noteEl = document.getElementById('evtnote-' + id);
       if (noteEl) noteEl.textContent = note;
+      document.querySelectorAll('[id^="evtwit-' + id + '-"]').forEach(function(cb) {
+        cb.dataset.initial = cb.checked ? 'true' : 'false';
+      });
       rfEvtCancelEdit(id);
     }
   });
@@ -1940,11 +2021,21 @@ function rfEvtDelete(btn) {
 </div>
 {% set inp = "background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:5px 8px; font-size:0.8rem; width:100%; box-sizing:border-box;" %}
 <div class="card mb-4" id="world-section-body" style="display:none;">
-  {% if npcs or factions or party or conditions %}
+  {% if npcs or factions or all_party_chars or conditions %}
 
   {# ── Party (TTRPG only) ── #}
-  {% if party and (not meta.mode or meta.mode == 'ttrpg') %}
-  <p style="color:var(--muted); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;">{{ terms.cast_label }}</p>
+  {% if (all_party_chars or parties) and (not meta.mode or meta.mode == 'ttrpg') %}
+  <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px; flex-wrap:wrap;">
+    <p style="color:var(--muted); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin:0;">{{ terms.cast_label }}</p>
+    <a href="/{{ slug }}/dm/party/add" style="color:var(--gold-dim); font-size:0.72rem; text-decoration:none;">+ Add Character</a>
+    <button onclick="document.getElementById('dm-add-party-form').style.display='flex'; this.style.display='none';"
+            style="background:none; border:none; color:var(--muted); font-size:0.72rem; cursor:pointer; padding:0; text-decoration:underline dotted;">＋ Add Group</button>
+    <form id="dm-add-party-form" method="POST" action="/{{ slug }}/dm/party/create"
+          style="display:none; align-items:center; gap:4px;">
+      <input type="text" name="name" placeholder="Group name" required style="{{ inp }}">
+      <button type="submit" style="background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:3px 8px; font-size:0.72rem; font-weight:700; cursor:pointer;">Create</button>
+    </form>
+  </div>
   <div style="display:flex; flex-direction:column; gap:4px; margin-bottom:16px;">
 
     {# Party Hub — faction/NPC relation management #}
@@ -2007,7 +2098,12 @@ function rfEvtDelete(btn) {
       </div>
     </div>
 
-    {% for char in party %}
+    {% for char in all_party_chars %}
+    {% if parties | length > 1 and char._group_name is defined and (loop.first or char._group_name != all_party_chars[loop.index0 - 1]._group_name) %}
+    <div style="padding:3px 10px; border-left:2px solid var(--gold-dim); margin:{% if loop.first %}0{% else %}6px{% endif %} 0 3px 0;">
+      <span style="font-size:0.68rem; font-weight:700; color:var(--gold-dim); text-transform:uppercase; letter-spacing:0.05em;">{{ char._group_name }}</span>
+    </div>
+    {% endif %}
     {% set pid = 'char-' ~ char.name | replace(' ', '-') %}
     <div style="border:1px solid var(--border); border-radius:5px; overflow:hidden;">
       <div onclick="toggleWorldPanel('{{ pid }}')"
@@ -2088,10 +2184,12 @@ function rfEvtDelete(btn) {
           <input type="hidden" name="ajax" value="1">
           <select name="target_id" required style="{{ inp }} width:auto; flex:1; min-width:120px;"
                   onchange="this.form.target_type.value=this.options[this.selectedIndex].dataset.type">
+            {% set _other_chars = all_party_chars | selectattr('name', '!=', char.name) | list %}
+            {% if _other_chars %}<optgroup label="{{ terms.cast_label }}">{% for c in _other_chars %}<option value="_char_{{ c.name | slugify }}" data-type="char">{{ c.name }}</option>{% endfor %}</optgroup>{% endif %}
             {% if npcs %}<optgroup label="{{ terms.npcs }}">{% for n in npcs %}<option value="{{ n.id }}" data-type="npc">{{ n.name }}</option>{% endfor %}</optgroup>{% endif %}
             {% if factions %}<optgroup label="{{ terms.factions }}">{% for f in factions %}<option value="{{ f.id }}" data-type="faction">{{ f.name }}</option>{% endfor %}</optgroup>{% endif %}
           </select>
-          <input type="hidden" name="target_type" value="npc">
+          <input type="hidden" name="target_type" value="char">
           <select name="relation" style="{{ inp }} width:80px;">
             <option value="rival">rival</option>
             <option value="ally">ally</option>
@@ -2184,11 +2282,11 @@ function rfEvtDelete(btn) {
         </form>
 
         {# Party Relations #}
-        {% if party %}
+        {% if all_party_chars %}
         <p style="color:var(--muted); font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin:8px 0 6px 0;">{{ terms.cast_label }} Relations</p>
         <div id="{{ nid }}-charrels">
           {% set char_rels_here = [] %}
-          {% for char in party %}{% for rel in char.get('relations', []) %}{% if rel.target == npc.id %}{% set _ = char_rels_here.append({'char': char, 'rel': rel}) %}{% endif %}{% endfor %}{% endfor %}
+          {% for char in all_party_chars %}{% for rel in char.get('relations', []) %}{% if rel.target == npc.id %}{% set _ = char_rels_here.append({'char': char, 'rel': rel}) %}{% endif %}{% endfor %}{% endfor %}
           {% if char_rels_here %}
           <div style="display:flex; flex-direction:column; gap:4px; margin-bottom:8px;">
             {% for cr in char_rels_here %}
@@ -2214,7 +2312,7 @@ function rfEvtDelete(btn) {
               style="display:flex; gap:6px; align-items:flex-end; flex-wrap:wrap; margin-bottom:14px;">
           <input type="hidden" name="ajax" value="1">
           <select name="char_name" required style="{{ inp }} width:auto; min-width:100px;">
-            {% for char in party %}<option value="{{ char.name }}">{{ char.name }}</option>{% endfor %}
+            {% for char in all_party_chars %}<option value="{{ char.name }}">{{ char.name }}</option>{% endfor %}
           </select>
           <select name="relation" style="{{ inp }} width:80px;">
             <option value="rival">rival</option>
@@ -2666,6 +2764,16 @@ function rfEvtDelete(btn) {
         <input type="text" name="char_class" placeholder="Class" autocomplete="off" style="{{ input_s }} flex:1; min-width:100px; box-sizing:border-box;">
         <input type="number" name="level" value="1" min="1" max="20" style="{{ input_s }} width:70px;">
       </div>
+      {% if parties %}
+      <div style="display:flex; flex-direction:column; gap:3px;">
+        <label style="color:var(--muted); font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em;">Group</label>
+        <select name="party_id" style="{{ input_s }} width:100%; box-sizing:border-box;">
+          {% for p in parties %}
+          <option value="{{ p.id }}">{{ p.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      {% endif %}
       <textarea name="notes" rows="2" placeholder="Notes" autocomplete="off"
                 style="{{ input_s }} width:100%; box-sizing:border-box; resize:vertical; font-family:inherit;"></textarea>
       <div style="display:flex; justify-content:space-between; align-items:center;">

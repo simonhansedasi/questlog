@@ -33,6 +33,21 @@
     </form>
 
     <form method="POST" action="/welcome">
+      <button name="choice" value="campaign" type="submit"
+              style="width:100%; text-align:left; background:var(--surface); border:2px solid var(--gold);
+                     border-radius:8px; padding:20px 24px; cursor:pointer; color:var(--text); font-family:inherit;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:5px;">
+          <span style="font-size:1.05rem; font-weight:700; color:var(--gold);">Campaign mode</span>
+          <span style="font-size:0.7rem; color:var(--muted); border:1px solid var(--border); border-radius:3px; padding:1px 6px;">async</span>
+          <span style="font-size:0.7rem; color:var(--muted); border:1px solid var(--border); border-radius:3px; padding:1px 6px;">3 free plays</span>
+        </div>
+        <div style="font-size:0.88rem; color:var(--muted); line-height:1.5;">
+          Turn-based storytelling across time zones. Invite players by email, each person takes a turn when they're ready, and the AI referee logs the consequences to a living world.
+        </div>
+      </button>
+    </form>
+
+    <form method="POST" action="/welcome">
       <button name="choice" value="deepend" type="submit"
               style="width:100%; text-align:left; background:var(--surface); border:1px solid var(--border);
                      border-radius:8px; padding:20px 24px; cursor:pointer; color:var(--text); font-family:inherit;">

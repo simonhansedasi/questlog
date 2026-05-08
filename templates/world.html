@@ -353,7 +353,7 @@ window.applyFilters = function() {
           {% if entry.polarity == 'negative' %}↑{% elif entry.polarity == 'positive' %}↓{% endif %}{{ entry.intensity }}
         </span>
         {% endif %}
-        {{ entry.note | wikilinks(slug, npcs, factions, locations) }}
+        {{ entry.note | wikilinks(slug, npcs, factions, locations, party) }}
       </li>
       {% endif %}{% endfor %}
     </ul>
@@ -411,7 +411,7 @@ window.applyFilters = function() {
     <hr class="divider" style="margin:10px 0;">
 
     {% if npc.description %}
-    <p style="font-size:0.88rem; color:var(--text); margin-bottom:10px;">{{ npc.description | wikilinks(slug, npcs, factions, locations) }}</p>
+    <p style="font-size:0.88rem; color:var(--text); margin-bottom:10px;">{{ npc.description | wikilinks(slug, npcs, factions, locations, party) }}</p>
     {% endif %}
 
     {% if npc.relations %}
@@ -455,7 +455,7 @@ window.applyFilters = function() {
           {% if entry.polarity == 'positive' %}+{% elif entry.polarity == 'negative' %}−{% endif %}{{ entry.intensity }}
         </span>
         {% endif %}
-        {{ entry.note | wikilinks(slug, npcs, factions, locations) }}
+        {{ entry.note | wikilinks(slug, npcs, factions, locations, party) }}
       </li>
       {% endif %}{% endfor %}
     </ul>
@@ -500,7 +500,7 @@ window.applyFilters = function() {
     <hr class="divider" style="margin:10px 0;">
 
     {% if faction.description %}
-    <p style="font-size:0.88rem; color:var(--text); margin-bottom:10px;">{{ faction.description | wikilinks(slug, npcs, factions, locations) }}</p>
+    <p style="font-size:0.88rem; color:var(--text); margin-bottom:10px;">{{ faction.description | wikilinks(slug, npcs, factions, locations, party) }}</p>
     {% endif %}
 
     <a href="/{{ slug }}/world/faction/{{ faction.id }}"
@@ -513,7 +513,7 @@ window.applyFilters = function() {
       {% for entry in faction.log | sort(attribute='session', reverse=true) %}{% if loop.index0 < 4 %}
       <li style="font-size:0.82rem;">
         <span class="log-session">{{ terms.session }} {{ entry.session }}</span>
-        {{ entry.note | wikilinks(slug, npcs, factions, locations) }}
+        {{ entry.note | wikilinks(slug, npcs, factions, locations, party) }}
       </li>
       {% endif %}{% endfor %}
     </ul>
@@ -549,7 +549,7 @@ window.applyFilters = function() {
     <hr class="divider" style="margin:10px 0;">
 
     {% if loc.description %}
-    <p style="font-size:0.88rem; color:var(--text); margin-bottom:10px;">{{ loc.description | wikilinks(slug, npcs, factions, locations) }}</p>
+    <p style="font-size:0.88rem; color:var(--text); margin-bottom:10px;">{{ loc.description | wikilinks(slug, npcs, factions, locations, party) }}</p>
     {% endif %}
 
     <a href="/{{ slug }}/world/location/{{ loc.id }}"
@@ -563,7 +563,7 @@ window.applyFilters = function() {
       <li style="font-size:0.82rem;">
         <span class="log-session">{{ terms.session }} {{ entry.session }}</span>
         {% if entry.event_type %}<span style="color:var(--purple); font-size:0.72rem; font-weight:700; margin-right:5px; text-transform:uppercase; letter-spacing:0.04em;">{{ entry.event_type }}</span>{% endif %}
-        {{ entry.note | wikilinks(slug, npcs, factions, locations) }}
+        {{ entry.note | wikilinks(slug, npcs, factions, locations, party) }}
       </li>
       {% endif %}{% endfor %}
     </ul>

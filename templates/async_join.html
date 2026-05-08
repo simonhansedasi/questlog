@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Join {{ meta.name or 'Campaign' }}{% endblock %}
+{% block content %}
+<div style="max-width:520px; margin:64px auto 0; padding:0 16px 64px;">
+
+  {% if wrong_account %}
+  <div class="card" style="border-color:#e05c5c55; padding:20px 22px; margin-bottom:24px;">
+    <p style="font-weight:700; color:#e05c5c; margin:0 0 8px 0;">Wrong account</p>
+    <p style="color:var(--muted); font-size:0.9rem; line-height:1.6; margin:0 0 16px 0;">
+      This invite was sent to <strong style="color:var(--text);">{{ invite.email }}</strong>.
+      You're signed in as a different account. Sign out and sign in with the right one.
+    </p>
+    <form method="POST" action="/logout?next=/{{ slug }}/campaign/join/{{ token }}">
+      <button type="submit"
+              style="background:var(--surface2); border:1px solid var(--border); border-radius:5px;
+                     padding:8px 18px; font-size:0.88rem; color:var(--text); cursor:pointer; font-family:inherit;">
+        Sign out and use the right account →
+      </button>
+    </form>
+  </div>
+  {% else %}
+
+  {% with msgs = get_flashed_messages(with_categories=true) %}
+  {% for cat, msg in msgs %}
+  <div class="card mb-4" style="border-color:#e05c5c55; padding:12px 16px; margin-bottom:16px;">
+    <p style="margin:0; color:#e05c5c; font-size:0.9rem;">{{ msg }}</p>
+  </div>
+  {% endfor %}
+  {% endwith %}
+
+  <p style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:var(--gold); margin:0 0 8px 0;">You've been invited</p>
+  <h1 class="page-title" style="margin-bottom:4px;">{{ meta.name or 'New Campaign' }}</h1>
+  <p class="subtitle" style="margin-bottom:28px;">Async campaign — take your turn when you're ready.</p>
+
+  {% if arc and arc.title %}
+  <div class="card" style="border-color:var(--gold)44; padding:16px 18px; margin-bottom:24px;">
+    <p style="font-size:0.7rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:0.1em; margin:0 0 6px 0;">The story so far</p>
+    <p style="font-weight:700; color:var(--text); margin:0 0 6px 0;">{{ arc.title }}</p>
+    {% if arc.description %}
+    <p style="color:var(--muted); font-size:0.88rem; margin:0; line-height:1.6;">{{ arc.description }}</p>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <form method="POST" action="/{{ slug }}/campaign/join/{{ token }}">
+    <div style="margin-bottom:20px;">
+      <label style="display:block; font-size:0.85rem; font-weight:700; color:var(--muted); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.08em;">
+        Name your character
+      </label>
+      <input type="text" name="character_name" required autofocus maxlength="60"
+             placeholder="Who are you in this world?"
+             style="width:100%; box-sizing:border-box; background:var(--surface2); border:1px solid var(--border);
+                    border-radius:6px; padding:12px 14px; color:var(--text); font-size:1rem;
+                    font-family:inherit; font-weight:600;">
+    </div>
+
+    <button type="submit"
+            style="width:100%; background:var(--gold); border:none; border-radius:6px; padding:14px;
+                   font-size:1rem; font-weight:700; color:#000; cursor:pointer; font-family:inherit;">
+      Join Campaign →
+    </button>
+    <p style="text-align:center; color:var(--muted); font-size:0.78rem; margin:10px 0 0;">
+      Your secret mission will be revealed on the next screen.
+    </p>
+  </form>
+
+  <div style="text-align:center; margin-top:24px;">
+    <form method="POST" action="/{{ slug }}/campaign/leave"
+          onsubmit="return confirm('Decline this invitation?')">
+      <input type="hidden" name="token" value="{{ token }}">
+      <button type="submit"
+              style="background:none; border:none; color:var(--muted); font-size:0.82rem;
+                     cursor:pointer; font-family:inherit; text-decoration:underline; padding:0;">
+        Decline invitation
+      </button>
+    </form>
+  </div>
+
+  {% endif %}
+
+</div>
+{% endblock %}

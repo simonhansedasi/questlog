@@ -35,6 +35,18 @@
                      border-radius:4px; padding:8px 12px; font-size:0.9rem; resize:vertical; font-family:inherit;"></textarea>
   </div>
 
+  {% if parties %}
+  <div style="display:flex; flex-direction:column; gap:4px;">
+    <label style="color:var(--gold); font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Group</label>
+    <select name="party_id" style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:8px 12px; font-size:0.9rem;">
+      {% set preselect = request.args.get('party_id', '') %}
+      {% for p in parties %}
+      <option value="{{ p.id }}" {% if p.id == preselect %}selected{% endif %}>{{ p.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  {% endif %}
+
   <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.9rem; color:var(--muted);">
     <input type="checkbox" name="hidden" style="accent-color:var(--gold);">
     Hidden from players

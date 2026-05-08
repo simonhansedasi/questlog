@@ -1,0 +1,538 @@
+{% extends "base.html" %}
+{% block title %}{{ meta.name or 'New Campaign' }} — Campaign Setup{% endblock %}
+{% block content %}
+<div style="max-width:600px; margin:48px auto 0; padding:0 16px 64px;">
+
+  <h1 class="page-title" style="margin-bottom:4px;">{{ meta.name or 'New Campaign' }}</h1>
+  <p class="subtitle" style="margin-bottom:28px;">Async Campaign — turn-based, no shared schedule required.</p>
+
+  {% with msgs = get_flashed_messages(with_categories=true) %}
+  {% for cat, msg in msgs %}
+  <div class="card mb-4" style="border-color:{% if cat == 'success' %}#4caf5055{% else %}#e05c5c55{% endif %}; padding:12px 16px; margin-bottom:16px;">
+    <p style="margin:0; color:{% if cat == 'success' %}#4caf50{% else %}#e05c5c{% endif %}; font-size:0.9rem;">{{ msg }}</p>
+  </div>
+  {% endfor %}
+  {% endwith %}
+
+  {% if game.phase == 'active' %}
+  <!-- Already running -->
+  <div class="card mb-4" style="border-color:#4caf5055; padding:16px 18px; margin-bottom:20px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+      <p style="margin:0; color:#4caf50; font-weight:700;">Campaign running — Turn {{ game.turn_number }}</p>
+      <a href="/{{ slug }}/campaign" style="color:#4caf50; font-size:0.88rem; font-weight:600; text-decoration:none;">Go to campaign →</a>
+    </div>
+  </div>
+
+  {% elif game.phase == 'recruiting' %}
+
+  {# ── Story Arc ──────────────────────────────────────────── #}
+  {% set arc = game.arc or {} %}
+  <h2 class="section-title">Story</h2>
+
+  {% if arc.title %}
+  <div class="card" style="border-color:var(--gold)44; padding:16px 18px; margin-bottom:8px;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; flex-wrap:wrap;">
+      <div style="flex:1; min-width:0;">
+        <p style="font-size:0.7rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:0.1em; margin:0 0 4px 0;">Story Arc</p>
+        <p style="font-weight:700; color:var(--text); margin:0 0 6px 0; font-size:0.95rem;">{{ arc.title }}</p>
+        {% if arc.description %}
+        <p style="color:var(--muted); font-size:0.85rem; margin:0 0 8px 0; line-height:1.6;">{{ arc.description }}</p>
+        {% endif %}
+        {% if arc.objectives %}
+        <p style="font-size:0.72rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin:8px 0 4px 0;">Potential paths</p>
+        <ul style="margin:0; padding-left:18px;">
+          {% for obj in arc.objectives %}
+          <li style="color:var(--muted); font-size:0.82rem; margin-bottom:2px;">{{ obj }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+      <button type="button" onclick="toggleArcEdit()"
+              style="background:none; border:1px solid var(--border); border-radius:4px; padding:4px 12px;
+                     font-size:0.78rem; color:var(--muted); cursor:pointer; font-family:inherit; flex-shrink:0;">
+        Edit
+      </button>
+    </div>
+  </div>
+  {% endif %}
+
+  <div id="arc-edit-section" style="{% if arc.title %}display:none;{% endif %} margin-bottom:20px;">
+    <form method="POST" action="/{{ slug }}/campaign/arc">
+      <input type="hidden" name="action" value="manual" id="arc-action-field">
+      <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px;">
+        <input type="text" name="arc_title" value="{{ arc.title or '' }}" maxlength="120"
+               placeholder="Campaign title"
+               style="background:var(--surface2); border:1px solid var(--border); border-radius:4px;
+                      padding:9px 12px; color:var(--text); font-size:0.9rem; font-family:inherit;">
+        <textarea name="arc_hook" rows="3" maxlength="800"
+                  placeholder="The hook — what's the inciting incident or world setup?"
+                  style="background:var(--surface2); border:1px solid var(--border); border-radius:4px;
+                         padding:9px 12px; color:var(--text); font-size:0.9rem; font-family:inherit;
+                         resize:vertical; line-height:1.5;">{{ arc.description or '' }}</textarea>
+        {% set objs = arc.objectives or [] %}
+        <input type="text" name="arc_path_1" value="{{ objs[0] if objs|length > 0 else '' }}" maxlength="200"
+               placeholder="Story path 1 (optional)"
+               style="background:var(--surface2); border:1px solid var(--border); border-radius:4px;
+                      padding:7px 12px; color:var(--text); font-size:0.85rem; font-family:inherit;">
+        <input type="text" name="arc_path_2" value="{{ objs[1] if objs|length > 1 else '' }}" maxlength="200"
+               placeholder="Story path 2 (optional)"
+               style="background:var(--surface2); border:1px solid var(--border); border-radius:4px;
+                      padding:7px 12px; color:var(--text); font-size:0.85rem; font-family:inherit;">
+        <input type="text" name="arc_path_3" value="{{ objs[2] if objs|length > 2 else '' }}" maxlength="200"
+               placeholder="Story path 3 (optional)"
+               style="background:var(--surface2); border:1px solid var(--border); border-radius:4px;
+                      padding:7px 12px; color:var(--text); font-size:0.85rem; font-family:inherit;">
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button type="submit"
+                style="background:var(--gold); border:none; border-radius:5px; padding:8px 20px;
+                       font-size:0.88rem; font-weight:700; color:#000; cursor:pointer; font-family:inherit;">
+          Save story →
+        </button>
+        <button type="button" onclick="generateArc()"
+                style="background:var(--surface2); border:1px solid var(--border); border-radius:5px;
+                       padding:8px 16px; font-size:0.85rem; color:var(--muted); cursor:pointer; font-family:inherit;">
+          Generate with AI →
+        </button>
+        {% if arc.title %}
+        <button type="button" onclick="toggleArcEdit()"
+                style="background:none; border:none; font-size:0.82rem; color:var(--muted);
+                       cursor:pointer; font-family:inherit; padding:8px 0;">
+          Cancel
+        </button>
+        {% endif %}
+      </div>
+    </form>
+  </div>
+
+  {# ── Players ────────────────────────────────────────────── #}
+  <h2 class="section-title">Players</h2>
+  <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:24px;">
+
+    {% for p in players %}
+    <div class="card" style="padding:14px 18px; border-color:{% if not p.character_name %}var(--gold)44{% else %}var(--border){% endif %};">
+      {% if not p.character_name and p.username == session.user %}
+      <p style="font-size:0.78rem; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:0.08em; margin:0 0 10px 0;">
+        Name your character to get ready
+      </p>
+      <form method="POST" action="/{{ slug }}/campaign/name" style="display:flex; gap:8px; flex-wrap:wrap;">
+        <input type="text" name="character_name" required autofocus maxlength="60"
+               placeholder="Who are you in this world?"
+               style="flex:1; min-width:160px; background:var(--surface); border:1px solid var(--border);
+                      border-radius:5px; padding:9px 12px; color:var(--text); font-size:0.95rem;
+                      font-family:inherit; font-weight:600;">
+        <button type="submit"
+                style="background:var(--gold); border:none; border-radius:5px; padding:9px 18px;
+                       font-size:0.88rem; font-weight:700; color:#000; cursor:pointer; font-family:inherit;">
+          Set name →
+        </button>
+      </form>
+      {% else %}
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+        <div>
+          <span style="font-weight:700; color:var(--text);">{{ p.character_name or p.email or p.username }}</span>
+          <span class="text-muted text-sm" style="margin-left:8px;">{{ p.username }}{% if p.username == session.user %} (you){% endif %}</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="color:#4caf50; font-size:0.82rem; font-weight:700;">✓ Ready</span>
+          {% if player_tokens.get(p.username) %}
+          <form method="POST" action="/{{ slug }}/campaign/remove"
+                onsubmit="return confirm('Remove {{ p.character_name or p.username }} from the campaign?')"
+                style="margin:0;">
+            <input type="hidden" name="token" value="{{ player_tokens[p.username] }}">
+            <button type="submit"
+                    style="background:none; border:1px solid var(--border); border-radius:4px;
+                           padding:3px 10px; font-size:0.75rem; color:var(--muted); cursor:pointer;
+                           font-family:inherit;">
+              Remove
+            </button>
+          </form>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+
+    {% for inv in pending_invites %}
+    <div class="card" style="padding:12px 16px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:8px;">
+        <div style="flex:1; min-width:0;">
+          <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+            {% if inv.character_name %}
+            <span style="font-weight:700; color:var(--text); font-size:0.9rem;">{{ inv.character_name }}</span>
+            <span class="text-muted text-sm">{{ inv.email }}</span>
+            <span style="color:#4caf50; font-size:0.78rem; font-weight:700;">✓ Ready</span>
+            {% else %}
+            <span style="font-weight:600; color:var(--text); font-size:0.9rem;">{{ inv.email }}</span>
+            <span style="color:var(--gold); font-size:0.78rem;">Waiting to join</span>
+            {% endif %}
+          </div>
+          {% if not inv.claimed_by %}
+          <div style="display:flex; align-items:center; gap:6px; margin-top:8px;">
+            <input type="text" readonly
+                   value="{{ request.host_url.rstrip('/') }}/{{ slug }}/campaign/join/{{ inv.token }}"
+                   style="flex:1; min-width:0; background:var(--surface); border:1px solid var(--border);
+                          border-radius:4px; padding:4px 8px; color:var(--muted); font-size:0.72rem;
+                          font-family:monospace;"
+                   onclick="this.select()">
+            <button type="button"
+                    onclick="navigator.clipboard.writeText(this.previousElementSibling.value).then(()=>{ this.textContent='Copied!'; setTimeout(()=>this.textContent='Copy',1500); })"
+                    style="background:var(--surface2); border:1px solid var(--border); border-radius:4px;
+                           padding:4px 10px; font-size:0.75rem; color:var(--muted); cursor:pointer;
+                           font-family:inherit; white-space:nowrap;">
+              Copy
+            </button>
+          </div>
+          {% endif %}
+        </div>
+        <form method="POST" action="/{{ slug }}/campaign/remove"
+              onsubmit="return confirm('Remove {{ inv.character_name or inv.email }} from the campaign?')">
+          <input type="hidden" name="token" value="{{ inv.token }}">
+          <button type="submit"
+                  style="background:none; border:1px solid var(--border); border-radius:4px;
+                         padding:4px 10px; font-size:0.75rem; color:var(--muted); cursor:pointer;
+                         font-family:inherit; flex-shrink:0;">
+            Remove
+          </button>
+        </form>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  {# ── Secret Roles ───────────────────────────────────────── #}
+  {% if players %}
+  <h2 class="section-title" style="margin-bottom:4px;">Secret Roles <span style="font-size:0.72rem; font-weight:600; color:var(--muted); text-transform:none; letter-spacing:0;">— optional</span></h2>
+  <p style="color:var(--muted); font-size:0.82rem; margin:0 0 16px 0; line-height:1.5;">Give players hidden agendas and biases — or leave everyone without a role.</p>
+
+  {% set all_char_names = players | map(attribute='character_name') | select | list %}
+  {% set _ROLES = ['Saboteur', 'Protector', 'Investigator', 'Opportunist', 'Loyalist', 'Impostor', 'Catalyst'] %}
+
+  <form method="POST" action="/{{ slug }}/campaign/roles">
+    <input type="hidden" name="action" value="save" id="roles-action-field">
+    <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:16px;">
+      {% for p in players %}
+      {% set cid = p.character_id %}
+      {% set sec = p.secret or {} %}
+      {% set pname = p.character_name or p.email or p.username %}
+      <div class="card" style="padding:14px 18px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <span style="font-weight:700; color:var(--text); font-size:0.9rem;">{{ pname }}</span>
+          {% if sec.role %}
+          <span style="background:var(--gold)22; color:var(--gold); font-size:0.72rem; font-weight:700;
+                       border-radius:20px; padding:2px 10px; text-transform:uppercase; letter-spacing:0.06em;">
+            {{ sec.role }}
+          </span>
+          {% endif %}
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:8px;">
+          <select name="role_{{ cid }}" class="role-select" data-player="{{ cid }}"
+                  style="background:var(--surface2); border:1px solid var(--border); border-radius:4px;
+                         padding:6px 10px; color:var(--text); font-size:0.85rem; font-family:inherit;
+                         cursor:pointer; flex:1; min-width:160px;">
+            <option value="none" {% if not sec.role %}selected{% endif %}>No role</option>
+            {% for r in _ROLES %}
+            <option value="{{ r }}" {% if sec.role == r %}selected{% endif %}>{{ r }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div id="role-details-{{ cid }}" style="{% if not sec.role %}display:none;{% endif %} display:{% if sec.role %}flex{% else %}none{% endif %}; flex-direction:column; gap:8px;">
+          <textarea name="objective_{{ cid }}" rows="2" maxlength="500"
+                    placeholder="Secret objective (what are they really trying to do?)"
+                    style="background:var(--surface); border:1px solid var(--border); border-radius:4px;
+                           padding:7px 10px; color:var(--text); font-size:0.85rem; font-family:inherit;
+                           resize:vertical; line-height:1.5;">{{ sec.objective or '' }}</textarea>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <select name="bias_target_{{ cid }}"
+                    style="flex:1; min-width:140px; background:var(--surface); border:1px solid var(--border);
+                           border-radius:4px; padding:6px 10px; color:var(--text); font-size:0.82rem; font-family:inherit;">
+              <option value="">No bias target</option>
+              {% for other in players %}
+              {% if other.character_id != cid and other.character_name %}
+              <option value="{{ other.character_name }}" {% if sec.bias_target == other.character_name %}selected{% endif %}>
+                {{ other.character_name }}
+              </option>
+              {% endif %}
+              {% endfor %}
+            </select>
+            <input type="text" name="bias_type_{{ cid }}" value="{{ sec.bias_type or '' }}" maxlength="60"
+                   placeholder="bias type (e.g. suspects, protects)"
+                   style="flex:1; min-width:140px; background:var(--surface); border:1px solid var(--border);
+                          border-radius:4px; padding:6px 10px; color:var(--text); font-size:0.82rem; font-family:inherit;">
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:32px;">
+      <button type="submit"
+              style="background:var(--surface2); border:1px solid var(--border); border-radius:5px;
+                     padding:8px 20px; font-size:0.88rem; font-weight:700; color:var(--text);
+                     cursor:pointer; font-family:inherit;">
+        Save roles →
+      </button>
+      <button type="button" onclick="generateRoles()"
+              style="background:none; border:1px solid var(--border); border-radius:5px;
+                     padding:8px 16px; font-size:0.85rem; color:var(--muted); cursor:pointer; font-family:inherit;">
+        Generate AI roles for unassigned players →
+      </button>
+    </div>
+  </form>
+  {% endif %}
+
+  {# ── Start ──────────────────────────────────────────────── #}
+  <form method="POST" action="/{{ slug }}/campaign/start" style="margin-bottom:8px;">
+    <button type="submit"
+            {% if not can_start %}disabled{% endif %}
+            style="width:100%; background:{% if can_start %}#4caf50{% else %}var(--surface2){% endif %};
+                   border:none; border-radius:6px; padding:14px;
+                   font-size:1rem; font-weight:700;
+                   color:{% if can_start %}#fff{% else %}var(--muted){% endif %};
+                   cursor:{% if can_start %}pointer{% else %}not-allowed{% endif %};
+                   font-family:inherit;">
+      Start Campaign →
+    </button>
+  </form>
+  {% if not can_start %}
+  <p style="text-align:center; color:var(--muted); font-size:0.8rem; margin:0 0 24px;">
+    {% if not all_claimed %}Waiting for all players to join.
+    {% elif not all_named %}Everyone must name their character before starting.
+    {% endif %}
+  </p>
+  {% endif %}
+
+  {% else %}
+  {# ── Setup phase ─────────────────────────────────────────── #}
+  <form method="POST" action="/{{ slug }}/campaign/invite" id="setup-form">
+    <input type="hidden" name="action" value="setup_emails">
+    <input type="hidden" name="story_mode" value="ai" id="story-mode-field">
+
+    <h2 class="section-title">Who's playing?</h2>
+    <p class="text-muted text-sm" style="margin-bottom:16px;">Add each player's email. They'll get an invite link.</p>
+
+    <div id="email-list" style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px;">
+      <div class="email-row" style="display:flex; gap:8px; align-items:center;">
+        <input type="email" name="emails" placeholder="player@email.com"
+               style="flex:1; background:var(--surface2); border:1px solid var(--border); border-radius:4px;
+                      padding:9px 12px; color:var(--text); font-size:0.9rem; font-family:inherit;">
+        <button type="button" onclick="removeEmail(this)"
+                style="background:none; border:none; color:var(--muted); cursor:pointer; font-size:1.1rem; padding:4px 8px;">✕</button>
+      </div>
+    </div>
+
+    <button type="button" onclick="addEmail()"
+            style="background:none; border:1px dashed var(--border); border-radius:4px;
+                   padding:8px 16px; color:var(--muted); font-size:0.85rem; cursor:pointer;
+                   font-family:inherit; width:100%; margin-bottom:20px;">
+      + Add another player
+    </button>
+
+    <div class="card" style="padding:12px 16px; margin-bottom:20px;">
+      <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+        <input type="checkbox" name="include_self" value="1" checked
+               style="accent-color:var(--gold); width:16px; height:16px;">
+        <span style="font-size:0.9rem; color:var(--text);">I'm playing too (send invite to myself)</span>
+      </label>
+    </div>
+
+    <!-- Story setup -->
+    <div class="card" style="padding:14px 16px; margin-bottom:20px;">
+      <label style="color:var(--muted); font-size:0.85rem; display:block; margin-bottom:10px;">Story</label>
+      <div style="display:flex; gap:8px; margin-bottom:14px;">
+        <button type="button" id="btn-story-ai" onclick="setStoryMode('ai')"
+                style="flex:1; border-radius:5px; border:1px solid var(--gold); background:var(--gold)22;
+                       color:var(--gold); font-size:0.82rem; font-weight:700; padding:7px 12px;
+                       cursor:pointer; font-family:inherit;">
+          Generate with AI
+        </button>
+        <button type="button" id="btn-story-manual" onclick="setStoryMode('manual')"
+                style="flex:1; border-radius:5px; border:1px solid var(--border); background:var(--surface2);
+                       color:var(--muted); font-size:0.82rem; font-weight:700; padding:7px 12px;
+                       cursor:pointer; font-family:inherit;">
+          Write my own
+        </button>
+      </div>
+
+      <!-- AI: genre picker -->
+      <div id="story-ai-section">
+        <label style="color:var(--muted); font-size:0.82rem; display:block; margin-bottom:8px;">Genre / tone</label>
+        <div style="display:flex; flex-wrap:wrap; gap:8px;">
+          {% for g in ['adventure', 'mystery', 'horror', 'political', 'romance', 'heist'] %}
+          <label style="cursor:pointer;">
+            <input type="radio" name="genre" value="{{ g }}" {% if g == 'adventure' %}checked{% endif %} style="display:none;" class="genre-radio">
+            <span class="genre-chip" data-value="{{ g }}"
+                  style="display:inline-block; padding:5px 12px; border-radius:20px; font-size:0.8rem; font-weight:600;
+                         border:1px solid var(--border); background:var(--surface2); color:var(--muted); cursor:pointer;">
+              {{ g | capitalize }}
+            </span>
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Manual: story fields -->
+      <div id="story-manual-section" style="display:none; flex-direction:column; gap:8px;">
+        <input type="text" name="arc_title" maxlength="120" placeholder="Campaign title"
+               style="background:var(--surface); border:1px solid var(--border); border-radius:4px;
+                      padding:8px 12px; color:var(--text); font-size:0.9rem; font-family:inherit;">
+        <textarea name="arc_hook" rows="3" maxlength="800"
+                  placeholder="The hook — what's the inciting incident?"
+                  style="background:var(--surface); border:1px solid var(--border); border-radius:4px;
+                         padding:8px 12px; color:var(--text); font-size:0.9rem; font-family:inherit;
+                         resize:vertical; line-height:1.5;"></textarea>
+        <input type="text" name="arc_path_1" maxlength="200" placeholder="Story path 1 (optional)"
+               style="background:var(--surface); border:1px solid var(--border); border-radius:4px;
+                      padding:7px 12px; color:var(--text); font-size:0.85rem; font-family:inherit;">
+        <input type="text" name="arc_path_2" maxlength="200" placeholder="Story path 2 (optional)"
+               style="background:var(--surface); border:1px solid var(--border); border-radius:4px;
+                      padding:7px 12px; color:var(--text); font-size:0.85rem; font-family:inherit;">
+        <input type="text" name="arc_path_3" maxlength="200" placeholder="Story path 3 (optional)"
+               style="background:var(--surface); border:1px solid var(--border); border-radius:4px;
+                      padding:7px 12px; color:var(--text); font-size:0.85rem; font-family:inherit;">
+      </div>
+    </div>
+
+    <div class="card" style="padding:12px 16px; margin-bottom:24px;">
+      <label style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+        <span style="color:var(--muted); font-size:0.85rem;">Hours per turn:</span>
+        <input type="number" name="deadline_hours" value="24" min="1" max="168"
+               style="background:var(--surface); border:1px solid var(--border); border-radius:4px;
+                      padding:5px 10px; color:var(--text); font-size:0.88rem; width:72px; font-family:inherit;">
+      </label>
+    </div>
+
+    <button type="submit" id="create-btn"
+            style="width:100%; background:var(--gold); border:none; border-radius:6px; padding:14px;
+                   font-size:1rem; font-weight:700; color:#000; cursor:pointer; font-family:inherit;">
+      Generate Campaign →
+    </button>
+    <p id="create-hint" style="text-align:center; color:var(--muted); font-size:0.78rem; margin:10px 0 0;">
+      AI generates a story arc. Invites go out by email.
+    </p>
+  </form>
+  {% endif %}
+
+  <div style="margin-top:32px; text-align:center;">
+    <a href="/{{ slug }}/" style="color:var(--muted); font-size:0.85rem; text-decoration:none;">← Campaign home</a>
+  </div>
+
+</div>
+
+<script>
+// ── Story mode toggle (setup phase) ──────────────────────────
+function setStoryMode(mode) {
+  document.getElementById('story-mode-field').value = mode;
+  const aiSection = document.getElementById('story-ai-section');
+  const manualSection = document.getElementById('story-manual-section');
+  const btnAi = document.getElementById('btn-story-ai');
+  const btnManual = document.getElementById('btn-story-manual');
+  const btn = document.getElementById('create-btn');
+  const hint = document.getElementById('create-hint');
+  if (!aiSection) return;
+  if (mode === 'ai') {
+    aiSection.style.display = '';
+    manualSection.style.display = 'none';
+    btnAi.style.borderColor = 'var(--gold)';
+    btnAi.style.background = 'var(--gold)22';
+    btnAi.style.color = 'var(--gold)';
+    btnManual.style.borderColor = 'var(--border)';
+    btnManual.style.background = 'var(--surface2)';
+    btnManual.style.color = 'var(--muted)';
+    if (btn) btn.textContent = 'Generate Campaign →';
+    if (hint) hint.textContent = 'AI generates a story arc. Invites go out by email.';
+  } else {
+    aiSection.style.display = 'none';
+    manualSection.style.display = 'flex';
+    btnManual.style.borderColor = 'var(--gold)';
+    btnManual.style.background = 'var(--gold)22';
+    btnManual.style.color = 'var(--gold)';
+    btnAi.style.borderColor = 'var(--border)';
+    btnAi.style.background = 'var(--surface2)';
+    btnAi.style.color = 'var(--muted)';
+    if (btn) btn.textContent = 'Create Campaign →';
+    if (hint) hint.textContent = 'You can add or update the story in the next screen. Invites go out by email.';
+  }
+}
+
+// ── Setup form submit (loading state) ────────────────────────
+document.getElementById('setup-form')?.addEventListener('submit', function() {
+  const mode = document.getElementById('story-mode-field')?.value;
+  setTimeout(() => {
+    const btn = document.getElementById('create-btn');
+    if (!btn) return;
+    if (mode === 'ai') {
+      btn.textContent = 'Generating… (20–30s)';
+    } else {
+      btn.textContent = 'Creating…';
+    }
+    btn.disabled = true;
+  }, 50);
+});
+
+// ── Email add/remove ─────────────────────────────────────────
+function addEmail() {
+  const list = document.getElementById('email-list');
+  const row = document.createElement('div');
+  row.className = 'email-row';
+  row.style.cssText = 'display:flex; gap:8px; align-items:center;';
+  row.innerHTML = `
+    <input type="email" name="emails" placeholder="player@email.com"
+           style="flex:1; background:var(--surface2); border:1px solid var(--border); border-radius:4px;
+                  padding:9px 12px; color:var(--text); font-size:0.9rem; font-family:inherit;">
+    <button type="button" onclick="removeEmail(this)"
+            style="background:none; border:none; color:var(--muted); cursor:pointer; font-size:1.1rem; padding:4px 8px;">✕</button>
+  `;
+  list.appendChild(row);
+  row.querySelector('input').focus();
+}
+
+function removeEmail(btn) {
+  const rows = document.querySelectorAll('.email-row');
+  if (rows.length > 1) btn.closest('.email-row').remove();
+}
+
+// ── Genre chip highlight ──────────────────────────────────────
+document.querySelectorAll('.genre-radio').forEach(radio => {
+  radio.addEventListener('change', () => {
+    document.querySelectorAll('.genre-chip').forEach(c => {
+      c.style.background = 'var(--surface2)';
+      c.style.color = 'var(--muted)';
+      c.style.borderColor = 'var(--border)';
+    });
+    if (radio.checked) {
+      const chip = radio.nextElementSibling;
+      chip.style.background = 'var(--gold)22';
+      chip.style.color = 'var(--gold)';
+      chip.style.borderColor = 'var(--gold)';
+    }
+  });
+  if (radio.checked) radio.dispatchEvent(new Event('change'));
+});
+
+// ── Arc edit toggle (recruiting phase) ───────────────────────
+function toggleArcEdit() {
+  const section = document.getElementById('arc-edit-section');
+  if (section) section.style.display = section.style.display === 'none' ? '' : 'none';
+}
+
+function generateArc() {
+  document.getElementById('arc-action-field').value = 'generate';
+  document.querySelector('#arc-edit-section form').submit();
+}
+
+// ── Role select show/hide details ────────────────────────────
+document.querySelectorAll('.role-select').forEach(select => {
+  select.addEventListener('change', () => {
+    const cid = select.dataset.player;
+    const details = document.getElementById(`role-details-${cid}`);
+    if (details) details.style.display = select.value === 'none' ? 'none' : 'flex';
+  });
+});
+
+function generateRoles() {
+  document.getElementById('roles-action-field').value = 'generate';
+  document.querySelector('form[action$="/campaign/roles"]').submit();
+}
+</script>
+{% endblock %}

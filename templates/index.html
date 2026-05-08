@@ -21,11 +21,43 @@
   </div>
 </div>
 
+<!-- Campaign Mode -->
+<div style="background:var(--surface2); border:1px solid var(--gold)44; border-radius:10px; padding:24px; margin-bottom:32px;">
+  <p style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:var(--gold); margin:0 0 8px 0;">Turn-based · async · across time zones</p>
+  <h2 style="font-size:1.25rem; font-weight:800; color:var(--text); margin:0 0 8px 0;">Start a Campaign</h2>
+  <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0 0 18px 0;">Invite players by email. Each person takes a turn when they're ready — the AI referee logs the consequences to a living world. No shared schedule needed.</p>
+  <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+    <form method="POST" action="/welcome">
+      <input type="hidden" name="choice" value="campaign">
+      <button type="submit" style="background:var(--gold); color:#000; border:none; border-radius:5px; padding:10px 22px; font-size:0.9rem; font-weight:800; cursor:pointer; letter-spacing:0.01em;">
+        Start a campaign &#8594;
+      </button>
+    </form>
+    <span style="font-size:0.78rem; color:var(--muted);">3 free games · async</span>
+  </div>
+</div>
+
 {% if my_campaigns %}
 <h2 class="section-title">My Worlds</h2>
 <div class="card-grid mb-8">
   {% for c in my_campaigns %}
-  {% if c.get('party_phase') and c.get('party_phase') != 'done' %}
+  {% if c.get('async_phase') == 'active' %}
+  <a href="/{{ c.slug }}/campaign" style="text-decoration:none;">
+    <div class="campaign-card" style="border-color:var(--gold)55;">
+      <div style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--gold); margin-bottom:6px;">Campaign Active</div>
+      <h2>{{ c.name }}</h2>
+      <div class="system">{{ c.system }}</div>
+    </div>
+  </a>
+  {% elif c.get('async_phase') == 'recruiting' %}
+  <a href="/{{ c.slug }}/campaign/lobby" style="text-decoration:none;">
+    <div class="campaign-card" style="border-color:var(--gold)33;">
+      <div style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--gold); margin-bottom:6px;">Campaign — Recruiting</div>
+      <h2>{{ c.name }}</h2>
+      <div class="system">{{ c.system }}</div>
+    </div>
+  </a>
+  {% elif c.get('party_phase') and c.get('party_phase') != 'done' %}
   <a href="/{{ c.slug }}/play" style="text-decoration:none;">
     <div class="campaign-card" style="border-color:#4caf5044;">
       <div style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:#4caf50; margin-bottom:6px;">In Progress</div>
@@ -58,6 +90,17 @@
 <h2 class="section-title mt-8">My Games</h2>
 <div class="card-grid mb-8">
   {% for c in member_campaigns %}
+  {% if c.get('async_phase') in ('active', 'recruiting') %}
+  <a href="/{{ c.slug }}/campaign" style="text-decoration:none;">
+    <div class="campaign-card" style="border-color:var(--gold)55;">
+      <div style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--gold); margin-bottom:6px;">
+        {% if c.get('async_phase') == 'active' %}Campaign Active{% else %}Campaign — Waiting to Start{% endif %}
+      </div>
+      <h2>{{ c.name }}</h2>
+      <div class="system">{{ c.system }}</div>
+    </div>
+  </a>
+  {% else %}
   <a href="/{{ c.slug }}/" style="text-decoration:none;">
     <div class="campaign-card">
       <h2>{{ c.name }}</h2>
@@ -65,6 +108,7 @@
       {% if c.description %}<p class="text-sm text-muted">{{ c.description }}</p>{% endif %}
     </div>
   </a>
+  {% endif %}
   {% endfor %}
 </div>
 {% endif %}
