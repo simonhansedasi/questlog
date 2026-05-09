@@ -2048,6 +2048,17 @@ def welcome_post():
             return redirect(url_for("async_campaign_lobby", slug=result))
         return result or redirect(url_for("index"))
 
+    if choice == "obsidian":
+        user_data = users.get(username, {})
+        limit = user_data.get("world_limit", 3) + user_data.get("extra_worlds", 0)
+        if _user_world_count(username) >= limit:
+            flash("You've reached your world limit. Delete a world to make room.", "error")
+            return redirect(url_for("index"))
+        result = _create_onboarding_campaign(username, "obsidian")
+        if isinstance(result, str):
+            return redirect(url_for("dm_import", slug=result))
+        return result or redirect(url_for("index"))
+
     return redirect(url_for("index"))
 
 

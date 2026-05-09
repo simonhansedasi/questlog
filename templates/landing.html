@@ -44,53 +44,52 @@
   <!-- Hero -->
   <div style="text-align:center; margin-bottom:52px;">
     <h1 style="font-size:2.4rem; font-weight:800; color:var(--text); letter-spacing:-0.03em; margin:0 0 14px 0; line-height:1.15;">
-      Players decide.<br>AI referees.
+      Players decide.<br>AI referees.<br>The world remembers.
     </h1>
     <p style="font-size:1.05rem; color:var(--muted); line-height:1.6; margin:0 auto 28px; max-width:520px;">
-      A pass-the-phone storytelling game where everyone has a secret agenda, an AI referee keeps the world honest, and every session leaves a living world behind.
+      A consequence engine for GMs and storytellers. Log one event — the whole world reacts. Import your Obsidian campaign, build one with players, or run a quick party game.
     </p>
-    <div style="display:flex; flex-direction:column; gap:10px; align-items:center;">
-      <a href="/welcome" style="background:#4caf50; color:#fff; border-radius:5px; padding:11px 28px; font-size:0.95rem; font-weight:800; text-decoration:none; letter-spacing:0.01em;">
-        Start a game →
-      </a>
-      <a href="/welcome" style="background:var(--gold); color:#000; border-radius:5px; padding:11px 28px; font-size:0.95rem; font-weight:800; text-decoration:none; letter-spacing:0.01em;">
-        Start an async campaign →
-      </a>
-      <a href="/login" style="background:var(--surface2); color:var(--muted); border:1px solid var(--border); border-radius:5px; padding:11px 28px; font-size:0.95rem; font-weight:800; text-decoration:none; letter-spacing:0.01em;">
-        Build a world from scratch
-      </a>
-    </div>
-    <p style="color:var(--muted); font-size:0.78rem; margin:14px 0 0; opacity:0.7;">3 free games · 1–6 players · 30 min · no prep</p>
   </div>
 
-  <!-- Campaign pipeline feature -->
-  <div style="margin-bottom:32px; border:2px solid var(--gold)55; border-radius:12px; padding:28px 28px 24px; background:var(--surface2);">
-    <p style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:var(--gold); margin:0 0 10px 0;">The thing nobody else does</p>
-    <h3 style="font-size:1.1rem; font-weight:800; color:var(--text); margin:0 0 12px 0; line-height:1.3;">Create your world. Then play in it.</h3>
-    <p style="color:var(--muted); font-size:0.9rem; line-height:1.7; margin:0 0 16px 0;">
-      Start an async campaign — each player builds a character and shapes the world over days or weeks at their own pace. When the story concludes, your GM converts it to a full TTRPG campaign. Players claim the characters they created. The relationship graph is already mapped. The wiki is already written. The inciting incident is baked into history.
-    </p>
-    <p style="color:var(--text); font-size:0.9rem; line-height:1.7; margin:0 0 20px 0; font-weight:600;">
-      You don't start at Session Zero. You start at Session One with a world that already knows you.
-    </p>
-    <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
-      <a href="/welcome" style="background:var(--gold); color:#000; border-radius:5px; padding:9px 20px; font-size:0.88rem; font-weight:800; text-decoration:none;">
-        Start a campaign →
-      </a>
-      <span style="font-size:0.8rem; color:var(--muted);">async · turn-based · no shared schedule</span>
+  <!-- Three mode cards -->
+  <div class="card-grid" style="grid-template-columns:repeat(3,1fr); margin-bottom:32px;">
+
+    <!-- Import from Obsidian -->
+    <div class="card" style="border-color:#9b6bd466;">
+      <div style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--purple); margin-bottom:8px;">Free</div>
+      <h3 style="color:var(--purple); margin-bottom:6px; font-size:0.95rem;">Import from Obsidian</h3>
+      <p style="font-size:0.82rem; color:var(--muted); line-height:1.5; margin-bottom:14px;">Bring your existing campaign notes in — NPCs, factions, quests — and let the ripple engine take over.</p>
+      <a href="/login" style="font-size:0.82rem; color:var(--purple); font-weight:700; text-decoration:none;">Import notes →</a>
     </div>
+
+    <!-- Async Campaign -->
+    <div class="card" style="border-color:#c9a84c44;">
+      <div style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--gold); margin-bottom:8px;">Async</div>
+      <h3 style="margin-bottom:6px; font-size:0.95rem;">Build a world together</h3>
+      <p style="font-size:0.82rem; color:var(--muted); line-height:1.5; margin-bottom:14px;">GM and players co-create the world — 24hr turns, email notifications. Convert to TTRPG and play in what you built.</p>
+      <a href="/login" style="font-size:0.82rem; color:var(--gold); font-weight:700; text-decoration:none;">Start a campaign →</a>
+    </div>
+
+    <!-- Party Mode -->
+    <div class="card" style="border-color:#4caf5044;">
+      <div style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#4caf50; margin-bottom:8px;">3 Free Games</div>
+      <h3 style="color:#4caf50; margin-bottom:6px; font-size:0.95rem;">Party Mode</h3>
+      <p style="font-size:0.82rem; color:var(--muted); line-height:1.5; margin-bottom:14px;">1–6 players. AI referee. Secret missions. No prep — pass the phone and play.</p>
+      <a href="/login" style="font-size:0.82rem; color:#4caf50; font-weight:700; text-decoration:none;">Start a game →</a>
+    </div>
+
   </div>
 
-  <!-- Pillar 1 — The game -->
-  <div class="card" style="margin-bottom:16px; border-color:#4caf5055;">
+  <!-- Pillar 1 — The ripple system -->
+  <div class="card" style="margin-bottom:16px; border-color:var(--purple)55;">
     <div style="display:flex; gap:16px; align-items:flex-start;">
       <span style="font-size:1.4rem; flex-shrink:0; margin-top:2px;">⊕</span>
       <div style="flex:1;">
-        <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 8px 0;">Secret missions. Everyone has one.</h3>
+        <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 8px 0;">Log one event. The whole world reacts.</h3>
         <p style="color:var(--muted); font-size:0.9rem; line-height:1.65; margin:0 0 12px 0;">
-          Players build characters and set the scene together. The AI generates a story arc and assigns each player a secret role — Saboteur, Protector, Investigator, and more. Then you take turns logging what happens. Nobody knows who's working against them.
+          Every NPC, faction, and location is connected. When something happens, the ripple system propagates consequences automatically — allies rally, rivals scheme, relationship scores shift. Between sessions the world doesn't freeze. It moves.
         </p>
-        <a href="/welcome" style="color:#4caf50; font-size:0.85rem; font-weight:600; text-decoration:none;">Start a game →</a>
+        <a href="/demo/" style="color:var(--purple); font-size:0.85rem; font-weight:600; text-decoration:none;">See it in action →</a>
       </div>
     </div>
   </div>
@@ -102,9 +101,9 @@
       <div style="flex:1;">
         <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 8px 0;">The referee never cheats.</h3>
         <p style="color:var(--muted); font-size:0.9rem; line-height:1.65; margin:0 0 12px 0;">
-          The AI doesn't write your story — it referees it. It flags shortcuts, catches contradictions, and propagates consequences automatically across every connected character, faction, and place. You make the choices. It makes sure they cost something.
+          Paste your session notes and the AI extracts log entries — who did what, to whom, with what consequence. It surfaces Active Pressures, Stale Threads, and Consequence Risks before your next session. You run the story. It keeps score.
         </p>
-        <a href="/demo/ai" style="color:var(--gold); font-size:0.85rem; font-weight:600; text-decoration:none;">See it in action →</a>
+        <a href="/demo/ai" style="color:var(--gold); font-size:0.85rem; font-weight:600; text-decoration:none;">Try the AI tools →</a>
       </div>
     </div>
   </div>

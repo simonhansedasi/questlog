@@ -5,36 +5,41 @@
 <h1 class="page-title">RippleForge</h1>
 <p class="subtitle">Welcome back, {{ session.get('display_name', session.get('user')) }}</p>
 
-<!-- Party Mode — forefront -->
-<div style="background:var(--surface2); border:1px solid #4caf5044; border-radius:10px; padding:24px; margin-bottom:32px;">
-  <p style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:#4caf50; margin:0 0 8px 0;">Players decide · AI referees</p>
-  <h2 style="font-size:1.25rem; font-weight:800; color:var(--text); margin:0 0 8px 0;">Start a Party Game</h2>
-  <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0 0 18px 0;">Pass the phone. Everyone picks a character and gets a secret mission. The AI generates your story arc and referees every move. One game, one world — 30 minutes, no prep.</p>
-  <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
-    <form method="POST" action="/welcome">
-      <input type="hidden" name="choice" value="party">
-      <button type="submit" style="background:#4caf50; color:#fff; border:none; border-radius:5px; padding:10px 22px; font-size:0.9rem; font-weight:800; cursor:pointer; letter-spacing:0.01em;">
-        Start a game &#8594;
-      </button>
-    </form>
-    <span style="font-size:0.78rem; color:var(--muted);">3 free games · 1–6 players</span>
-  </div>
-</div>
+<div class="card-grid" style="margin-bottom:32px;">
 
-<!-- Campaign Mode -->
-<div style="background:var(--surface2); border:1px solid var(--gold)44; border-radius:10px; padding:24px; margin-bottom:32px;">
-  <p style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:var(--gold); margin:0 0 8px 0;">Turn-based · async · across time zones</p>
-  <h2 style="font-size:1.25rem; font-weight:800; color:var(--text); margin:0 0 8px 0;">Start a Campaign</h2>
-  <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0 0 18px 0;">Invite players by email. Each person takes a turn when they're ready — the AI referee logs the consequences to a living world. No shared schedule needed.</p>
-  <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+  <!-- Card 1: Import from Obsidian -->
+  <div class="card" style="border-color:#9b6bd466;">
+    <div style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--purple); margin-bottom:8px;">Free</div>
+    <h3 style="color:var(--purple); margin-bottom:6px;">Import from Obsidian</h3>
+    <p style="font-size:0.88rem; color:var(--muted); line-height:1.5; margin-bottom:16px;">Already running a campaign in Obsidian? Bring your notes in — NPCs, factions, quests — and let the ripple engine take over.</p>
+    <form method="POST" action="/welcome">
+      <input type="hidden" name="choice" value="obsidian">
+      <button type="submit" style="background:none; border:none; padding:0; color:var(--purple); font-size:0.85rem; font-weight:700; cursor:pointer; text-decoration:none;">Import notes &#8594;</button>
+    </form>
+  </div>
+
+  <!-- Card 2: Async Campaign -->
+  <div class="card" style="border-color:#c9a84c44;">
+    <div style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--gold); margin-bottom:8px;">Async</div>
+    <h3 style="margin-bottom:6px;">Build a world together</h3>
+    <p style="font-size:0.88rem; color:var(--muted); line-height:1.5; margin-bottom:16px;">GMs and players co-create the world — 24 hours per turn, email notifications. When it's ready, convert to TTRPG and play in it.</p>
     <form method="POST" action="/welcome">
       <input type="hidden" name="choice" value="campaign">
-      <button type="submit" style="background:var(--gold); color:#000; border:none; border-radius:5px; padding:10px 22px; font-size:0.9rem; font-weight:800; cursor:pointer; letter-spacing:0.01em;">
-        Start a campaign &#8594;
-      </button>
+      <button type="submit" style="background:none; border:none; padding:0; color:var(--gold); font-size:0.85rem; font-weight:700; cursor:pointer;">Start a campaign &#8594;</button>
     </form>
-    <span style="font-size:0.78rem; color:var(--muted);">3 free games · async</span>
   </div>
+
+  <!-- Card 3: Party Mode -->
+  <div class="card" style="border-color:#4caf5044;">
+    <div style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#4caf50; margin-bottom:8px;">3 Free Games</div>
+    <h3 style="color:#4caf50; margin-bottom:6px;">Party Mode</h3>
+    <p style="font-size:0.88rem; color:var(--muted); line-height:1.5; margin-bottom:16px;">1–6 players. AI referee. No prep. Pass the phone and everyone gets a secret mission.</p>
+    <form method="POST" action="/welcome">
+      <input type="hidden" name="choice" value="party">
+      <button type="submit" style="background:none; border:none; padding:0; color:#4caf50; font-size:0.85rem; font-weight:700; cursor:pointer;">Start a game &#8594;</button>
+    </form>
+  </div>
+
 </div>
 
 {% if my_campaigns %}
@@ -80,7 +85,7 @@
 <div style="background:var(--surface2); border:1px solid var(--purple); border-radius:8px; padding:20px 24px; margin-bottom:32px; max-width:560px;">
   <p style="color:var(--text); font-size:0.95rem; font-weight:700; margin:0 0 6px 0;">No worlds yet.</p>
   <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0 0 14px 0;">
-    Start with a party game above, or create a world below and add NPCs and factions. The <strong>Quick Start Guide</strong> walks you through the first session in five steps.
+    Pick a mode above, or create a world below and add NPCs and factions. The <strong>Quick Start Guide</strong> walks you through the first session in five steps.
   </p>
   <a href="/guide" style="color:var(--gold); font-size:0.88rem; font-weight:700; text-decoration:none;">Read the Quick Start Guide →</a>
 </div>
