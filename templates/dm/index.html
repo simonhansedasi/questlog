@@ -1895,31 +1895,32 @@ function generateBrief() {
 {# ── Event Log ────────────────────────────────────────────── #}
 <h2 class="section-title mt-8" id="eventlog">Event Log</h2>
 {% if all_log_entries %}
-{% set _el_sessions = [] %}
-{% for e in all_log_entries %}
-  {% if e.session not in _el_sessions %}{% set _ = _el_sessions.append(e.session) %}{% endif %}
-{% endfor %}
 <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:20px;">
-  {% for sess in _el_sessions | sort(reverse=true) %}
-  {% set _el_group = all_log_entries | selectattr('session','equalto',sess) | list %}
-  <details {% if loop.first %}open{% endif %} style="background:var(--surface); border:1px solid var(--border); border-radius:6px; overflow:hidden;">
-    <summary style="padding:8px 14px; cursor:pointer; font-size:0.8rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.06em; user-select:none; list-style:none; display:flex; align-items:center; gap:8px;">
-      {{ terms.session }} {{ sess }}
-      <span style="font-weight:400; color:var(--muted); font-size:0.72rem;">{{ _el_group | length }} event{{ 's' if _el_group | length != 1 }}</span>
+  {% for entity_name, entity_events in all_log_entries | groupby('source') %}
+  {% set _evts = entity_events | list %}
+  {% set _first = _evts[0] %}
+  {% set n = _evts | length %}
+  <details open style="margin-bottom:2px;">
+    <summary style="list-style:none; cursor:pointer; display:flex; align-items:center; padding:8px 10px; background:var(--surface2); border:1px solid var(--border); border-radius:5px; user-select:none;">
+      <span style="font-size:0.7rem; color:var(--muted); margin-right:6px; flex-shrink:0;">▾</span>
+      <span style="font-weight:700; font-size:0.88rem; color:var(--text);">
+        {% if _first.type == 'NPC' and _first.entity_id %}<a href="/{{ slug }}/world/npc/{{ _first.entity_id }}" style="color:var(--text); text-decoration:none;">{{ entity_name }}</a>
+        {% elif _first.type == 'Faction' and _first.entity_id %}<a href="/{{ slug }}/world/faction/{{ _first.entity_id }}" style="color:var(--text); text-decoration:none;">{{ entity_name }}</a>
+        {% elif _first.type == 'Quest' and _first.entity_id %}<a href="/{{ slug }}/story" style="color:var(--text); text-decoration:none;">{{ entity_name }}</a>
+        {% else %}{{ entity_name }}{% endif %}
+      </span>
+      <span style="color:var(--muted); font-size:0.65rem; font-weight:600; text-transform:uppercase; letter-spacing:0.04em; margin-left:8px; background:var(--surface); padding:1px 5px; border-radius:3px;">{{ _first.type }}</span>
+      <span style="color:var(--muted); font-size:0.72rem; margin-left:8px;">{{ n }} event{{ 's' if n != 1 }}</span>
     </summary>
-    <ul style="margin:0; padding:6px 14px 8px; list-style:none; display:flex; flex-direction:column; gap:0;">
-      {% for e in _el_group %}
+    <ul style="margin:0; padding:6px 0 4px 14px; list-style:none; display:flex; flex-direction:column; gap:0; border-left:2px solid var(--border); margin-top:4px;">
+      {% for e in _evts %}
       {% set vis = e.visibility if e.visibility is defined else ('dm_only' if e.get('dm_only') else 'public') %}
       {% set is_ripple = e.ripple_source is defined and e.ripple_source %}
       {% set _pcol = '#7ec87e' if e.polarity == 'positive' else '#e05c5c' if e.polarity == 'negative' else 'rgba(255,255,255,0.12)' if e.polarity == 'neutral' else 'var(--border)' %}
       <li id="evtcard-{{ e.id }}" style="border-left:2px solid {{ _pcol }}; {% if is_ripple %}margin-left:18px;{% endif %} padding:5px 10px; margin-bottom:2px;">
         <div style="display:flex; align-items:baseline; gap:5px; flex-wrap:wrap; font-size:0.8rem;">
           {% if is_ripple %}<span style="color:var(--muted); font-size:0.72rem;">↳</span>{% endif %}
-          <span style="font-weight:700; color:var(--gold);">
-            {% if e.type == 'NPC' and e.entity_id %}<a href="/{{ slug }}/world/npc/{{ e.entity_id }}" style="color:var(--gold); text-decoration:none;">{{ e.source }}</a>
-            {% elif e.type == 'Faction' and e.entity_id %}<a href="/{{ slug }}/world/faction/{{ e.entity_id }}" style="color:var(--gold); text-decoration:none;">{{ e.source }}</a>
-            {% else %}{{ e.source }}{% endif %}
-          </span>
+          <span class="log-session" style="font-size:0.68rem;">{{ terms.session }} {{ e.session }}</span>
           {% if e._other %}<span style="color:var(--muted); font-size:0.72rem;">← {{ e._other }}</span>{% endif %}
           {% if e.polarity %}
           {% set _sign = '+' if e.polarity == 'positive' else ('−' if e.polarity == 'negative' else '~') %}

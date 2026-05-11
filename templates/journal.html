@@ -7,70 +7,68 @@
 
 {% if entries %}
 {% for entry in entries %}
-<div class="card mb-4">
-  <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
-    <div>
-      <span style="color:var(--gold); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em;">
-        {{ terms.session }} {{ entry.session }}
-      </span>
-      {% if entry.date %}
-      <span style="color:var(--muted); font-size:0.75rem; margin-left:10px;">{{ entry.date }}</span>
-      {% endif %}
+<details {% if loop.first %}open{% endif %} class="card mb-4" style="padding:0; overflow:hidden;">
+  <summary style="list-style:none; cursor:pointer; display:flex; justify-content:space-between; align-items:center; padding:12px 20px; user-select:none;">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <span style="font-size:0.7rem; color:var(--muted); flex-shrink:0;">▾</span>
+      <span style="color:var(--gold); font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em;">{{ terms.session }} {{ entry.session }}</span>
+      {% if entry.date %}<span style="color:var(--muted); font-size:0.75rem;">{{ entry.date }}</span>{% endif %}
     </div>
     {% if is_dm %}
-    <form method="POST" action="/{{ slug }}/dm/journal/{{ entry.idx }}/delete">
-      <button type="submit"
-              style="background:none; border:1px solid #e05c5c44; color:#e05c5c; border-radius:4px;
-                     padding:2px 10px; font-size:0.75rem; cursor:pointer;">
-        Delete
-      </button>
+    <form method="POST" action="/{{ slug }}/dm/journal/{{ entry.idx }}/delete" onclick="event.stopPropagation();">
+      <button type="submit" style="background:none; border:1px solid #e05c5c44; color:#e05c5c; border-radius:4px; padding:2px 10px; font-size:0.75rem; cursor:pointer;">Delete</button>
     </form>
     {% endif %}
-  </div>
-  <div class="md-render" style="font-size:0.92rem; line-height:1.7;">{{ entry.recap_html }}</div>
-  {% set groups = deltas.get(entry.session, []) %}
-  {% if groups %}
-  <div style="margin-top:16px; border-top:1px solid var(--border); padding-top:14px; display:flex; flex-direction:column; gap:8px;">
-    {% for group in groups %}
-    {% set visible_entries = [] %}
-    {% for e in group.entries %}
-      {% set vis = e.visibility if e.visibility is defined else ('dm_only' if e.get('dm_only') else 'public') %}
-      {% if is_dm or vis != 'dm_only' %}{% set _ = visible_entries.append(e) %}{% endif %}
-    {% endfor %}
-    {% if visible_entries %}
-    <div>
-      <div style="margin-bottom:5px;">
-        <a href="{% if group.kind == 'party' %}/{{ slug }}/party{% elif group.kind == 'location' %}/{{ slug }}/world/location/{{ group.id }}{% else %}/{{ slug }}/world/{{ group.kind }}/{{ group.id }}{% endif %}"
-           style="font-weight:700; color:{% if group.kind == 'party' %}var(--gold){% else %}var(--gold){% endif %}; font-size:0.8rem; text-decoration:none;">{{ group.name }}</a>
-        {% if group.rel_data %}
-        <span class="badge badge-{{ group.rel_data.relationship }}" style="font-size:0.62rem; padding:1px 5px; margin-left:6px;">{{ group.rel_data.relationship }}</span>
-        {% if group.rel_data.trend == 'up' %}<span style="color:#7ec87e; font-size:0.72rem; margin-left:2px;">↑</span>
-        {% elif group.rel_data.trend == 'down' %}<span style="color:#e05c5c; font-size:0.72rem; margin-left:2px;">↓</span>{% endif %}
-        {% endif %}
-      </div>
-      <ul style="margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:3px;">
-        {% for entry in visible_entries %}
-        {% set is_ripple = entry.get('ripple_source') is not none %}
-        {% set vis = entry.visibility if entry.visibility is defined else ('dm_only' if entry.get('dm_only') else 'public') %}
-        <li style="font-size:0.78rem; color:{% if is_ripple %}var(--muted){% else %}var(--text-dim){% endif %}; {% if is_ripple %}padding-left:10px; border-left:2px solid var(--border);{% endif %}">
-          {% if is_ripple %}<span style="color:var(--muted); margin-right:3px;">↳</span>{% endif %}
-          {% if entry.polarity %}
-          <span style="color:{% if entry.polarity == 'positive' %}#7ec87e{% elif entry.polarity == 'negative' %}#e05c5c{% else %}var(--muted){% endif %}; font-size:0.65rem; margin-right:3px;">
-            {% if entry.polarity == 'positive' %}+{% elif entry.polarity == 'negative' %}−{% endif %}{{ entry.intensity }}
-          </span>
+  </summary>
+  <div style="padding:0 20px 16px;">
+    <div class="md-render" style="font-size:0.92rem; line-height:1.7; padding-top:4px;">{{ entry.recap_html }}</div>
+    {% set groups = deltas.get(entry.session, []) %}
+    {% if groups %}
+    <div style="margin-top:16px; border-top:1px solid var(--border); padding-top:14px; display:flex; flex-direction:column; gap:6px;">
+      {% for group in groups %}
+      {% set visible_entries = [] %}
+      {% for e in group.entries %}
+        {% set vis = e.visibility if e.visibility is defined else ('dm_only' if e.get('dm_only') else 'public') %}
+        {% if is_dm or vis != 'dm_only' %}{% set _ = visible_entries.append(e) %}{% endif %}
+      {% endfor %}
+      {% if visible_entries %}
+      {% set _gn = visible_entries | length %}
+      <details open style="border:1px solid var(--border); border-radius:5px; overflow:hidden;">
+        <summary style="list-style:none; cursor:pointer; display:flex; align-items:center; gap:6px; padding:6px 10px; background:var(--surface2); user-select:none;">
+          <span style="font-size:0.7rem; color:var(--muted); flex-shrink:0;">▾</span>
+          <a href="{% if group.kind == 'party' %}/{{ slug }}/party{% elif group.kind == 'location' %}/{{ slug }}/world/location/{{ group.id }}{% else %}/{{ slug }}/world/{{ group.kind }}/{{ group.id }}{% endif %}"
+             style="font-weight:700; color:var(--text); font-size:0.82rem; text-decoration:none;" onclick="event.stopPropagation();">{{ group.name }}</a>
+          {% if group.rel_data %}
+          <span class="badge badge-{{ group.rel_data.relationship }}" style="font-size:0.62rem; padding:1px 5px;">{{ group.rel_data.relationship }}</span>
+          {% if group.rel_data.trend == 'up' %}<span style="color:#7ec87e; font-size:0.72rem;">↑</span>
+          {% elif group.rel_data.trend == 'down' %}<span style="color:#e05c5c; font-size:0.72rem;">↓</span>{% endif %}
           {% endif %}
-          {% if entry.event_type %}<span style="color:var(--purple); font-size:0.65rem; font-weight:700; text-transform:uppercase; margin-right:3px;">{{ entry.event_type }}</span>{% endif %}
-          {{ entry.note | wikilinks(slug, npcs, factions, locations, party) }}
-          {% if is_dm and vis == 'dm_only' %}<span style="color:var(--muted); font-size:0.62rem; margin-left:4px; font-style:italic;">DM only</span>{% endif %}
-        </li>
-        {% endfor %}
-      </ul>
+          <span style="color:var(--muted); font-size:0.72rem; margin-left:4px;">{{ _gn }} event{{ 's' if _gn != 1 }}</span>
+        </summary>
+        <ul style="margin:0; padding:4px 10px 8px; list-style:none; display:flex; flex-direction:column; gap:3px;">
+          {% for evt in visible_entries %}
+          {% set is_ripple = evt.get('ripple_source') is not none %}
+          {% set vis = evt.visibility if evt.visibility is defined else ('dm_only' if evt.get('dm_only') else 'public') %}
+          <li style="font-size:0.78rem; color:{% if is_ripple %}var(--muted){% else %}var(--text-dim){% endif %}; {% if is_ripple %}padding-left:10px; border-left:2px solid var(--border);{% endif %}">
+            {% if is_ripple %}<span style="color:var(--muted); margin-right:3px;">↳</span>{% endif %}
+            {% if evt.polarity %}
+            <span style="color:{% if evt.polarity == 'positive' %}#7ec87e{% elif evt.polarity == 'negative' %}#e05c5c{% else %}var(--muted){% endif %}; font-size:0.65rem; margin-right:3px;">
+              {% if evt.polarity == 'positive' %}+{% elif evt.polarity == 'negative' %}−{% endif %}{{ evt.intensity }}
+            </span>
+            {% endif %}
+            {% if evt.event_type %}<span style="color:var(--purple); font-size:0.65rem; font-weight:700; text-transform:uppercase; margin-right:3px;">{{ evt.event_type }}</span>{% endif %}
+            {{ evt.note | wikilinks(slug, npcs, factions, locations, party) }}
+            {% if is_dm and vis == 'dm_only' %}<span style="color:var(--muted); font-size:0.62rem; margin-left:4px; font-style:italic;">DM only</span>{% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+      </details>
+      {% endif %}
+      {% endfor %}
     </div>
     {% endif %}
-    {% endfor %}
   </div>
-  {% endif %}
-</div>
+</details>
 {% endfor %}
 {% else %}
 <div class="card">
