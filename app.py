@@ -4913,6 +4913,7 @@ def dm_import_obsidian(slug):
     existing_npc_ids = {n["id"] for n in db.get_npcs(slug)}
     existing_faction_ids = {f["id"] for f in db.get_factions(slug)}
     existing_quest_ids = {q["id"] for q in db.get_quests(slug)}
+    existing_location_ids = {l["id"] for l in db.get_locations(slug)}
 
     for n in result["npcs"]:
         n["exists"] = db.slugify(n["name"]) in existing_npc_ids
@@ -4920,6 +4921,8 @@ def dm_import_obsidian(slug):
         f2["exists"] = db.slugify(f2["name"]) in existing_faction_ids
     for q in result["quests"]:
         q["exists"] = db.slugify(q["name"]) in existing_quest_ids
+    for loc in result["locations"]:
+        loc["exists"] = db.slugify(loc["name"]) in existing_location_ids
 
     return jsonify(result)
 
@@ -4931,8 +4934,9 @@ def dm_import_obsidian_confirm(slug):
     npcs_in = data.get("npcs", [])
     factions_in = data.get("factions", [])
     quests_in = data.get("quests", [])
+    locations_in = data.get("locations", [])
 
-    created = {"npcs": 0, "factions": 0, "quests": 0}
+    created = {"npcs": 0, "factions": 0, "quests": 0, "locations": 0}
 
     # Create factions first so NPCs can reference them
     existing_factions = db.get_factions(slug)
@@ -4966,6 +4970,16 @@ def dm_import_obsidian_confirm(slug):
         db.add_quest(slug, q["name"], q.get("description", ""), hidden=False, status=q.get("status", "active"))
         existing_quest_ids.add(qid)
         created["quests"] += 1
+
+    existing_location_ids = {l["id"] for l in db.get_locations(slug)}
+    for loc in locations_in:
+        lid = db.slugify(loc["name"])
+        if lid in existing_location_ids:
+            continue
+        db.add_location(slug, loc["name"], loc.get("role", ""), loc.get("description", ""),
+                        hidden=False, dm_notes="")
+        existing_location_ids.add(lid)
+        created["locations"] += 1
 
     total = sum(created.values())
     return jsonify({"ok": True, "created": created, "total": total})

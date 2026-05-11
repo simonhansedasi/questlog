@@ -177,8 +177,10 @@
   </div>
 
   <div style="text-align:center; color:var(--muted); font-size:0.85rem;">
+    <a href="/wiki" style="color:var(--gold); font-weight:700;">Knowledge Base →</a>
+    <span style="color:var(--border);">&nbsp;&nbsp;·&nbsp;&nbsp;</span>
     {% if session.get('user') %}
-    <a href="/" style="color:var(--gold); font-weight:700;">← Back to my worlds</a>
+    <a href="/" style="color:var(--muted);">← Back to my worlds</a>
     {% else %}
     <a href="/login" style="color:var(--muted);">Log in</a>
     {% endif %}

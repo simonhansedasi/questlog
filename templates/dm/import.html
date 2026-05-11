@@ -106,7 +106,7 @@
 <div class="card mb-4">
   <p style="color:var(--muted); font-size:0.85rem; margin-bottom:4px; line-height:1.5;">
     Export your Obsidian vault (or a subfolder of it) as a <code>.zip</code> and upload it here.
-    RippleForge will detect <strong style="color:var(--text);">NPCs, factions, and quests</strong> from your notes — skipping locations, items, statblocks, and anything else that doesn't map to the engine.
+    RippleForge will detect <strong style="color:var(--text);">NPCs, factions, quests, and locations</strong> from your notes — skipping items, statblocks, and anything else that doesn't map to the engine.
   </p>
   <p style="color:var(--muted); font-size:0.82rem; margin-bottom:16px; line-height:1.5;">
     Detection uses folder names (<code>NPCs/</code>, <code>Factions/</code>, <code>Quests/</code>), YAML frontmatter (<code>type: npc</code>), or tags (<code>#npc</code>, <code>#faction</code>).
@@ -489,6 +489,7 @@ async function obsHandleFile(file) {
 function obsEntityRow(e, type, idx) {
   const badge = type === 'npc' ? `<span style="color:var(--blue); font-size:0.7rem; font-weight:700;">NPC</span>`
               : type === 'faction' ? `<span style="color:var(--purple); font-size:0.7rem; font-weight:700;">FACTION</span>`
+              : type === 'location' ? `<span style="color:#5ba87e; font-size:0.7rem; font-weight:700;">LOCATION</span>`
               : `<span style="color:var(--gold); font-size:0.7rem; font-weight:700;">QUEST</span>`;
   const exists = e.exists
     ? `<span style="color:var(--muted); font-size:0.7rem; font-style:italic; margin-left:4px;">already exists — will skip</span>` : '';
@@ -510,7 +511,7 @@ function obsEntityRow(e, type, idx) {
 
 function obsShowPreview(filename) {
   const d = obsData;
-  const total = d.npcs.length + d.factions.length + d.quests.length;
+  const total = d.npcs.length + d.factions.length + d.quests.length + (d.locations || []).length;
   document.getElementById("obs-preview-title").textContent =
     `Found ${total} entities in ${filename}`;
 
@@ -518,6 +519,7 @@ function obsShowPreview(filename) {
   list.innerHTML = '<div style="display:flex; flex-direction:column; gap:4px;">' +
     d.factions.map((e,i) => obsEntityRow(e, 'faction', i)).join('') +
     d.npcs.map((e,i) => obsEntityRow(e, 'npc', i)).join('') +
+    (d.locations || []).map((e,i) => obsEntityRow(e, 'location', i)).join('') +
     d.quests.map((e,i) => obsEntityRow(e, 'quest', i)).join('') +
     '</div>';
 
@@ -548,11 +550,12 @@ async function obsConfirm() {
     return;
   }
 
-  const payload = { npcs: [], factions: [], quests: [] };
+  const payload = { npcs: [], factions: [], quests: [], locations: [] };
   checkboxes.forEach(cb => {
     const type = cb.dataset.type;
     const idx = parseInt(cb.dataset.idx);
-    payload[type + 's'].push(obsData[type + 's'][idx]);
+    const key = type + 's';
+    if (payload[key] !== undefined) payload[key].push(obsData[key][idx]);
   });
 
   const btn = document.getElementById("obs-confirm-btn");
@@ -574,6 +577,7 @@ async function obsConfirm() {
     document.getElementById("obs-done-summary").textContent =
       `${d.total} entities created: ${d.created.factions} faction${d.created.factions !== 1 ? 's' : ''}, ` +
       `${d.created.npcs} NPC${d.created.npcs !== 1 ? 's' : ''}, ` +
+      `${d.created.locations} location${d.created.locations !== 1 ? 's' : ''}, ` +
       `${d.created.quests} quest${d.created.quests !== 1 ? 's' : ''}. ` +
       `Entities are visible to players — hide any secrets from the World page.`;
   } catch (err) {

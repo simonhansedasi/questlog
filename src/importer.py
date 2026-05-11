@@ -19,8 +19,13 @@ _QUEST = {
     'plot', 'plots', 'adventure', 'adventures', 'arc', 'arcs',
     'thread', 'threads', 'objective', 'objectives',
 }
-_SKIP = {
+_LOCATION = {
     'location', 'locations', 'place', 'places', 'region', 'regions',
+    'area', 'areas', 'site', 'sites', 'city', 'cities', 'town', 'towns',
+    'village', 'villages', 'dungeon', 'dungeons', 'landmark', 'landmarks',
+    'district', 'districts', 'settlement', 'settlements',
+}
+_SKIP = {
     'map', 'maps', 'item', 'items', 'spell', 'spells', 'monster', 'monsters',
     'statblock', 'statblocks', 'template', 'templates', '_templates',
     'attachment', 'attachments', 'asset', 'assets', 'rule', 'rules',
@@ -59,6 +64,7 @@ def _classify(folder_parts, fm, body):
         if token in _NPC: return 'npc'
         if token in _FACTION: return 'faction'
         if token in _QUEST: return 'quest'
+        if token in _LOCATION: return 'location'
         if token in _SKIP: return 'skip'
 
     # 2. folder hierarchy (deepest folder first)
@@ -67,6 +73,7 @@ def _classify(folder_parts, fm, body):
         if p in _NPC: return 'npc'
         if p in _FACTION: return 'faction'
         if p in _QUEST: return 'quest'
+        if p in _LOCATION: return 'location'
         if p in _SKIP: return 'skip'
 
     # 3. tags (frontmatter + inline)
@@ -78,6 +85,7 @@ def _classify(folder_parts, fm, body):
     if all_tags & _NPC: return 'npc'
     if all_tags & _FACTION: return 'faction'
     if all_tags & _QUEST: return 'quest'
+    if all_tags & _LOCATION: return 'location'
 
     return None
 
@@ -117,7 +125,7 @@ def parse_vault_zip(zip_bytes, max_files=600):
     top_dirs = {n.split('/')[0] for n in md_files if '/' in n}
     root = (top_dirs.pop() + '/') if len(top_dirs) == 1 else ''
 
-    npcs, factions, quests, skipped = [], [], [], []
+    npcs, factions, quests, locations, skipped = [], [], [], [], []
     seen = set()
 
     for filepath in md_files[:max_files]:
@@ -147,7 +155,7 @@ def parse_vault_zip(zip_bytes, max_files=600):
 
         if entity_type == 'skip':
             skipped.append({'name': display_name, 'source': rel,
-                            'reason': 'Location, item, session, or template — intentionally skipped'})
+                            'reason': 'Item, session, or template — intentionally skipped'})
             continue
         if entity_type is None:
             skipped.append({'name': display_name, 'source': rel,
@@ -177,5 +185,11 @@ def parse_vault_zip(zip_bytes, max_files=600):
                 status = 'active'
             quests.append({'name': display_name, 'status': status,
                            'description': desc, 'source': rel})
+        elif entity_type == 'location':
+            role = (fm.get('role') or fm.get('type_detail') or fm.get('category')
+                    or fm.get('kind') or '').strip()
+            locations.append({'name': display_name, 'role': role,
+                              'description': desc, 'source': rel})
 
-    return {'npcs': npcs, 'factions': factions, 'quests': quests, 'skipped': skipped}
+    return {'npcs': npcs, 'factions': factions, 'quests': quests,
+            'locations': locations, 'skipped': skipped}

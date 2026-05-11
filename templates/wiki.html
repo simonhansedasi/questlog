@@ -6,20 +6,57 @@
 
   <div style="margin-bottom:28px;">
     <h1 style="font-size:1.8rem; font-weight:800; color:var(--text); letter-spacing:-0.02em; margin:0 0 8px 0;">Knowledge Base</h1>
-    <p style="color:var(--muted); font-size:0.95rem; margin:0 0 6px 0;">Edge cases, scenarios, and how-tos for getting the most out of RippleForge.</p>
+    <p style="color:var(--muted); font-size:0.95rem; margin:0 0 6px 0;">Concepts, edge cases, and how-tos for getting the most out of RippleForge.</p>
     <a href="/guide" style="color:var(--gold); font-size:0.82rem;">New here? Start with the Quick Start guide instead →</a>
+  </div>
+
+  <!-- What is RippleForge -->
+  <div id="what-is" class="card" style="margin-bottom:20px; border-color:var(--purple)55;">
+    <h2 style="font-size:0.8rem; font-weight:700; color:var(--purple); margin:0 0 14px 0; text-transform:uppercase; letter-spacing:0.05em;">What is RippleForge, exactly?</h2>
+    <p style="color:var(--text); font-size:0.92rem; line-height:1.65; margin:0 0 12px 0;">
+      RippleForge is a <strong style="color:var(--purple);">causality engine for narrative</strong>. Its job is not to tell your story — it's to remember it accurately and propagate consequences automatically.
+    </p>
+    <div style="display:flex; flex-direction:column; gap:8px; margin:0 0 16px 0;">
+      <div style="display:grid; grid-template-columns:130px 1fr; gap:8px; font-size:0.87rem; align-items:start;">
+        <span style="color:var(--text); font-weight:700;">Entities</span>
+        <span style="color:var(--muted);">Characters, factions, and locations in your world. The nodes in the graph.</span>
+      </div>
+      <div style="display:grid; grid-template-columns:130px 1fr; gap:8px; font-size:0.87rem; align-items:start;">
+        <span style="color:var(--text); font-weight:700;">Events</span>
+        <span style="color:var(--muted);">Discrete things that happened — logged one at a time or extracted from notes. Events are the ground truth. Everything else is derived from them.</span>
+      </div>
+      <div style="display:grid; grid-template-columns:130px 1fr; gap:8px; font-size:0.87rem; align-items:start;">
+        <span style="color:var(--text); font-weight:700;">Relationships</span>
+        <span style="color:var(--muted);">Computed from the pattern of events between entities. You don't set them — they emerge. A score that was Hostile three sessions ago drifts back toward Neutral if nothing negative has happened since.</span>
+      </div>
+      <div style="display:grid; grid-template-columns:130px 1fr; gap:8px; font-size:0.87rem; align-items:start;">
+        <span style="color:var(--text); font-weight:700;">Ripples</span>
+        <span style="color:var(--muted);">Automatic consequences. When something happens to A, every entity connected to A feels it — allies share the impact, rivals feel the opposite. You log one event; the graph updates everywhere it should.</span>
+      </div>
+    </div>
+    <div style="background:var(--surface2); border-left:3px solid var(--purple); border-radius:0 6px 6px 0; padding:12px 14px; margin-bottom:14px;">
+      <p style="color:var(--text); font-size:0.87rem; font-weight:700; margin:0 0 4px 0;">What it doesn't do</p>
+      <p style="color:var(--muted); font-size:0.85rem; line-height:1.5; margin:0;">RippleForge never invents narrative. The AI proposes; the Narrator approves; nothing is written without a commit. It keeps score — you run the story.</p>
+    </div>
+    <p style="color:var(--muted); font-size:0.87rem; line-height:1.6; margin:0;">
+      Think of it as a referee who never forgets, never gets tired, and never loses track of who owes whom a favor. Every relationship score, every ripple event, every alert in the World State panel is derived from events you logged. The system is only as good as the events you put in.
+    </p>
   </div>
 
   <!-- TOC -->
   <div class="card" style="margin-bottom:28px; padding:16px 20px;">
     <p style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin:0 0 10px 0;">Jump to</p>
     <div style="display:flex; flex-direction:column; gap:6px; font-size:0.88rem;">
+      <a href="#what-is" style="color:var(--gold); text-decoration:none;">What is RippleForge, exactly?</a>
+      <a href="#what-to-log" style="color:var(--gold); text-decoration:none;">What do I log?</a>
       <a href="#interaction-rule" style="color:var(--gold); text-decoration:none;">Logging an interaction — who goes in which field</a>
       <a href="#polarity" style="color:var(--gold); text-decoration:none;">Polarity — what it actually means</a>
       <a href="#rel-score" style="color:var(--gold); text-decoration:none;">Reading the relationship score</a>
       <a href="#dm-only" style="color:var(--gold); text-decoration:none;">Revealing a secret (narrator-only → public)</a>
       <a href="#relation-suggestions" style="color:var(--gold); text-decoration:none;">Relation suggestions and backfilling</a>
       <a href="#projections" style="color:var(--gold); text-decoration:none;">Confirm vs. Dismiss a Pending Projection</a>
+      <a href="#branching" style="color:var(--gold); text-decoration:none;">Branching timelines</a>
+      <a href="#dual-axis" style="color:var(--gold); text-decoration:none;">Dual-axis relationships</a>
       <a href="#npc-to-pc" style="color:var(--gold); text-decoration:none;">A character joins the protagonist group</a>
       <a href="#mid-scene" style="color:var(--gold); text-decoration:none;">Stopped mid-scene — don't log what hasn't happened yet</a>
       <a href="#character-death" style="color:var(--gold); text-decoration:none;">A character dies</a>
@@ -31,10 +68,56 @@
   </div>
 
   <!-- Logging & Ripples -->
-  <div id="interaction-rule" style="margin-bottom:8px;">
+  <div style="margin-bottom:8px;">
     <h2 style="font-size:0.72rem; font-weight:700; color:var(--purple); text-transform:uppercase; letter-spacing:0.08em; margin:0 0 10px 0;">Logging &amp; Ripples</h2>
   </div>
-  <div class="card" style="margin-bottom:16px;">
+
+  <div id="what-to-log" class="card" style="margin-bottom:16px;">
+    <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 10px 0;">What do I log?</h3>
+    <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0 0 12px 0;">
+      The threshold is simple: <strong style="color:var(--text);">log something if this entity's standing meaningfully shifted.</strong> Don't log world flavor.
+    </p>
+
+    <div style="border-left:3px solid var(--purple); padding-left:12px; margin-bottom:14px;">
+      <p style="color:var(--text); font-size:0.87rem; font-weight:700; margin:0 0 6px 0;">One question to ask before logging</p>
+      <p style="color:var(--muted); font-size:0.86rem; line-height:1.5; margin:0 0 8px 0;">Did something happen that changed how this entity is positioned in the world — or is this just scene description?</p>
+      <p style="color:var(--muted); font-size:0.85rem; line-height:1.6; margin:0;">If it shifted their standing (positively, negatively, or in a way worth tracking) — log it. If it's atmosphere, skip it.</p>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:14px;">
+      <div style="background:var(--surface2); border-radius:6px; padding:10px 14px; border-left:3px solid #e05c5c;">
+        <p style="color:var(--text); font-size:0.88rem; font-weight:700; margin:0 0 4px 0;">Don't log this</p>
+        <p style="color:var(--muted); font-size:0.85rem; margin:0;">"The battle happened." — Pure scene description. Nothing and no one shifted.</p>
+      </div>
+      <div style="background:var(--surface2); border-radius:6px; padding:10px 14px; border-left:3px solid #7ec87e;">
+        <p style="color:var(--text); font-size:0.88rem; font-weight:700; margin:0 0 4px 0;">Log these instead</p>
+        <p style="color:var(--muted); font-size:0.85rem; margin:0;">"The general ordered the retreat." Negative on the general. "The alliance took heavy losses." Negative on the alliance. Each entity that was affected gets its own entry, with its own tone.</p>
+      </div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:14px;">
+      <div>
+        <p style="color:var(--text); font-size:0.87rem; font-weight:700; margin:0 0 4px 0;">Multi-character scenes</p>
+        <p style="color:var(--muted); font-size:0.85rem; line-height:1.5; margin:0;">Each entity that was meaningfully affected gets their own entry. A betrayal has at least two — what it cost the person betrayed, and what it says about the betrayer. Log both separately.</p>
+      </div>
+      <div>
+        <p style="color:var(--text); font-size:0.87rem; font-weight:700; margin:0 0 4px 0;">Background world events</p>
+        <p style="color:var(--muted); font-size:0.85rem; line-height:1.5; margin:0;">A war breaks out. A city falls. A faction makes an announcement. Only log these against a specific entity if they change that entity's relationship to the observer. The war isn't an entry — "the Guild used the war as cover to seize the harbor" is an entry.</p>
+      </div>
+      <div>
+        <p style="color:var(--text); font-size:0.87rem; font-weight:700; margin:0 0 4px 0;">New characters</p>
+        <p style="color:var(--muted); font-size:0.85rem; line-height:1.5; margin:0;">Don't pre-populate. Add entities when they appear in the story. Their first entry should be something that actually happened, not a description of who they are.</p>
+      </div>
+    </div>
+
+    <div style="border-left:3px solid var(--gold); padding-left:12px;">
+      <p style="color:var(--muted); font-size:0.85rem; line-height:1.6; margin:0;">
+        <strong style="color:var(--text);">The AI parse handles this automatically</strong> when you paste notes — it extracts one entry per affected entity, not one entry per scene. Manual logging should follow the same pattern.
+      </p>
+    </div>
+  </div>
+
+  <div id="interaction-rule" class="card" style="margin-bottom:16px;">
     <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 10px 0;">Logging an interaction — who goes in which field</h3>
     <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0 0 12px 0;">
       The two fields that confuse everyone most are <strong style="color:var(--text);">Who this affects</strong> and <strong style="color:var(--text);">Caused by</strong>. Here's the rule:
@@ -78,28 +161,35 @@
 
   <!-- Polarity -->
   <div id="polarity" class="card" style="margin-bottom:16px;">
-    <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 10px 0;">Polarity — what it actually means</h3>
+    <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 10px 0;">Tone (polarity) — what it actually means</h3>
     <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0 0 12px 0;">
-      Polarity does <strong style="color:var(--text);">not</strong> describe what happened to the character. It describes how the <strong style="color:var(--text);">observer's relationship with that character changed</strong> because of the event. The observer is whatever POV you defined for your world — the party, the reader, posterity.
+      Tone describes <strong style="color:var(--text);">whether this event was beneficial or harmful for this entity</strong>. Think of it as the direction the event pulled their standing — up, down, or sideways.
     </p>
-    <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px;">
+    <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:14px;">
       <div style="background:var(--surface2); border-radius:6px; padding:10px 14px; border-left:3px solid #7ec87e;">
-        <p style="color:var(--text); font-size:0.88rem; margin:0 0 4px 0;"><strong>Positive</strong> — the observer's relationship with this character improved.</p>
-        <p style="color:var(--muted); font-size:0.82rem; margin:0;">Example: "Finch helped the protagonists escape." The observer's regard for Finch went up → positive.</p>
+        <p style="color:var(--text); font-size:0.88rem; margin:0 0 4px 0;"><strong>Positive</strong> — something beneficial happened to or because of this entity.</p>
+        <p style="color:var(--muted); font-size:0.82rem; margin:0;">Examples: "Finch helped the group escape." "The Guild secured a major trade deal." The event reflects well on them or went in their favor.</p>
       </div>
       <div style="background:var(--surface2); border-radius:6px; padding:10px 14px; border-left:3px solid #888;">
-        <p style="color:var(--text); font-size:0.88rem; margin:0 0 4px 0;"><strong>Neutral</strong> — something happened, but the observer relationship didn't meaningfully shift.</p>
-        <p style="color:var(--muted); font-size:0.82rem; margin:0;">Example: "The Merchant Guild announced a new policy." Big world event, but the observer is watching, not involved.</p>
+        <p style="color:var(--text); font-size:0.88rem; margin:0 0 4px 0;"><strong>Neutral</strong> — something happened worth recording, but their standing didn't shift meaningfully.</p>
+        <p style="color:var(--muted); font-size:0.82rem; margin:0;">Example: "The Merchant Guild announced a new policy." Worth logging for the record, but not directional.</p>
       </div>
       <div style="background:var(--surface2); border-radius:6px; padding:10px 14px; border-left:3px solid #e05c5c;">
-        <p style="color:var(--text); font-size:0.88rem; margin:0 0 4px 0;"><strong>Negative</strong> — trust or rapport between the observer and this character dropped.</p>
-        <p style="color:var(--muted); font-size:0.82rem; margin:0;">Example: "The protagonists burned the Guild's warehouse." The Guild's relationship with the observer deteriorated → negative.</p>
+        <p style="color:var(--text); font-size:0.88rem; margin:0 0 4px 0;"><strong>Negative</strong> — something harmful happened to or because of this entity.</p>
+        <p style="color:var(--muted); font-size:0.82rem; margin:0;">Examples: "The bandits attacked the caravan." "Finch was captured." The event reflects badly on them or went against them.</p>
       </div>
     </div>
+
+    <div style="border-left:3px solid var(--purple); padding-left:12px; margin-bottom:12px;">
+      <p style="color:var(--text); font-size:0.87rem; font-weight:700; margin:0 0 6px 0;">How tone drives the relationship score</p>
+      <p style="color:var(--muted); font-size:0.85rem; line-height:1.5; margin:0 0 6px 0;">Positive events push an entity's score upward (toward Allied). Negative events push it downward (toward Hostile). Neutral entries are recorded but don't shift the score. Scores decay between sessions — an entity that hasn't had activity drifts toward Neutral.</p>
+      <p style="color:var(--muted); font-size:0.85rem; line-height:1.5; margin:0;">Think of the score as this entity's <em>standing</em> in the world — how much weight they carry, in which direction.</p>
+    </div>
+
     <div style="border-left:3px solid var(--gold); padding-left:12px;">
-      <p style="color:var(--muted); font-size:0.85rem; line-height:1.6; margin:0;">
-        <strong style="color:var(--text);">Common mistake:</strong> "The bandits attacked the village" → logging negative on the bandits because something bad happened. But if the observer/protagonists didn't cause it, it's neutral. Negative means the observer did something that hurt the relationship — not that the character had a bad day.
-      </p>
+      <p style="color:var(--text); font-size:0.87rem; font-weight:700; margin:0 0 6px 0;">Tone vs. "Caused by" — they're separate things</p>
+      <p style="color:var(--muted); font-size:0.85rem; line-height:1.5; margin:0 0 6px 0;">The <strong style="color:var(--text);">Caused by</strong> field captures who did it. Tone captures how the event went. You can log "Bandits attacked the Guild" as a negative event on the Guild — with <em>Caused by: Bandits</em> — and both pieces of information are recorded separately.</p>
+      <p style="color:var(--muted); font-size:0.85rem; line-height:1.5; margin:0;">When a tone event ripples through the graph, allies of the affected entity receive the same tone (their ally's loss is their loss); rivals receive the flipped tone (their rival's loss is their gain). This is automatic.</p>
     </div>
   </div>
 
@@ -201,6 +291,93 @@
     <p style="color:var(--muted); font-size:0.85rem; line-height:1.6; margin:0;">
       If neither applies yet — the projection is still in play — leave it pending. It stays visible in your intel layer as an active pressure.
     </p>
+  </div>
+
+  <!-- Advanced Features -->
+  <div style="margin-bottom:8px;">
+    <h2 style="font-size:0.72rem; font-weight:700; color:var(--purple); text-transform:uppercase; letter-spacing:0.08em; margin:0 0 10px 0;">Advanced Features</h2>
+  </div>
+
+  <div id="branching" class="card" style="margin-bottom:16px;">
+    <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 10px 0;">Branching timelines</h3>
+    <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0 0 12px 0;">
+      Branches let you fork the world at any point and explore what happens differently — without touching the original timeline.
+    </p>
+
+    <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:14px;">
+      <div style="background:var(--surface2); border-radius:6px; padding:10px 14px;">
+        <p style="color:var(--text); font-size:0.88rem; font-weight:700; margin:0 0 4px 0;">What branches share</p>
+        <p style="color:var(--muted); font-size:0.85rem; margin:0;">All entities, relationships, and events that existed before the fork. Every branch starts from the same world state at the moment you created it.</p>
+      </div>
+      <div style="background:var(--surface2); border-radius:6px; padding:10px 14px;">
+        <p style="color:var(--text); font-size:0.88rem; font-weight:700; margin:0 0 4px 0;">What branches separate</p>
+        <p style="color:var(--muted); font-size:0.85rem; margin:0;">Everything logged after the fork. Events on Branch A don't exist on Branch B or the main timeline. Each branch entry carries a tag in the event log so you can tell them apart.</p>
+      </div>
+    </div>
+
+    <div style="border-left:3px solid var(--purple); padding-left:12px; margin-bottom:14px;">
+      <p style="color:var(--text); font-size:0.87rem; font-weight:700; margin:0 0 6px 0;">How to create and switch branches</p>
+      <p style="color:var(--muted); font-size:0.85rem; line-height:1.5; margin:0 0 6px 0;">From the Narrator dashboard, use the <strong style="color:var(--text);">Branch</strong> panel. Create a new branch and name it — the branch becomes active immediately. Everything you log goes to that branch. Switch back to the main timeline or another branch at any time from the same panel.</p>
+      <p style="color:var(--muted); font-size:0.85rem; line-height:1.5; margin:0;">Deleting a branch removes all its events. The main timeline and other branches are unaffected.</p>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:6px; margin-bottom:12px;">
+      <p style="color:var(--text); font-size:0.86rem; font-weight:700; margin:0 0 4px 0;">When branches make sense</p>
+      <ul style="color:var(--muted); font-size:0.85rem; line-height:1.7; margin:0; padding-left:18px;">
+        <li>"What if the protagonists had taken the other path at the end of last session?"</li>
+        <li>Alternate histories — what if a key figure had survived, or a faction had held the city</li>
+        <li>Prep: sketch two versions of a scene before you know which way it goes</li>
+        <li>Exploring the downstream consequences of a decision before committing it</li>
+      </ul>
+    </div>
+
+    <div style="border-left:3px solid var(--gold); padding-left:12px;">
+      <p style="color:var(--muted); font-size:0.85rem; line-height:1.6; margin:0;">
+        <strong style="color:var(--text);">Branches are for exploration, not for staying.</strong> If you decide a branch is the real timeline, the cleanest path is to continue there — there's no "promote branch to main" operation. Keep the main timeline as your canonical one and use branches for exploration.
+      </p>
+    </div>
+  </div>
+
+  <div id="dual-axis" class="card" style="margin-bottom:28px;">
+    <h3 style="font-size:1rem; font-weight:700; color:var(--text); margin:0 0 10px 0;">Dual-axis relationships</h3>
+    <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0 0 12px 0;">
+      Every connection in RippleForge can have two axes:
+    </p>
+    <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:14px;">
+      <div style="background:var(--surface2); border-radius:6px; padding:10px 14px; border-left:3px solid var(--purple);">
+        <p style="color:var(--text); font-size:0.88rem; font-weight:700; margin:0 0 4px 0;">Formal axis</p>
+        <p style="color:var(--muted); font-size:0.85rem; margin:0;">What the relationship officially is. They signed a treaty. They're formally allied. The record says so.</p>
+      </div>
+      <div style="background:var(--surface2); border-radius:6px; padding:10px 14px; border-left:3px solid var(--gold);">
+        <p style="color:var(--text); font-size:0.88rem; font-weight:700; margin:0 0 4px 0;">Personal axis</p>
+        <p style="color:var(--muted); font-size:0.85rem; margin:0;">What they actually feel. The treaty is signed. One side is quietly hostile. The official relationship and the real one are not the same.</p>
+      </div>
+    </div>
+
+    <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin:0 0 12px 0;">
+      When the two axes differ, the world graph shows <strong style="color:var(--text);">two separate arcs</strong> between those entities — one per axis, colored differently. This is a visual signal that the relationship has tension that hasn't resolved yet.
+    </p>
+
+    <div style="border-left:3px solid var(--purple); padding-left:12px; margin-bottom:14px;">
+      <p style="color:var(--text); font-size:0.87rem; font-weight:700; margin:0 0 6px 0;">How to add a dual-axis edge</p>
+      <p style="color:var(--muted); font-size:0.85rem; line-height:1.5; margin:0;">From the Relations section on a character or faction card → Add Relation → set both <strong style="color:var(--text);">Formal Relation</strong> and <strong style="color:var(--text);">Personal Relation</strong>. If they're the same value, one arc renders. If they differ, two arcs render.</p>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:6px; margin-bottom:12px;">
+      <p style="color:var(--text); font-size:0.86rem; font-weight:700; margin:0 0 4px 0;">When to use it</p>
+      <ul style="color:var(--muted); font-size:0.85rem; line-height:1.7; margin:0; padding-left:18px;">
+        <li>A faction formally allied to another but harboring resentment after a betrayal</li>
+        <li>A character who treats someone professionally while privately despising them</li>
+        <li>Political marriages, enforced treaties, reluctant collaborations of any kind</li>
+        <li>Any situation where the official relationship and the emotional reality are pulling apart</li>
+      </ul>
+    </div>
+
+    <div style="border-left:3px solid var(--gold); padding-left:12px;">
+      <p style="color:var(--muted); font-size:0.85rem; line-height:1.6; margin:0;">
+        <strong style="color:var(--text);">The system doesn't resolve the tension automatically.</strong> It makes it visible. You decide when and how the divergence plays out in events — and when it does, you log it and the score shifts accordingly.
+      </p>
+    </div>
   </div>
 
   <!-- Mid-Story Situations -->
