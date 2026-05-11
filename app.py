@@ -153,6 +153,7 @@ from routes.async_campaign import async_camp_bp
 from routes.demo          import demo_bp
 from routes.player        import player_bp
 from routes.dm            import dm_bp
+from routes.transfer      import transfer_bp
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(admin_bp)
@@ -162,6 +163,7 @@ app.register_blueprint(async_camp_bp)
 app.register_blueprint(demo_bp)
 app.register_blueprint(player_bp)
 app.register_blueprint(dm_bp)
+app.register_blueprint(transfer_bp)
 
 
 if __name__ == "__main__":

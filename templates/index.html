@@ -42,6 +42,29 @@
 
 </div>
 
+{% if incoming_transfers %}
+<h2 class="section-title">Incoming Transfers</h2>
+<div class="card mb-8" style="border-color:var(--gold)44;">
+  {% for xfer_slug, xfer_meta in incoming_transfers %}
+  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; {% if not loop.last %}padding-bottom:14px; margin-bottom:14px; border-bottom:1px solid var(--border);{% endif %}">
+    <div>
+      <strong style="color:var(--text); font-size:0.92rem;">{{ xfer_meta.name }}</strong>
+      {% if xfer_meta.system %}<span style="color:var(--muted); font-size:0.78rem; margin-left:6px;">{{ xfer_meta.system }}</span>{% endif %}
+      <div style="color:var(--muted); font-size:0.75rem; margin-top:2px;">From {{ xfer_meta.pending_transfer.from_display_name or xfer_meta.owner }}</div>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <form method="POST" action="/transfer/{{ xfer_slug }}/accept" style="margin:0;">
+        <button type="submit" style="background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:5px 16px; font-size:0.82rem; font-weight:700; cursor:pointer;">Accept</button>
+      </form>
+      <form method="POST" action="/transfer/{{ xfer_slug }}/decline" style="margin:0;">
+        <button type="submit" style="background:none; border:1px solid var(--border); color:var(--muted); border-radius:4px; padding:5px 14px; font-size:0.82rem; cursor:pointer;">Decline</button>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
 {% if my_campaigns %}
 <h2 class="section-title">My Worlds</h2>
 <div class="card-grid mb-8">

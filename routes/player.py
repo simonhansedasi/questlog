@@ -15,7 +15,7 @@ from routes.utils import (
     ai_required, admin_required,
     load_users, save_users, load_invites, save_invites, generate_invite_code,
     load, campaigns, _validate_slug, _user_world_count, _allowed_image_url,
-    _get_backlinks, _compute_site_stats,
+    _get_backlinks, _compute_site_stats, get_pending_incoming_transfers,
     CAMPAIGNS, USERS_FILE, INVITES_FILE,
     _DEFAULT_TERMS, _BLANK_TEMPLATES,
     STRIPE_PUBLISHABLE_KEY, STRIPE_WEBHOOK_SECRET,
@@ -44,7 +44,8 @@ def index():
         _ag = db.get_async_campaign(c["slug"])
         if _ag and _ag.get("phase") in ("recruiting", "active"):
             c["async_phase"] = _ag.get("phase")
-    return render_template("index.html", my_campaigns=my_campaigns, member_campaigns=member_campaigns, demo_campaigns=demo_campaigns)
+    incoming_transfers = get_pending_incoming_transfers(username)
+    return render_template("index.html", my_campaigns=my_campaigns, member_campaigns=member_campaigns, demo_campaigns=demo_campaigns, incoming_transfers=incoming_transfers)
 
 
 @player_bp.route("/guide")

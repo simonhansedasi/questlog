@@ -1,4 +1,4 @@
-from flask import session, request, redirect, url_for, abort
+from flask import session, request, redirect, url_for, abort, flash
 from markupsafe import Markup
 from pathlib import Path
 from functools import wraps
@@ -69,6 +69,25 @@ def _user_world_count(username):
         if meta.get("owner") == username and not meta.get("demo_mode") and not meta.get("demo"):
             count += 1
     return count
+
+
+def get_pending_incoming_transfers(username):
+    """Return list of (slug, meta) for worlds with a pending transfer to this user."""
+    result = []
+    for d in CAMPAIGNS.iterdir():
+        if not d.is_dir():
+            continue
+        cf = d / "campaign.json"
+        if not cf.exists():
+            continue
+        try:
+            meta = json.loads(cf.read_text())
+        except Exception:
+            continue
+        pt = meta.get("pending_transfer")
+        if pt and pt.get("to_username") == username:
+            result.append((meta.get("slug", d.name), meta))
+    return result
 
 
 _stats_cache = {"data": None, "ts": 0.0}
@@ -335,6 +354,13 @@ def dm_required(f):
                 session[f"dm_{slug}"] = True
             else:
                 return redirect(url_for("dm_bp.dm_login", slug=slug))
+        if request.method == "POST":
+            _transfer_exempt = ("/dm/transfer/cancel", "/dm/transfer")
+            if not any(request.path.endswith(e) for e in _transfer_exempt):
+                meta = load(slug, "campaign.json")
+                if meta.get("pending_transfer"):
+                    flash("This world is locked while a transfer is pending. Cancel the transfer to make changes.", "error")
+                    return redirect(url_for("dm_bp.dm", slug=slug))
         return f(slug, *args, **kwargs)
     return decorated
 

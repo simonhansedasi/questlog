@@ -7,3 +7,4 @@ python-dotenv
 stripe
 werkzeug
 resend
+pytest

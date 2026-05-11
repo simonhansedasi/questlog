@@ -3035,5 +3035,50 @@ def dm_delete_campaign(slug):
     return redirect(url_for("player.index"))
 
 
+@dm_bp.route("/<slug>/dm/transfer", methods=["POST"])
+@login_required
+@dm_required
+def dm_transfer_initiate(slug):
+    meta = load(slug, "campaign.json")
+    if meta.get("owner") != session.get("user"):
+        abort(403)
+    email = request.form.get("email", "").strip().lower()
+    if not email:
+        flash("Enter the recipient's Gmail address.", "error")
+        return redirect(url_for("dm_bp.dm", slug=slug))
+    users = load_users()
+    sender_email = users.get(session["user"], {}).get("email", "").lower()
+    if email == sender_email:
+        flash("You can't transfer a world to yourself.", "error")
+        return redirect(url_for("dm_bp.dm", slug=slug))
+    to_username = next((u for u, d in users.items() if d.get("email", "").lower() == email), None)
+    if not to_username:
+        flash("No RippleForge account found for that address.", "error")
+        return redirect(url_for("dm_bp.dm", slug=slug))
+    sender = users.get(session["user"], {})
+    meta["pending_transfer"] = {
+        "to_username": to_username,
+        "to_email": email,
+        "from_display_name": sender.get("display_name") or session["user"],
+        "initiated_at": datetime.datetime.utcnow().isoformat(),
+    }
+    (CAMPAIGNS / slug / "campaign.json").write_text(json.dumps(meta, indent=2))
+    flash(f"Transfer request sent to {email}. World is locked until they accept or you cancel.", "success")
+    return redirect(url_for("dm_bp.dm", slug=slug))
+
+
+@dm_bp.route("/<slug>/dm/transfer/cancel", methods=["POST"])
+@login_required
+@dm_required
+def dm_transfer_cancel(slug):
+    meta = load(slug, "campaign.json")
+    if meta.get("owner") != session.get("user"):
+        abort(403)
+    meta.pop("pending_transfer", None)
+    (CAMPAIGNS / slug / "campaign.json").write_text(json.dumps(meta, indent=2))
+    flash("Transfer cancelled. World is unlocked.", "success")
+    return redirect(url_for("dm_bp.dm", slug=slug))
+
+
 # ── Admin routes ──────────────────────────────────────────────────────────────
 

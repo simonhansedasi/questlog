@@ -1993,6 +1993,29 @@ window.RF = {
   </form>
 </div>
 
+<h2 class="section-title mt-8">Transfer World</h2>
+<div class="card mb-4">
+  {% if meta.get('pending_transfer') %}
+  <p style="color:var(--text); font-size:0.85rem; margin-bottom:10px;">
+    Pending transfer to <strong>{{ meta.pending_transfer.to_email }}</strong> — world is locked until they accept or you cancel.
+  </p>
+  <form method="POST" action="/{{ slug }}/dm/transfer/cancel">
+    <button type="submit" style="background:none; border:1px solid var(--border); color:var(--muted); border-radius:4px; padding:5px 14px; font-size:0.82rem; cursor:pointer;">
+      Cancel Transfer
+    </button>
+  </form>
+  {% else %}
+  <p class="text-muted text-sm" style="margin-bottom:12px;">Transfer ownership to another RippleForge user. Enter their Gmail address. Nothing happens until they accept.</p>
+  <form method="POST" action="/{{ slug }}/dm/transfer" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+    <input type="email" name="email" placeholder="recipient@gmail.com" required
+           style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:6px 10px; font-size:0.85rem; flex:1; min-width:200px;">
+    <button type="submit" style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:6px 16px; font-size:0.85rem; font-weight:600; cursor:pointer; white-space:nowrap;">
+      Send Transfer
+    </button>
+  </form>
+  {% endif %}
+</div>
+
 <h2 class="section-title mt-8" style="color:#e05c5c;">Danger Zone</h2>
 <div class="card" style="border-color:#e05c5c33;">
   <p class="text-muted text-sm" style="margin-bottom:12px;">Permanently delete this world and all its data. This cannot be undone.</p>

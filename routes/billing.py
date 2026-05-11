@@ -175,6 +175,44 @@ def billing_world_success():
     return redirect(url_for("dm_bp.dm", slug=new_slug))
 
 
+@billing_bp.route("/billing/transfer/success")
+@login_required
+def billing_transfer_success():
+    session_id = request.args.get("session_id")
+    if not session_id:
+        abort(400)
+    try:
+        cs = stripe.checkout.Session.retrieve(session_id)
+    except stripe.StripeError:
+        abort(400)
+    if cs.payment_status != "paid":
+        flash("Payment not completed.", "error")
+        return redirect(url_for("player.index"))
+    username = getattr(cs.metadata, "username", None)
+    if username != session.get("user"):
+        abort(403)
+    if getattr(cs.metadata, "action", None) != "accept_transfer":
+        abort(400)
+    slug = getattr(cs.metadata, "transfer_slug", None)
+    if not slug:
+        abort(400)
+    cf = CAMPAIGNS / slug / "campaign.json"
+    if not cf.exists():
+        flash("The world no longer exists.", "error")
+        return redirect(url_for("player.index"))
+    meta = json.loads(cf.read_text())
+    pt = meta.get("pending_transfer")
+    if not pt or pt.get("to_username") != username:
+        flash("Transfer is no longer pending.", "error")
+        return redirect(url_for("player.index"))
+    meta["owner"] = username
+    meta.pop("pending_transfer", None)
+    cf.write_text(json.dumps(meta, indent=2))
+    session[f"dm_{slug}"] = True
+    flash(f"World transferred! Welcome to {meta.get('name', 'your new world')}.", "success")
+    return redirect(url_for("dm_bp.dm", slug=slug))
+
+
 @billing_bp.route("/billing/party/success")
 @login_required
 def billing_party_success():
