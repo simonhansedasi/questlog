@@ -2292,6 +2292,7 @@ def campaign(slug):
         latest_journal = {**e, "recap_html": Markup(markdown.markdown(e.get("recap", ""), extensions=["nl2br"]))}
     npcs = db.get_npcs(slug, include_hidden=is_dm)
     factions = db.get_factions(slug, include_hidden=is_dm)
+    locations = db.get_locations(slug)
     current_session = db.get_current_session(slug)
     async_campaign = db.get_async_campaign(slug)
     username = session.get("user")
@@ -2304,6 +2305,7 @@ def campaign(slug):
                            current_session=current_session,
                            recent_entities=db.get_recent_entities(slug, current_session),
                            npc_count=len(npcs), faction_count=len(factions),
+                           npcs=npcs, factions=factions, locations=locations,
                            async_campaign=async_campaign, async_visible=async_visible,
                            is_dm=is_dm)
 
@@ -3593,7 +3595,11 @@ def story(slug):
     meta = load(slug, "campaign.json")
     is_dm = bool(session.get(f"dm_{slug}"))
     quests = db.get_quests(slug, include_hidden=is_dm)
-    return render_template("story.html", meta=meta, quests=quests, slug=slug)
+    npcs = db.get_npcs(slug, include_hidden=is_dm)
+    factions = db.get_factions(slug, include_hidden=is_dm)
+    locations = db.get_locations(slug)
+    return render_template("story.html", meta=meta, quests=quests, slug=slug,
+                           npcs=npcs, factions=factions, locations=locations)
 
 
 @app.route("/<slug>/journal")

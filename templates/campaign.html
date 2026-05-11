@@ -121,7 +121,7 @@
 {% for quest in active %}
 <div class="card mb-4">
   <h3 style="margin-bottom:6px;">{{ quest.title }}</h3>
-  <p style="margin-bottom:10px; font-size:0.9rem; color:var(--muted);">{{ quest.description }}</p>
+  <p style="margin-bottom:10px; font-size:0.9rem; color:var(--muted);">{{ quest.description | wikilinks(slug, npcs, factions, locations) }}</p>
   {% if quest.objectives %}
   <ul style="padding-left:18px; margin:0;">
     {% for obj in quest.objectives %}

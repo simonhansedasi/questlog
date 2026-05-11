@@ -300,24 +300,55 @@
 </div>
 
 {% if party_log %}
-<div class="card" style="margin-top:24px;">
-  <h3 style="font-size:0.85rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); margin-bottom:14px;">{{ party_display_name }} — Event Log</h3>
-  <ul class="log-list" style="margin-bottom:0;">
-    {% for entry in party_log %}
-    {% set vis = entry.visibility if entry.visibility is defined else ('dm_only' if entry.get('dm_only') else 'public') %}
-    {% if is_dm or vis != 'dm_only' %}
-    <li style="font-size:0.82rem;">
-      <span class="log-session">{{ terms.session }} {{ entry.session }}</span>
-      {% if entry._source_type == 'group' %}<span style="color:var(--gold-dim); font-size:0.68rem; font-weight:700; margin-right:3px;">{{ entry._source }}</span>{% else %}<span style="color:var(--purple); font-size:0.68rem; font-weight:700; margin-right:3px;">{{ entry._source }}</span>{% endif %}
-      {% if entry.event_type %}<span style="color:var(--purple); font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; margin-right:3px;">{{ entry.event_type }}</span>{% endif %}
-      {% if entry.polarity and entry.polarity != 'neutral' %}<span style="color:{% if entry.polarity == 'positive' %}#7ec87e{% else %}#e05c5c{% endif %}; font-size:0.7rem; font-weight:700; margin-right:3px;">{% if entry.polarity == 'positive' %}+{% else %}−{% endif %}{{ entry.intensity }}</span>{% endif %}
-      {% if entry._actor_name and (is_dm or not entry.get('actor_dm_only')) %}<span style="color:var(--gold-dim); font-size:0.7rem; font-style:italic;">⤷ {{ entry._actor_name }}</span> {% endif %}
-      <span style="color:var(--text-dim);">{{ entry.note | wikilinks(slug, npcs, factions, locations, all_party_chars) }}</span>
-      {% if vis == 'dm_only' and is_dm %}<span style="color:var(--muted); font-size:0.65rem; margin-left:4px;">[DM]</span>{% endif %}
-    </li>
+<div style="margin-top:24px;">
+  <h3 style="font-size:0.85rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); margin-bottom:10px;">{{ party_display_name }} — Event Log</h3>
+  {# collect unique sessions in desc order (party_log already sorted desc) #}
+  {% set _ns = namespace(seen_sess=[]) %}
+  {% for _e in party_log %}
+    {% if _e.session not in _ns.seen_sess %}{% set _ns.seen_sess = _ns.seen_sess + [_e.session] %}{% endif %}
+  {% endfor %}
+  <div style="display:flex; flex-direction:column; gap:8px;">
+    {% for sess in _ns.seen_sess %}
+    {% set _sess_all = party_log | selectattr('session','equalto',sess) | list %}
+    {% set _sess_visible = [] %}
+    {% for _e in _sess_all %}{% set _vis = _e.visibility if _e.visibility is defined else ('dm_only' if _e.get('dm_only') else 'public') %}{% if is_dm or _vis != 'dm_only' %}{% set _ = _sess_visible.append(_e) %}{% endif %}{% endfor %}
+    {% if _sess_visible %}
+    {% set _sess_n = _sess_visible | length %}
+    <details {% if loop.first %}open{% endif %} style="background:var(--surface); border:1px solid var(--border); border-radius:6px; overflow:hidden;">
+      <summary style="padding:8px 14px; cursor:pointer; list-style:none; display:flex; align-items:center; gap:8px; user-select:none;">
+        <span style="font-size:0.7rem; color:var(--muted); flex-shrink:0;">▾</span>
+        <span style="font-size:0.8rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.06em;">{{ terms.session }} {{ sess }}</span>
+        <span style="font-weight:400; color:var(--muted); font-size:0.72rem;">{{ _sess_n }} event{{ 's' if _sess_n != 1 }}</span>
+      </summary>
+      <div style="padding:6px 14px 10px; display:flex; flex-direction:column; gap:6px;">
+        {% for char_name, char_events in _sess_visible | groupby('_source') %}
+        {% set _cev = char_events | list %}
+        {% set _cn = _cev | length %}
+        <details open style="border:1px solid var(--border); border-radius:5px; overflow:hidden;">
+          <summary style="list-style:none; cursor:pointer; display:flex; align-items:center; gap:6px; padding:6px 10px; background:var(--surface2); user-select:none;">
+            <span style="font-size:0.7rem; color:var(--muted); flex-shrink:0;">▾</span>
+            <span style="font-weight:700; font-size:0.85rem; color:var(--text);">{{ char_name }}</span>
+            <span style="color:var(--muted); font-size:0.72rem; margin-left:4px;">{{ _cn }} event{{ 's' if _cn != 1 }}</span>
+          </summary>
+          <ul class="log-list" style="margin:0; padding:4px 10px 6px; list-style:none;">
+            {% for entry in _cev %}
+            {% set vis = entry.visibility if entry.visibility is defined else ('dm_only' if entry.get('dm_only') else 'public') %}
+            <li style="font-size:0.82rem;">
+              {% if entry.event_type %}<span style="color:var(--purple); font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; margin-right:3px;">{{ entry.event_type }}</span>{% endif %}
+              {% if entry.polarity and entry.polarity != 'neutral' %}<span style="color:{% if entry.polarity == 'positive' %}#7ec87e{% else %}#e05c5c{% endif %}; font-size:0.7rem; font-weight:700; margin-right:3px;">{% if entry.polarity == 'positive' %}+{% else %}−{% endif %}{{ entry.intensity }}</span>{% endif %}
+              {% if entry._actor_name and (is_dm or not entry.get('actor_dm_only')) %}<span style="color:var(--gold-dim); font-size:0.7rem; font-style:italic;">⤷ {{ entry._actor_name }}</span> {% endif %}
+              <span style="color:var(--text-dim);">{{ entry.note | wikilinks(slug, npcs, factions, locations, all_party_chars) }}</span>
+              {% if vis == 'dm_only' and is_dm %}<span style="color:var(--muted); font-size:0.65rem; margin-left:4px;">[DM]</span>{% endif %}
+            </li>
+            {% endfor %}
+          </ul>
+        </details>
+        {% endfor %}
+      </div>
+    </details>
     {% endif %}
     {% endfor %}
-  </ul>
+  </div>
 </div>
 {% endif %}
 

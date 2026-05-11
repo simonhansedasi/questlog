@@ -96,7 +96,7 @@ def _extract_description(body):
         line = line.strip()
         if not line or line.startswith('#') or line == '---':
             continue
-        line = re.sub(r'\[\[(?:[^\]|]+\|)?([^\]]+)\]\]', r'\1', line)
+        # wikilinks preserved — RippleForge renders [[Name]] natively
         line = re.sub(r'\[([^\]]+)\]\([^\)]+\)', r'\1', line)
         line = re.sub(r'(?:^|\s)#\w+', '', line).strip()
         if line:
