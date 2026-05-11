@@ -539,6 +539,22 @@ window.applyFilters = function() {
     {% else %}
     <p class="text-muted text-sm" style="margin-bottom:0;">No interactions logged yet.</p>
     {% endif %}
+    {% if faction._actor_log %}
+    <p style="font-size:0.72rem; color:var(--muted); margin:8px 0 4px 0; text-transform:uppercase; letter-spacing:0.05em;">Events caused by {{ faction.name }}</p>
+    <ul class="log-list" style="margin-bottom:0;">
+      {% for entry in faction._actor_log %}{% if loop.index0 < 4 %}
+      <li style="font-size:0.82rem;">
+        <span class="log-session">{{ terms.session }} {{ entry.session }}</span>
+        {% if entry.polarity %}<span style="color:{% if entry.polarity == 'positive' %}#7ec87e{% elif entry.polarity == 'negative' %}#e05c5c{% else %}var(--muted){% endif %}; font-size:0.72rem; margin-right:4px;">{% if entry.polarity == 'positive' %}+{% elif entry.polarity == 'negative' %}−{% endif %}{{ entry.intensity }}</span>{% endif %}
+        {{ entry.note | wikilinks(slug, npcs, factions, locations, party) }}
+        {% if entry._target_type in ('npc', 'faction', 'location') %}<span style="font-size:0.7rem; color:var(--muted);"> → <a href="/{{ slug }}/world/{{ entry._target_type }}/{{ entry._target_id }}" style="color:var(--muted);">{{ entry._target_name }}</a></span>{% else %}<span style="font-size:0.7rem; color:var(--muted);"> → {{ entry._target_name }}</span>{% endif %}
+      </li>
+      {% endif %}{% endfor %}
+    </ul>
+    {% if faction._actor_log | length > 4 %}
+    <p style="font-size:0.72rem; color:var(--muted); margin:4px 0 0 0;">+{{ faction._actor_log | length - 4 }} more — <a href="/{{ slug }}/world/faction/{{ faction.id }}" style="color:var(--muted);">full page</a></p>
+    {% endif %}
+    {% endif %}
   </details>
   {% endfor %}
 </div>

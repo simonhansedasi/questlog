@@ -868,23 +868,32 @@ window.RF = {
 <h2 class="section-title mt-8" id="eventlog">Event Log</h2>
 {% if all_log_entries %}
 <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:20px;">
-  {% for entity_name, entity_events in all_log_entries | groupby('source') %}
-  {% set _evts = entity_events | list %}
-  {% set _first = _evts[0] %}
-  {% set n = _evts | length %}
-  <details open style="margin-bottom:2px;">
+  {% for session_n, session_entries in all_log_entries | sort(attribute='session') | groupby('session') %}
+  {% set _session_list = session_entries | list %}
+  <details {{ 'open' if loop.last }} style="margin-bottom:2px;">
     <summary style="list-style:none; cursor:pointer; display:flex; align-items:center; padding:8px 10px; background:var(--surface2); border:1px solid var(--border); border-radius:5px; user-select:none;">
       <span style="font-size:0.7rem; color:var(--muted); margin-right:6px; flex-shrink:0;">▾</span>
-      <span style="font-weight:700; font-size:0.88rem; color:var(--text);">
-        {% if _first.type == 'NPC' and _first.entity_id %}<a href="/{{ slug }}/world/npc/{{ _first.entity_id }}" style="color:var(--text); text-decoration:none;">{{ entity_name }}</a>
-        {% elif _first.type == 'Faction' and _first.entity_id %}<a href="/{{ slug }}/world/faction/{{ _first.entity_id }}" style="color:var(--text); text-decoration:none;">{{ entity_name }}</a>
-        {% elif _first.type == 'Quest' and _first.entity_id %}<a href="/{{ slug }}/story" style="color:var(--text); text-decoration:none;">{{ entity_name }}</a>
-        {% else %}{{ entity_name }}{% endif %}
-      </span>
-      <span style="color:var(--muted); font-size:0.65rem; font-weight:600; text-transform:uppercase; letter-spacing:0.04em; margin-left:8px; background:var(--surface); padding:1px 5px; border-radius:3px;">{{ _first.type }}</span>
-      <span style="color:var(--muted); font-size:0.72rem; margin-left:8px;">{{ n }} event{{ 's' if n != 1 }}</span>
+      <span style="font-weight:700; font-size:0.88rem; color:var(--text);">{{ terms.session }} {{ session_n }}</span>
+      <span style="color:var(--muted); font-size:0.72rem; margin-left:8px;">{{ _session_list | length }} event{{ 's' if (_session_list | length) != 1 }}</span>
     </summary>
-    <ul style="margin:0; padding:6px 0 4px 14px; list-style:none; display:flex; flex-direction:column; gap:0; border-left:2px solid var(--border); margin-top:4px;">
+    <div style="display:flex; flex-direction:column; gap:6px; margin-top:4px; padding-left:14px; border-left:2px solid var(--border);">
+    {% set is_last_session = loop.last %}
+    {% for entity_name, entity_events in _session_list | sort(attribute='source') | groupby('source') %}
+    {% set _evts = entity_events | list %}
+    {% set _first = _evts[0] %}
+    {% set n = _evts | length %}
+    <details style="margin-bottom:2px;">
+      <summary style="list-style:none; cursor:pointer; display:flex; align-items:center; gap:6px; padding:3px 0 3px 2px; user-select:none;">
+        <span style="font-weight:700; font-size:0.82rem; color:var(--text);">
+          {% if _first.type == 'NPC' and _first.entity_id %}<a href="/{{ slug }}/world/npc/{{ _first.entity_id }}" style="color:var(--text); text-decoration:none;">{{ entity_name }}</a>
+          {% elif _first.type == 'Faction' and _first.entity_id %}<a href="/{{ slug }}/world/faction/{{ _first.entity_id }}" style="color:var(--text); text-decoration:none;">{{ entity_name }}</a>
+          {% elif _first.type == 'Quest' and _first.entity_id %}<a href="/{{ slug }}/story" style="color:var(--text); text-decoration:none;">{{ entity_name }}</a>
+          {% else %}{{ entity_name }}{% endif %}
+        </span>
+        <span style="color:var(--muted); font-size:0.65rem; font-weight:600; text-transform:uppercase; letter-spacing:0.04em; background:var(--surface); padding:1px 5px; border-radius:3px;">{{ _first.type }}</span>
+        <span style="color:var(--muted); font-size:0.68rem;">{{ n }} event{{ 's' if n != 1 }}</span>
+      </summary>
+      <ul style="margin:0; padding:0 0 4px 12px; list-style:none; display:flex; flex-direction:column; gap:0; border-left:2px solid var(--border);">
       {% for e in _evts %}
       {% set vis = e.visibility if e.visibility is defined else ('dm_only' if e.get('dm_only') else 'public') %}
       {% set is_ripple = e.ripple_source is defined and e.ripple_source %}
@@ -972,7 +981,10 @@ window.RF = {
         </div>
       </li>
       {% endfor %}
-    </ul>
+      </ul>
+    </details>
+    {% endfor %}
+    </div>
   </details>
   {% endfor %}
 </div>
@@ -1486,6 +1498,27 @@ window.RF = {
           </select>
           <button type="submit" style="background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:5px 12px; font-size:0.78rem; font-weight:700; cursor:pointer;">Add</button>
         </form>
+
+        {# Events Caused by faction #}
+        {% set _fal = faction_actor_logs.get(f.id, []) %}
+        {% if _fal %}
+        <p style="color:var(--muted); font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin:12px 0 4px 0;">Events Caused by {{ f.name }}</p>
+        <ul style="list-style:none; margin:0 0 10px 0; padding:0; display:flex; flex-direction:column; gap:4px;">
+        {% for evt in _fal %}
+        {% set _pc = '#7ec87e' if evt.polarity == 'positive' else '#e05c5c' if evt.polarity == 'negative' else 'var(--muted)' %}
+        <li style="padding:5px 8px; background:var(--surface); border-radius:4px; border-left:3px solid {{ _pc }};">
+          <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-bottom:2px;">
+            <span style="color:var(--muted); font-size:0.68rem;">S{{ evt.session }}</span>
+            {% if evt.polarity %}<span style="color:{{ _pc }}; font-size:0.68rem; font-weight:700;">{{ evt.polarity }}</span>{% endif %}
+            <span style="color:var(--muted); font-size:0.68rem;">on</span>
+            <span style="color:var(--gold); font-size:0.75rem; font-weight:600;">{{ evt._target_name }}</span>
+            {% if evt.visibility == 'dm_only' %}<span style="color:var(--purple); font-size:0.65rem;">{{ terms.dm }} only</span>{% endif %}
+          </div>
+          <span style="color:var(--text); font-size:0.8rem;">{{ evt.note }}</span>
+        </li>
+        {% endfor %}
+        </ul>
+        {% endif %}
 
         {# Edit metadata #}
         <p style="color:var(--muted); font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin:0 0 6px 0;">Edit</p>

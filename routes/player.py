@@ -554,6 +554,22 @@ def world(slug):
                     _al.append({**_e, "_target_name": _ent["name"], "_target_id": _tid, "_target_type": _etype})
         _npc["_actor_log"] = sorted(_al, key=lambda e: e.get("session", 0), reverse=True)
 
+    _pgl = db.get_visible_log(meta.get("party_group_log", []), is_dm=is_dm)
+    for _fac in factions:
+        _al = []
+        for _ent, _etype in _scan_targets:
+            if _etype == "faction" and _ent["id"] == _fac["id"]:
+                continue
+            _tid = db.slugify(_ent["name"]) if _etype == "char" else _ent.get("id", "")
+            for _e in db.get_visible_log(_ent.get("log", []), is_dm=is_dm):
+                if _e.get("actor_id") == _fac["id"]:
+                    _al.append({**_e, "_target_name": _ent["name"], "_target_id": _tid, "_target_type": _etype})
+        for _e in _pgl:
+            if _e.get("actor_id") == _fac["id"]:
+                _pname = _e.get("party_name") or "The Party"
+                _al.append({**_e, "_target_name": _pname, "_target_id": "", "_target_type": "party_group"})
+        _fac["_actor_log"] = sorted(_al, key=lambda e: e.get("session", 0), reverse=True)
+
     return render_template("world.html", meta=meta, npcs=npcs, factions=factions,
                            conditions=conditions, locations=locations, slug=slug, is_dm=is_dm,
                            as_of=as_of, max_session=max_session,
@@ -1023,6 +1039,7 @@ def world_graph_data(slug):
         for _pc in _pg.get("characters", []):
             _char_hub[_pc["name"]] = _phub
     _default_hub = f"_party_{_parties_data[0]['id']}" if _multi_party else "_party"
+    _party_name_to_hub = {pg["name"]: (f"_party_{pg['id']}" if _multi_party else "_party") for pg in _parties_data}
 
     if party:
         # Build reverse lookup: event_id → entity_id so character known_events
@@ -1274,7 +1291,8 @@ def world_graph_data(slug):
             aid = f"_char_{db.slugify(aid)}"
         if aid not in known_ids:
             continue
-        _add_acted_edge(aid, _default_hub, entry.get("polarity"), entry.get("actor_dm_only", False))
+        _hub = _party_name_to_hub.get(entry.get("party_name"), _default_hub)
+        _add_acted_edge(aid, _hub, entry.get("polarity"), entry.get("actor_dm_only", False))
 
     return jsonify({"nodes": nodes, "edges": edges})
 
