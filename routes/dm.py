@@ -177,6 +177,20 @@ def dm(slug):
                     _al.append({**_e, "_target_name": _oc["name"], "_target_id": db.slugify(_oc["name"]), "_target_type": "char"})
         _al.sort(key=lambda e: e.get("session", 0), reverse=True)
         char_actor_logs[_cname] = _al
+    faction_actor_logs = {}
+    _scan_all = (
+        [(n, n["name"]) for n in db.get_npcs(slug, include_hidden=True)] +
+        [(f, f["name"]) for f in db.get_factions(slug, include_hidden=True)] +
+        [(loc, loc["name"]) for loc in db.get_locations(slug, include_hidden=True)] +
+        [(c, c["name"]) for c in all_party_chars]
+    )
+    for _ent, _tname in _scan_all:
+        for _e in _ent.get("log", []):
+            if _e.get("actor_type") == "faction" and _e.get("actor_id"):
+                faction_actor_logs.setdefault(_e["actor_id"], []).append(
+                    {**_e, "_target_name": _tname})
+    for _fid in faction_actor_logs:
+        faction_actor_logs[_fid].sort(key=lambda e: e.get("session", 0), reverse=True)
     _party_display_name = meta.get("party_name") or "The Party"
     _multi_party = len(parties) > 1
     all_entities = (
@@ -259,7 +273,8 @@ def dm(slug):
                            all_log_entries=all_log_entries,
                            parties=parties,
                            all_party_chars=all_party_chars,
-                           char_actor_logs=char_actor_logs)
+                           char_actor_logs=char_actor_logs,
+                           faction_actor_logs=faction_actor_logs)
 
 
 @dm_bp.route("/<slug>/dm/log/quick", methods=["POST"])
