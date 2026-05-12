@@ -816,6 +816,23 @@ function rfFormalize(srcId, srcType, tgtId, tgtType, rel, rowId) {
 
       <hr class="divider">
 
+      {% if world_npcs | length > 1 %}
+      <div style="margin-bottom:12px;">
+        <p style="color:var(--muted); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin:0 0 6px 0;">Collapse &amp; Migrate</p>
+        <p style="color:var(--muted); font-size:0.72rem; margin:0 0 8px 0;">Merge this {{ terms.npc | lower }}'s full history into another, then delete this entry. Use after a secret identity reveal.</p>
+        <form method="POST" action="/{{ slug }}/dm/npc/{{ npc.id }}/collapse_into" onsubmit="return confirm('Merge all log entries and relations from {{ npc.name }} into the selected character, then delete {{ npc.name }}? This cannot be undone.');">
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <select name="target_id" style="background:var(--surface); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:4px 8px; font-size:0.8rem;">
+              {% for n in world_npcs %}{% if n.id != npc.id %}
+              <option value="{{ n.id }}">{{ n.name }}</option>
+              {% endif %}{% endfor %}
+            </select>
+            <button type="submit" style="background:none; border:1px solid var(--muted); color:var(--muted); border-radius:4px; padding:4px 12px; font-size:0.78rem; cursor:pointer;">Collapse into →</button>
+          </div>
+        </form>
+      </div>
+      {% endif %}
+
       <form method="POST" action="/{{ slug }}/dm/npc/{{ npc.id }}/delete">
         <button type="submit" style="background:none; border:1px solid #e05c5c; color:#e05c5c; border-radius:4px; padding:4px 12px; font-size:0.78rem; cursor:pointer;">
           Delete {{ terms.npc }}

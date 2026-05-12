@@ -153,6 +153,112 @@ def delete_npc(slug, npc_id):
     _save(slug, data, "world/npcs.json")
 
 
+def collapse_npc_into(slug, source_id, target_id):
+    """Merge source NPC into target NPC, then delete source.
+
+    All log entries, relations, and factions from source are absorbed into
+    target. Every actor_id / ripple_source.entity_id reference to source_id
+    is rewritten to target_id across all entity files and party_group_log.
+    Relations on other entities that point to source_id are repointed to
+    target_id (or dropped if target already has an edge to that entity).
+    """
+    if source_id == target_id:
+        return False
+
+    npc_data = _load(slug, "world/npcs.json")
+    npcs = npc_data.get("npcs", [])
+    source = next((n for n in npcs if n["id"] == source_id), None)
+    target = next((n for n in npcs if n["id"] == target_id), None)
+    if not source or not target:
+        return False
+
+    # ── 1. Merge logs ──────────────────────────────────────────────────────
+    combined = target.get("log", []) + source.get("log", [])
+    combined.sort(key=lambda e: e.get("session", 0))
+    target["log"] = combined
+
+    # ── 2. Merge relations (skip dupes already on target) ──────────────────
+    existing_rel_targets = {r.get("target") for r in target.get("relations", [])}
+    for rel in source.get("relations", []):
+        if rel.get("target") not in existing_rel_targets and rel.get("target") != target_id:
+            target.setdefault("relations", []).append(rel)
+
+    # ── 3. Merge factions ──────────────────────────────────────────────────
+    merged_factions = list({*target.get("factions", []), *source.get("factions", [])})
+    if merged_factions:
+        target["factions"] = merged_factions
+    merged_hfactions = list({*target.get("hidden_factions", []), *source.get("hidden_factions", [])})
+    if merged_hfactions:
+        target["hidden_factions"] = merged_hfactions
+
+    # ── 4. Remove source from NPC list ────────────────────────────────────
+    npc_data["npcs"] = [n for n in npcs if n["id"] != source_id]
+    _save(slug, npc_data, "world/npcs.json")
+
+    # ── 5. Rewrite all cross-references in every data file ────────────────
+    def _rewrite_log(log):
+        for e in log:
+            if e.get("actor_id") == source_id and e.get("actor_type") == "npc":
+                e["actor_id"] = target_id
+            rs = e.get("ripple_source")
+            if rs and rs.get("entity_id") == source_id and rs.get("entity_type") == "npc":
+                rs["entity_id"] = target_id
+
+    def _rewrite_relations(entity):
+        rels = entity.get("relations", [])
+        # repoint source → target; drop if target already has an edge there
+        existing = {r.get("target") for r in rels if r.get("target") != source_id}
+        new_rels = []
+        for r in rels:
+            if r.get("target") == source_id:
+                if target_id not in existing:
+                    r = dict(r)
+                    r["target"] = target_id
+                    new_rels.append(r)
+                    existing.add(target_id)
+            else:
+                new_rels.append(r)
+        entity["relations"] = new_rels
+
+    # NPCs
+    npc_data2 = _load(slug, "world/npcs.json")
+    for n in npc_data2.get("npcs", []):
+        _rewrite_log(n.get("log", []))
+        _rewrite_relations(n)
+        if n.get("id") == target_id:
+            _rewrite_log(n.get("log", []))
+    _save(slug, npc_data2, "world/npcs.json")
+
+    # Factions
+    fac_data = _load(slug, "world/factions.json")
+    for f in fac_data.get("factions", []):
+        _rewrite_log(f.get("log", []))
+        _rewrite_relations(f)
+    _save(slug, fac_data, "world/factions.json")
+
+    # Locations
+    loc_data = _load(slug, "world/locations.json")
+    for loc in loc_data.get("locations", []):
+        _rewrite_log(loc.get("log", []))
+    _save(slug, loc_data, "world/locations.json")
+
+    # Party characters
+    party_data = _load(slug, "party.json")
+    for pg in party_data.get("parties", party_data.get("characters", [])):
+        chars = pg.get("characters", [pg]) if "characters" in pg else [pg]
+        for c in chars:
+            _rewrite_log(c.get("log", []))
+            _rewrite_relations(c)
+    _save(slug, party_data, "party.json")
+
+    # campaign.json party_group_log
+    meta = _load(slug, "campaign.json")
+    _rewrite_log(meta.get("party_group_log", []))
+    _save(slug, meta, "campaign.json")
+
+    return True
+
+
 def set_npc_dead(slug, npc_id, dead, dead_session=None):
     data = _load(slug, "world/npcs.json")
     for npc in data.get("npcs", []):

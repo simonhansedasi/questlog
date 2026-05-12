@@ -3095,5 +3095,24 @@ def dm_transfer_cancel(slug):
     return redirect(url_for("dm_bp.dm", slug=slug))
 
 
+@dm_bp.route("/<slug>/dm/npc/<npc_id>/collapse_into", methods=["POST"])
+@login_required
+@dm_required
+def dm_collapse_npc(slug, npc_id):
+    target_id = request.form.get("target_id", "").strip()
+    if not target_id or target_id == npc_id:
+        flash("Select a different character to collapse into.", "error")
+        return redirect(url_for("dm_bp.dm", slug=slug))
+    ok = db.collapse_npc_into(slug, npc_id, target_id)
+    if not ok:
+        flash("Collapse failed — one of the characters wasn't found.", "error")
+        return redirect(url_for("dm_bp.dm", slug=slug))
+    target_npcs = db.get_npcs(slug, include_hidden=True)
+    target = next((n for n in target_npcs if n["id"] == target_id), None)
+    tname = target["name"] if target else target_id
+    flash(f"Collapsed into {tname}. All history merged.", "success")
+    return redirect(f"/{slug}/world/npc/{target_id}")
+
+
 # ── Admin routes ──────────────────────────────────────────────────────────────
 
