@@ -400,7 +400,7 @@ function commitProposals(slug) {
   var entries = _proposalData
     .filter(function(p, i) { return !_pcFlags[i] && document.getElementById('prop-' + i) && document.getElementById('prop-' + i).checked; })
     .map(function(p, i) {
-      return { entity_id: p.entity_id || '', entity_name: p.entity_name || '', entity_type: p.entity_type, note: p.note, polarity: p.polarity, intensity: p.intensity, event_type: p.event_type, visibility: p.visibility, discrete: !!_discreteFlags[i], witnesses: p.witnesses || [], actor_id: p.actor_id || null, actor_type: p.actor_type || null, actor_dm_only: !!p.actor_dm_only, entity_hidden: !!p.entity_hidden, location_id: p.location_id || null };
+      return { entity_id: p.entity_id || '', entity_name: p.entity_name || '', entity_type: p.entity_type, note: p.note, polarity: p.polarity, intensity: p.intensity, event_type: p.event_type, visibility: p.visibility, discrete: !!_discreteFlags[i], witnesses: p.witnesses || [], actor_id: p.actor_id || null, actor_type: p.actor_type || null, actor_dm_only: !!p.actor_dm_only, entity_hidden: !!p.entity_hidden, location_id: p.location_id || null, condition_meta: p.condition_meta || null };
     });
   if (!entries.length) { document.getElementById('commit-status').textContent = 'Nothing to commit.'; return; }
   document.getElementById('commit-status').textContent = 'Committing…';
