@@ -13,7 +13,7 @@
       "relations": [],
       "log": [
         {
-          "id": "evt_ebda4d",
+          "id": "evt_e0a01d",
           "session": 5,
           "note": "Ironmask street operation broken; toll collection ended. Roads are open. Supply margins will recover in 2-3 weeks.",
           "visibility": "public",
@@ -35,9 +35,9 @@
       "relations": [],
       "log": [
         {
-          "id": "evt_507fc1",
+          "id": "evt_5b27b3",
           "session": 4,
-          "note": "Three shafts confirmed as critical per Emerald Circle survey. 60-day window before structural failure in lower sections.",
+          "note": "Three shafts confirmed as critical per [[Emerald Circle]] survey. 60-day window before structural failure in lower sections.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2

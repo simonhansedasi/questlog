@@ -7,13 +7,15 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_90fd62",
+          "id": "evt_52f789",
           "session": 1,
           "note": "[[Orvyn Thatch]] speaks freely for the first time in months. Names every collector, describes patrol timing, produces his private log of Ironmask activity. The party has their first real picture of what they're dealing with.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 1,
-          "event_type": "dialogue"
+          "event_type": "dialogue",
+          "actor_id": "orvyn_thatch",
+          "actor_type": "npc"
         }
       ],
       "role": "General store and town information hub",
@@ -26,18 +28,18 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_3151d8",
+          "id": "evt_85b8ed",
           "session": 2,
           "note": "[[Petra Holt]] recovers the hidden ledger copy from beneath the floorboards. Twelve percent of miner wages have been skimmed through a fictitious 'safety equipment' line for at least six months.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 2,
           "event_type": "discovery",
-          "actor_id": "The Party",
-          "actor_type": "party"
+          "actor_id": "petra_holt",
+          "actor_type": "npc"
         },
         {
-          "id": "evt_63251a",
+          "id": "evt_7c22fa",
           "session": 5,
           "note": "[[Maren Vosk]] captured here during the raid. Complete ledgers seized. 'CA' appears in seventeen entries. [[Sister Veyne]] secures the building.",
           "visibility": "public",
@@ -58,13 +60,15 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_66b98b",
+          "id": "evt_7ba562",
           "session": 1,
           "note": "[[Edda Sorn]] makes contact in the back room. Her shipping discrepancy records cover eight months. The gap between declared output and actual weight shipped is not a rounding error.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 2,
-          "event_type": "dialogue"
+          "event_type": "dialogue",
+          "actor_id": "edda_sorn",
+          "actor_type": "npc"
         }
       ],
       "role": "Ashford's main inn and tavern",
@@ -77,13 +81,15 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_d9f96b",
+          "id": "evt_60a8d4",
           "session": 4,
           "note": "[[Emerald Circle]] survey confirmed: three critical failure points in the lower shafts. Structural collapse projected within sixty days. Miners are already refusing the lower shaft shifts.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
-          "event_type": "discovery"
+          "event_type": "discovery",
+          "actor_id": "thane_bergrak",
+          "actor_type": "npc"
         }
       ],
       "role": "Ashford's primary silver mine",
@@ -96,24 +102,24 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_c17495",
+          "id": "evt_230d67",
           "session": 2,
           "note": "[[Warchief Durnak]] parleys at the gate. Terms set: clear the outer courtyard, [[Bram Ketterly|Bram]] goes free. Three days.",
           "visibility": "public",
           "polarity": "neutral",
           "intensity": 1,
-          "event_type": "dialogue"
+          "event_type": "dialogue",
+          "actor_id": "warchief_durnak",
+          "actor_type": "npc"
         },
         {
-          "id": "evt_ea7e1e",
+          "id": "evt_8e5cf5",
           "session": 3,
           "note": "The outer courtyard is taken. Six [[The Ironmasks|Ironmasks]] subdued, two escaped. [[Bram Ketterly]] released from the storage cellar \u2014 underfed, uninjured, and remembering everything.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 3,
-          "event_type": "combat",
-          "actor_id": "The Party",
-          "actor_type": "party"
+          "event_type": "combat"
         }
       ],
       "role": "Ancient fortress, seat of the Stonebreaker Clan",
@@ -126,15 +132,13 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_3df995",
+          "id": "evt_cf6f78",
           "session": 4,
           "note": "[[The Pale Widow]] shows the party the garrison archive. The tunnel maps are intact. One exit runs directly beneath [[Corvin Ashale]]'s warehouse \u2014 eight months of shipping discrepancies explained in a single diagram.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 3,
-          "event_type": "discovery",
-          "actor_id": "The Party",
-          "actor_type": "party"
+          "event_type": "discovery"
         }
       ],
       "role": "Abandoned garrison post, haunted",
@@ -156,7 +160,7 @@
       "hidden": true,
       "log": [
         {
-          "id": "evt_9ac125",
+          "id": "evt_59ef69",
           "session": 5,
           "note": "[[Corvin Ashale]] barricades the doors when [[The Ironmasks|Ironmasks]] break. [[Serev]] has already left with a message. The warehouse is locked from the inside. The tunnel entrance is somewhere below.",
           "visibility": "dm_only",

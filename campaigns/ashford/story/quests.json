@@ -7,7 +7,16 @@
       "description": "Bram Ketterly refused to pay the toll and ended up in an Ironmask cell in Greystone Keep. He's been there three months. His family thinks he's dead. The Stonebreaker Clan controls the Keep's outer walls. Getting to Bram without starting a war with Durnak's clan requires either diplomacy or creativity.",
       "hidden": false,
       "objectives": [],
-      "log": []
+      "log": [
+        {
+          "session": 2,
+          "note": "Session 2: Terms set with Warchief Durnak \u2014 clear the outer courtyard, Bram goes free. Three days."
+        },
+        {
+          "session": 3,
+          "note": "Session 3: Courtyard cleared. Bram released \u2014 underfed, uninjured, and remembering Shadow Wing courier routes."
+        }
+      ]
     },
     {
       "id": "secure_the_old_vein",
@@ -16,7 +25,20 @@
       "description": "The lower Ashcroft shafts are unsafe and the Ironmasks are forcing miners into them anyway. Stopping this requires either breaking the Ironmasks' grip on the Registry or getting the unsafe-shaft report to someone who can act on it \u2014 which means finding someone in the Trade Compact who isn't compromised.",
       "hidden": false,
       "objectives": [],
-      "log": []
+      "log": [
+        {
+          "session": 2,
+          "note": "Session 2: Petra Holt reveals the payroll skim ledger hidden under the Registry floor. Evidence in hand."
+        },
+        {
+          "session": 4,
+          "note": "Session 4: Emerald Circle survey \u2014 three critical shafts, sixty days to failure. Not might. Will."
+        },
+        {
+          "session": 5,
+          "note": "Session 5: Maren Vosk captured; the skim operation ends with the Ironmasks."
+        }
+      ]
     },
     {
       "id": "drive_out_the_ironmasks",
@@ -25,7 +47,16 @@
       "description": "Maren Vosk runs a tight operation. The Ironmasks are entrenched, connected, and violent enough to deter individual resistance. Breaking them requires evidence that implicates whoever is protecting them at the Compact level \u2014 without which any victory against the street operation just creates a vacancy.",
       "hidden": false,
       "objectives": [],
-      "log": []
+      "log": [
+        {
+          "session": 3,
+          "note": "Session 3: First major blow \u2014 Ironmask hold on Greystone Keep outer courtyard broken. Six taken, two fled."
+        },
+        {
+          "session": 5,
+          "note": "Session 5: Complete. Seventeen captured, Maren Vosk in custody, toll ended. Factor still at large."
+        }
+      ]
     },
     {
       "id": "the_warden_s_archive",
@@ -34,7 +65,12 @@
       "description": "The Coldwater ruins were once a garrison post. The Pale Widow guards the archive. Someone sent a Shadow Wing operative to the ruins recently \u2014 they didn't come back. The archive may contain records about the tunnels below the Vein. Approaching the Pale Widow requires respect, not force.",
       "hidden": false,
       "objectives": [],
-      "log": []
+      "log": [
+        {
+          "session": 4,
+          "note": "Session 4: Pale Widow grants access. Garrison archive intact. Tunnel maps show exit beneath Corvin Ashale's warehouse."
+        }
+      ]
     },
     {
       "id": "the_factor",
@@ -43,7 +79,16 @@
       "description": "Maren Vosk answers to someone. Edda Sorn's shipping discrepancy records point to a warehouse near the Vein entrance that moves more weight than its declared cargo accounts for. Find the Factor. Find the tunnel. Find out who the Shadow Wing is selling to. This is the real problem.",
       "hidden": true,
       "objectives": [],
-      "log": []
+      "log": [
+        {
+          "session": 4,
+          "note": "Session 4: Tunnel confirmed \u2014 Shadow Wing ore skim through Ashale's warehouse, eight months running."
+        },
+        {
+          "session": 5,
+          "note": "Session 5: Ashale barricaded inside. Serev got a message out. The Factor is waiting for extraction."
+        }
+      ]
     }
   ]
 }
