@@ -1,9 +1,10 @@
 {
+  "slug": "roses",
   "name": "Wars of the Roses",
   "system": "History \u2014 1455\u20131485",
   "owner": "demo",
   "dm_pin": "1234",
-  "share_token": "bYMWgkQ7outprihXXZxD_Q",
+  "share_token": "ogIzL_qc0qCPmC8t6mqMag",
   "demo": true,
   "public": true,
   "mode": "historical",
@@ -31,6 +32,5 @@
     "quests_label": "Threads",
     "share_label": "Researcher Share Link",
     "players_label": "Collaborators"
-  },
-  "slug": "roses"
+  }
 }

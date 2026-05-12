@@ -6,7 +6,24 @@
       "relationship": "ally",
       "description": "The paladin order that has kept Hartstone neutral for three generations. They serve no king and take no side \u2014 only the compact. Their numbers are dwindling and their resources thin, but their reputation is the only thing stopping Hartstone from becoming a battlefield. [[Commander Aldric Vane]] leads them.",
       "hidden": false,
-      "log": [],
+      "log": [
+        {
+          "id": "evt_a070fd",
+          "session": 1,
+          "note": "Consequence of House Vespar (rival): Vespar delegation's forty-guard arrival puts the compact's enforcement clause in play.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 1,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "house_vespar",
+            "entity_type": "faction",
+            "event_id": "evt_b20046"
+          },
+          "actor_id": "house_vespar",
+          "actor_type": "faction"
+        }
+      ],
       "relations": [
         {
           "target": "the_compact_guild",
@@ -36,9 +53,9 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_aba863",
+          "id": "evt_b20046",
           "session": 1,
-          "note": "[[House Vespar]]'s delegation exceeds the twelve-guard compact limit by twenty-eight. [[The Grace-Sworn]] are counting swords. [[Commander Aldric Vane]] has not yet invoked the clause.",
+          "note": "[[House Vespar]]'s delegation arrives at Hartstone's north gate with forty armed guards \u2014 twenty-eight over the compact's twelve-guard limit. [[Commander Aldric Vane]] reads [[Lady Ivra Malt|her]] papers and does not invoke the clause. He is counting.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
@@ -46,9 +63,9 @@
           "location_id": "hartstone_north_gate"
         },
         {
-          "id": "evt_43c42a",
+          "id": "evt_718536",
           "session": 2,
-          "note": "Consequence of The Underbrick (ally): Three shipments of weapons have moved through the east tunnels in two weeks \u2014 too many for street crime. Consistent with equipping a small private force.",
+          "note": "Consequence of The Underbrick (ally): Military-scale weapons moving through east tunnels \u2014 Underbrick operating at new capacity.",
           "visibility": "dm_only",
           "polarity": "negative",
           "intensity": 1,
@@ -56,15 +73,15 @@
           "ripple_source": {
             "entity_id": "the_underbrick",
             "entity_type": "faction",
-            "event_id": null
+            "event_id": "evt_509f39"
           },
           "actor_id": "the_underbrick",
           "actor_type": "faction"
         },
         {
-          "id": "evt_707dc9",
+          "id": "evt_f2409f",
           "session": 4,
-          "note": "Consequence of The Underbrick (ally): Underbrick attacks Grace-Sworn patrol \u2014 open confrontation.",
+          "note": "Consequence of The Underbrick (ally): Underbrick attacks Grace-Sworn patrol \u2014 open confrontation, armed, organized.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
@@ -72,7 +89,7 @@
           "ripple_source": {
             "entity_id": "the_underbrick",
             "entity_type": "faction",
-            "event_id": null
+            "event_id": "evt_affaae"
           },
           "actor_id": "the_underbrick",
           "actor_type": "faction"
@@ -115,7 +132,56 @@
       "relationship": "rival",
       "description": "The southern Confederation sends diplomats instead of armies \u2014 so far. [[Emissary Dax Fell]] has been in Hartstone six months before [[House Vespar|Vespar's]] delegation arrived. He knows where every magistrate eats dinner and which ones have debts.",
       "hidden": false,
-      "log": [],
+      "log": [
+        {
+          "id": "evt_a3f154",
+          "session": 1,
+          "note": "Consequence of House Vespar (rival): Vespar delegation's forty-guard arrival puts the compact's enforcement clause in play.",
+          "visibility": "public",
+          "polarity": "positive",
+          "intensity": 2,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "house_vespar",
+            "entity_type": "faction",
+            "event_id": "evt_b20046"
+          },
+          "actor_id": "house_vespar",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_9ac9b9",
+          "session": 2,
+          "note": "Consequence of The Underbrick (ally): Military-scale weapons moving through east tunnels \u2014 Underbrick operating at new capacity.",
+          "visibility": "dm_only",
+          "polarity": "negative",
+          "intensity": 1,
+          "event_type": "other",
+          "ripple_source": {
+            "entity_id": "the_underbrick",
+            "entity_type": "faction",
+            "event_id": "evt_509f39"
+          },
+          "actor_id": "the_underbrick",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_283cef",
+          "session": 4,
+          "note": "Consequence of The Underbrick (ally): Underbrick attacks Grace-Sworn patrol \u2014 open confrontation, armed, organized.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "combat",
+          "ripple_source": {
+            "entity_id": "the_underbrick",
+            "entity_type": "faction",
+            "event_id": "evt_affaae"
+          },
+          "actor_id": "the_underbrick",
+          "actor_type": "faction"
+        }
+      ],
       "relations": [
         {
           "target": "house_vespar",
@@ -139,18 +205,34 @@
       "hidden": true,
       "log": [
         {
-          "id": "evt_1bc31a",
+          "id": "evt_72aa3c",
+          "session": 1,
+          "note": "Consequence of House Vespar (ally): Vespar delegation's forty-guard arrival puts the compact's enforcement clause in play.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 1,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "house_vespar",
+            "entity_type": "faction",
+            "event_id": "evt_b20046"
+          },
+          "actor_id": "house_vespar",
+          "actor_type": "faction"
+        },
+        {
+          "id": "evt_509f39",
           "session": 2,
-          "note": "Three shipments of weapons have moved through the east tunnels in two weeks \u2014 too many for street crime. Consistent with equipping a small private force.",
+          "note": "Three weapon shipments move through [[The East Quarter Tunnels|the east tunnels]] in two weeks \u2014 too many for street crime. Consistent with equipping a small private force. A [[The Grace-Sworn|Grace-Sworn]] border patrol filed the report. [[Commander Aldric Vane]] has not yet briefed the delegations.",
           "visibility": "dm_only",
           "polarity": "negative",
           "intensity": 2,
           "event_type": "other"
         },
         {
-          "id": "evt_d74820",
+          "id": "evt_affaae",
           "session": 4,
-          "note": "A [[The Grace-Sworn|Grace-Sworn]] patrol is ambushed in the east tunnels \u2014 non-lethal, but disarmed and blindfolded for two hours. A message is left: 'Stop looking.'",
+          "note": "A [[The Grace-Sworn|Grace-Sworn]] patrol is ambushed in [[The East Quarter Tunnels|the east tunnels]] \u2014 non-lethal, disarmed, and blindfolded for two hours. A message is written on one guard's forearm: 'Stop looking.' [[The Loom]] did not use the patrol's own weapons. They had their own.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
@@ -163,6 +245,13 @@
       "relations": [
         {
           "target": "house_vespar",
+          "target_type": "faction",
+          "relation": "ally",
+          "weight": 0.5,
+          "dm_only": true
+        },
+        {
+          "target": "the_kelrath_envoys",
           "target_type": "faction",
           "relation": "ally",
           "weight": 0.5,

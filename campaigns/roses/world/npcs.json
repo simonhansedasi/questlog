@@ -13,7 +13,7 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_dfc209",
+          "id": "evt_bf6be4",
           "session": 1,
           "note": "Henry VI suffers his first complete mental collapse in August 1453 \u2014 eighteen months of total incapacity. He sits immobile, unable to speak or recognise his newborn son. Richard of York is appointed Protector of England. Henry's recovery in December 1454 restores the Lancastrian court faction and strips York of his protectorate. The confrontation is now inevitable.",
           "visibility": "public",
@@ -22,9 +22,9 @@
           "event_type": "other"
         },
         {
-          "id": "evt_0e71a6",
+          "id": "evt_a6eb92",
           "session": 1,
-          "note": "Consequence of Richard Duke of York (rival): The First Battle of St. Albans, May 22, 1455: [[Richard Duke of York]] intercepts the royal army on a market street. The battle lasts less than an hour. The Lancastrian commander Somerset is killed. [[Henry VI]] is found sitting alone in a tanner's cottage, wounded by an arrow in the neck. York kneels before him and blames the dead Somerset for everything. It is the first blood of the war. It is presented as a misunderstanding.",
+          "note": "Consequence of Richard Duke of York (rival): St. Albans \u2014 York draws first blood; Somerset killed, the war begun.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 2,
@@ -32,15 +32,15 @@
           "ripple_source": {
             "entity_id": "richard_duke_of_york",
             "entity_type": "npc",
-            "event_id": "evt_ad01fe"
+            "event_id": "evt_ca24ff"
           },
           "actor_id": "richard_duke_of_york",
           "actor_type": "npc"
         },
         {
-          "id": "evt_7dcf7a",
+          "id": "evt_43a6c3",
           "session": 2,
-          "note": "Consequence of Margaret of Anjou (ally): Margaret assembles a Lancastrian army in the north and defeats the Yorkists at the Battle of Wakefield on December 30, 1460. Richard Duke of York is killed \u2014 ambushed outside his castle. His head is mounted on the gates of York wearing a paper crown. Margaret's forces show no restraint. The brutality radicalises York's surviving son Edward, who is now the Yorkist claimant.",
+          "note": "Consequence of Margaret of Anjou (ally): Wakefield \u2014 York killed, head mounted on the city gates; Edward now the Yorkist claimant.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
@@ -48,15 +48,15 @@
           "ripple_source": {
             "entity_id": "margaret_of_anjou",
             "entity_type": "npc",
-            "event_id": "evt_1422a3"
+            "event_id": "evt_a35baa"
           },
           "actor_id": "margaret_of_anjou",
           "actor_type": "npc"
         },
         {
-          "id": "evt_3a03ac",
+          "id": "evt_3db2cc",
           "session": 2,
-          "note": "Consequence of Richard Duke of York (rival): Before his death, York had achieved his greatest political success: the Act of Accord (October 1460) \u2014 a parliamentary settlement making him heir to Henry VI and disinheriting the Lancastrian prince. Henry VI signs it. Margaret refuses to accept it on behalf of her son. York dies at Wakefield two months later. His son inherits the claim, the crown, and the war.",
+          "note": "Consequence of Richard Duke of York (rival): Act of Accord \u2014 York made heir to Henry VI; Margaret refuses; York dies at Wakefield.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 3,
@@ -64,13 +64,13 @@
           "ripple_source": {
             "entity_id": "richard_duke_of_york",
             "entity_type": "npc",
-            "event_id": "evt_f9b7e7"
+            "event_id": "evt_e5ccc0"
           },
           "actor_id": "richard_duke_of_york",
           "actor_type": "npc"
         },
         {
-          "id": "evt_6b29b8",
+          "id": "evt_cc4e7f",
           "session": 3,
           "note": "[[Henry VI]] flees north after Towton with [[Margaret of Anjou]] and the [[House of Lancaster|Lancastrian]] court. He spends three years as a fugitive in Scotland and northern England. He is captured in Lancashire in 1465 and imprisoned in the Tower of London. He prays. He is content, by some accounts, in a way he never was as a king. He is not executed \u2014 [[Edward IV]] finds him more useful as a symbol of Lancastrian incompetence than as a martyr.",
           "visibility": "public",
@@ -80,9 +80,9 @@
           "location_id": "towton_field"
         },
         {
-          "id": "evt_b90ea0",
+          "id": "evt_d6cd48",
           "session": 4,
-          "note": "Consequence of Margaret of Anjou (ally): [[Margaret of Anjou]] receives [[Richard Neville, Earl of Warwick|Warwick]]'s offer in [[Kingdom of France|France]]. He was her greatest enemy for fifteen years. She makes him wait on his knees for a quarter of an hour before agreeing. The price: Warwick's daughter Anne will marry her son [[Edward Prince of Wales]], securing the alliance with a dynastic bond. It is the most extraordinary political agreement of the entire war \u2014 the Kingmaker and the She-Wolf, united by shared hatred of [[Edward IV]].",
+          "note": "Consequence of Margaret of Anjou (ally): Margaret and Warwick ally \u2014 former enemies united by shared hatred of Edward IV.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 3,
@@ -90,13 +90,13 @@
           "ripple_source": {
             "entity_id": "margaret_of_anjou",
             "entity_type": "npc",
-            "event_id": "evt_4eae31"
+            "event_id": "evt_243cc1"
           },
           "actor_id": "margaret_of_anjou",
           "actor_type": "npc"
         },
         {
-          "id": "evt_2d764a",
+          "id": "evt_19546c",
           "session": 5,
           "note": "[[Henry VI]] is returned to the Tower after Barnet. He is murdered there on May 21, 1471 \u2014 on the same night [[Edward IV]] returns to London after Tewkesbury. The official cause of death is 'pure displeasure and melancholy.' No one believes this. Edward needs the [[House of Lancaster|Lancastrian]] line ended; Henry is the last legitimate adult male claimant. He is buried without ceremony. He is later venerated as a saint.",
           "visibility": "dm_only",
@@ -104,38 +104,6 @@
           "intensity": 3,
           "event_type": "other",
           "location_id": "the_tower_of_london"
-        },
-        {
-          "id": "evt_3e5cd3",
-          "session": 6,
-          "note": "Consequence of Margaret of Anjou (ally): Margaret lands in England on the same day as Barnet \u2014 she does not yet know Warwick is dead. She raises a new army in Wales, marching to join with Welsh allies. Edward IV intercepts her at Tewkesbury on May 4, 1471. The Lancastrian army is destroyed. Her son Edward, Prince of Wales, is killed \u2014 captured after the battle and executed. He is seventeen. Margaret herself is captured. She is imprisoned in the Tower and later ransomed back to France by Louis XI. She never returns to England. She dies in poverty in 1482.",
-          "visibility": "public",
-          "polarity": "negative",
-          "intensity": 3,
-          "event_type": "combat",
-          "ripple_source": {
-            "entity_id": "margaret_of_anjou",
-            "entity_type": "npc",
-            "event_id": "evt_e58d13"
-          },
-          "actor_id": "margaret_of_anjou",
-          "actor_type": "npc"
-        },
-        {
-          "id": "evt_834a87",
-          "session": 6,
-          "note": "Consequence of Edward Prince of Wales (ally): The Lancastrian Prince of Wales is killed at Tewkesbury at seventeen. He is the last male heir of the Lancastrian line in England. His death is the true end of the first phase of the wars: there is no legitimate Lancaster left to fight for. The cause Margaret sustained for two decades dies with her son.",
-          "visibility": "public",
-          "polarity": "negative",
-          "intensity": 3,
-          "event_type": "combat",
-          "ripple_source": {
-            "entity_id": "edward_prince_of_wales",
-            "entity_type": "npc",
-            "event_id": "evt_0c4826"
-          },
-          "actor_id": "edward_prince_of_wales",
-          "actor_type": "npc"
         }
       ],
       "relations": [
@@ -157,7 +125,9 @@
           "relation": "rival",
           "weight": 0.9
         }
-      ]
+      ],
+      "dead": true,
+      "dead_session": 5
     },
     {
       "id": "margaret_of_anjou",
@@ -172,9 +142,9 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_59c124",
+          "id": "evt_3452f3",
           "session": 1,
-          "note": "Consequence of Henry VI (ally): Henry VI suffers his first complete mental collapse in August 1453 \u2014 eighteen months of total incapacity. He sits immobile, unable to speak or recognise his newborn son. Richard of York is appointed Protector of England. Henry's recovery in December 1454 restores the Lancastrian court faction and strips York of his protectorate. The confrontation is now inevitable.",
+          "note": "Consequence of Henry VI (ally): Henry VI's mental collapse \u2014 York appointed Protector; the throne exposed.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
@@ -182,15 +152,15 @@
           "ripple_source": {
             "entity_id": "henry_vi",
             "entity_type": "npc",
-            "event_id": "evt_dfc209"
+            "event_id": "evt_bf6be4"
           },
           "actor_id": "henry_vi",
           "actor_type": "npc"
         },
         {
-          "id": "evt_e97fd3",
+          "id": "evt_145de5",
           "session": 1,
-          "note": "Consequence of Richard Duke of York (rival): The First Battle of St. Albans, May 22, 1455: [[Richard Duke of York]] intercepts the royal army on a market street. The battle lasts less than an hour. The Lancastrian commander Somerset is killed. [[Henry VI]] is found sitting alone in a tanner's cottage, wounded by an arrow in the neck. York kneels before him and blames the dead Somerset for everything. It is the first blood of the war. It is presented as a misunderstanding.",
+          "note": "Consequence of Richard Duke of York (rival): St. Albans \u2014 York draws first blood; Somerset killed, the war begun.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 2,
@@ -198,13 +168,13 @@
           "ripple_source": {
             "entity_id": "richard_duke_of_york",
             "entity_type": "npc",
-            "event_id": "evt_ad01fe"
+            "event_id": "evt_ca24ff"
           },
           "actor_id": "richard_duke_of_york",
           "actor_type": "npc"
         },
         {
-          "id": "evt_1422a3",
+          "id": "evt_a35baa",
           "session": 2,
           "note": "Margaret assembles a Lancastrian army in the north and defeats the Yorkists at the Battle of Wakefield on December 30, 1460. Richard Duke of York is killed \u2014 ambushed outside his castle. His head is mounted on the gates of York wearing a paper crown. Margaret's forces show no restraint. The brutality radicalises York's surviving son Edward, who is now the Yorkist claimant.",
           "visibility": "public",
@@ -213,9 +183,9 @@
           "event_type": "combat"
         },
         {
-          "id": "evt_072679",
+          "id": "evt_6db846",
           "session": 2,
-          "note": "Consequence of Richard Duke of York (rival): Before his death, York had achieved his greatest political success: the Act of Accord (October 1460) \u2014 a parliamentary settlement making him heir to Henry VI and disinheriting the Lancastrian prince. Henry VI signs it. Margaret refuses to accept it on behalf of her son. York dies at Wakefield two months later. His son inherits the claim, the crown, and the war.",
+          "note": "Consequence of Richard Duke of York (rival): Act of Accord \u2014 York made heir to Henry VI; Margaret refuses; York dies at Wakefield.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 3,
@@ -223,15 +193,15 @@
           "ripple_source": {
             "entity_id": "richard_duke_of_york",
             "entity_type": "npc",
-            "event_id": "evt_f9b7e7"
+            "event_id": "evt_e5ccc0"
           },
           "actor_id": "richard_duke_of_york",
           "actor_type": "npc"
         },
         {
-          "id": "evt_b08b99",
+          "id": "evt_a8b177",
           "session": 2,
-          "note": "Consequence of Richard Neville, Earl of Warwick (ally): Warwick holds London for York throughout this period \u2014 a crucial strategic contribution. He controls the city's resources, the financial networks, and the propaganda apparatus. When Edward IV marches south after Wakefield, Warwick's London is the foundation he builds the next campaign on. Their partnership is at its peak.",
+          "note": "Consequence of Richard Neville, Earl of Warwick (ally): Warwick holds London for York \u2014 the Kingmaker at the peak of his influence.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 2,
@@ -239,15 +209,15 @@
           "ripple_source": {
             "entity_id": "richard_neville_earl_of_warwick",
             "entity_type": "npc",
-            "event_id": "evt_790e09"
+            "event_id": "evt_9e8051"
           },
           "actor_id": "richard_neville_earl_of_warwick",
           "actor_type": "npc"
         },
         {
-          "id": "evt_cf81f1",
+          "id": "evt_d8ad4a",
           "session": 3,
-          "note": "Consequence of Edward IV (rival): [[Edward IV]] enters London in February 1461 and is acclaimed king. He immediately marches north to end the war. The Battle of Towton, March 29, 1461: fought in a blizzard on Palm Sunday. An estimated 28,000 dead \u2014 the bloodiest battle ever fought on English soil. The [[House of Lancaster|Lancastrian]] army is destroyed. [[Henry VI]] and [[Margaret of Anjou]] flee to Scotland. Edward IV is king. He is nineteen years old.",
+          "note": "Consequence of Edward IV (rival): Towton \u2014 Edward IV destroys Lancaster in the bloodiest battle on English soil.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
@@ -255,15 +225,15 @@
           "ripple_source": {
             "entity_id": "edward_iv",
             "entity_type": "npc",
-            "event_id": "evt_66908b"
+            "event_id": "evt_2e78ac"
           },
           "actor_id": "edward_iv",
           "actor_type": "npc"
         },
         {
-          "id": "evt_77d598",
+          "id": "evt_9c8334",
           "session": 3,
-          "note": "Consequence of Henry VI (ally): [[Henry VI]] flees north after Towton with [[Margaret of Anjou]] and the [[House of Lancaster|Lancastrian]] court. He spends three years as a fugitive in Scotland and northern England. He is captured in Lancashire in 1465 and imprisoned in the Tower of London. He prays. He is content, by some accounts, in a way he never was as a king. He is not executed \u2014 [[Edward IV]] finds him more useful as a symbol of Lancastrian incompetence than as a martyr.",
+          "note": "Consequence of Henry VI (ally): Henry VI flees after Towton; captured, imprisoned in the Tower \u2014 living symbol of Lancaster's failure.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
@@ -271,15 +241,15 @@
           "ripple_source": {
             "entity_id": "henry_vi",
             "entity_type": "npc",
-            "event_id": "evt_6b29b8"
+            "event_id": "evt_cc4e7f"
           },
           "actor_id": "henry_vi",
           "actor_type": "npc"
         },
         {
-          "id": "evt_255b7f",
+          "id": "evt_aee063",
           "session": 4,
-          "note": "Consequence of Edward IV (rival): Edward's secret marriage to Elizabeth Woodville in 1464 is announced while Warwick is in France negotiating Edward's marriage to a French princess. Warwick returns to find the deal done and himself humiliated. The Woodville family floods the court with appointments. Warwick's influence over foreign policy evaporates. The wound does not heal.",
+          "note": "Consequence of Edward IV (rival): Edward's Woodville marriage humiliates Warwick \u2014 the wound that ends their alliance.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 2,
@@ -287,15 +257,15 @@
           "ripple_source": {
             "entity_id": "edward_iv",
             "entity_type": "npc",
-            "event_id": "evt_1a54f1"
+            "event_id": "evt_ce5445"
           },
           "actor_id": "edward_iv",
           "actor_type": "npc"
         },
         {
-          "id": "evt_1ce38e",
+          "id": "evt_a4c2da",
           "session": 4,
-          "note": "Consequence of Richard Neville, Earl of Warwick (ally): [[Richard Neville, Earl of Warwick]] rebels in 1469 in alliance with [[George Duke of Clarence]] \u2014 [[Edward IV]]'s own brother. They defeat a royal army at Edgecote, capture Edward IV, and govern briefly in his name. It does not hold: Edward is released when the nobility refuses to support a king held prisoner by his own subject. Warwick and Clarence flee to France. Warwick approaches [[Margaret of Anjou]] \u2014 his former enemy \u2014 and offers to restore [[Henry VI]] if she will ally with him.",
+          "note": "Consequence of Richard Neville, Earl of Warwick (ally): Warwick rebels, captures Edward IV, flees to France, approaches Margaret of Anjou.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
@@ -303,13 +273,13 @@
           "ripple_source": {
             "entity_id": "richard_neville_earl_of_warwick",
             "entity_type": "npc",
-            "event_id": "evt_2d48ea"
+            "event_id": "evt_256172"
           },
           "actor_id": "richard_neville_earl_of_warwick",
           "actor_type": "npc"
         },
         {
-          "id": "evt_4eae31",
+          "id": "evt_243cc1",
           "session": 4,
           "note": "[[Margaret of Anjou]] receives [[Richard Neville, Earl of Warwick|Warwick]]'s offer in [[Kingdom of France|France]]. He was her greatest enemy for fifteen years. She makes him wait on his knees for a quarter of an hour before agreeing. The price: Warwick's daughter Anne will marry her son [[Edward Prince of Wales]], securing the alliance with a dynastic bond. It is the most extraordinary political agreement of the entire war \u2014 the Kingmaker and the She-Wolf, united by shared hatred of [[Edward IV]].",
           "visibility": "public",
@@ -319,9 +289,9 @@
           "location_id": "france_and_brittany"
         },
         {
-          "id": "evt_6b414d",
+          "id": "evt_a45df0",
           "session": 5,
-          "note": "Consequence of Richard Neville, Earl of Warwick (ally): [[Richard Neville, Earl of Warwick]] invades England with [[Kingdom of France|French]] backing in September 1470. [[Edward IV]], caught off guard, flees to Burgundy with [[Richard Duke of Gloucester]]. Warwick releases [[Henry VI]] from the Tower and restores him as king \u2014 the 'Re-adeption' of Henry VI. Henry is paraded through London. He is described as dazed and confused, wearing a long blue velvet gown, repeating 'My kingdom, my kingdom.' It lasts six months.",
+          "note": "Consequence of Richard Neville, Earl of Warwick (ally): Warwick invades, restores Henry VI \u2014 Edward IV flees to Burgundy.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
@@ -329,15 +299,15 @@
           "ripple_source": {
             "entity_id": "richard_neville_earl_of_warwick",
             "entity_type": "npc",
-            "event_id": "evt_bc080b"
+            "event_id": "evt_fd8cc8"
           },
           "actor_id": "richard_neville_earl_of_warwick",
           "actor_type": "npc"
         },
         {
-          "id": "evt_6cbbba",
+          "id": "evt_566411",
           "session": 5,
-          "note": "Consequence of Edward IV (rival): [[Edward IV]] returns from Burgundy in March 1471 with a small army and reclaims England town by town, battle by battle. [[George Duke of Clarence]], characteristically, switches back to Edward mid-campaign \u2014 he meets his brother on the road and they reconcile. [[Richard Neville, Earl of Warwick]] is killed at the Battle of Barnet on April 14, 1471, in thick fog, partly by friendly fire from his own [[House of Lancaster|Lancastrian]] allies. Edward weeps over his cousin's body and has it displayed publicly to prevent rumours that Warwick survived.",
+          "note": "Consequence of Edward IV (rival): Edward returns, Warwick killed at Barnet in fog \u2014 the Kingmaker dead.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
@@ -345,15 +315,15 @@
           "ripple_source": {
             "entity_id": "edward_iv",
             "entity_type": "npc",
-            "event_id": "evt_95840f"
+            "event_id": "evt_91fa53"
           },
           "actor_id": "edward_iv",
           "actor_type": "npc"
         },
         {
-          "id": "evt_a01b72",
+          "id": "evt_4e9209",
           "session": 5,
-          "note": "Consequence of Henry VI (ally): [[Henry VI]] is returned to the Tower after Barnet. He is murdered there on May 21, 1471 \u2014 on the same night [[Edward IV]] returns to London after Tewkesbury. The official cause of death is 'pure displeasure and melancholy.' No one believes this. Edward needs the [[House of Lancaster|Lancastrian]] line ended; Henry is the last legitimate adult male claimant. He is buried without ceremony. He is later venerated as a saint.",
+          "note": "Consequence of Henry VI (ally): Henry VI murdered in the Tower \u2014 official cause 'melancholy'; Lancastrian main line closed.",
           "visibility": "dm_only",
           "polarity": "negative",
           "intensity": 3,
@@ -361,13 +331,13 @@
           "ripple_source": {
             "entity_id": "henry_vi",
             "entity_type": "npc",
-            "event_id": "evt_2d764a"
+            "event_id": "evt_19546c"
           },
           "actor_id": "henry_vi",
           "actor_type": "npc"
         },
         {
-          "id": "evt_e58d13",
+          "id": "evt_c099a5",
           "session": 6,
           "note": "Margaret lands in England on the same day as Barnet \u2014 she does not yet know Warwick is dead. She raises a new army in Wales, marching to join with Welsh allies. Edward IV intercepts her at Tewkesbury on May 4, 1471. The Lancastrian army is destroyed. Her son Edward, Prince of Wales, is killed \u2014 captured after the battle and executed. He is seventeen. Margaret herself is captured. She is imprisoned in the Tower and later ransomed back to France by Louis XI. She never returns to England. She dies in poverty in 1482.",
           "visibility": "public",
@@ -376,9 +346,9 @@
           "event_type": "combat"
         },
         {
-          "id": "evt_33b33a",
+          "id": "evt_e7219e",
           "session": 6,
-          "note": "Consequence of Edward Prince of Wales (ally): The Lancastrian Prince of Wales is killed at Tewkesbury at seventeen. He is the last male heir of the Lancastrian line in England. His death is the true end of the first phase of the wars: there is no legitimate Lancaster left to fight for. The cause Margaret sustained for two decades dies with her son.",
+          "note": "Consequence of Edward Prince of Wales (ally): Edward Prince of Wales killed at Tewkesbury \u2014 the Lancastrian line ends.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
@@ -386,15 +356,15 @@
           "ripple_source": {
             "entity_id": "edward_prince_of_wales",
             "entity_type": "npc",
-            "event_id": "evt_0c4826"
+            "event_id": "evt_9473fe"
           },
           "actor_id": "edward_prince_of_wales",
           "actor_type": "npc"
         },
         {
-          "id": "evt_57a8ed",
+          "id": "evt_7b5e2f",
           "session": 7,
-          "note": "Consequence of Edward IV (rival): Edward IV rules England for twelve years after Tewkesbury \u2014 the longest stable period of the entire conflict. He is an effective king: he reforms royal finances, cultivates the merchant classes, and keeps the nobility in check. He has George of Clarence executed in 1478 \u2014 privately, in the Tower \u2014 for treason that is real, and for being an irredeemable liability. He grows fat and dissolute in his middle years, though he remains capable of bursts of decisive energy. He dies in April 1483 at forty, of a fever \u2014 unexpected, sudden, too soon.",
+          "note": "Consequence of Edward IV (rival): Edward IV dies April 1483 at 40 \u2014 unexpected, heir is 12, England unguarded.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
@@ -402,7 +372,7 @@
           "ripple_source": {
             "entity_id": "edward_iv",
             "entity_type": "npc",
-            "event_id": "evt_284de4"
+            "event_id": "evt_9c1df3"
           },
           "actor_id": "edward_iv",
           "actor_type": "npc"
@@ -455,9 +425,9 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_0758ca",
+          "id": "evt_084b0e",
           "session": 1,
-          "note": "Consequence of Henry VI (ally): Henry VI suffers his first complete mental collapse in August 1453 \u2014 eighteen months of total incapacity. He sits immobile, unable to speak or recognise his newborn son. Richard of York is appointed Protector of England. Henry's recovery in December 1454 restores the Lancastrian court faction and strips York of his protectorate. The confrontation is now inevitable.",
+          "note": "Consequence of Henry VI (ally): Henry VI's mental collapse \u2014 York appointed Protector; the throne exposed.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
@@ -465,15 +435,15 @@
           "ripple_source": {
             "entity_id": "henry_vi",
             "entity_type": "npc",
-            "event_id": "evt_dfc209"
+            "event_id": "evt_bf6be4"
           },
           "actor_id": "henry_vi",
           "actor_type": "npc"
         },
         {
-          "id": "evt_a33e3c",
+          "id": "evt_b741e1",
           "session": 2,
-          "note": "Consequence of Margaret of Anjou (ally): Margaret assembles a Lancastrian army in the north and defeats the Yorkists at the Battle of Wakefield on December 30, 1460. Richard Duke of York is killed \u2014 ambushed outside his castle. His head is mounted on the gates of York wearing a paper crown. Margaret's forces show no restraint. The brutality radicalises York's surviving son Edward, who is now the Yorkist claimant.",
+          "note": "Consequence of Margaret of Anjou (ally): Wakefield \u2014 York killed, head mounted on the city gates; Edward now the Yorkist claimant.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
@@ -481,15 +451,15 @@
           "ripple_source": {
             "entity_id": "margaret_of_anjou",
             "entity_type": "npc",
-            "event_id": "evt_1422a3"
+            "event_id": "evt_a35baa"
           },
           "actor_id": "margaret_of_anjou",
           "actor_type": "npc"
         },
         {
-          "id": "evt_3441a8",
+          "id": "evt_509602",
           "session": 3,
-          "note": "Consequence of Henry VI (ally): [[Henry VI]] flees north after Towton with [[Margaret of Anjou]] and the [[House of Lancaster|Lancastrian]] court. He spends three years as a fugitive in Scotland and northern England. He is captured in Lancashire in 1465 and imprisoned in the Tower of London. He prays. He is content, by some accounts, in a way he never was as a king. He is not executed \u2014 [[Edward IV]] finds him more useful as a symbol of Lancastrian incompetence than as a martyr.",
+          "note": "Consequence of Henry VI (ally): Henry VI flees after Towton; captured, imprisoned in the Tower \u2014 living symbol of Lancaster's failure.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
@@ -497,15 +467,15 @@
           "ripple_source": {
             "entity_id": "henry_vi",
             "entity_type": "npc",
-            "event_id": "evt_6b29b8"
+            "event_id": "evt_cc4e7f"
           },
           "actor_id": "henry_vi",
           "actor_type": "npc"
         },
         {
-          "id": "evt_2585e4",
+          "id": "evt_4eb3a9",
           "session": 4,
-          "note": "Consequence of Margaret of Anjou (ally): [[Margaret of Anjou]] receives [[Richard Neville, Earl of Warwick|Warwick]]'s offer in [[Kingdom of France|France]]. He was her greatest enemy for fifteen years. She makes him wait on his knees for a quarter of an hour before agreeing. The price: Warwick's daughter Anne will marry her son [[Edward Prince of Wales]], securing the alliance with a dynastic bond. It is the most extraordinary political agreement of the entire war \u2014 the Kingmaker and the She-Wolf, united by shared hatred of [[Edward IV]].",
+          "note": "Consequence of Margaret of Anjou (ally): Margaret and Warwick ally \u2014 former enemies united by shared hatred of Edward IV.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 3,
@@ -513,15 +483,15 @@
           "ripple_source": {
             "entity_id": "margaret_of_anjou",
             "entity_type": "npc",
-            "event_id": "evt_4eae31"
+            "event_id": "evt_243cc1"
           },
           "actor_id": "margaret_of_anjou",
           "actor_type": "npc"
         },
         {
-          "id": "evt_01e7d6",
+          "id": "evt_1b1c1b",
           "session": 5,
-          "note": "Consequence of Henry VI (ally): [[Henry VI]] is returned to the Tower after Barnet. He is murdered there on May 21, 1471 \u2014 on the same night [[Edward IV]] returns to London after Tewkesbury. The official cause of death is 'pure displeasure and melancholy.' No one believes this. Edward needs the [[House of Lancaster|Lancastrian]] line ended; Henry is the last legitimate adult male claimant. He is buried without ceremony. He is later venerated as a saint.",
+          "note": "Consequence of Henry VI (ally): Henry VI murdered in the Tower \u2014 official cause 'melancholy'; Lancastrian main line closed.",
           "visibility": "dm_only",
           "polarity": "negative",
           "intensity": 3,
@@ -529,37 +499,25 @@
           "ripple_source": {
             "entity_id": "henry_vi",
             "entity_type": "npc",
-            "event_id": "evt_2d764a"
+            "event_id": "evt_19546c"
           },
           "actor_id": "henry_vi",
           "actor_type": "npc"
         },
         {
-          "id": "evt_e2cac6",
-          "session": 6,
-          "note": "Consequence of Margaret of Anjou (ally): Margaret lands in England on the same day as Barnet \u2014 she does not yet know Warwick is dead. She raises a new army in Wales, marching to join with Welsh allies. Edward IV intercepts her at Tewkesbury on May 4, 1471. The Lancastrian army is destroyed. Her son Edward, Prince of Wales, is killed \u2014 captured after the battle and executed. He is seventeen. Margaret herself is captured. She is imprisoned in the Tower and later ransomed back to France by Louis XI. She never returns to England. She dies in poverty in 1482.",
-          "visibility": "public",
-          "polarity": "negative",
-          "intensity": 3,
-          "event_type": "combat",
-          "ripple_source": {
-            "entity_id": "margaret_of_anjou",
-            "entity_type": "npc",
-            "event_id": "evt_e58d13"
-          },
-          "actor_id": "margaret_of_anjou",
-          "actor_type": "npc"
-        },
-        {
-          "id": "evt_0c4826",
+          "id": "evt_9473fe",
           "session": 6,
           "note": "The Lancastrian Prince of Wales is killed at Tewkesbury at seventeen. He is the last male heir of the Lancastrian line in England. His death is the true end of the first phase of the wars: there is no legitimate Lancaster left to fight for. The cause Margaret sustained for two decades dies with her son.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
-          "event_type": "combat"
+          "event_type": "combat",
+          "actor_id": "edward_iv",
+          "actor_type": "npc"
         }
-      ]
+      ],
+      "dead": true,
+      "dead_session": 6
     },
     {
       "id": "richard_duke_of_york",
@@ -574,9 +532,9 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_0a01cb",
+          "id": "evt_3f6439",
           "session": 1,
-          "note": "Consequence of Henry VI (rival): Henry VI suffers his first complete mental collapse in August 1453 \u2014 eighteen months of total incapacity. He sits immobile, unable to speak or recognise his newborn son. Richard of York is appointed Protector of England. Henry's recovery in December 1454 restores the Lancastrian court faction and strips York of his protectorate. The confrontation is now inevitable.",
+          "note": "Consequence of Henry VI (rival): Henry VI's mental collapse \u2014 York appointed Protector; the throne exposed.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 3,
@@ -584,13 +542,13 @@
           "ripple_source": {
             "entity_id": "henry_vi",
             "entity_type": "npc",
-            "event_id": "evt_dfc209"
+            "event_id": "evt_bf6be4"
           },
           "actor_id": "henry_vi",
           "actor_type": "npc"
         },
         {
-          "id": "evt_ad01fe",
+          "id": "evt_ca24ff",
           "session": 1,
           "note": "The First Battle of St. Albans, May 22, 1455: [[Richard Duke of York]] intercepts the royal army on a market street. The battle lasts less than an hour. The Lancastrian commander Somerset is killed. [[Henry VI]] is found sitting alone in a tanner's cottage, wounded by an arrow in the neck. York kneels before him and blames the dead Somerset for everything. It is the first blood of the war. It is presented as a misunderstanding.",
           "visibility": "public",
@@ -600,157 +558,13 @@
           "location_id": "st_albans"
         },
         {
-          "id": "evt_81eafc",
-          "session": 2,
-          "note": "Consequence of Margaret of Anjou (rival): Margaret assembles a Lancastrian army in the north and defeats the Yorkists at the Battle of Wakefield on December 30, 1460. Richard Duke of York is killed \u2014 ambushed outside his castle. His head is mounted on the gates of York wearing a paper crown. Margaret's forces show no restraint. The brutality radicalises York's surviving son Edward, who is now the Yorkist claimant.",
-          "visibility": "public",
-          "polarity": "positive",
-          "intensity": 3,
-          "event_type": "combat",
-          "ripple_source": {
-            "entity_id": "margaret_of_anjou",
-            "entity_type": "npc",
-            "event_id": "evt_1422a3"
-          },
-          "actor_id": "margaret_of_anjou",
-          "actor_type": "npc"
-        },
-        {
-          "id": "evt_f9b7e7",
+          "id": "evt_e5ccc0",
           "session": 2,
           "note": "Before his death, York had achieved his greatest political success: the Act of Accord (October 1460) \u2014 a parliamentary settlement making him heir to Henry VI and disinheriting the Lancastrian prince. Henry VI signs it. Margaret refuses to accept it on behalf of her son. York dies at Wakefield two months later. His son inherits the claim, the crown, and the war.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
           "event_type": "politics"
-        },
-        {
-          "id": "evt_f6c793",
-          "session": 3,
-          "note": "Consequence of Edward IV (ally): [[Edward IV]] enters London in February 1461 and is acclaimed king. He immediately marches north to end the war. The Battle of Towton, March 29, 1461: fought in a blizzard on Palm Sunday. An estimated 28,000 dead \u2014 the bloodiest battle ever fought on English soil. The [[House of Lancaster|Lancastrian]] army is destroyed. [[Henry VI]] and [[Margaret of Anjou]] flee to Scotland. Edward IV is king. He is nineteen years old.",
-          "visibility": "public",
-          "polarity": "positive",
-          "intensity": 3,
-          "event_type": "combat",
-          "ripple_source": {
-            "entity_id": "edward_iv",
-            "entity_type": "npc",
-            "event_id": "evt_66908b"
-          },
-          "actor_id": "edward_iv",
-          "actor_type": "npc"
-        },
-        {
-          "id": "evt_73827c",
-          "session": 3,
-          "note": "Consequence of Henry VI (rival): [[Henry VI]] flees north after Towton with [[Margaret of Anjou]] and the [[House of Lancaster|Lancastrian]] court. He spends three years as a fugitive in Scotland and northern England. He is captured in Lancashire in 1465 and imprisoned in the Tower of London. He prays. He is content, by some accounts, in a way he never was as a king. He is not executed \u2014 [[Edward IV]] finds him more useful as a symbol of Lancastrian incompetence than as a martyr.",
-          "visibility": "public",
-          "polarity": "positive",
-          "intensity": 3,
-          "event_type": "other",
-          "ripple_source": {
-            "entity_id": "henry_vi",
-            "entity_type": "npc",
-            "event_id": "evt_6b29b8"
-          },
-          "actor_id": "henry_vi",
-          "actor_type": "npc"
-        },
-        {
-          "id": "evt_67bb06",
-          "session": 4,
-          "note": "Consequence of Edward IV (ally): Edward's secret marriage to Elizabeth Woodville in 1464 is announced while Warwick is in France negotiating Edward's marriage to a French princess. Warwick returns to find the deal done and himself humiliated. The Woodville family floods the court with appointments. Warwick's influence over foreign policy evaporates. The wound does not heal.",
-          "visibility": "public",
-          "polarity": "negative",
-          "intensity": 2,
-          "event_type": "politics",
-          "ripple_source": {
-            "entity_id": "edward_iv",
-            "entity_type": "npc",
-            "event_id": "evt_1a54f1"
-          },
-          "actor_id": "edward_iv",
-          "actor_type": "npc"
-        },
-        {
-          "id": "evt_2f420e",
-          "session": 4,
-          "note": "Consequence of Margaret of Anjou (rival): [[Margaret of Anjou]] receives [[Richard Neville, Earl of Warwick|Warwick]]'s offer in [[Kingdom of France|France]]. He was her greatest enemy for fifteen years. She makes him wait on his knees for a quarter of an hour before agreeing. The price: Warwick's daughter Anne will marry her son [[Edward Prince of Wales]], securing the alliance with a dynastic bond. It is the most extraordinary political agreement of the entire war \u2014 the Kingmaker and the She-Wolf, united by shared hatred of [[Edward IV]].",
-          "visibility": "public",
-          "polarity": "negative",
-          "intensity": 3,
-          "event_type": "politics",
-          "ripple_source": {
-            "entity_id": "margaret_of_anjou",
-            "entity_type": "npc",
-            "event_id": "evt_4eae31"
-          },
-          "actor_id": "margaret_of_anjou",
-          "actor_type": "npc"
-        },
-        {
-          "id": "evt_ecabcb",
-          "session": 5,
-          "note": "Consequence of Edward IV (ally): [[Edward IV]] returns from Burgundy in March 1471 with a small army and reclaims England town by town, battle by battle. [[George Duke of Clarence]], characteristically, switches back to Edward mid-campaign \u2014 he meets his brother on the road and they reconcile. [[Richard Neville, Earl of Warwick]] is killed at the Battle of Barnet on April 14, 1471, in thick fog, partly by friendly fire from his own [[House of Lancaster|Lancastrian]] allies. Edward weeps over his cousin's body and has it displayed publicly to prevent rumours that Warwick survived.",
-          "visibility": "public",
-          "polarity": "positive",
-          "intensity": 3,
-          "event_type": "combat",
-          "ripple_source": {
-            "entity_id": "edward_iv",
-            "entity_type": "npc",
-            "event_id": "evt_95840f"
-          },
-          "actor_id": "edward_iv",
-          "actor_type": "npc"
-        },
-        {
-          "id": "evt_311ad2",
-          "session": 5,
-          "note": "Consequence of Henry VI (rival): [[Henry VI]] is returned to the Tower after Barnet. He is murdered there on May 21, 1471 \u2014 on the same night [[Edward IV]] returns to London after Tewkesbury. The official cause of death is 'pure displeasure and melancholy.' No one believes this. Edward needs the [[House of Lancaster|Lancastrian]] line ended; Henry is the last legitimate adult male claimant. He is buried without ceremony. He is later venerated as a saint.",
-          "visibility": "dm_only",
-          "polarity": "positive",
-          "intensity": 3,
-          "event_type": "other",
-          "ripple_source": {
-            "entity_id": "henry_vi",
-            "entity_type": "npc",
-            "event_id": "evt_2d764a"
-          },
-          "actor_id": "henry_vi",
-          "actor_type": "npc"
-        },
-        {
-          "id": "evt_b4da5d",
-          "session": 6,
-          "note": "Consequence of Margaret of Anjou (rival): Margaret lands in England on the same day as Barnet \u2014 she does not yet know Warwick is dead. She raises a new army in Wales, marching to join with Welsh allies. Edward IV intercepts her at Tewkesbury on May 4, 1471. The Lancastrian army is destroyed. Her son Edward, Prince of Wales, is killed \u2014 captured after the battle and executed. He is seventeen. Margaret herself is captured. She is imprisoned in the Tower and later ransomed back to France by Louis XI. She never returns to England. She dies in poverty in 1482.",
-          "visibility": "public",
-          "polarity": "positive",
-          "intensity": 3,
-          "event_type": "combat",
-          "ripple_source": {
-            "entity_id": "margaret_of_anjou",
-            "entity_type": "npc",
-            "event_id": "evt_e58d13"
-          },
-          "actor_id": "margaret_of_anjou",
-          "actor_type": "npc"
-        },
-        {
-          "id": "evt_48e783",
-          "session": 7,
-          "note": "Consequence of Edward IV (ally): Edward IV rules England for twelve years after Tewkesbury \u2014 the longest stable period of the entire conflict. He is an effective king: he reforms royal finances, cultivates the merchant classes, and keeps the nobility in check. He has George of Clarence executed in 1478 \u2014 privately, in the Tower \u2014 for treason that is real, and for being an irredeemable liability. He grows fat and dissolute in his middle years, though he remains capable of bursts of decisive energy. He dies in April 1483 at forty, of a fever \u2014 unexpected, sudden, too soon.",
-          "visibility": "public",
-          "polarity": "positive",
-          "intensity": 2,
-          "event_type": "other",
-          "ripple_source": {
-            "entity_id": "edward_iv",
-            "entity_type": "npc",
-            "event_id": "evt_284de4"
-          },
-          "actor_id": "edward_iv",
-          "actor_type": "npc"
         }
       ],
       "relations": [
@@ -772,7 +586,9 @@
           "relation": "rival",
           "weight": 0.9
         }
-      ]
+      ],
+      "dead": true,
+      "dead_session": 2
     },
     {
       "id": "edward_iv",
@@ -787,9 +603,9 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_528943",
+          "id": "evt_925a4b",
           "session": 1,
-          "note": "Consequence of Richard Duke of York (ally): The First Battle of St. Albans, May 22, 1455: [[Richard Duke of York]] intercepts the royal army on a market street. The battle lasts less than an hour. The Lancastrian commander Somerset is killed. [[Henry VI]] is found sitting alone in a tanner's cottage, wounded by an arrow in the neck. York kneels before him and blames the dead Somerset for everything. It is the first blood of the war. It is presented as a misunderstanding.",
+          "note": "Consequence of Richard Duke of York (ally): St. Albans \u2014 York draws first blood; Somerset killed, the war begun.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
@@ -797,15 +613,15 @@
           "ripple_source": {
             "entity_id": "richard_duke_of_york",
             "entity_type": "npc",
-            "event_id": "evt_ad01fe"
+            "event_id": "evt_ca24ff"
           },
           "actor_id": "richard_duke_of_york",
           "actor_type": "npc"
         },
         {
-          "id": "evt_f9d38c",
+          "id": "evt_b5ea5b",
           "session": 2,
-          "note": "Consequence of Margaret of Anjou (rival): Margaret assembles a Lancastrian army in the north and defeats the Yorkists at the Battle of Wakefield on December 30, 1460. Richard Duke of York is killed \u2014 ambushed outside his castle. His head is mounted on the gates of York wearing a paper crown. Margaret's forces show no restraint. The brutality radicalises York's surviving son Edward, who is now the Yorkist claimant.",
+          "note": "Consequence of Margaret of Anjou (rival): Wakefield \u2014 York killed, head mounted on the city gates; Edward now the Yorkist claimant.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 3,
@@ -813,15 +629,15 @@
           "ripple_source": {
             "entity_id": "margaret_of_anjou",
             "entity_type": "npc",
-            "event_id": "evt_1422a3"
+            "event_id": "evt_a35baa"
           },
           "actor_id": "margaret_of_anjou",
           "actor_type": "npc"
         },
         {
-          "id": "evt_1d13c1",
+          "id": "evt_cc2f40",
           "session": 2,
-          "note": "Consequence of Richard Duke of York (ally): Before his death, York had achieved his greatest political success: the Act of Accord (October 1460) \u2014 a parliamentary settlement making him heir to Henry VI and disinheriting the Lancastrian prince. Henry VI signs it. Margaret refuses to accept it on behalf of her son. York dies at Wakefield two months later. His son inherits the claim, the crown, and the war.",
+          "note": "Consequence of Richard Duke of York (ally): Act of Accord \u2014 York made heir to Henry VI; Margaret refuses; York dies at Wakefield.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
@@ -829,15 +645,15 @@
           "ripple_source": {
             "entity_id": "richard_duke_of_york",
             "entity_type": "npc",
-            "event_id": "evt_f9b7e7"
+            "event_id": "evt_e5ccc0"
           },
           "actor_id": "richard_duke_of_york",
           "actor_type": "npc"
         },
         {
-          "id": "evt_5845b9",
+          "id": "evt_7838e5",
           "session": 2,
-          "note": "Consequence of Richard Neville, Earl of Warwick (ally): Warwick holds London for York throughout this period \u2014 a crucial strategic contribution. He controls the city's resources, the financial networks, and the propaganda apparatus. When Edward IV marches south after Wakefield, Warwick's London is the foundation he builds the next campaign on. Their partnership is at its peak.",
+          "note": "Consequence of Richard Neville, Earl of Warwick (ally): Warwick holds London for York \u2014 the Kingmaker at the peak of his influence.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 2,
@@ -845,13 +661,13 @@
           "ripple_source": {
             "entity_id": "richard_neville_earl_of_warwick",
             "entity_type": "npc",
-            "event_id": "evt_790e09"
+            "event_id": "evt_9e8051"
           },
           "actor_id": "richard_neville_earl_of_warwick",
           "actor_type": "npc"
         },
         {
-          "id": "evt_66908b",
+          "id": "evt_2e78ac",
           "session": 3,
           "note": "[[Edward IV]] enters London in February 1461 and is acclaimed king. He immediately marches north to end the war. The Battle of Towton, March 29, 1461: fought in a blizzard on Palm Sunday. An estimated 28,000 dead \u2014 the bloodiest battle ever fought on English soil. The [[House of Lancaster|Lancastrian]] army is destroyed. [[Henry VI]] and [[Margaret of Anjou]] flee to Scotland. Edward IV is king. He is nineteen years old.",
           "visibility": "public",
@@ -861,7 +677,7 @@
           "location_id": "towton_field"
         },
         {
-          "id": "evt_1a54f1",
+          "id": "evt_ce5445",
           "session": 4,
           "note": "Edward's secret marriage to Elizabeth Woodville in 1464 is announced while Warwick is in France negotiating Edward's marriage to a French princess. Warwick returns to find the deal done and himself humiliated. The Woodville family floods the court with appointments. Warwick's influence over foreign policy evaporates. The wound does not heal.",
           "visibility": "public",
@@ -870,9 +686,9 @@
           "event_type": "politics"
         },
         {
-          "id": "evt_5bde73",
+          "id": "evt_fc71ac",
           "session": 4,
-          "note": "Consequence of Richard Neville, Earl of Warwick (ally): [[Richard Neville, Earl of Warwick]] rebels in 1469 in alliance with [[George Duke of Clarence]] \u2014 [[Edward IV]]'s own brother. They defeat a royal army at Edgecote, capture Edward IV, and govern briefly in his name. It does not hold: Edward is released when the nobility refuses to support a king held prisoner by his own subject. Warwick and Clarence flee to France. Warwick approaches [[Margaret of Anjou]] \u2014 his former enemy \u2014 and offers to restore [[Henry VI]] if she will ally with him.",
+          "note": "Consequence of Richard Neville, Earl of Warwick (ally): Warwick rebels, captures Edward IV, flees to France, approaches Margaret of Anjou.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
@@ -880,15 +696,15 @@
           "ripple_source": {
             "entity_id": "richard_neville_earl_of_warwick",
             "entity_type": "npc",
-            "event_id": "evt_2d48ea"
+            "event_id": "evt_256172"
           },
           "actor_id": "richard_neville_earl_of_warwick",
           "actor_type": "npc"
         },
         {
-          "id": "evt_999422",
+          "id": "evt_a22042",
           "session": 4,
-          "note": "Consequence of Margaret of Anjou (rival): [[Margaret of Anjou]] receives [[Richard Neville, Earl of Warwick|Warwick]]'s offer in [[Kingdom of France|France]]. He was her greatest enemy for fifteen years. She makes him wait on his knees for a quarter of an hour before agreeing. The price: Warwick's daughter Anne will marry her son [[Edward Prince of Wales]], securing the alliance with a dynastic bond. It is the most extraordinary political agreement of the entire war \u2014 the Kingmaker and the She-Wolf, united by shared hatred of [[Edward IV]].",
+          "note": "Consequence of Margaret of Anjou (rival): Margaret and Warwick ally \u2014 former enemies united by shared hatred of Edward IV.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
@@ -896,15 +712,15 @@
           "ripple_source": {
             "entity_id": "margaret_of_anjou",
             "entity_type": "npc",
-            "event_id": "evt_4eae31"
+            "event_id": "evt_243cc1"
           },
           "actor_id": "margaret_of_anjou",
           "actor_type": "npc"
         },
         {
-          "id": "evt_106507",
+          "id": "evt_f06b07",
           "session": 5,
-          "note": "Consequence of Richard Neville, Earl of Warwick (ally): [[Richard Neville, Earl of Warwick]] invades England with [[Kingdom of France|French]] backing in September 1470. [[Edward IV]], caught off guard, flees to Burgundy with [[Richard Duke of Gloucester]]. Warwick releases [[Henry VI]] from the Tower and restores him as king \u2014 the 'Re-adeption' of Henry VI. Henry is paraded through London. He is described as dazed and confused, wearing a long blue velvet gown, repeating 'My kingdom, my kingdom.' It lasts six months.",
+          "note": "Consequence of Richard Neville, Earl of Warwick (ally): Warwick invades, restores Henry VI \u2014 Edward IV flees to Burgundy.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
@@ -912,13 +728,13 @@
           "ripple_source": {
             "entity_id": "richard_neville_earl_of_warwick",
             "entity_type": "npc",
-            "event_id": "evt_bc080b"
+            "event_id": "evt_fd8cc8"
           },
           "actor_id": "richard_neville_earl_of_warwick",
           "actor_type": "npc"
         },
         {
-          "id": "evt_95840f",
+          "id": "evt_91fa53",
           "session": 5,
           "note": "[[Edward IV]] returns from Burgundy in March 1471 with a small army and reclaims England town by town, battle by battle. [[George Duke of Clarence]], characteristically, switches back to Edward mid-campaign \u2014 he meets his brother on the road and they reconcile. [[Richard Neville, Earl of Warwick]] is killed at the Battle of Barnet on April 14, 1471, in thick fog, partly by friendly fire from his own [[House of Lancaster|Lancastrian]] allies. Edward weeps over his cousin's body and has it displayed publicly to prevent rumours that Warwick survived.",
           "visibility": "public",
@@ -928,9 +744,9 @@
           "location_id": "barnet_field"
         },
         {
-          "id": "evt_11993a",
+          "id": "evt_f953f6",
           "session": 6,
-          "note": "Consequence of Margaret of Anjou (rival): Margaret lands in England on the same day as Barnet \u2014 she does not yet know Warwick is dead. She raises a new army in Wales, marching to join with Welsh allies. Edward IV intercepts her at Tewkesbury on May 4, 1471. The Lancastrian army is destroyed. Her son Edward, Prince of Wales, is killed \u2014 captured after the battle and executed. He is seventeen. Margaret herself is captured. She is imprisoned in the Tower and later ransomed back to France by Louis XI. She never returns to England. She dies in poverty in 1482.",
+          "note": "Consequence of Margaret of Anjou (rival): Tewkesbury \u2014 Lancastrian army destroyed, Prince of Wales killed at 17, Margaret captured.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 3,
@@ -938,67 +754,19 @@
           "ripple_source": {
             "entity_id": "margaret_of_anjou",
             "entity_type": "npc",
-            "event_id": "evt_e58d13"
+            "event_id": "evt_c099a5"
           },
           "actor_id": "margaret_of_anjou",
           "actor_type": "npc"
         },
         {
-          "id": "evt_284de4",
+          "id": "evt_9c1df3",
           "session": 7,
           "note": "Edward IV rules England for twelve years after Tewkesbury \u2014 the longest stable period of the entire conflict. He is an effective king: he reforms royal finances, cultivates the merchant classes, and keeps the nobility in check. He has George of Clarence executed in 1478 \u2014 privately, in the Tower \u2014 for treason that is real, and for being an irredeemable liability. He grows fat and dissolute in his middle years, though he remains capable of bursts of decisive energy. He dies in April 1483 at forty, of a fever \u2014 unexpected, sudden, too soon.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 2,
           "event_type": "other"
-        },
-        {
-          "id": "evt_eeebb8",
-          "session": 7,
-          "note": "Consequence of George Duke of Clarence (ally): George is attainted of treason in 1478 and privately executed in the Tower. The Malmsey wine tradition \u2014 that he was drowned in a butt of his favorite wine at his own request \u2014 comes from contemporary sources. Whether literally true or darkly symbolic, it captures something real about how England viewed him: even his death had a theatrical quality. Edward weeps at his execution. He executes him anyway.",
-          "visibility": "public",
-          "polarity": "negative",
-          "intensity": 2,
-          "event_type": "betrayal",
-          "ripple_source": {
-            "entity_id": "george_duke_of_clarence",
-            "entity_type": "npc",
-            "event_id": "evt_2ff3c8"
-          },
-          "actor_id": "george_duke_of_clarence",
-          "actor_type": "npc"
-        },
-        {
-          "id": "evt_7ebd55",
-          "session": 8,
-          "note": "Consequence of Richard Duke of Gloucester (ally): [[Edward IV]] dies in April 1483. [[Richard Duke of Gloucester]] intercepts his nephew Edward V on the road to London, takes custody of him, and arrests his [[Elizabeth Woodville|Woodville]] escorts. He is appointed Lord Protector. Within weeks he has imprisoned the boy king and his brother in the Tower 'for their safety.' He declares both boys illegitimate on the grounds that Edward IV's marriage to [[Elizabeth Woodville]] was invalid. He is crowned Richard III on July 6, 1483. He is efficient, thorough, and hated for it.",
-          "visibility": "public",
-          "polarity": "negative",
-          "intensity": 3,
-          "event_type": "betrayal",
-          "ripple_source": {
-            "entity_id": "richard_duke_of_gloucester",
-            "entity_type": "npc",
-            "event_id": "evt_731a32"
-          },
-          "actor_id": "richard_duke_of_gloucester",
-          "actor_type": "npc"
-        },
-        {
-          "id": "evt_705a0c",
-          "session": 9,
-          "note": "Consequence of Richard Duke of Gloucester (ally): The Battle of Bosworth Field, August 22, 1485. [[Richard Duke of Gloucester|Richard III]] sees [[Henry Tudor]] exposed away from his main force and charges personally with his household cavalry to kill him directly \u2014 a bold, desperate, and strategically sound gamble. The Stanley family, watching from the flank, makes their decision: they charge into Richard's flank as he reaches Tudor's position. Richard is unhorsed, surrounded, and killed. 'A horse, a horse, my kingdom for a horse.' Whether he said it is unknown. He is the last English king to die in battle. His crown is found in a hawthorn bush and placed on [[Henry Tudor]]'s head.",
-          "visibility": "public",
-          "polarity": "negative",
-          "intensity": 3,
-          "event_type": "combat",
-          "ripple_source": {
-            "entity_id": "richard_duke_of_gloucester",
-            "entity_type": "npc",
-            "event_id": "evt_18ed62"
-          },
-          "actor_id": "richard_duke_of_gloucester",
-          "actor_type": "npc"
         }
       ],
       "relations": [
@@ -1033,7 +801,9 @@
           "relation": "rival",
           "weight": 1.0
         }
-      ]
+      ],
+      "dead": true,
+      "dead_session": 7
     },
     {
       "id": "richard_duke_of_gloucester",
@@ -1048,9 +818,9 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_aa6884",
+          "id": "evt_b3953b",
           "session": 3,
-          "note": "Consequence of Edward IV (ally): [[Edward IV]] enters London in February 1461 and is acclaimed king. He immediately marches north to end the war. The Battle of Towton, March 29, 1461: fought in a blizzard on Palm Sunday. An estimated 28,000 dead \u2014 the bloodiest battle ever fought on English soil. The [[House of Lancaster|Lancastrian]] army is destroyed. [[Henry VI]] and [[Margaret of Anjou]] flee to Scotland. Edward IV is king. He is nineteen years old.",
+          "note": "Consequence of Edward IV (ally): Towton \u2014 Edward IV destroys Lancaster in the bloodiest battle on English soil.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 3,
@@ -1058,15 +828,15 @@
           "ripple_source": {
             "entity_id": "edward_iv",
             "entity_type": "npc",
-            "event_id": "evt_66908b"
+            "event_id": "evt_2e78ac"
           },
           "actor_id": "edward_iv",
           "actor_type": "npc"
         },
         {
-          "id": "evt_53a6ea",
+          "id": "evt_1d40de",
           "session": 4,
-          "note": "Consequence of Edward IV (ally): Edward's secret marriage to Elizabeth Woodville in 1464 is announced while Warwick is in France negotiating Edward's marriage to a French princess. Warwick returns to find the deal done and himself humiliated. The Woodville family floods the court with appointments. Warwick's influence over foreign policy evaporates. The wound does not heal.",
+          "note": "Consequence of Edward IV (ally): Edward's Woodville marriage humiliates Warwick \u2014 the wound that ends their alliance.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
@@ -1074,15 +844,15 @@
           "ripple_source": {
             "entity_id": "edward_iv",
             "entity_type": "npc",
-            "event_id": "evt_1a54f1"
+            "event_id": "evt_ce5445"
           },
           "actor_id": "edward_iv",
           "actor_type": "npc"
         },
         {
-          "id": "evt_67a00a",
+          "id": "evt_09fe78",
           "session": 5,
-          "note": "Consequence of Edward IV (ally): [[Edward IV]] returns from Burgundy in March 1471 with a small army and reclaims England town by town, battle by battle. [[George Duke of Clarence]], characteristically, switches back to Edward mid-campaign \u2014 he meets his brother on the road and they reconcile. [[Richard Neville, Earl of Warwick]] is killed at the Battle of Barnet on April 14, 1471, in thick fog, partly by friendly fire from his own [[House of Lancaster|Lancastrian]] allies. Edward weeps over his cousin's body and has it displayed publicly to prevent rumours that Warwick survived.",
+          "note": "Consequence of Edward IV (ally): Edward returns, Warwick killed at Barnet in fog \u2014 the Kingmaker dead.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 3,
@@ -1090,15 +860,15 @@
           "ripple_source": {
             "entity_id": "edward_iv",
             "entity_type": "npc",
-            "event_id": "evt_95840f"
+            "event_id": "evt_91fa53"
           },
           "actor_id": "edward_iv",
           "actor_type": "npc"
         },
         {
-          "id": "evt_396147",
+          "id": "evt_4581b5",
           "session": 7,
-          "note": "Consequence of Edward IV (ally): Edward IV rules England for twelve years after Tewkesbury \u2014 the longest stable period of the entire conflict. He is an effective king: he reforms royal finances, cultivates the merchant classes, and keeps the nobility in check. He has George of Clarence executed in 1478 \u2014 privately, in the Tower \u2014 for treason that is real, and for being an irredeemable liability. He grows fat and dissolute in his middle years, though he remains capable of bursts of decisive energy. He dies in April 1483 at forty, of a fever \u2014 unexpected, sudden, too soon.",
+          "note": "Consequence of Edward IV (ally): Edward IV dies April 1483 at 40 \u2014 unexpected, heir is 12, England unguarded.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 2,
@@ -1106,13 +876,13 @@
           "ripple_source": {
             "entity_id": "edward_iv",
             "entity_type": "npc",
-            "event_id": "evt_284de4"
+            "event_id": "evt_9c1df3"
           },
           "actor_id": "edward_iv",
           "actor_type": "npc"
         },
         {
-          "id": "evt_7dd880",
+          "id": "evt_2abe9b",
           "session": 7,
           "note": "Richard of Gloucester is Edward's loyal lieutenant throughout the stable years \u2014 governing the north of England, fighting Scotland, administering justice. He is considered the most reliable of the three York brothers. He is present at Barnet and Tewkesbury. He may have participated in Henry VI's murder. He is thirty years old when Edward dies and the world changes around him.",
           "visibility": "public",
@@ -1121,7 +891,7 @@
           "event_type": "other"
         },
         {
-          "id": "evt_731a32",
+          "id": "evt_4ee6b1",
           "session": 8,
           "note": "[[Edward IV]] dies in April 1483. [[Richard Duke of Gloucester]] intercepts his nephew Edward V on the road to London, takes custody of him, and arrests his [[Elizabeth Woodville|Woodville]] escorts. He is appointed Lord Protector. Within weeks he has imprisoned the boy king and his brother in the Tower 'for their safety.' He declares both boys illegitimate on the grounds that Edward IV's marriage to [[Elizabeth Woodville]] was invalid. He is crowned Richard III on July 6, 1483. He is efficient, thorough, and hated for it.",
           "visibility": "public",
@@ -1131,9 +901,9 @@
           "location_id": "the_tower_of_london"
         },
         {
-          "id": "evt_5b7253",
+          "id": "evt_0a8371",
           "session": 8,
-          "note": "Consequence of Elizabeth Woodville (ally): [[Elizabeth Woodville]] takes sanctuary in Westminster Abbey with her daughters when [[Richard Duke of Gloucester]] moves against the Woodvilles. She is powerless: her son is Richard's prisoner; her relatives are arrested. She is eventually persuaded to release her younger son Richard into his uncle's custody \u2014 a decision she will spend the rest of her life regretting or justifying, depending on the source. Both boys are never seen publicly again.",
+          "note": "Consequence of Elizabeth Woodville (ally): Elizabeth Woodville in sanctuary \u2014 releases younger son to Richard; both princes disappear.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
@@ -1141,15 +911,15 @@
           "ripple_source": {
             "entity_id": "elizabeth_woodville",
             "entity_type": "npc",
-            "event_id": "evt_f35b5e"
+            "event_id": "evt_a2fdc2"
           },
           "actor_id": "elizabeth_woodville",
           "actor_type": "npc"
         },
         {
-          "id": "evt_cecc90",
+          "id": "evt_8925e7",
           "session": 9,
-          "note": "Consequence of Henry Tudor (rival): [[Henry Tudor]] lands at Milford Haven in Wales on August 7, 1485 with 2,000 [[Kingdom of France|French]] soldiers and growing Welsh support. He marches through Wales gathering men under the red dragon banner. By the time he reaches Bosworth, he has perhaps 5,000 men. [[Richard Duke of Gloucester|Richard III]] has twice that. But the Stanley family \u2014 controlling 6,000 men \u2014 hovers at the battlefield's edge, uncommitted.",
+          "note": "Consequence of Henry Tudor (rival): Tudor lands at Milford Haven \u2014 marching to Bosworth with French troops and Welsh support.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
@@ -1157,13 +927,13 @@
           "ripple_source": {
             "entity_id": "henry_tudor",
             "entity_type": "npc",
-            "event_id": "evt_3180dd"
+            "event_id": "evt_aaf800"
           },
           "actor_id": "henry_tudor",
           "actor_type": "npc"
         },
         {
-          "id": "evt_18ed62",
+          "id": "evt_7e4da0",
           "session": 9,
           "note": "The Battle of Bosworth Field, August 22, 1485. [[Richard Duke of Gloucester|Richard III]] sees [[Henry Tudor]] exposed away from his main force and charges personally with his household cavalry to kill him directly \u2014 a bold, desperate, and strategically sound gamble. The Stanley family, watching from the flank, makes their decision: they charge into Richard's flank as he reaches Tudor's position. Richard is unhorsed, surrounded, and killed. 'A horse, a horse, my kingdom for a horse.' Whether he said it is unknown. He is the last English king to die in battle. His crown is found in a hawthorn bush and placed on [[Henry Tudor]]'s head.",
           "visibility": "public",
@@ -1171,22 +941,6 @@
           "intensity": 3,
           "event_type": "combat",
           "location_id": "bosworth_field"
-        },
-        {
-          "id": "evt_37196d",
-          "session": 9,
-          "note": "Consequence of Henry Tudor (rival): [[Henry VII|Henry VII]] is crowned on the battlefield. He imprisons Elizabeth of York, [[Edward IV]]'s daughter, and then marries her \u2014 the union of the roses that ends thirty years of war. He rules for twenty-four years. He never faces a serious dynastic challenge that he cannot defeat. He is cold, careful, and extraordinarily competent. Everything that follows \u2014 the English Reformation, the British Empire, Shakespeare's history plays \u2014 begins here, in a Leicestershire field, on a summer morning in 1485.",
-          "visibility": "public",
-          "polarity": "negative",
-          "intensity": 3,
-          "event_type": "other",
-          "ripple_source": {
-            "entity_id": "henry_tudor",
-            "entity_type": "npc",
-            "event_id": "evt_cc6627"
-          },
-          "actor_id": "henry_tudor",
-          "actor_type": "npc"
         }
       ],
       "relations": [
@@ -1209,7 +963,9 @@
           "personal_relation": "rival",
           "weight": 0.7
         }
-      ]
+      ],
+      "dead": true,
+      "dead_session": 9
     },
     {
       "id": "george_duke_of_clarence",
@@ -1224,9 +980,9 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_15e79e",
+          "id": "evt_17d76b",
           "session": 2,
-          "note": "Consequence of Richard Neville, Earl of Warwick (ally): Warwick holds London for York throughout this period \u2014 a crucial strategic contribution. He controls the city's resources, the financial networks, and the propaganda apparatus. When Edward IV marches south after Wakefield, Warwick's London is the foundation he builds the next campaign on. Their partnership is at its peak.",
+          "note": "Consequence of Richard Neville, Earl of Warwick (ally): Warwick holds London for York \u2014 the Kingmaker at the peak of his influence.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 2,
@@ -1234,15 +990,15 @@
           "ripple_source": {
             "entity_id": "richard_neville_earl_of_warwick",
             "entity_type": "npc",
-            "event_id": "evt_790e09"
+            "event_id": "evt_9e8051"
           },
           "actor_id": "richard_neville_earl_of_warwick",
           "actor_type": "npc"
         },
         {
-          "id": "evt_456b2b",
+          "id": "evt_4c0277",
           "session": 3,
-          "note": "Consequence of Edward IV (ally): [[Edward IV]] enters London in February 1461 and is acclaimed king. He immediately marches north to end the war. The Battle of Towton, March 29, 1461: fought in a blizzard on Palm Sunday. An estimated 28,000 dead \u2014 the bloodiest battle ever fought on English soil. The [[House of Lancaster|Lancastrian]] army is destroyed. [[Henry VI]] and [[Margaret of Anjou]] flee to Scotland. Edward IV is king. He is nineteen years old.",
+          "note": "Consequence of Edward IV (ally): Towton \u2014 Edward IV destroys Lancaster in the bloodiest battle on English soil.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 2,
@@ -1250,15 +1006,15 @@
           "ripple_source": {
             "entity_id": "edward_iv",
             "entity_type": "npc",
-            "event_id": "evt_66908b"
+            "event_id": "evt_2e78ac"
           },
           "actor_id": "edward_iv",
           "actor_type": "npc"
         },
         {
-          "id": "evt_ecd11f",
+          "id": "evt_6fd2f5",
           "session": 4,
-          "note": "Consequence of Edward IV (ally): Edward's secret marriage to Elizabeth Woodville in 1464 is announced while Warwick is in France negotiating Edward's marriage to a French princess. Warwick returns to find the deal done and himself humiliated. The Woodville family floods the court with appointments. Warwick's influence over foreign policy evaporates. The wound does not heal.",
+          "note": "Consequence of Edward IV (ally): Edward's Woodville marriage humiliates Warwick \u2014 the wound that ends their alliance.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
@@ -1266,15 +1022,15 @@
           "ripple_source": {
             "entity_id": "edward_iv",
             "entity_type": "npc",
-            "event_id": "evt_1a54f1"
+            "event_id": "evt_ce5445"
           },
           "actor_id": "edward_iv",
           "actor_type": "npc"
         },
         {
-          "id": "evt_89b19f",
+          "id": "evt_090516",
           "session": 4,
-          "note": "Consequence of Richard Neville, Earl of Warwick (ally): [[Richard Neville, Earl of Warwick]] rebels in 1469 in alliance with [[George Duke of Clarence]] \u2014 [[Edward IV]]'s own brother. They defeat a royal army at Edgecote, capture Edward IV, and govern briefly in his name. It does not hold: Edward is released when the nobility refuses to support a king held prisoner by his own subject. Warwick and Clarence flee to France. Warwick approaches [[Margaret of Anjou]] \u2014 his former enemy \u2014 and offers to restore [[Henry VI]] if she will ally with him.",
+          "note": "Consequence of Richard Neville, Earl of Warwick (ally): Warwick rebels, captures Edward IV, flees to France, approaches Margaret of Anjou.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
@@ -1282,15 +1038,15 @@
           "ripple_source": {
             "entity_id": "richard_neville_earl_of_warwick",
             "entity_type": "npc",
-            "event_id": "evt_2d48ea"
+            "event_id": "evt_256172"
           },
           "actor_id": "richard_neville_earl_of_warwick",
           "actor_type": "npc"
         },
         {
-          "id": "evt_f34d86",
+          "id": "evt_7ce549",
           "session": 5,
-          "note": "Consequence of Richard Neville, Earl of Warwick (ally): [[Richard Neville, Earl of Warwick]] invades England with [[Kingdom of France|French]] backing in September 1470. [[Edward IV]], caught off guard, flees to Burgundy with [[Richard Duke of Gloucester]]. Warwick releases [[Henry VI]] from the Tower and restores him as king \u2014 the 'Re-adeption' of Henry VI. Henry is paraded through London. He is described as dazed and confused, wearing a long blue velvet gown, repeating 'My kingdom, my kingdom.' It lasts six months.",
+          "note": "Consequence of Richard Neville, Earl of Warwick (ally): Warwick invades, restores Henry VI \u2014 Edward IV flees to Burgundy.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
@@ -1298,15 +1054,15 @@
           "ripple_source": {
             "entity_id": "richard_neville_earl_of_warwick",
             "entity_type": "npc",
-            "event_id": "evt_bc080b"
+            "event_id": "evt_fd8cc8"
           },
           "actor_id": "richard_neville_earl_of_warwick",
           "actor_type": "npc"
         },
         {
-          "id": "evt_b6516d",
+          "id": "evt_733f18",
           "session": 5,
-          "note": "Consequence of Edward IV (ally): [[Edward IV]] returns from Burgundy in March 1471 with a small army and reclaims England town by town, battle by battle. [[George Duke of Clarence]], characteristically, switches back to Edward mid-campaign \u2014 he meets his brother on the road and they reconcile. [[Richard Neville, Earl of Warwick]] is killed at the Battle of Barnet on April 14, 1471, in thick fog, partly by friendly fire from his own [[House of Lancaster|Lancastrian]] allies. Edward weeps over his cousin's body and has it displayed publicly to prevent rumours that Warwick survived.",
+          "note": "Consequence of Edward IV (ally): Edward returns, Warwick killed at Barnet in fog \u2014 the Kingmaker dead.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 2,
@@ -1314,15 +1070,15 @@
           "ripple_source": {
             "entity_id": "edward_iv",
             "entity_type": "npc",
-            "event_id": "evt_95840f"
+            "event_id": "evt_91fa53"
           },
           "actor_id": "edward_iv",
           "actor_type": "npc"
         },
         {
-          "id": "evt_4c8072",
+          "id": "evt_70bfbc",
           "session": 7,
-          "note": "Consequence of Edward IV (ally): Edward IV rules England for twelve years after Tewkesbury \u2014 the longest stable period of the entire conflict. He is an effective king: he reforms royal finances, cultivates the merchant classes, and keeps the nobility in check. He has George of Clarence executed in 1478 \u2014 privately, in the Tower \u2014 for treason that is real, and for being an irredeemable liability. He grows fat and dissolute in his middle years, though he remains capable of bursts of decisive energy. He dies in April 1483 at forty, of a fever \u2014 unexpected, sudden, too soon.",
+          "note": "Consequence of Edward IV (ally): Edward IV dies April 1483 at 40 \u2014 unexpected, heir is 12, England unguarded.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 2,
@@ -1330,19 +1086,20 @@
           "ripple_source": {
             "entity_id": "edward_iv",
             "entity_type": "npc",
-            "event_id": "evt_284de4"
+            "event_id": "evt_9c1df3"
           },
           "actor_id": "edward_iv",
           "actor_type": "npc"
         },
         {
-          "id": "evt_2ff3c8",
+          "id": "evt_b90922",
           "session": 7,
           "note": "George is attainted of treason in 1478 and privately executed in the Tower. The Malmsey wine tradition \u2014 that he was drowned in a butt of his favorite wine at his own request \u2014 comes from contemporary sources. Whether literally true or darkly symbolic, it captures something real about how England viewed him: even his death had a theatrical quality. Edward weeps at his execution. He executes him anyway.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
-          "event_type": "betrayal"
+          "event_type": "betrayal",
+          "location_id": "the_tower_of_london"
         }
       ],
       "relations": [
@@ -1353,7 +1110,9 @@
           "personal_relation": "rival",
           "weight": 0.8
         }
-      ]
+      ],
+      "dead": true,
+      "dead_session": 7
     },
     {
       "id": "richard_neville_earl_of_warwick",
@@ -1368,9 +1127,9 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_41dabf",
+          "id": "evt_7f0e37",
           "session": 2,
-          "note": "Consequence of Margaret of Anjou (ally): Margaret assembles a Lancastrian army in the north and defeats the Yorkists at the Battle of Wakefield on December 30, 1460. Richard Duke of York is killed \u2014 ambushed outside his castle. His head is mounted on the gates of York wearing a paper crown. Margaret's forces show no restraint. The brutality radicalises York's surviving son Edward, who is now the Yorkist claimant.",
+          "note": "Consequence of Margaret of Anjou (ally): Wakefield \u2014 York killed, head mounted on the city gates; Edward now the Yorkist claimant.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
@@ -1378,13 +1137,13 @@
           "ripple_source": {
             "entity_id": "margaret_of_anjou",
             "entity_type": "npc",
-            "event_id": "evt_1422a3"
+            "event_id": "evt_a35baa"
           },
           "actor_id": "margaret_of_anjou",
           "actor_type": "npc"
         },
         {
-          "id": "evt_790e09",
+          "id": "evt_9e8051",
           "session": 2,
           "note": "Warwick holds London for York throughout this period \u2014 a crucial strategic contribution. He controls the city's resources, the financial networks, and the propaganda apparatus. When Edward IV marches south after Wakefield, Warwick's London is the foundation he builds the next campaign on. Their partnership is at its peak.",
           "visibility": "public",
@@ -1393,9 +1152,9 @@
           "event_type": "politics"
         },
         {
-          "id": "evt_b515a3",
+          "id": "evt_65da99",
           "session": 3,
-          "note": "Consequence of Edward IV (ally): [[Edward IV]] enters London in February 1461 and is acclaimed king. He immediately marches north to end the war. The Battle of Towton, March 29, 1461: fought in a blizzard on Palm Sunday. An estimated 28,000 dead \u2014 the bloodiest battle ever fought on English soil. The [[House of Lancaster|Lancastrian]] army is destroyed. [[Henry VI]] and [[Margaret of Anjou]] flee to Scotland. Edward IV is king. He is nineteen years old.",
+          "note": "Consequence of Edward IV (ally): Towton \u2014 Edward IV destroys Lancaster in the bloodiest battle on English soil.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 3,
@@ -1403,15 +1162,15 @@
           "ripple_source": {
             "entity_id": "edward_iv",
             "entity_type": "npc",
-            "event_id": "evt_66908b"
+            "event_id": "evt_2e78ac"
           },
           "actor_id": "edward_iv",
           "actor_type": "npc"
         },
         {
-          "id": "evt_54a352",
+          "id": "evt_5515fd",
           "session": 4,
-          "note": "Consequence of Edward IV (ally): Edward's secret marriage to Elizabeth Woodville in 1464 is announced while Warwick is in France negotiating Edward's marriage to a French princess. Warwick returns to find the deal done and himself humiliated. The Woodville family floods the court with appointments. Warwick's influence over foreign policy evaporates. The wound does not heal.",
+          "note": "Consequence of Edward IV (ally): Edward's Woodville marriage humiliates Warwick \u2014 the wound that ends their alliance.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
@@ -1419,13 +1178,13 @@
           "ripple_source": {
             "entity_id": "edward_iv",
             "entity_type": "npc",
-            "event_id": "evt_1a54f1"
+            "event_id": "evt_ce5445"
           },
           "actor_id": "edward_iv",
           "actor_type": "npc"
         },
         {
-          "id": "evt_2d48ea",
+          "id": "evt_256172",
           "session": 4,
           "note": "[[Richard Neville, Earl of Warwick]] rebels in 1469 in alliance with [[George Duke of Clarence]] \u2014 [[Edward IV]]'s own brother. They defeat a royal army at Edgecote, capture Edward IV, and govern briefly in his name. It does not hold: Edward is released when the nobility refuses to support a king held prisoner by his own subject. Warwick and Clarence flee to France. Warwick approaches [[Margaret of Anjou]] \u2014 his former enemy \u2014 and offers to restore [[Henry VI]] if she will ally with him.",
           "visibility": "public",
@@ -1435,9 +1194,9 @@
           "location_id": "france_and_brittany"
         },
         {
-          "id": "evt_48e58a",
+          "id": "evt_693978",
           "session": 4,
-          "note": "Consequence of Margaret of Anjou (ally): [[Margaret of Anjou]] receives [[Richard Neville, Earl of Warwick|Warwick]]'s offer in [[Kingdom of France|France]]. He was her greatest enemy for fifteen years. She makes him wait on his knees for a quarter of an hour before agreeing. The price: Warwick's daughter Anne will marry her son [[Edward Prince of Wales]], securing the alliance with a dynastic bond. It is the most extraordinary political agreement of the entire war \u2014 the Kingmaker and the She-Wolf, united by shared hatred of [[Edward IV]].",
+          "note": "Consequence of Margaret of Anjou (ally): Margaret and Warwick ally \u2014 former enemies united by shared hatred of Edward IV.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 2,
@@ -1445,13 +1204,13 @@
           "ripple_source": {
             "entity_id": "margaret_of_anjou",
             "entity_type": "npc",
-            "event_id": "evt_4eae31"
+            "event_id": "evt_243cc1"
           },
           "actor_id": "margaret_of_anjou",
           "actor_type": "npc"
         },
         {
-          "id": "evt_bc080b",
+          "id": "evt_fd8cc8",
           "session": 5,
           "note": "[[Richard Neville, Earl of Warwick]] invades England with [[Kingdom of France|French]] backing in September 1470. [[Edward IV]], caught off guard, flees to Burgundy with [[Richard Duke of Gloucester]]. Warwick releases [[Henry VI]] from the Tower and restores him as king \u2014 the 'Re-adeption' of Henry VI. Henry is paraded through London. He is described as dazed and confused, wearing a long blue velvet gown, repeating 'My kingdom, my kingdom.' It lasts six months.",
           "visibility": "public",
@@ -1459,86 +1218,6 @@
           "intensity": 3,
           "event_type": "politics",
           "location_id": "the_tower_of_london"
-        },
-        {
-          "id": "evt_aa2bf9",
-          "session": 5,
-          "note": "Consequence of Edward IV (ally): [[Edward IV]] returns from Burgundy in March 1471 with a small army and reclaims England town by town, battle by battle. [[George Duke of Clarence]], characteristically, switches back to Edward mid-campaign \u2014 he meets his brother on the road and they reconcile. [[Richard Neville, Earl of Warwick]] is killed at the Battle of Barnet on April 14, 1471, in thick fog, partly by friendly fire from his own [[House of Lancaster|Lancastrian]] allies. Edward weeps over his cousin's body and has it displayed publicly to prevent rumours that Warwick survived.",
-          "visibility": "public",
-          "polarity": "positive",
-          "intensity": 3,
-          "event_type": "combat",
-          "ripple_source": {
-            "entity_id": "edward_iv",
-            "entity_type": "npc",
-            "event_id": "evt_95840f"
-          },
-          "actor_id": "edward_iv",
-          "actor_type": "npc"
-        },
-        {
-          "id": "evt_6a6664",
-          "session": 6,
-          "note": "Consequence of Margaret of Anjou (ally): Margaret lands in England on the same day as Barnet \u2014 she does not yet know Warwick is dead. She raises a new army in Wales, marching to join with Welsh allies. Edward IV intercepts her at Tewkesbury on May 4, 1471. The Lancastrian army is destroyed. Her son Edward, Prince of Wales, is killed \u2014 captured after the battle and executed. He is seventeen. Margaret herself is captured. She is imprisoned in the Tower and later ransomed back to France by Louis XI. She never returns to England. She dies in poverty in 1482.",
-          "visibility": "public",
-          "polarity": "negative",
-          "intensity": 2,
-          "event_type": "combat",
-          "ripple_source": {
-            "entity_id": "margaret_of_anjou",
-            "entity_type": "npc",
-            "event_id": "evt_e58d13"
-          },
-          "actor_id": "margaret_of_anjou",
-          "actor_type": "npc"
-        },
-        {
-          "id": "evt_9944f9",
-          "session": 7,
-          "note": "Consequence of Edward IV (ally): Edward IV rules England for twelve years after Tewkesbury \u2014 the longest stable period of the entire conflict. He is an effective king: he reforms royal finances, cultivates the merchant classes, and keeps the nobility in check. He has George of Clarence executed in 1478 \u2014 privately, in the Tower \u2014 for treason that is real, and for being an irredeemable liability. He grows fat and dissolute in his middle years, though he remains capable of bursts of decisive energy. He dies in April 1483 at forty, of a fever \u2014 unexpected, sudden, too soon.",
-          "visibility": "public",
-          "polarity": "positive",
-          "intensity": 2,
-          "event_type": "other",
-          "ripple_source": {
-            "entity_id": "edward_iv",
-            "entity_type": "npc",
-            "event_id": "evt_284de4"
-          },
-          "actor_id": "edward_iv",
-          "actor_type": "npc"
-        },
-        {
-          "id": "evt_029fdf",
-          "session": 7,
-          "note": "Consequence of George Duke of Clarence (ally): George is attainted of treason in 1478 and privately executed in the Tower. The Malmsey wine tradition \u2014 that he was drowned in a butt of his favorite wine at his own request \u2014 comes from contemporary sources. Whether literally true or darkly symbolic, it captures something real about how England viewed him: even his death had a theatrical quality. Edward weeps at his execution. He executes him anyway.",
-          "visibility": "public",
-          "polarity": "negative",
-          "intensity": 2,
-          "event_type": "betrayal",
-          "ripple_source": {
-            "entity_id": "george_duke_of_clarence",
-            "entity_type": "npc",
-            "event_id": "evt_2ff3c8"
-          },
-          "actor_id": "george_duke_of_clarence",
-          "actor_type": "npc"
-        },
-        {
-          "id": "evt_22e7ce",
-          "session": 8,
-          "note": "Consequence of Elizabeth Woodville (rival): [[Elizabeth Woodville]] takes sanctuary in Westminster Abbey with her daughters when [[Richard Duke of Gloucester]] moves against the Woodvilles. She is powerless: her son is Richard's prisoner; her relatives are arrested. She is eventually persuaded to release her younger son Richard into his uncle's custody \u2014 a decision she will spend the rest of her life regretting or justifying, depending on the source. Both boys are never seen publicly again.",
-          "visibility": "public",
-          "polarity": "positive",
-          "intensity": 3,
-          "event_type": "politics",
-          "ripple_source": {
-            "entity_id": "elizabeth_woodville",
-            "entity_type": "npc",
-            "event_id": "evt_f35b5e"
-          },
-          "actor_id": "elizabeth_woodville",
-          "actor_type": "npc"
         }
       ],
       "relations": [
@@ -1567,7 +1246,9 @@
           "relation": "rival",
           "weight": 0.9
         }
-      ]
+      ],
+      "dead": true,
+      "dead_session": 5
     },
     {
       "id": "henry_tudor",
@@ -1584,9 +1265,9 @@
       ],
       "log": [
         {
-          "id": "evt_2d0d02",
+          "id": "evt_48d7e0",
           "session": 8,
-          "note": "Consequence of Richard Duke of Gloucester (rival): [[Edward IV]] dies in April 1483. [[Richard Duke of Gloucester]] intercepts his nephew Edward V on the road to London, takes custody of him, and arrests his [[Elizabeth Woodville|Woodville]] escorts. He is appointed Lord Protector. Within weeks he has imprisoned the boy king and his brother in the Tower 'for their safety.' He declares both boys illegitimate on the grounds that Edward IV's marriage to [[Elizabeth Woodville]] was invalid. He is crowned Richard III on July 6, 1483. He is efficient, thorough, and hated for it.",
+          "note": "Consequence of Richard Duke of Gloucester (rival): Richard takes the crown \u2014 princes imprisoned, Yorkist coalition fracturing.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 3,
@@ -1594,13 +1275,13 @@
           "ripple_source": {
             "entity_id": "richard_duke_of_gloucester",
             "entity_type": "npc",
-            "event_id": "evt_731a32"
+            "event_id": "evt_4ee6b1"
           },
           "actor_id": "richard_duke_of_gloucester",
           "actor_type": "npc"
         },
         {
-          "id": "evt_3180dd",
+          "id": "evt_aaf800",
           "session": 9,
           "note": "[[Henry Tudor]] lands at Milford Haven in Wales on August 7, 1485 with 2,000 [[Kingdom of France|French]] soldiers and growing Welsh support. He marches through Wales gathering men under the red dragon banner. By the time he reaches Bosworth, he has perhaps 5,000 men. [[Richard Duke of Gloucester|Richard III]] has twice that. But the Stanley family \u2014 controlling 6,000 men \u2014 hovers at the battlefield's edge, uncommitted.",
           "visibility": "public",
@@ -1610,9 +1291,9 @@
           "location_id": "bosworth_field"
         },
         {
-          "id": "evt_483d15",
+          "id": "evt_cd1146",
           "session": 9,
-          "note": "Consequence of Richard Duke of Gloucester (rival): The Battle of Bosworth Field, August 22, 1485. [[Richard Duke of Gloucester|Richard III]] sees [[Henry Tudor]] exposed away from his main force and charges personally with his household cavalry to kill him directly \u2014 a bold, desperate, and strategically sound gamble. The Stanley family, watching from the flank, makes their decision: they charge into Richard's flank as he reaches Tudor's position. Richard is unhorsed, surrounded, and killed. 'A horse, a horse, my kingdom for a horse.' Whether he said it is unknown. He is the last English king to die in battle. His crown is found in a hawthorn bush and placed on [[Henry Tudor]]'s head.",
+          "note": "Consequence of Richard Duke of Gloucester (rival): Richard III killed at Bosworth \u2014 Stanleys switch mid-charge; last king to die in battle.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 3,
@@ -1620,13 +1301,13 @@
           "ripple_source": {
             "entity_id": "richard_duke_of_gloucester",
             "entity_type": "npc",
-            "event_id": "evt_18ed62"
+            "event_id": "evt_7e4da0"
           },
           "actor_id": "richard_duke_of_gloucester",
           "actor_type": "npc"
         },
         {
-          "id": "evt_cc6627",
+          "id": "evt_791222",
           "session": 9,
           "note": "[[Henry VII|Henry VII]] is crowned on the battlefield. He imprisons Elizabeth of York, [[Edward IV]]'s daughter, and then marries her \u2014 the union of the roses that ends thirty years of war. He rules for twenty-four years. He never faces a serious dynastic challenge that he cannot defeat. He is cold, careful, and extraordinarily competent. Everything that follows \u2014 the English Reformation, the British Empire, Shakespeare's history plays \u2014 begins here, in a Leicestershire field, on a summer morning in 1485.",
           "visibility": "public",
@@ -1664,9 +1345,9 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_45d50c",
+          "id": "evt_b3f137",
           "session": 9,
-          "note": "Consequence of Henry Tudor (ally): [[Henry Tudor]] lands at Milford Haven in Wales on August 7, 1485 with 2,000 [[Kingdom of France|French]] soldiers and growing Welsh support. He marches through Wales gathering men under the red dragon banner. By the time he reaches Bosworth, he has perhaps 5,000 men. [[Richard Duke of Gloucester|Richard III]] has twice that. But the Stanley family \u2014 controlling 6,000 men \u2014 hovers at the battlefield's edge, uncommitted.",
+          "note": "Consequence of Henry Tudor (ally): Tudor lands at Milford Haven \u2014 marching to Bosworth with French troops and Welsh support.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 2,
@@ -1674,15 +1355,15 @@
           "ripple_source": {
             "entity_id": "henry_tudor",
             "entity_type": "npc",
-            "event_id": "evt_3180dd"
+            "event_id": "evt_aaf800"
           },
           "actor_id": "henry_tudor",
           "actor_type": "npc"
         },
         {
-          "id": "evt_762a65",
+          "id": "evt_0aa7bb",
           "session": 9,
-          "note": "Consequence of Henry Tudor (ally): [[Henry VII|Henry VII]] is crowned on the battlefield. He imprisons Elizabeth of York, [[Edward IV]]'s daughter, and then marries her \u2014 the union of the roses that ends thirty years of war. He rules for twenty-four years. He never faces a serious dynastic challenge that he cannot defeat. He is cold, careful, and extraordinarily competent. Everything that follows \u2014 the English Reformation, the British Empire, Shakespeare's history plays \u2014 begins here, in a Leicestershire field, on a summer morning in 1485.",
+          "note": "Consequence of Henry Tudor (ally): Henry VII crowned on the battlefield \u2014 the union of the roses, thirty years of war ended.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 3,
@@ -1690,7 +1371,7 @@
           "ripple_source": {
             "entity_id": "henry_tudor",
             "entity_type": "npc",
-            "event_id": "evt_cc6627"
+            "event_id": "evt_791222"
           },
           "actor_id": "henry_tudor",
           "actor_type": "npc"
@@ -1718,9 +1399,9 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_f5ebbd",
+          "id": "evt_1477ed",
           "session": 2,
-          "note": "Consequence of Richard Neville, Earl of Warwick (rival): Warwick holds London for York throughout this period \u2014 a crucial strategic contribution. He controls the city's resources, the financial networks, and the propaganda apparatus. When Edward IV marches south after Wakefield, Warwick's London is the foundation he builds the next campaign on. Their partnership is at its peak.",
+          "note": "Consequence of Richard Neville, Earl of Warwick (rival): Warwick holds London for York \u2014 the Kingmaker at the peak of his influence.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
@@ -1728,15 +1409,15 @@
           "ripple_source": {
             "entity_id": "richard_neville_earl_of_warwick",
             "entity_type": "npc",
-            "event_id": "evt_790e09"
+            "event_id": "evt_9e8051"
           },
           "actor_id": "richard_neville_earl_of_warwick",
           "actor_type": "npc"
         },
         {
-          "id": "evt_dbc708",
+          "id": "evt_e3bc0d",
           "session": 4,
-          "note": "Consequence of Richard Neville, Earl of Warwick (rival): [[Richard Neville, Earl of Warwick]] rebels in 1469 in alliance with [[George Duke of Clarence]] \u2014 [[Edward IV]]'s own brother. They defeat a royal army at Edgecote, capture Edward IV, and govern briefly in his name. It does not hold: Edward is released when the nobility refuses to support a king held prisoner by his own subject. Warwick and Clarence flee to France. Warwick approaches [[Margaret of Anjou]] \u2014 his former enemy \u2014 and offers to restore [[Henry VI]] if she will ally with him.",
+          "note": "Consequence of Richard Neville, Earl of Warwick (rival): Warwick rebels, captures Edward IV, flees to France, approaches Margaret of Anjou.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 3,
@@ -1744,15 +1425,15 @@
           "ripple_source": {
             "entity_id": "richard_neville_earl_of_warwick",
             "entity_type": "npc",
-            "event_id": "evt_2d48ea"
+            "event_id": "evt_256172"
           },
           "actor_id": "richard_neville_earl_of_warwick",
           "actor_type": "npc"
         },
         {
-          "id": "evt_f59482",
+          "id": "evt_3564a9",
           "session": 5,
-          "note": "Consequence of Richard Neville, Earl of Warwick (rival): [[Richard Neville, Earl of Warwick]] invades England with [[Kingdom of France|French]] backing in September 1470. [[Edward IV]], caught off guard, flees to Burgundy with [[Richard Duke of Gloucester]]. Warwick releases [[Henry VI]] from the Tower and restores him as king \u2014 the 'Re-adeption' of Henry VI. Henry is paraded through London. He is described as dazed and confused, wearing a long blue velvet gown, repeating 'My kingdom, my kingdom.' It lasts six months.",
+          "note": "Consequence of Richard Neville, Earl of Warwick (rival): Warwick invades, restores Henry VI \u2014 Edward IV flees to Burgundy.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 3,
@@ -1760,15 +1441,15 @@
           "ripple_source": {
             "entity_id": "richard_neville_earl_of_warwick",
             "entity_type": "npc",
-            "event_id": "evt_bc080b"
+            "event_id": "evt_fd8cc8"
           },
           "actor_id": "richard_neville_earl_of_warwick",
           "actor_type": "npc"
         },
         {
-          "id": "evt_f58b0b",
+          "id": "evt_1c7bae",
           "session": 8,
-          "note": "Consequence of Richard Duke of Gloucester (ally): [[Edward IV]] dies in April 1483. [[Richard Duke of Gloucester]] intercepts his nephew Edward V on the road to London, takes custody of him, and arrests his [[Elizabeth Woodville|Woodville]] escorts. He is appointed Lord Protector. Within weeks he has imprisoned the boy king and his brother in the Tower 'for their safety.' He declares both boys illegitimate on the grounds that Edward IV's marriage to [[Elizabeth Woodville]] was invalid. He is crowned Richard III on July 6, 1483. He is efficient, thorough, and hated for it.",
+          "note": "Consequence of Richard Duke of Gloucester (ally): Richard takes the crown \u2014 princes imprisoned, Yorkist coalition fracturing.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
@@ -1776,13 +1457,13 @@
           "ripple_source": {
             "entity_id": "richard_duke_of_gloucester",
             "entity_type": "npc",
-            "event_id": "evt_731a32"
+            "event_id": "evt_4ee6b1"
           },
           "actor_id": "richard_duke_of_gloucester",
           "actor_type": "npc"
         },
         {
-          "id": "evt_f35b5e",
+          "id": "evt_a2fdc2",
           "session": 8,
           "note": "[[Elizabeth Woodville]] takes sanctuary in Westminster Abbey with her daughters when [[Richard Duke of Gloucester]] moves against the Woodvilles. She is powerless: her son is Richard's prisoner; her relatives are arrested. She is eventually persuaded to release her younger son Richard into his uncle's custody \u2014 a decision she will spend the rest of her life regretting or justifying, depending on the source. Both boys are never seen publicly again.",
           "visibility": "public",
@@ -1792,9 +1473,9 @@
           "location_id": "westminster_abbey"
         },
         {
-          "id": "evt_f1528b",
+          "id": "evt_46c652",
           "session": 9,
-          "note": "Consequence of Richard Duke of Gloucester (ally): The Battle of Bosworth Field, August 22, 1485. [[Richard Duke of Gloucester|Richard III]] sees [[Henry Tudor]] exposed away from his main force and charges personally with his household cavalry to kill him directly \u2014 a bold, desperate, and strategically sound gamble. The Stanley family, watching from the flank, makes their decision: they charge into Richard's flank as he reaches Tudor's position. Richard is unhorsed, surrounded, and killed. 'A horse, a horse, my kingdom for a horse.' Whether he said it is unknown. He is the last English king to die in battle. His crown is found in a hawthorn bush and placed on [[Henry Tudor]]'s head.",
+          "note": "Consequence of Richard Duke of Gloucester (ally): Richard III killed at Bosworth \u2014 Stanleys switch mid-charge; last king to die in battle.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
@@ -1802,7 +1483,7 @@
           "ripple_source": {
             "entity_id": "richard_duke_of_gloucester",
             "entity_type": "npc",
-            "event_id": "evt_18ed62"
+            "event_id": "evt_7e4da0"
           },
           "actor_id": "richard_duke_of_gloucester",
           "actor_type": "npc"

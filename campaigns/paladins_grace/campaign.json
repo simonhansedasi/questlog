@@ -1,12 +1,58 @@
 {
+  "slug": "paladins_grace",
   "name": "The Hartstone Compact",
   "system": "TTRPG \u2014 any system",
   "owner": "demo",
   "dm_pin": "1234",
-  "share_token": "dXTEOeR6amVw0wSzz3TLaQ",
+  "share_token": "Ke7Csk8DpmH0UPswNHPMig",
   "demo": true,
   "public": true,
   "mode": "ttrpg",
   "observer_name": "The Party",
-  "party_name": "The Party"
+  "party_name": "The Party",
+  "party_group_log": [
+    {
+      "id": "evt_5add2f",
+      "session": 1,
+      "note": "First evening in Hartstone: [[House Vespar]]'s column through the north gate, [[Lady Ivra Malt]] presenting papers before the ink on Aldric's receipt was dry, and [[Emissary Dax Fell]] already dining with the Guild's inner circle. Two delegations, one compact, and the man who holds it together is down one rider he won't explain.",
+      "visibility": "public",
+      "polarity": "negative",
+      "intensity": 2,
+      "event_type": "politics",
+      "location_id": "hartstone_north_gate"
+    },
+    {
+      "id": "evt_c3597e",
+      "session": 2,
+      "note": "Split run: [[Carran Voss|Carran]] and [[Osric Fell|Osric]] in [[The City Archive|the archive]], [[Mira Dune|Mira]] in the east quarter tunnels, [[Sera Eld|Sera]] at the [[The Guildhall|Guildhall]] meeting. Everyone came back with something. The succession clause requires a ruling. The weapons movement is military. The 1187 treaty has a third provision nobody is citing. [[Guildmaster Sena Cord|Sena Cord]] knows about the weapons and wants to talk terms.",
+      "visibility": "public",
+      "polarity": "negative",
+      "intensity": 2,
+      "event_type": "discovery",
+      "actor_id": "the_underbrick",
+      "actor_type": "faction"
+    },
+    {
+      "id": "evt_6b718a",
+      "session": 3,
+      "note": "[[The Compact Hall|The hearing]] produced no ruling and two very careful legal positions. [[Lady Ivra Malt|Ivra]]'s documentation is genuine. [[Emissary Dax Fell|Dax]]'s resolution is ratified. [[Commander Aldric Vane|Aldric]] adjourned without comment. [[Brother Edmar]] is pulling the 1187 treaty's original text for the third time. [[Osric Fell|Osric]] has said nothing about what he found in the archive yesterday.",
+      "visibility": "public",
+      "polarity": "negative",
+      "intensity": 2,
+      "event_type": "politics",
+      "location_id": "the_compact_hall"
+    },
+    {
+      "id": "evt_e61cd4",
+      "session": 4,
+      "note": "Ambush patrol recovered. Cutout captured. [[The Loom]] sold the same weapons to both [[House Vespar|Vespar]] and [[The Kelrath Envoys|Kelrath]]. [[Commander Aldric Vane|Aldric]] invoked the armed envoy clause \u2014 [[The Kelrath Envoys|Kelrath]] complied immediately, [[House Vespar|Vespar]] has 48 hours. The weapons cache is still in the tunnels. Two delegations are about to learn they each paid for a shipment neither of them is going to receive.",
+      "visibility": "public",
+      "polarity": "negative",
+      "intensity": 3,
+      "event_type": "combat",
+      "actor_id": "the_underbrick",
+      "actor_type": "faction",
+      "location_id": "the_east_quarter_tunnels"
+    }
+  ]
 }

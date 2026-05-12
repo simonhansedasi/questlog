@@ -4,7 +4,7 @@ Showcases: dual-axis edges (allied-but-rival commanders), world conditions
 (The Blitz, U-boat Blockade, Holocaust, Soviet Winter), historical mode,
 observer_name: Posterity, story threads.
 
-Run:  python seed_ww2.py
+Run:  python seeds/seed_ww2.py
 """
 import sys, os, json, secrets, shutil
 from pathlib import Path
@@ -180,7 +180,13 @@ npcs_to_add = [
      "as he refuses to retreat, relieves competent generals, and increasingly "
      "substitutes ideology for strategy. Dies by suicide in [[The Berlin Bunker]] "
      "on April 30, 1945.",
-     [F["Nazi Germany"]], []),
+     [F["Nazi Germany"]], [],
+     "His decision-making follows a pattern: visionary in 1939–1941, catastrophic from 1942. "
+     "He fires Brauchitsch and takes personal command of the army after Moscow. "
+     "'Not one step back' is sound doctrine against a weaker enemy and suicidal against the Red Army. "
+     "He relieves Guderian, Rundstedt, and everyone who contradicts him. "
+     "By 1944 his hands shake uncontrollably and he walks with a stoop from the July 20 blast. "
+     "His last testament blames the Jews. He dies convinced he was betrayed by his generals."),
 
     ("Benito Mussolini", "Duce of Fascist Italy", "hostile", False,
      "The original fascist, in power in Italy since 1922. "
@@ -192,7 +198,13 @@ npcs_to_add = [
      "rescued by German commandos, and installed as puppet ruler "
      "of northern Italy until Italian partisans capture and execute him "
      "on April 28, 1945 — two days before [[Adolf Hitler|Hitler's]] death.",
-     [F["Fascist Italy"]], []),
+     [F["Fascist Italy"]], [],
+     "The Greece invasion without telling Hitler is his defining blunder — it costs Germany "
+     "six weeks and delays Barbarossa past the summer weather window. "
+     "Italy's industrial base is genuinely weak; Mussolini inherits an army that cannot "
+     "sustain modern war. His execution at Dongo: partisans shoot him on April 28, 1945. "
+     "He and his mistress Clara Petacci are hung upside down at a Milan gas station. "
+     "Crowds spit on the bodies."),
 
     ("Hideki Tojo", "Prime Minister and War Minister of Japan", "hostile", False,
      "Army general who becomes Prime Minister in October 1941 and drives "
@@ -202,7 +214,11 @@ npcs_to_add = [
      "He is the dominant figure of Japanese war policy until July 1944, "
      "when the fall of Saipan forces his resignation. "
      "He survives the war, is tried as a war criminal, and is executed in 1948.",
-     [F["Imperial Japan"]], []),
+     [F["Imperial Japan"]], [],
+     "His conviction at the Tokyo War Crimes Tribunal is controversial — historians debate "
+     "how much civilian control over the military was real vs. nominal under the Meiji constitution. "
+     "He attempts suicide on September 11, 1945 — shoots himself in the chest, misses his heart. "
+     "US Army doctors save his life so he can be tried. He is hanged December 23, 1948."),
 
     ("Emperor Hirohito", "Emperor of Japan — Divine Sovereign", "hostile", True,
      "The 124th Emperor of Japan, theoretically divine, practically constrained. "
@@ -214,7 +230,13 @@ npcs_to_add = [
      "His voice has never been heard publicly before. "
      "He speaks in classical Japanese that most Japanese cannot understand. "
      "He does not use the word 'surrender.'",
-     [F["Imperial Japan"]], []),
+     [F["Imperial Japan"]], [],
+     "The scholarly consensus has shifted: Hirohito had more agency than postwar accounts admitted. "
+     "He was briefed on the Nanjing massacre. He signed off on the Pacific war. "
+     "The decision not to prosecute him is a political calculation by MacArthur — "
+     "Hirohito's cooperation is essential for a stable occupation. "
+     "His broadcast voice is high and reedy. His people, hearing him for the first time, weep. "
+     "A faction within the army attempts to seize the recording before the broadcast. They fail."),
 
     ("Heinrich Himmler", "Reichsführer-SS — Architect of the Holocaust", "hostile", True,
      "The second most powerful man in [[Nazi Germany]] after [[Adolf Hitler|Hitler]]. "
@@ -226,7 +248,13 @@ npcs_to_add = [
      "trying to negotiate a separate peace. [[Adolf Hitler|Hitler]], learning of this, strips him "
      "of all offices. Himmler is captured by [[Great Britain|British]] forces in May 1945 "
      "and bites down on a cyanide capsule before he can be tried.",
-     [F["Nazi Germany"]], []),
+     [F["Nazi Germany"]], [],
+     "His SS operates as a state within a state — parallel to the Wehrmacht, often in conflict with it. "
+     "He genuinely believes in racial pseudoscience; this is not cynical. "
+     "His final weeks: he shaves off his mustache and puts on an eyepatch as a disguise. "
+     "He is identified almost immediately by a British soldier who recognizes him anyway. "
+     "He bites the cyanide capsule hidden in his mouth during a medical exam on May 23, 1945. "
+     "He is dead within fifteen minutes."),
 
     ("Erwin Rommel", "Field Marshal — The Desert Fox", "neutral", False,
      "The Wehrmacht's most celebrated general. His tank command in France (1940) "
@@ -239,7 +267,12 @@ npcs_to_add = [
      "After the plot's failure, he is given the choice: public trial "
      "or private suicide. He takes poison on October 14, 1944. "
      "[[Nazi Germany|Germany]] announces he died of his wounds. He is given a state funeral.",
-     [F["Nazi Germany"]], []),
+     [F["Nazi Germany"]], [],
+     "His connection to the July 20 plot is real but limited — he knew about plans for a coup "
+     "but was not in the bomb room. He was in a car accident the week before, seriously injured. "
+     "His family is threatened: public trial means reprisals against them. He chooses the capsule. "
+     "The myth of the 'clean Wehrmacht' soldier — fighting honorably apart from Nazi atrocities — "
+     "is partly constructed around Rommel postwar. He ignored some orders; he did not stop the war."),
 
     # ── Allied leaders ─────────────────────────────────────────────────────────
     ("Winston Churchill", "Prime Minister of Great Britain", "ally", False,
@@ -252,7 +285,13 @@ npcs_to_add = [
      "He is also difficult: stubborn, Mediterranean-strategy-obsessed, "
      "condescending to Americans, and prone to operational interference. "
      "But the alliance holds, partly because of and partly despite him.",
-     [F["Great Britain"]], []),
+     [F["Great Britain"]], [],
+     "He drinks throughout — champagne at breakfast, brandy in the afternoon and evening. "
+     "His doctor keeps a secret diary. His depressions are real and severe; he calls it the black dog. "
+     "His insistence on the Mediterranean strategy ('the soft underbelly of Europe') costs time and lives "
+     "but also keeps British forces fighting while the American buildup proceeds. "
+     "He weeps at multiple points during the war — in cabinet, in private. "
+     "He is voted out of office in July 1945, before Japan surrenders. He hears the result at Potsdam."),
 
     ("Franklin D. Roosevelt", "President of the United States — 1933–1945", "ally", False,
      "Serves an unprecedented four terms. Leads the US out of the Depression "
@@ -263,7 +302,13 @@ npcs_to_add = [
      "fully satisfying either. He dies on April 12, 1945 — "
      "three weeks before [[Nazi Germany|Germany's]] surrender — of a cerebral hemorrhage "
      "at Warm Springs, Georgia. He does not live to see victory.",
-     [F["United States"]], []),
+     [F["United States"]], [],
+     "He is dying at Yalta (February 1945) — blood pressure 260/150 on the opening day. "
+     "Stalin and Churchill both see it. He agrees to concessions on Poland and Eastern Europe "
+     "that he might not have made in health. "
+     "He does not tell Truman about the Manhattan Project — Truman learns of it only after becoming president. "
+     "He is sitting for a portrait at the Little White House in Warm Springs when he collapses. "
+     "His last words are 'I have a terrific headache.' He dies that afternoon."),
 
     ("Harry S. Truman", "President of the United States — 1945", "ally", False,
      "Vice President for 82 days before [[Franklin D. Roosevelt|Roosevelt's]] death. "
@@ -273,7 +318,13 @@ npcs_to_add = [
      "of the Japanese home islands would cost more lives — American and Japanese — "
      "than the bombs. He orders the destruction of [[Hiroshima]] on August 6, 1945. "
      "He orders Nagasaki on August 9. Japan surrenders August 15.",
-     [F["United States"]], []),
+     [F["United States"]], [],
+     "His diary on the Manhattan Project briefing: 'It may be the fire destruction prophesied "
+     "in the Euphrates Valley Era, after Noah and his fabulous Ark.' "
+     "He authorizes the bomb 82 days into office. "
+     "He does not publicly express regret about the decision — he maintains it saved more lives "
+     "than an invasion would have cost. The argument continues for the rest of the century. "
+     "He sleeps soundly after making the decision, by his own account."),
 
     ("Dwight D. Eisenhower", "Supreme Allied Commander — Europe", "ally", False,
      "The coalition builder. Not the most tactically gifted Allied general — "
@@ -283,7 +334,13 @@ npcs_to_add = [
      "and Operation Overlord (D-Day). He manages the egos of [[Winston Churchill|Churchill]], "
      "[[Bernard Montgomery|Montgomery]], and [[George S. Patton|Patton]] simultaneously without losing any of them "
      "irreparably. After the war he becomes the 34th President of the [[United States]].",
-     [F["United States"]], []),
+     [F["United States"]], [],
+     "The failure message he wrote for D-Day: 'Our landings have failed to gain a satisfactory foothold "
+     "and I have withdrawn the troops... If any blame or fault attaches to the attempt it is mine alone.' "
+     "He dated it July 5 instead of June 5 — the wrong date, written under extreme stress. "
+     "His insistence on touring the liberated concentration camps is the right instinct: "
+     "'I want to be in a position to give firsthand evidence of these things if ever "
+     "in the future there develops a tendency to charge these allegations merely to propaganda.'"),
 
     ("Douglas MacArthur", "Supreme Commander — Pacific (Southwest)", "ally", False,
      "Brilliant, theatrical, and difficult. Escapes the Philippines by PT boat "
@@ -292,7 +349,13 @@ npcs_to_add = [
      "He commands the island-hopping campaign that brings the war to [[Imperial Japan|Japan's]] doorstep. "
      "He accepts [[Imperial Japan|Japan's]] formal surrender on the deck of the USS Missouri "
      "on September 2, 1945, and then personally oversees [[Imperial Japan|Japan's]] postwar reconstruction.",
-     [F["United States"]], []),
+     [F["United States"]], [],
+     "His escape leaves 76,000 Filipino and American troops to the Bataan Death March. "
+     "He is awarded the Medal of Honor — the citation was written largely by MacArthur himself. "
+     "His PR machine is extraordinary: every communiqué from the Pacific theater is written in "
+     "third person ('MacArthur's forces today...') and filed by his own staff. "
+     "He wades ashore at Leyte with film crews present, then wades ashore again "
+     "because the first take was not good enough."),
 
     ("George S. Patton", "Commanding General — Third Army", "ally", False,
      "The most aggressive Allied commander and the one the Germans most feared. "
@@ -302,7 +365,14 @@ npcs_to_add = [
      "and is nearly relieved of command by [[Dwight D. Eisenhower|Eisenhower]] — his value as a threat "
      "to German planning exceeds his personal conduct. "
      "He dies in December 1945 in a car accident in occupied Germany.",
-     [F["United States"]], []),
+     [F["United States"]], [],
+     "The slapping incidents are two, not one — both in the same week in Sicily, August 1943. "
+     "Eisenhower considers relief and decides the cost is too high. "
+     "Patton is instead used as a phantom army commander in Operation Fortitude (D-Day deception) — "
+     "German intelligence rates him the best Allied general and expects him to lead the main invasion. "
+     "His Third Army's Bastogne relief — turning an entire army ninety degrees in winter — "
+     "is one of the most impressive staff operations of the war. He is killed in a minor car accident "
+     "in December 1945. No combat injury ever touched him."),
 
     ("Bernard Montgomery", "Field Marshal — 8th Army and 21st Army Group", "friendly", False,
      "The British general who defeats [[Erwin Rommel|Rommel]] at El Alamein — the first "
@@ -312,7 +382,13 @@ npcs_to_add = [
      "His Operation Market Garden (September 1944) — a bold airdrop into "
      "the Netherlands — fails at Arnhem, the bridge too far. "
      "He accepts [[Nazi Germany|Germany's]] surrender at Lüneburg Heath on May 4, 1945.",
-     [F["Great Britain"]], []),
+     [F["Great Britain"]], [],
+     "Market Garden is his plan and his failure. Intelligence that German armor was at Arnhem "
+     "was available and was discounted. He never publicly accepts responsibility. "
+     "His memoir is famously self-serving — he credits himself for everything that went right. "
+     "Eisenhower describes him privately as 'a clever tactician but not a great general.' "
+     "The Patton rivalry is partly theater — both men understood its value for Allied morale — "
+     "but the contempt is real on both sides."),
 
     ("Charles de Gaulle", "Leader of Free France", "friendly", False,
      "A two-star brigadier general who refuses to accept France's armistice "
@@ -324,7 +400,13 @@ npcs_to_add = [
      "he has to bear — and he is right about almost everything. "
      "He walks down the Champs-Élysées in August 1944 under sniper fire "
      "because the scene requires it.",
-     [F["Free France"]], []),
+     [F["Free France"]], [],
+     "Churchill's exact quote: 'Of all the crosses I have to bear, the heaviest is the Cross of Lorraine.' "
+     "De Gaulle's insistence that France liberated itself is historically dishonest "
+     "but politically essential — he has to give the French people a story they can live with. "
+     "The postwar purges of collaborators kill approximately 10,000 people. "
+     "De Gaulle does not stop them. He wins the narrative: France's official postwar story "
+     "is resistance, not collaboration, despite the reality of Vichy."),
 
     # ── Soviet commanders ──────────────────────────────────────────────────────
     ("Joseph Stalin", "General Secretary — Soviet Union", "neutral", False,
@@ -336,7 +418,13 @@ npcs_to_add = [
      "By 1943 the Soviet military machine is the most powerful on earth. "
      "He extracts maximum territorial concessions from the Allies at Yalta "
      "and leaves the war controlling [[Occupied Europe|Eastern Europe]].",
-     [F["Soviet Union"]], []),
+     [F["Soviet Union"]], [],
+     "His purge of 35,000 officers out of 75,000 is why the Red Army cannot function in 1941. "
+     "He is unreachable for approximately ten days after Barbarossa begins — retreats to his dacha. "
+     "The Politburo comes to him; he apparently expects to be arrested. "
+     "He is not arrested. He recovers and does not make that mistake again. "
+     "At Yalta his demands are non-negotiable and everyone at the table knows it: "
+     "the Red Army controls Eastern Europe already."),
 
     ("Georgy Zhukov", "Marshal of the Soviet Union — Defender of Moscow, Berlin", "friendly", False,
      "The greatest general of World War II by almost any measure. "
@@ -346,7 +434,13 @@ npcs_to_add = [
      "the Vistula-Oder Offensive, and the final assault on Berlin. "
      "He accepts [[Nazi Germany|Germany's]] unconditional surrender in Berlin on May 8, 1945. "
      "[[Joseph Stalin|Stalin]], jealous of his reputation, sidelines him after the war.",
-     [F["Soviet Union"]], []),
+     [F["Soviet Union"]], [],
+     "Stalin sidelines him after the war because his popularity threatens Stalin's own. "
+     "Zhukov is sent first to Odessa, then to the Ural Military District — administrative exile. "
+     "He is brought back during the Korean War crisis. He helps Khrushchev consolidate power "
+     "after Stalin's death in 1953, then is dismissed again in 1957. "
+     "He dies in 1974, rehabilitated enough to receive a state funeral. "
+     "His memoirs are the most reliable firsthand account of the Eastern Front by any commander."),
 
     # ── Japanese commanders ────────────────────────────────────────────────────
     ("Isoroku Yamamoto", "Fleet Admiral — Architect of Pearl Harbor", "hostile", False,
@@ -358,12 +452,20 @@ npcs_to_add = [
      "code-breakers read the Japanese naval codes. "
      "He is killed on April 18, 1943, when [[United States|US]] fighters intercept his transport "
      "over Bougainville — his flight schedule decoded from an intercepted message.",
-     [F["Imperial Japan"]], []),
+     [F["Imperial Japan"]], [],
+     "His death is a direct consequence of signals intelligence: US code-breakers intercept "
+     "a message giving his exact flight itinerary — aircraft type, departure time, arrival time. "
+     "Nimitz authorizes the intercept after confirming with Washington. "
+     "Eighteen P-38s fly 600 miles at low altitude to avoid radar detection. "
+     "They intercept his transport exactly on schedule over Bougainville. "
+     "His body is found in the jungle still strapped into his seat. "
+     "Japan keeps his death secret for over a month to avoid a morale collapse."),
 ]
 
-for name, role, rel, hidden, desc, visible_fids, hidden_fids in npcs_to_add:
+for name, role, rel, hidden, desc, visible_fids, hidden_fids, dm_notes in npcs_to_add:
     db.add_npc(SLUG, name=name, role=role, relationship=rel, description=desc,
-               hidden=hidden, factions=visible_fids, hidden_factions=hidden_fids)
+               hidden=hidden, factions=visible_fids, hidden_factions=hidden_fids,
+               dm_notes=dm_notes)
     print(f"  + npc: {name}")
 
 N = {n["name"]: n["id"] for n in db.get_npcs(SLUG, include_hidden=True)}
@@ -606,24 +708,16 @@ print(f"  Locations: {list(L.keys())}")
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 def log_n(npc_id, session, note, polarity=None, intensity=1,
-          event_type=None, visibility="public", ripple=False, actor_id=None, actor_type=None, location_id=None):
-    evt = db.log_npc(SLUG, npc_id, session, note, polarity=polarity,
-                     intensity=intensity, event_type=event_type, visibility=visibility,
-                     actor_id=actor_id, actor_type=actor_type, location_id=location_id)
-    if ripple and polarity:
-        db.apply_ripple(SLUG, npc_id, "npc", session, note, polarity, intensity,
-                        event_type, visibility=visibility, source_event_id=evt)
-    return evt
+          event_type=None, visibility="public", actor_id=None, actor_type=None, location_id=None):
+    return db.log_npc(SLUG, npc_id, session, note, polarity=polarity,
+                      intensity=intensity, event_type=event_type, visibility=visibility,
+                      actor_id=actor_id, actor_type=actor_type, location_id=location_id)
 
 def log_f(fid, session, note, polarity=None, intensity=1,
-          event_type=None, visibility="public", ripple=False, actor_id=None, actor_type=None, location_id=None):
-    evt = db.log_faction(SLUG, fid, session, note, polarity=polarity,
-                         intensity=intensity, event_type=event_type, visibility=visibility,
-                         actor_id=actor_id, actor_type=actor_type, location_id=location_id)
-    if ripple and polarity:
-        db.apply_ripple(SLUG, fid, "faction", session, note, polarity, intensity,
-                        event_type, visibility=visibility, source_event_id=evt)
-    return evt
+          event_type=None, visibility="public", actor_id=None, actor_type=None, location_id=None):
+    return db.log_faction(SLUG, fid, session, note, polarity=polarity,
+                          intensity=intensity, event_type=event_type, visibility=visibility,
+                          actor_id=actor_id, actor_type=actor_type, location_id=location_id)
 
 def log_l(loc_id, session, note, polarity=None, intensity=1,
           event_type=None, visibility="public", actor_id=None, actor_type=None):
@@ -631,29 +725,38 @@ def log_l(loc_id, session, note, polarity=None, intensity=1,
                     polarity=polarity, intensity=intensity, event_type=event_type,
                     actor_id=actor_id, actor_type=actor_type)
 
-# ── Session 1: The Axis Rises (1933–1938) ─────────────────────────────────────
-log_n(N["Adolf Hitler"], 1,
+# ── Period 1: The Axis Rises (1933–1938) ──────────────────────────────────────
+evt = log_n(N["Adolf Hitler"], 1,
     "Hitler is appointed Chancellor of Germany on January 30, 1933. "
     "Within eighteen months he is Führer, having abolished the presidency, "
     "merged it with the chancellorship, and purged his own party's rivals "
     "in the Night of the Long Knives. The democratic Weimar Republic is dead.",
-    polarity="negative", intensity=3, event_type="politics", ripple=True)
+    polarity="negative", intensity=3, event_type="politics")
+db.apply_ripple(SLUG, N["Adolf Hitler"], "npc", 1,
+    "Hitler seizes total power — Weimar Republic abolished, the Führer state begins.",
+    "negative", 3, "politics", "public", source_event_id=evt)
 
-log_n(N["Benito Mussolini"], 1,
+evt = log_n(N["Benito Mussolini"], 1,
     "Mussolini invades Ethiopia in 1935 with chemical weapons and overwhelming force, "
     "in defiance of the League of Nations. The League's impotent response — "
     "toothless sanctions — signals to Hitler that the international order "
     "will not resist force with force. The Rome-Berlin Axis is formalized in 1936.",
-    polarity="negative", intensity=2, event_type="combat", ripple=True)
+    polarity="negative", intensity=2, event_type="combat")
+db.apply_ripple(SLUG, N["Benito Mussolini"], "npc", 1,
+    "Mussolini's Ethiopia invasion exposes the League's impotence — Hitler takes note.",
+    "negative", 2, "combat", "public", source_event_id=evt)
 
-log_f(F["Nazi Germany"], 1,
+evt = log_f(F["Nazi Germany"], 1,
     "Germany remilitarizes the Rhineland in 1936, violating the Treaty of Versailles. "
     "France and Britain protest and do nothing. Germany annexes Austria in the "
     "Anschluss of March 1938. The Munich Agreement of September 1938 gives Hitler "
     "the Sudetenland in exchange for his promise that he has no further territorial "
     "ambitions. 'Peace for our time,' Chamberlain announces. "
     "Hitler has contempt for men who can be bought with appeasement.",
-    polarity="negative", intensity=3, event_type="politics", ripple=True)
+    polarity="negative", intensity=3, event_type="politics")
+db.apply_ripple(SLUG, F["Nazi Germany"], "faction", 1,
+    "Nazi Germany remilitarizes, annexes Austria and the Sudetenland — appeasement holds the door open.",
+    "negative", 3, "politics", "public", source_event_id=evt)
 
 log_n(N["Winston Churchill"], 1,
     "Churchill is in his 'wilderness years' — out of government, warning from "
@@ -663,18 +766,20 @@ log_n(N["Winston Churchill"], 1,
     "His moment is coming.",
     polarity="negative", intensity=1, event_type="politics")
 
-log_f(F["Occupied Europe"], 1,
+evt = log_f(F["Occupied Europe"], 1,
     "The Nuremberg Laws of 1935 strip German Jews of citizenship and forbid "
     "marriage between Jews and Germans. Kristallnacht (November 9, 1938) — "
     "the Night of Broken Glass — sees Jewish synagogues, businesses, and homes "
     "destroyed across Germany and Austria. Ninety-one Jews are killed; "
     "thirty thousand are arrested and sent to concentration camps. "
     "This is the visible surface of what is being built beneath.",
-    polarity="negative", intensity=3, event_type="other", visibility="dm_only",
-    ripple=True)
+    polarity="negative", intensity=3, event_type="other", visibility="dm_only")
+db.apply_ripple(SLUG, F["Occupied Europe"], "faction", 1,
+    "Nuremberg Laws and Kristallnacht — the machinery of persecution is openly running.",
+    "negative", 3, "other", "dm_only", source_event_id=evt)
 
 db.post_journal(SLUG, 1, "2024-01-01",
-    "**Session 1 — The Axis Rises (1933–1938)**\n\n"
+    "**Period 1 — The Axis Rises (1933–1938)**\n\n"
     "The precondition for everything. Hitler's rise is not inevitable: "
     "it requires the specific failure of Weimar's democracy, the specific "
     "humiliation of Versailles, and the specific cowardice of appeasement. "
@@ -686,23 +791,29 @@ db.post_journal(SLUG, 1, "2024-01-01",
     "Churchill alone says clearly what this is. No one listens yet."
 )
 
-# ── Session 2: The World Goes to War (1939) ───────────────────────────────────
-log_n(N["Adolf Hitler"], 2,
+# ── Period 2: The World Goes to War (1939) ────────────────────────────────────
+evt = log_n(N["Adolf Hitler"], 2,
     "The Molotov-Ribbentrop Pact (August 23, 1939) — a non-aggression agreement "
     "with the Soviet Union that also secretly divides Eastern Europe between them. "
     "It frees Hitler to move west without a two-front war. "
     "Stalin believes he has bought time. Hitler believes he has solved his "
     "strategic problem. Both are partially right.",
-    polarity="negative", intensity=3, event_type="politics", ripple=True)
+    polarity="negative", intensity=3, event_type="politics")
+db.apply_ripple(SLUG, N["Adolf Hitler"], "npc", 2,
+    "Molotov-Ribbentrop Pact signed — Hitler's eastern flank secured, Poland doomed.",
+    "negative", 3, "politics", "public", source_event_id=evt)
 
-log_f(F["Poland"], 2,
+evt = log_f(F["Poland"], 2,
     "Germany invades Poland from the west on September 1, 1939. "
     "The Soviet Union invades from the east on September 17. "
     "Britain and France declare war on Germany on September 3 — "
     "and then do almost nothing. Poland falls in five weeks. "
     "The Polish government escapes to London. "
     "A hundred thousand Polish soldiers eventually fight in British uniform.",
-    polarity="negative", intensity=3, event_type="combat", ripple=True)
+    polarity="negative", intensity=3, event_type="combat")
+db.apply_ripple(SLUG, F["Poland"], "faction", 2,
+    "Poland destroyed in five weeks — invaded from both sides, abandoned by its guarantors.",
+    "negative", 3, "combat", "public", source_event_id=evt)
 
 log_n(N["Franklin D. Roosevelt"], 2,
     "Roosevelt watches Europe go to war and begins positioning the United States "
@@ -713,7 +824,7 @@ log_n(N["Franklin D. Roosevelt"], 2,
     polarity="negative", intensity=2, event_type="politics")
 
 db.post_journal(SLUG, 2, "2024-01-01",
-    "**Session 2 — The World Goes to War (1939)**\n\n"
+    "**Period 2 — The World Goes to War (1939)**\n\n"
     "The Molotov-Ribbentrop Pact is the most consequential diplomatic event "
     "of the war's opening. It enables the Polish invasion, enables Dunkirk, "
     "enables the Fall of France. Stalin believes he has bought time. "
@@ -725,48 +836,60 @@ db.post_journal(SLUG, 2, "2024-01-01",
     "between Germany and its neighbors are now active."
 )
 
-# ── Session 3: The Fall of France (May–June 1940) ────────────────────────────
-log_f(F["Nazi Germany"], 3,
+# ── Period 3: The Fall of France (May–June 1940) ──────────────────────────────
+evt = log_f(F["Nazi Germany"], 3,
     "Germany invades France through the Ardennes on May 10, 1940 — "
     "the one direction the French do not expect. The Allied line breaks. "
     "Three hundred and thirty thousand British and French troops are "
     "evacuated from Dunkirk's beaches by an armada of warships and "
     "civilian boats in nine days. France signs an armistice on June 22. "
     "The Wehrmacht has conquered Western Europe in six weeks.",
-    polarity="negative", intensity=3, event_type="combat", ripple=True)
+    polarity="negative", intensity=3, event_type="combat")
+db.apply_ripple(SLUG, F["Nazi Germany"], "faction", 3,
+    "France falls in six weeks — Western Europe under German occupation.",
+    "negative", 3, "combat", "public", source_event_id=evt)
 
-log_n(N["Winston Churchill"], 3,
+evt = log_n(N["Winston Churchill"], 3,
     "[[Winston Churchill]] becomes Prime Minister on May 10, 1940 — the day [[Nazi Germany|Germany]] attacks. "
     "He tells the House of Commons he has nothing to offer but blood, toil, "
     "tears, and sweat. He refuses to consider any armistice or negotiated peace. "
     "When the War Cabinet debates terms, he ends it: 'If this long island story "
     "of ours is to end at last, let it end only when each one of us lies "
     "choking in his own blood upon the ground.' The cabinet stands and cheers.",
-    polarity="positive", intensity=3, event_type="dialogue", ripple=True,
+    polarity="positive", intensity=3, event_type="dialogue",
     location_id=L["London and Whitehall"])
+db.apply_ripple(SLUG, N["Winston Churchill"], "npc", 3,
+    "Churchill refuses armistice — Britain will fight on regardless of France.",
+    "positive", 3, "dialogue", "public", source_event_id=evt)
 
-log_n(N["Charles de Gaulle"], 3,
+evt = log_n(N["Charles de Gaulle"], 3,
     "De Gaulle is a junior general when France falls. He flies to London "
     "and broadcasts on the BBC on June 18, 1940: 'Whatever happens, the flame "
     "of French resistance must not and shall not die.' "
     "The French government in Vichy considers him a traitor and sentences him "
     "to death in absentia. He has no army, no recognition, and no territory. "
     "He has the microphone and the argument.",
-    polarity="positive", intensity=2, event_type="dialogue", ripple=True)
+    polarity="positive", intensity=2, event_type="dialogue")
+db.apply_ripple(SLUG, N["Charles de Gaulle"], "npc", 3,
+    "De Gaulle's BBC broadcast — Free France declared from London with nothing but a microphone.",
+    "positive", 2, "dialogue", "public", source_event_id=evt)
 
-log_f(F["Great Britain"], 3,
+evt = log_f(F["Great Britain"], 3,
     "The Battle of Britain (July–September 1940): the Luftwaffe attempts to "
     "destroy the RAF and establish air superiority for invasion. "
     "The RAF holds — by a narrow margin, exhausting its pilots, "
     "but holding. [[Adolf Hitler]] postpones Operation Sea Lion indefinitely. "
     "[[Great Britain]] will not be invaded. [[Winston Churchill]]: 'Never in the field of human "
     "conflict was so much owed by so many to so few.'",
-    polarity="positive", intensity=3, event_type="combat", ripple=True,
+    polarity="positive", intensity=3, event_type="combat",
     location_id=L["London and Whitehall"])
+db.apply_ripple(SLUG, F["Great Britain"], "faction", 3,
+    "Battle of Britain won — invasion postponed, the RAF holds by a narrow margin.",
+    "positive", 3, "combat", "public", source_event_id=evt)
 
 db.post_journal(SLUG, 3, "2024-01-01",
-    "**Session 3 — The Fall of France (1940)**\n\n"
-    "The engine's most complex session: simultaneous catastrophe and resistance. "
+    "**Period 3 — The Fall of France (1940)**\n\n"
+    "The engine's most complex period: simultaneous catastrophe and resistance. "
     "France falls (massive negative for the Allied cause) while Churchill "
     "and de Gaulle perform acts of pure will that keep the resistance alive.\n\n"
     "**Causal chain:** Dunkirk saves the army but not the territory. "
@@ -777,36 +900,45 @@ db.post_journal(SLUG, 3, "2024-01-01",
     "defining relationship of the European war."
 )
 
-# ── Session 4: Operation Barbarossa (June–December 1941) ─────────────────────
-log_n(N["Adolf Hitler"], 4,
+# ── Period 4: Operation Barbarossa (June–December 1941) ───────────────────────
+evt = log_n(N["Adolf Hitler"], 4,
     "Hitler launches Operation Barbarossa on June 22, 1941 — "
     "3 million German troops invade the Soviet Union on a front "
     "1,800 miles wide. It is the largest military operation in history. "
     "Stalin is warned by multiple intelligence sources. He ignores them all. "
     "The initial German advance is catastrophic for the Soviets: "
     "the Red Army loses 800,000 men in the first two months.",
-    polarity="negative", intensity=3, event_type="combat", ripple=True)
+    polarity="negative", intensity=3, event_type="combat")
+db.apply_ripple(SLUG, N["Adolf Hitler"], "npc", 4,
+    "Barbarossa — 3 million troops invade the USSR, the largest military operation in history.",
+    "negative", 3, "combat", "public", source_event_id=evt)
 
-log_n(N["Joseph Stalin"], 4,
+evt = log_n(N["Joseph Stalin"], 4,
     "Stalin collapses psychologically for approximately ten days after Barbarossa begins — "
     "retreating to his dacha, unreachable. The Politburo comes to him. "
     "He recovers. He broadcasts to the Soviet people, calling them 'brothers and sisters' "
     "for the first time. He does not leave Moscow when the Germans reach its suburbs. "
     "The decision to stay — visible, symbolic, immovable — is one of the most "
     "consequential of the war.",
-    polarity="negative", intensity=3, event_type="dialogue", ripple=True)
+    polarity="negative", intensity=3, event_type="dialogue")
+db.apply_ripple(SLUG, N["Joseph Stalin"], "npc", 4,
+    "Stalin stays in Moscow — his refusal to flee holds the Soviet state together.",
+    "negative", 3, "dialogue", "public", source_event_id=evt)
 
-log_n(N["Georgy Zhukov"], 4,
+evt = log_n(N["Georgy Zhukov"], 4,
     "Zhukov is appointed to defend Moscow in October 1941 when German forces "
     "are close enough to see the Kremlin's golden domes through field glasses. "
     "He holds. On December 5, 1941, he launches a counteroffensive with "
     "fresh Siberian divisions — troops acclimatized to cold that the Germans, "
     "who were never issued winter equipment, are not. "
     "The Wehrmacht is stopped forty miles from Moscow.",
-    polarity="positive", intensity=3, event_type="combat", ripple=True)
+    polarity="positive", intensity=3, event_type="combat")
+db.apply_ripple(SLUG, N["Georgy Zhukov"], "npc", 4,
+    "Zhukov holds Moscow — Siberian divisions counterattack, the Wehrmacht stopped 40 miles out.",
+    "positive", 3, "combat", "public", source_event_id=evt)
 
 db.post_journal(SLUG, 4, "2024-01-01",
-    "**Session 4 — Operation Barbarossa (1941)**\n\n"
+    "**Period 4 — Operation Barbarossa (1941)**\n\n"
     "The war's largest single event. Barbarossa breaks the Nazi-Soviet Pact "
     "and transforms the war's geometry: the Soviet Union is now fighting "
     "for survival, and survival requires the destruction of the Wehrmacht.\n\n"
@@ -818,45 +950,57 @@ db.post_journal(SLUG, 4, "2024-01-01",
     "from this point forward. It will never recover."
 )
 
-# ── Session 5: Pearl Harbor — America Enters (December 1941) ─────────────────
-log_n(N["Isoroku Yamamoto"], 5,
+# ── Period 5: Pearl Harbor — America Enters (December 1941) ───────────────────
+evt = log_n(N["Isoroku Yamamoto"], 5,
     "[[Isoroku Yamamoto]]'s strike force attacks [[Pearl Harbor]] at dawn on December 7, 1941. "
     "Eighteen US warships are sunk or damaged; 2,403 Americans are killed. "
     "Four battleships go to the bottom. Crucially, three US aircraft carriers "
     "are not in port — they are at sea — and survive. "
     "Yamamoto knows this. He knows the carriers are what matter.",
-    polarity="negative", intensity=3, event_type="combat", ripple=True,
+    polarity="negative", intensity=3, event_type="combat",
     location_id=L["Pearl Harbor"])
+db.apply_ripple(SLUG, N["Isoroku Yamamoto"], "npc", 5,
+    "Pearl Harbor attacked — 18 warships hit, but the US carriers are at sea and survive.",
+    "negative", 3, "combat", "public", source_event_id=evt)
 
-log_n(N["Franklin D. Roosevelt"], 5,
+evt = log_n(N["Franklin D. Roosevelt"], 5,
     "[[Franklin D. Roosevelt]] addresses Congress on December 8, 1941: "
     "'Yesterday, December 7, 1941 — a date which will live in infamy.' "
     "Congress declares war on Japan in thirty-three minutes. "
     "[[Adolf Hitler]], in the single most consequential blunder of the war, "
     "declares war on the [[United States]] four days later. "
     "He was not required to do this by the Axis pact. He does it anyway.",
-    polarity="positive", intensity=3, event_type="dialogue", ripple=True,
+    polarity="positive", intensity=3, event_type="dialogue",
     location_id=L["Pearl Harbor"])
+db.apply_ripple(SLUG, N["Franklin D. Roosevelt"], "npc", 5,
+    "Roosevelt's 'day of infamy' address — Congress declares war in 33 minutes.",
+    "positive", 3, "dialogue", "public", source_event_id=evt)
 
-log_n(N["Winston Churchill"], 5,
+evt = log_n(N["Winston Churchill"], 5,
     "[[Winston Churchill]] hears about [[Pearl Harbor]] on a radio and goes to bed and slept "
     "the sleep of the saved and thankful. He knows that with [[United States|America]] in the war, "
     "victory is now certain — it is only a question of time and suffering. "
     "He sails immediately to Washington to meet [[Franklin D. Roosevelt]] and begin building "
     "the Grand Alliance.",
-    polarity="positive", intensity=3, event_type="dialogue", ripple=True,
+    polarity="positive", intensity=3, event_type="dialogue",
     location_id=L["London and Whitehall"])
+db.apply_ripple(SLUG, N["Winston Churchill"], "npc", 5,
+    "Churchill hears of Pearl Harbor — 'We have won the war.' Grand Alliance begins.",
+    "positive", 3, "dialogue", "public", source_event_id=evt)
 
-log_f(F["United States"], 5,
+evt = log_f(F["United States"], 5,
     "America's industrial conversion is immediate and total. "
     "Car factories become tank factories. Shipyards work around the clock. "
     "The US produces more weapons in 1942 than Germany, Japan, and Italy combined. "
     "Lend-Lease ships supplies to Britain and the Soviet Union on a scale "
     "that neither could sustain their war effort without.",
-    polarity="positive", intensity=3, event_type="other", ripple=True)
+    polarity="positive", intensity=3, event_type="other")
+db.apply_ripple(SLUG, F["United States"], "faction", 5,
+    "US industrial conversion — outproduces all Axis nations combined within one year.",
+    "positive", 3, "other", "public", source_event_id=evt)
 
 db.post_journal(SLUG, 5, "2024-01-01",
-    "**Session 5 — Pearl Harbor: America Enters (December 1941)**\n\n"
+    "**Period 5 — Pearl Harbor: America Enters (December 1941)**\n\n"
     "The war's pivot. Pearl Harbor is a tactical success and a strategic "
     "catastrophe for Japan: it brings the one nation whose industrial capacity "
     "can simply outbuild the Axis into the war at full commitment.\n\n"
@@ -868,35 +1012,44 @@ db.post_journal(SLUG, 5, "2024-01-01",
     "through every Allied entity in the graph."
 )
 
-# ── Session 6: Midway — The Pacific Turns (June 1942) ────────────────────────
-log_n(N["Isoroku Yamamoto"], 6,
+# ── Period 6: Midway — The Pacific Turns (June 1942) ──────────────────────────
+evt = log_n(N["Isoroku Yamamoto"], 6,
     "Yamamoto plans the Midway operation: lure the US carriers into a trap "
     "at Midway Atoll and destroy them. US code-breakers read the Japanese "
     "naval codes and know the plan. Admiral Nimitz sets his own trap. "
     "June 4–7, 1942: in five minutes of divebombing, the US sinks four "
     "Japanese fleet carriers — the same carriers that attacked Pearl Harbor. "
     "Japan loses its offensive capability in the Pacific. The war's direction changes.",
-    polarity="negative", intensity=3, event_type="combat", ripple=True)
+    polarity="negative", intensity=3, event_type="combat")
+db.apply_ripple(SLUG, N["Isoroku Yamamoto"], "npc", 6,
+    "Midway — four Japanese carriers sunk in five minutes, Japan loses its offensive capability.",
+    "negative", 3, "combat", "public", source_event_id=evt)
 
-log_f(F["Imperial Japan"], 6,
+evt = log_f(F["Imperial Japan"], 6,
     "Japan's early 1942 conquests stretch from Burma to Guadalcanal, "
     "from Manchuria to the Dutch East Indies. The 'Greater East Asia Co-Prosperity Sphere' "
     "is a colonial empire built in six months. After Midway, the defensive perimeter "
     "begins to contract. The US island-hopping campaign — taking key islands, "
     "bypassing others to 'wither on the vine' — begins to compress Japan's "
     "supply lines and air cover.",
-    polarity="negative", intensity=3, event_type="other", ripple=True)
+    polarity="negative", intensity=3, event_type="other")
+db.apply_ripple(SLUG, F["Imperial Japan"], "faction", 6,
+    "After Midway, Japan's Pacific empire begins contracting under the island-hopping campaign.",
+    "negative", 3, "other", "public", source_event_id=evt)
 
-log_n(N["Douglas MacArthur"], 6,
+evt = log_n(N["Douglas MacArthur"], 6,
     "MacArthur, forced to abandon the Philippines ('I shall return'), "
     "commands the Southwest Pacific theater from Australia. "
     "The Guadalcanal campaign (August 1942 – February 1943) is the first "
     "major Allied land offensive of the Pacific war — six months of jungle "
     "fighting, naval battles, and attrition that Japan cannot sustain.",
-    polarity="positive", intensity=2, event_type="combat", ripple=True)
+    polarity="positive", intensity=2, event_type="combat")
+db.apply_ripple(SLUG, N["Douglas MacArthur"], "npc", 6,
+    "MacArthur commands the Southwest Pacific — Guadalcanal is the first Allied land offensive.",
+    "positive", 2, "combat", "public", source_event_id=evt)
 
 db.post_journal(SLUG, 6, "2024-01-01",
-    "**Session 6 — Midway: The Pacific Turns (1942)**\n\n"
+    "**Period 6 — Midway: The Pacific Turns (1942)**\n\n"
     "Midway is decided in five minutes but prepared over months. "
     "The decisive factor is not bravery or numbers but intelligence: "
     "US code-breakers know the Japanese plan. Yamamoto's fatal flaw "
@@ -908,36 +1061,45 @@ db.post_journal(SLUG, 6, "2024-01-01",
     "a rivalry the engine captures in their inter-commander scores."
 )
 
-# ── Session 7: El Alamein and Stalingrad (1942–1943) ─────────────────────────
-log_n(N["Bernard Montgomery"], 7,
+# ── Period 7: El Alamein and Stalingrad (1942–1943) ───────────────────────────
+evt = log_n(N["Bernard Montgomery"], 7,
     "The Second Battle of El Alamein (October–November 1942): "
     "Montgomery's 8th Army defeats Rommel's Afrika Korps in twelve days "
     "of fighting in the Egyptian desert. It is the first major British "
     "land victory of the war. Churchill orders church bells rung across Britain "
     "for the first time since the invasion threat of 1940. "
     "'Before Alamein we never had a victory. After Alamein we never had a defeat.'",
-    polarity="positive", intensity=3, event_type="combat", ripple=True)
+    polarity="positive", intensity=3, event_type="combat")
+db.apply_ripple(SLUG, N["Bernard Montgomery"], "npc", 7,
+    "El Alamein — Montgomery defeats Rommel, Britain's first major land victory of the war.",
+    "positive", 3, "combat", "public", source_event_id=evt)
 
-log_n(N["Erwin Rommel"], 7,
+evt = log_n(N["Erwin Rommel"], 7,
     "Rommel is beaten at El Alamein — outmanned, outgunned, and outmaneuvered. "
     "The Afrika Korps retreats across North Africa. Operation Torch "
     "(US landings in Morocco and Algeria) cuts off retreat. "
     "The last Axis forces in North Africa surrender in May 1943. "
     "Rommel has already been recalled to Germany on sick leave — "
     "Hitler does not want to be present for the defeat.",
-    polarity="negative", intensity=3, event_type="combat", ripple=True)
+    polarity="negative", intensity=3, event_type="combat")
+db.apply_ripple(SLUG, N["Erwin Rommel"], "npc", 7,
+    "Rommel beaten at El Alamein — Afrika Korps retreats, North Africa lost by May 1943.",
+    "negative", 3, "combat", "public", source_event_id=evt)
 
-log_n(N["Georgy Zhukov"], 7,
+evt = log_n(N["Georgy Zhukov"], 7,
     "Operation Uranus (November 1942): [[Georgy Zhukov]]'s encirclement of the German "
     "6th Army at [[Stalingrad]]. Three hundred thousand German troops are surrounded. "
     "[[Adolf Hitler]] forbids retreat. Operation Winter Storm — the relief attempt — fails. "
     "Field Marshal Paulus surrenders with 91,000 survivors on January 31, 1943. "
     "The Wehrmacht has never suffered a defeat of this magnitude. "
     "The war on the Eastern Front has turned.",
-    polarity="positive", intensity=3, event_type="combat", ripple=True,
+    polarity="positive", intensity=3, event_type="combat",
     location_id=L["Stalingrad"])
+db.apply_ripple(SLUG, N["Georgy Zhukov"], "npc", 7,
+    "Stalingrad — 300,000 Germans encircled, Paulus surrenders with 91,000 survivors.",
+    "positive", 3, "combat", "public", source_event_id=evt)
 
-log_f(F["Nazi Germany"], 7,
+evt = log_f(F["Nazi Germany"], 7,
     "[[Stalingrad]] kills the myth of [[Nazi Germany|German]] invincibility. "
     "The German public is told for the first time that something has gone wrong. "
     "Goebbels declares 'total war' in February 1943. "
@@ -945,11 +1107,27 @@ log_f(F["Nazi Germany"], 7,
     "begin an irreversible decline. The Kursk offensive in July 1943 — "
     "the last major German offensive on the Eastern Front — fails. "
     "After Kursk, Germany never attacks in the East again.",
-    polarity="negative", intensity=3, event_type="other", ripple=True,
+    polarity="negative", intensity=3, event_type="other",
     location_id=L["Stalingrad"])
+db.apply_ripple(SLUG, F["Nazi Germany"], "faction", 7,
+    "Stalingrad shatters the myth of German invincibility — after Kursk, no more eastern offensives.",
+    "negative", 3, "other", "public", source_event_id=evt)
+
+# Yamamoto killed April 18, 1943 — his flight schedule decoded from intercepted message
+evt = log_n(N["Isoroku Yamamoto"], 7,
+    "[[Isoroku Yamamoto]] is killed on April 18, 1943. US code-breakers intercept a message "
+    "giving his exact flight itinerary over Bougainville. Eighteen P-38s fly 600 miles "
+    "at low altitude to intercept him. They arrive exactly on schedule. "
+    "His transport is shot down over the jungle. His body is found still strapped into his seat. "
+    "Japan keeps his death secret for over a month.",
+    polarity="negative", intensity=3, event_type="combat")
+db.set_npc_dead(SLUG, N["Isoroku Yamamoto"], True, dead_session=7)
+db.apply_ripple(SLUG, N["Isoroku Yamamoto"], "npc", 7,
+    "Yamamoto killed — his flight schedule decoded by US intelligence, intercepted exactly on schedule.",
+    "negative", 3, "combat", "public", source_event_id=evt)
 
 db.post_journal(SLUG, 7, "2024-01-01",
-    "**Session 7 — El Alamein and Stalingrad (1942–1943)**\n\n"
+    "**Period 7 — El Alamein and Stalingrad (1942–1943)**\n\n"
     "The twin turning points. El Alamein ends the North African threat "
     "to the Suez Canal; Stalingrad ends the German offensive capacity in the East. "
     "Both happen within three months of each other.\n\n"
@@ -957,11 +1135,11 @@ db.post_journal(SLUG, 7, "2024-01-01",
     "The rival edge between them delivers the cleanest payoff in the war's "
     "first half. Zhukov's Stalingrad encirclement is the Eastern Front's "
     "decisive moment — 300,000 Germans surrounded is a wound Germany cannot heal. "
-    "The engine correctly scores both as the war's major inflection point."
+    "Yamamoto's death by decoded signal closes the rival edge between him and Roosevelt."
 )
 
-# ── Session 8: Sicily, Italy, Mussolini Falls (1943) ─────────────────────────
-log_f(F["Fascist Italy"], 8,
+# ── Period 8: Sicily, Italy, Mussolini Falls (1943) ───────────────────────────
+evt = log_f(F["Fascist Italy"], 8,
     "Operation Husky (July 1943): Allied forces invade Sicily. "
     "On July 25, Mussolini is voted out by his own Grand Council, "
     "arrested by King Victor Emmanuel III, and imprisoned. "
@@ -969,27 +1147,34 @@ log_f(F["Fascist Italy"], 8,
     "Italy surrenders on September 8, 1943. Germany occupies northern Italy "
     "and installs Mussolini as puppet ruler of the Italian Social Republic "
     "after a German commando raid rescues him from mountain imprisonment.",
-    polarity="positive", intensity=3, event_type="combat", ripple=True)
+    polarity="positive", intensity=3, event_type="combat")
+db.apply_ripple(SLUG, F["Fascist Italy"], "faction", 8,
+    "Sicily invaded, Mussolini deposed — Italy surrenders, Germany occupies the north.",
+    "positive", 3, "combat", "public", source_event_id=evt)
 
-log_n(N["Benito Mussolini"], 8,
+evt = log_n(N["Benito Mussolini"], 8,
     "Mussolini's fall is sudden and ignominious: voted out by his own council, "
     "arrested by the king he served for twenty years. The German rescue gives him "
-    "a final act as puppet, but real power is gone. "
-    "He is captured by Italian partisans on April 27, 1945, "
-    "attempting to escape to Switzerland. He and his mistress are shot "
-    "the following day. Their bodies are hung upside down in Milan.",
-    polarity="positive", intensity=3, event_type="politics", ripple=True)
+    "a final act as puppet of the Italian Social Republic, but real power is gone. "
+    "He rules a rump state in northern Italy while [[Dwight D. Eisenhower|Allied forces]] grind up the peninsula.",
+    polarity="negative", intensity=3, event_type="politics")
+db.apply_ripple(SLUG, N["Benito Mussolini"], "npc", 8,
+    "Mussolini deposed by his own Grand Council — rescued by Germany but real power is finished.",
+    "negative", 3, "politics", "public", source_event_id=evt)
 
-log_n(N["Dwight D. Eisenhower"], 8,
+evt = log_n(N["Dwight D. Eisenhower"], 8,
     "Eisenhower commands the Sicily invasion and the subsequent Italian campaign. "
     "The Italian front bogs down against the German Gustav Line — "
     "Monte Cassino is besieged for five months. The Italian campaign "
     "ties down German divisions but at enormous Allied cost. "
     "It is strategically important and operationally agonizing.",
-    polarity="positive", intensity=2, event_type="combat", ripple=True)
+    polarity="positive", intensity=2, event_type="combat")
+db.apply_ripple(SLUG, N["Dwight D. Eisenhower"], "npc", 8,
+    "Eisenhower commands Sicily and Italy — the 'soft underbelly' proves costly at Monte Cassino.",
+    "positive", 2, "combat", "public", source_event_id=evt)
 
 db.post_journal(SLUG, 8, "2024-01-01",
-    "**Session 8 — Sicily, Italy, Mussolini Falls (1943)**\n\n"
+    "**Period 8 — Sicily, Italy, Mussolini Falls (1943)**\n\n"
     "The first Axis partner collapses. Italy's defection is strategically "
     "significant (it opens the Mediterranean and forces German redeployment) "
     "but tactically costly — fighting up the Italian boot is some of the "
@@ -1001,8 +1186,8 @@ db.post_journal(SLUG, 8, "2024-01-01",
     "as Allied scores in the Mediterranean improve."
 )
 
-# ── Session 9: D-Day and Liberation (June–December 1944) ─────────────────────
-log_n(N["Dwight D. Eisenhower"], 9,
+# ── Period 9: D-Day and Liberation (June–December 1944) ───────────────────────
+evt = log_n(N["Dwight D. Eisenhower"], 9,
     "Operation Overlord, June 6, 1944: the largest amphibious assault in history. "
     "156,000 Allied troops land on five Normandy beaches. "
     "[[Normandy — Omaha Beach|Omaha Beach]] costs 2,000 American casualties in a single morning. "
@@ -1010,60 +1195,90 @@ log_n(N["Dwight D. Eisenhower"], 9,
     "The night before, [[Dwight D. Eisenhower]] prepares a message for if the operation fails: "
     "'Our landings have failed... If any blame or fault attaches to the attempt, "
     "it is mine alone.' He writes it. He does not need to send it.",
-    polarity="positive", intensity=3, event_type="combat", ripple=True,
+    polarity="positive", intensity=3, event_type="combat",
     location_id=L["Normandy — Omaha Beach"])
+db.apply_ripple(SLUG, N["Dwight D. Eisenhower"], "npc", 9,
+    "D-Day — 156,000 Allied troops land at Normandy, foothold in France secured.",
+    "positive", 3, "combat", "public", source_event_id=evt)
 
-log_n(N["George S. Patton"], 9,
+evt = log_n(N["George S. Patton"], 9,
     "Operation Cobra (July 1944): [[George S. Patton]]'s Third Army breaks out of Normandy "
     "and races across France — 600 miles in two weeks, the fastest advance "
     "in the history of armored warfare. Patton outstrips his supply lines "
     "and is eventually halted by fuel shortages. He argues — correctly — "
     "that if given the fuel he could end the war by Christmas. "
     "He is not given the fuel. The war does not end by Christmas.",
-    polarity="positive", intensity=3, event_type="combat", ripple=True,
+    polarity="positive", intensity=3, event_type="combat",
     location_id=L["Normandy — Omaha Beach"])
+db.apply_ripple(SLUG, N["George S. Patton"], "npc", 9,
+    "Patton's breakout — 600 miles across France in two weeks, fastest armored advance in history.",
+    "positive", 3, "combat", "public", source_event_id=evt)
 
-log_n(N["Charles de Gaulle"], 9,
+evt = log_n(N["Charles de Gaulle"], 9,
     "Paris is liberated on August 25, 1944. De Gaulle insists that French "
     "forces enter the city first. He then walks down the Champs-Élysées "
     "on foot, in full uniform, under sniper fire from Vichy holdouts, "
     "in front of two million people. The scene is deliberate theater: "
     "it establishes that France liberated itself, not that it was liberated. "
     "The distinction matters enormously to de Gaulle.",
-    polarity="positive", intensity=3, event_type="other", ripple=True)
+    polarity="positive", intensity=3, event_type="other")
+db.apply_ripple(SLUG, N["Charles de Gaulle"], "npc", 9,
+    "De Gaulle walks the Champs-Élysées — Paris liberated, France reclaims its narrative.",
+    "positive", 3, "other", "public", source_event_id=evt)
 
-log_f(F["Nazi Germany"], 9,
+evt = log_f(F["Nazi Germany"], 9,
     "July 20, 1944: German officers plant a bomb in Hitler's conference room. "
     "It explodes. Hitler survives — the briefcase was moved, deflecting the blast "
     "behind a table leg. The conspirators are arrested, tortured, and executed. "
     "Rommel, implicated, is given the choice of a people's court or private suicide. "
     "He takes the poison on October 14. Germany buries him with full military honors.",
-    polarity="negative", intensity=3, event_type="betrayal", ripple=True)
+    polarity="negative", intensity=3, event_type="betrayal")
+db.apply_ripple(SLUG, F["Nazi Germany"], "faction", 9,
+    "July 20 plot fails — conspirators executed, Rommel given suicide or trial, chooses poison.",
+    "negative", 3, "betrayal", "public", source_event_id=evt)
+
+# Rommel dies October 14, 1944
+evt = log_n(N["Erwin Rommel"], 9,
+    "[[Erwin Rommel]] is implicated in the July 20 assassination plot — he knew of plans "
+    "for a coup but was not in the bomb room. On October 14, 1944, two SS officers "
+    "arrive at his home with a choice: public trial before the People's Court "
+    "— which would destroy his family — or a cyanide capsule and a state funeral. "
+    "He tells his wife and son he will be dead in fifteen minutes. "
+    "He is driven away in a staff car. Twenty minutes later he is dead. "
+    "The official announcement says he died of his wounds from the July car accident. "
+    "Germany gives him a state funeral.",
+    polarity="negative", intensity=3, event_type="betrayal")
+db.set_npc_dead(SLUG, N["Erwin Rommel"], True, dead_session=9)
+db.apply_ripple(SLUG, N["Erwin Rommel"], "npc", 9,
+    "Rommel given the choice — suicide or trial. Chooses cyanide. Given a state funeral.",
+    "negative", 3, "betrayal", "public", source_event_id=evt)
 
 db.post_journal(SLUG, 9, "2024-01-01",
-    "**Session 9 — D-Day and Liberation (1944)**\n\n"
+    "**Period 9 — D-Day and Liberation (1944)**\n\n"
     "The war's climactic Allied operation. D-Day is the result of two years "
     "of argument — Churchill wanted to fight in the Mediterranean; "
     "the Americans wanted to cross the Channel. The Americans were right.\n\n"
     "**Causal chain:** Patton's breakout delivers what Eisenhower's coalition "
     "building makes possible. De Gaulle's Paris entry is the political payoff. "
     "The July 20 plot reveals the Wehrmacht's own crisis of faith — "
-    "senior officers try to kill their Führer. Rommel's death is the "
-    "engine's most complex inter-NPC event: the ally edge between Rommel "
-    "and Hitler terminates with the poison capsule."
+    "senior officers try to kill their Führer. Rommel's death closes "
+    "the ally edge between him and Hitler. He dies protecting his family."
 )
 
-# ── Session 10: The Eastern Colossus and V-E Day (1944–1945) ─────────────────
-log_n(N["Georgy Zhukov"], 10,
+# ── Period 10: The Eastern Colossus and V-E Day (1944–1945) ───────────────────
+evt = log_n(N["Georgy Zhukov"], 10,
     "Operation Bagration (June 1944): the Soviet summer offensive destroys "
     "Army Group Centre — 17 German divisions annihilated, 350,000 casualties. "
     "It is the largest defeat in German military history, larger than Stalingrad, "
     "happening at the same time as D-Day. "
     "The Red Army advances 400 miles in two months. "
     "By early 1945, Zhukov is 40 miles from Berlin.",
-    polarity="positive", intensity=3, event_type="combat", ripple=True)
+    polarity="positive", intensity=3, event_type="combat")
+db.apply_ripple(SLUG, N["Georgy Zhukov"], "npc", 10,
+    "Operation Bagration — Army Group Centre destroyed, 350,000 German casualties, 400-mile advance.",
+    "positive", 3, "combat", "public", source_event_id=evt)
 
-log_n(N["Adolf Hitler"], 10,
+evt = log_n(N["Adolf Hitler"], 10,
     "The Battle of the Bulge (December 1944): Germany's last western offensive. "
     "30 German divisions strike through the Ardennes in the American sector. "
     "The Americans are surprised, bent, and do not break. "
@@ -1071,43 +1286,80 @@ log_n(N["Adolf Hitler"], 10,
     "and relieves it in seventy-two hours. "
     "The Bulge costs Germany its last operational reserves. "
     "Hitler retreats to his Berlin bunker and does not emerge again.",
-    polarity="negative", intensity=3, event_type="combat", ripple=True)
+    polarity="negative", intensity=3, event_type="combat")
+db.apply_ripple(SLUG, N["Adolf Hitler"], "npc", 10,
+    "Battle of the Bulge fails — Germany expends its last reserves, Hitler retreats to the bunker.",
+    "negative", 3, "combat", "public", source_event_id=evt)
 
-log_n(N["Georgy Zhukov"], 10,
+# Roosevelt dies April 12, 1945
+evt = log_n(N["Franklin D. Roosevelt"], 10,
+    "[[Franklin D. Roosevelt]] dies on April 12, 1945, at Warm Springs, Georgia — "
+    "a cerebral hemorrhage while sitting for a portrait. His last words: "
+    "'I have a terrific headache.' He is within three weeks of [[Nazi Germany|Germany's]] surrender. "
+    "He does not live to see it. [[Harry S. Truman]] is sworn in that evening "
+    "and learns about the Manhattan Project for the first time.",
+    polarity="negative", intensity=3, event_type="other")
+db.set_npc_dead(SLUG, N["Franklin D. Roosevelt"], True, dead_session=10)
+db.apply_ripple(SLUG, N["Franklin D. Roosevelt"], "npc", 10,
+    "Roosevelt dies April 12 — three weeks from Germany's surrender. Truman inherits the bomb.",
+    "negative", 3, "other", "public", source_event_id=evt)
+
+# Mussolini executed April 28, 1945
+evt = log_n(N["Benito Mussolini"], 10,
+    "[[Benito Mussolini]] is captured by Italian partisans on April 27, 1945, "
+    "attempting to flee to Switzerland disguised in a German overcoat. "
+    "He and his mistress Clara Petacci are shot the following day at Dongo. "
+    "Their bodies are transported to Milan and hung upside down "
+    "from a gas station on the Piazzale Loreto — the same square where "
+    "partisans had been executed two years earlier. "
+    "This is two days before [[Adolf Hitler|Hitler's]] death.",
+    polarity="positive", intensity=3, event_type="combat")
+db.set_npc_dead(SLUG, N["Benito Mussolini"], True, dead_session=10)
+db.apply_ripple(SLUG, N["Benito Mussolini"], "npc", 10,
+    "Mussolini executed by partisans at Dongo, hung upside down in Milan — two days before Hitler.",
+    "positive", 3, "combat", "public", source_event_id=evt)
+
+evt = log_n(N["Georgy Zhukov"], 10,
     "Berlin falls to the Red Army on May 2, 1945. "
     "[[Adolf Hitler]] dies by suicide on April 30 — a gunshot wound and cyanide, "
     "with Eva Braun, in the Führerbunker. "
     "Their bodies are burned in the garden above. "
     "Germany signs unconditional surrender on May 8, 1945. "
     "V-E Day. The war in Europe is over.",
-    polarity="positive", intensity=3, event_type="combat", ripple=True,
+    polarity="positive", intensity=3, event_type="combat",
     location_id=L["The Berlin Bunker"])
+db.apply_ripple(SLUG, N["Georgy Zhukov"], "npc", 10,
+    "Berlin falls — Hitler dead in the bunker, Germany surrenders May 8. V-E Day.",
+    "positive", 3, "combat", "public", source_event_id=evt)
 
-log_n(N["Adolf Hitler"], 10,
+evt = log_n(N["Adolf Hitler"], 10,
     "[[Adolf Hitler]] kills himself in the Führerbunker on April 30, 1945, "
     "as [[Soviet Union|Soviet]] forces fight street by street through Berlin. "
     "He has governed [[Nazi Germany|Germany]] for twelve years, started a war that kills "
     "seventy to eighty-five million people, and presided over the "
     "deliberate murder of six million Jews. "
     "He dies blaming everyone else.",
-    polarity="positive", intensity=3, event_type="other", ripple=True,
+    polarity="positive", intensity=3, event_type="other",
     location_id=L["The Berlin Bunker"])
+db.set_npc_dead(SLUG, N["Adolf Hitler"], True, dead_session=10)
+db.apply_ripple(SLUG, N["Adolf Hitler"], "npc", 10,
+    "Hitler dead by suicide in the Führerbunker — twelve years, eighty million dead.",
+    "positive", 3, "other", "public", source_event_id=evt)
 
 db.post_journal(SLUG, 10, "2024-01-01",
-    "**Session 10 — The Eastern Colossus and V-E Day (1945)**\n\n"
+    "**Period 10 — The Eastern Colossus and V-E Day (1945)**\n\n"
     "The war in Europe ends where it was decided — on the Eastern Front. "
     "Operation Bagration is larger than D-Day, less photographed, and "
     "more decisive. The Soviet contribution to defeating Germany is "
     "proportionally the largest of any Allied nation.\n\n"
     "**Causal chain:** Hitler's score reaches its floor. "
     "The rival edge between Zhukov and Hitler terminates in the ruins of Berlin. "
-    "Germany's surrender on May 8 closes all open rivalries in the European theater. "
-    "The engine's European map reaches its final state: "
-    "every Axis entity at war or hostile; every Allied entity improved."
+    "Roosevelt dies three weeks before German surrender — he does not live to see it. "
+    "Mussolini is shot two days before Hitler. Germany surrenders May 8."
 )
 
-# ── Session 11: Himmler, the Holocaust, and the Liberation of the Camps ───────
-log_n(N["Heinrich Himmler"], 11,
+# ── Period 11: Himmler, the Holocaust, and the Liberation of the Camps ─────────
+evt = log_n(N["Heinrich Himmler"], 11,
     "The Holocaust reaches its industrial peak in 1942–1944 at [[Auschwitz|Auschwitz-Birkenau]], "
     "Treblinka, Sobibor, Belzec, Chelmno, and Majdanek. "
     "Six million Jews are murdered — two-thirds of [[Occupied Europe|European Jewry]]. "
@@ -1115,20 +1367,26 @@ log_n(N["Heinrich Himmler"], 11,
     "it accelerates. [[Heinrich Himmler]]'s SS continues deportations to the gas chambers "
     "until the camps are liberated by Allied forces in 1945.",
     polarity="negative", intensity=3, event_type="other",
-    visibility="dm_only", ripple=True,
+    visibility="dm_only",
     location_id=L["Auschwitz"])
+db.apply_ripple(SLUG, N["Heinrich Himmler"], "npc", 11,
+    "Holocaust at peak — six million Jews murdered, killing accelerates even as Germany loses.",
+    "negative", 3, "other", "dm_only", source_event_id=evt)
 
-log_f(F["Occupied Europe"], 11,
+evt = log_f(F["Occupied Europe"], 11,
     "Allied forces liberate the concentration camps in spring 1945: "
     "Buchenwald (April 11), Bergen-Belsen (April 15), Dachau (April 29). "
     "[[Dwight D. Eisenhower]] orders every available soldier and nearby German civilian "
     "to tour the camps. He cables Washington: the evidence is 'beyond the "
     "American mind to comprehend.' He wants witnesses. He is afraid "
     "that someday someone will say this did not happen.",
-    polarity="positive", intensity=3, event_type="discovery", ripple=True,
+    polarity="positive", intensity=3, event_type="discovery",
     location_id=L["Auschwitz"])
+db.apply_ripple(SLUG, F["Occupied Europe"], "faction", 11,
+    "Camps liberated — Eisenhower orders witnesses, cables Washington that it defies comprehension.",
+    "positive", 3, "discovery", "public", source_event_id=evt)
 
-log_n(N["Heinrich Himmler"], 11,
+evt = log_n(N["Heinrich Himmler"], 11,
     "In the war's final weeks, Himmler secretly contacts the World Jewish Congress "
     "and Allied representatives through a Swedish intermediary — "
     "offering to exchange Jews for trucks, then offering to surrender "
@@ -1136,12 +1394,17 @@ log_n(N["Heinrich Himmler"], 11,
     "He believes, even now, that the Western Allies will accept a "
     "separate peace against the Soviet Union. "
     "Hitler strips him of all offices when he learns of this. "
-    "Himmler is captured by British forces in disguise and bites down "
-    "on a cyanide capsule on May 23, 1945.",
-    polarity="positive", intensity=2, event_type="politics", ripple=True)
+    "Himmler is captured by British forces in disguise on May 21, 1945, "
+    "and bites down on a cyanide capsule hidden in his mouth on May 23. "
+    "He is dead within fifteen minutes.",
+    polarity="positive", intensity=2, event_type="politics")
+db.set_npc_dead(SLUG, N["Heinrich Himmler"], True, dead_session=11)
+db.apply_ripple(SLUG, N["Heinrich Himmler"], "npc", 11,
+    "Himmler captured in disguise, bites cyanide capsule before he can be tried.",
+    "positive", 2, "politics", "public", source_event_id=evt)
 
 db.post_journal(SLUG, 11, "2024-01-01",
-    "**Session 11 — The Holocaust and Liberation of the Camps**\n\n"
+    "**Period 11 — The Holocaust and Liberation of the Camps**\n\n"
     "The Holocaust is not a sidebar. It is the war's central crime and its "
     "most important fact. Six million Jews murdered, alongside Roma, "
     "disabled people, political prisoners, Soviet POWs, and others. "
@@ -1154,17 +1417,20 @@ db.post_journal(SLUG, 11, "2024-01-01",
     "trade it for his life. The engine records it as it was: cowardice after atrocity."
 )
 
-# ── Session 12: Pacific Endgame — VJ Day (1945) ───────────────────────────────
-log_n(N["Douglas MacArthur"], 12,
+# ── Period 12: Pacific Endgame — VJ Day (1945) ────────────────────────────────
+evt = log_n(N["Douglas MacArthur"], 12,
     "Iwo Jima (February–March 1945): 26,000 American casualties to take "
     "an eight-square-mile island. Okinawa (April–June 1945): 50,000 American "
     "casualties, 110,000 Japanese killed, 100,000 Okinawan civilians dead. "
     "The math of invading the Japanese home islands — Operation Downfall — "
     "projects 250,000 to one million Allied casualties. "
     "MacArthur is assigned to command it.",
-    polarity="negative", intensity=3, event_type="combat", ripple=True)
+    polarity="negative", intensity=3, event_type="combat")
+db.apply_ripple(SLUG, N["Douglas MacArthur"], "npc", 12,
+    "Iwo Jima and Okinawa — the cost of each island makes invasion of Japan unthinkable.",
+    "negative", 3, "combat", "public", source_event_id=evt)
 
-log_n(N["Harry S. Truman"], 12,
+evt = log_n(N["Harry S. Truman"], 12,
     "[[Harry S. Truman]] authorizes the use of atomic bombs on [[Imperial Japan|Japan]]. "
     "[[Hiroshima]]: August 6, 1945. One bomb kills 80,000 people immediately; "
     "total deaths reach 135,000. Nagasaki: August 9. "
@@ -1172,37 +1438,49 @@ log_n(N["Harry S. Truman"], 12,
     "Japan faces atomic annihilation and Soviet invasion simultaneously. "
     "Truman's calculation — that the bombs save more lives than an invasion — "
     "is argued about for the rest of the century.",
-    polarity="positive", intensity=3, event_type="other", ripple=True,
+    polarity="positive", intensity=3, event_type="other",
     location_id=L["Hiroshima"])
+db.apply_ripple(SLUG, N["Harry S. Truman"], "npc", 12,
+    "Truman orders Hiroshima and Nagasaki — Japan faces the bomb and Soviet invasion simultaneously.",
+    "positive", 3, "other", "public", source_event_id=evt)
 
-log_n(N["Emperor Hirohito"], 12,
+evt = log_n(N["Emperor Hirohito"], 12,
     "[[Emperor Hirohito]] records a message on August 14, 1945 — the first time "
     "a Japanese emperor has spoken directly to the people. "
     "The army briefly attempts to seize the recording and prevent surrender. "
     "They fail. The broadcast goes out August 15: [[Imperial Japan|Japan]] has decided to "
     "'endure the unendurable and suffer the insufferable.' "
     "He does not say 'surrender.' He does not need to.",
-    polarity="positive", intensity=3, event_type="dialogue", ripple=True,
+    polarity="positive", intensity=3, event_type="dialogue",
     location_id=L["Hiroshima"])
+db.apply_ripple(SLUG, N["Emperor Hirohito"], "npc", 12,
+    "Hirohito broadcasts — the first time an emperor has spoken to the people; Japan surrenders.",
+    "positive", 3, "dialogue", "public", source_event_id=evt)
 
-log_n(N["Douglas MacArthur"], 12,
+evt = log_n(N["Douglas MacArthur"], 12,
     "Japan formally surrenders on the deck of the USS Missouri in Tokyo Bay "
     "on September 2, 1945. MacArthur accepts the surrender and signs for the "
     "Allied Powers. He speaks: 'It is my earnest hope — indeed the hope of "
     "all mankind — that from this solemn occasion a better world shall emerge.' "
     "The war is over. Total dead: seventy to eighty-five million people.",
-    polarity="positive", intensity=3, event_type="other", ripple=True)
+    polarity="positive", intensity=3, event_type="other")
+db.apply_ripple(SLUG, N["Douglas MacArthur"], "npc", 12,
+    "Japan surrenders on the Missouri — MacArthur accepts for the Allied Powers. War over.",
+    "positive", 3, "other", "public", source_event_id=evt)
 
-log_f(F["Imperial Japan"], 12,
+evt = log_f(F["Imperial Japan"], 12,
     "Japan surrenders unconditionally. The Empire of Japan is dissolved. "
     "MacArthur oversees the occupation and reconstruction of Japan with "
     "pragmatic brilliance: Hirohito is retained as symbolic figurehead, "
     "the military is abolished, a democratic constitution is written. "
     "Japan becomes a US ally within a decade.",
-    polarity="positive", intensity=3, event_type="politics", ripple=True)
+    polarity="positive", intensity=3, event_type="politics")
+db.apply_ripple(SLUG, F["Imperial Japan"], "faction", 12,
+    "Imperial Japan dissolves — MacArthur oversees reconstruction, democratic constitution written.",
+    "positive", 3, "politics", "public", source_event_id=evt)
 
 db.post_journal(SLUG, 12, "2024-01-01",
-    "**Session 12 — Pacific Endgame: VJ Day (September 2, 1945)**\n\n"
+    "**Period 12 — Pacific Endgame: VJ Day (September 2, 1945)**\n\n"
     "The war ends where it began in the Pacific — with a decision made "
     "by one man and delivered from the air. Whether the atomic bombs were "
     "necessary is the most argued question of the twentieth century. "
@@ -1218,42 +1496,122 @@ db.post_journal(SLUG, 12, "2024-01-01",
 )
 
 # ── Location log entries ───────────────────────────────────────────────────────
-
 log_l(L["London and Whitehall"], 3,
-      "[[Winston Churchill]] refuses armistice. He tells the War Cabinet: 'If this long island story of ours is to end at last, let it end only when each one of us lies choking in his own blood upon the ground.' The cabinet stands and cheers. [[Great Britain]] will not negotiate.",
+      "[[Winston Churchill]] refuses armistice. He tells the War Cabinet: 'If this long island story "
+      "of ours is to end at last, let it end only when each one of us lies choking in his own blood "
+      "upon the ground.' The cabinet stands and cheers. [[Great Britain]] will not negotiate.",
       polarity="positive", intensity=3, event_type="dialogue",
       actor_id=N["Winston Churchill"], actor_type="npc")
 
 log_l(L["Pearl Harbor"], 5,
-      "[[Isoroku Yamamoto]]'s carrier fleet attacks at dawn. 18 warships sunk or damaged. 2,403 Americans killed. The three US aircraft carriers are not in port — they are at sea. [[Isoroku Yamamoto|Yamamoto]] knows this. [[Adolf Hitler]] declares war on the [[United States]] four days later. He was not required to.",
+      "[[Isoroku Yamamoto]]'s carrier fleet attacks at dawn. 18 warships sunk or damaged. 2,403 Americans "
+      "killed. The three US aircraft carriers are not in port — they are at sea. [[Adolf Hitler]] declares "
+      "war on the [[United States]] four days later. He was not required to.",
       polarity="negative", intensity=3, event_type="combat")
 
 log_l(L["Stalingrad"], 7,
-      "[[Georgy Zhukov]]'s Operation Uranus encircles 300,000 German troops. [[Adolf Hitler]] forbids retreat. The relief attempt fails. Field Marshal Paulus surrenders on January 31, 1943 with 91,000 survivors. The myth of German invincibility is over.",
+      "[[Georgy Zhukov]]'s Operation Uranus encircles 300,000 German troops. [[Adolf Hitler]] forbids "
+      "retreat. The relief attempt fails. Field Marshal Paulus surrenders on January 31, 1943 with "
+      "91,000 survivors. The myth of German invincibility is over.",
       polarity="positive", intensity=3, event_type="combat",
       actor_id=N["Georgy Zhukov"], actor_type="npc")
 
 log_l(L["Normandy — Omaha Beach"], 9,
-      "156,000 Allied troops land on five beaches. Omaha costs 2,000 American casualties in a morning. [[Dwight D. Eisenhower]] carries a message in his pocket for if the operation fails. By nightfall, the Allies are ashore. He does not need to send it.",
+      "156,000 Allied troops land on five beaches. Omaha costs 2,000 American casualties in a morning. "
+      "[[Dwight D. Eisenhower]] carries a message in his pocket for if the operation fails. By nightfall, "
+      "the Allies are ashore. He does not need to send it.",
       polarity="positive", intensity=3, event_type="combat",
       actor_id=N["Dwight D. Eisenhower"], actor_type="npc")
 
 log_l(L["Auschwitz"], 11,
-      "[[Heinrich Himmler]]'s SS operates the killing machinery at peak capacity through 1942-44. The camp is liberated by Soviet forces on January 27, 1945. [[Dwight D. Eisenhower]] orders every available soldier to tour the camps. He wants witnesses. He is afraid that someday someone will say this did not happen.",
+      "[[Heinrich Himmler]]'s SS operates the killing machinery at peak capacity through 1942-44. The camp "
+      "is liberated by Soviet forces on January 27, 1945. [[Dwight D. Eisenhower]] orders every available "
+      "soldier to tour the camps. He wants witnesses. He is afraid that someday someone will say this "
+      "did not happen.",
       polarity="negative", intensity=3, event_type="discovery",
       visibility="dm_only")
 
 log_l(L["The Berlin Bunker"], 10,
-      "[[Adolf Hitler]] dies here on April 30, 1945, as Soviet forces fight street by street above him. Cyanide and a gunshot, with Eva Braun. Their bodies are burned in the garden. Germany holds on for eight more days.",
+      "[[Adolf Hitler]] dies here on April 30, 1945, as Soviet forces fight street by street above him. "
+      "Cyanide and a gunshot, with Eva Braun. Their bodies are burned in the garden. Germany holds on "
+      "for eight more days.",
       polarity="positive", intensity=3, event_type="other",
       actor_id=N["Georgy Zhukov"], actor_type="npc")
 
 log_l(L["Hiroshima"], 12,
-      "[[Harry S. Truman]] orders the bomb. August 6, 1945. 80,000 dead immediately. Nagasaki on August 9. On August 15, [[Emperor Hirohito]] speaks to his people in a voice they have never heard. He does not say 'surrender.' Japan surrenders.",
+      "[[Harry S. Truman]] orders the bomb. August 6, 1945. 80,000 dead immediately. Nagasaki on August 9. "
+      "On August 15, [[Emperor Hirohito]] speaks to his people in a voice they have never heard. He does "
+      "not say 'surrender.' Japan surrenders.",
       polarity="positive", intensity=3, event_type="other",
       actor_id=N["Harry S. Truman"], actor_type="npc")
 
 print("  Location logs complete")
 
+# ── Thread progression logs ────────────────────────────────────────────────────
+db.log_quest(SLUG, "the_fall_and_recovery_of_france", 3,
+    "Period 3: France falls in six weeks. De Gaulle escapes to London and broadcasts "
+    "from the BBC on June 18: 'The flame of French resistance must not and shall not die.' "
+    "Vichy controls the south. Free France has a microphone and nothing else.")
+
+db.log_quest(SLUG, "the_fall_and_recovery_of_france", 8,
+    "Period 8: Allied forces invade Sicily. Free French units fight in North Africa and Italy. "
+    "Mussolini is deposed. The path to France from the south is opening.")
+
+db.log_quest(SLUG, "the_fall_and_recovery_of_france", 9,
+    "Period 9: Paris liberated August 25, 1944. De Gaulle insists French forces enter first, "
+    "then walks the Champs-Élysées under sniper fire. France did not wait to be liberated — "
+    "that is the story de Gaulle needs the world to believe.")
+
+db.log_quest(SLUG, "the_fall_and_recovery_of_france", 10,
+    "Period 10: Germany surrenders May 8, 1945. France is a victor power. "
+    "What France was during the occupation — the collaboration, Vichy, the deportations — "
+    "will be buried under the resistance narrative for a generation.")
+
+db.log_quest(SLUG, "the_eastern_front", 4,
+    "Period 4: Barbarossa — 3 million German troops invade on June 22, 1941. "
+    "The largest military operation in history. The Red Army loses 800,000 men in two months. "
+    "Stalin stays in Moscow. Zhukov stops the Germans forty miles from the Kremlin.")
+
+db.log_quest(SLUG, "the_eastern_front", 7,
+    "Period 7: Stalingrad turns the tide. Operation Uranus encircles 300,000 Germans. "
+    "Paulus surrenders. For the first time, the German public is told something has gone wrong. "
+    "After Kursk in July 1943, Germany never attacks in the East again.")
+
+db.log_quest(SLUG, "the_eastern_front", 10,
+    "Period 10: Operation Bagration destroys Army Group Centre — larger than D-Day, "
+    "happening the same week. Zhukov reaches Berlin. Hitler dies in the bunker April 30. "
+    "Germany surrenders May 8. The Eastern Front has cost 27 million Soviet lives.")
+
+db.log_quest(SLUG, "the_pacific_war", 5,
+    "Period 5: Pearl Harbor, December 7, 1941. Yamamoto's carriers attack at dawn. "
+    "The US aircraft carriers are at sea and survive. Hitler declares war on the US "
+    "four days later — he was not required to. The Grand Alliance is complete.")
+
+db.log_quest(SLUG, "the_pacific_war", 6,
+    "Period 6: Midway, June 1942. US code-breakers read the Japanese plan. "
+    "In five minutes of divebombing, four Japanese fleet carriers are sunk. "
+    "Japan loses its offensive capability in the Pacific. The war's direction changes.")
+
+db.log_quest(SLUG, "the_pacific_war", 12,
+    "Period 12: Hiroshima, August 6, 1945. Nagasaki, August 9. "
+    "Soviet Union declares war August 8. Japan faces simultaneous atomic and conventional destruction. "
+    "Hirohito broadcasts August 15. Japan surrenders on the Missouri September 2.")
+
+db.log_quest(SLUG, "the_road_to_d_day", 7,
+    "Period 7: El Alamein, October 1942. Montgomery defeats Rommel — Britain's first major land victory. "
+    "North Africa cleared by May 1943. The debate continues: cross the Channel now, "
+    "or go through the Mediterranean first?")
+
+db.log_quest(SLUG, "the_road_to_d_day", 8,
+    "Period 8: Sicily and Italy. Churchill's 'soft underbelly' — the Italian campaign ties down "
+    "German divisions but grinds Allied forces at Monte Cassino for five months. "
+    "The Americans are right that the Channel crossing cannot wait indefinitely.")
+
+db.log_quest(SLUG, "the_road_to_d_day", 9,
+    "Period 9: D-Day, June 6, 1944. 156,000 troops on five beaches. Omaha costs 2,000 casualties "
+    "in a morning. By August, Patton's Third Army has crossed France at 600 miles in two weeks. "
+    "Paris liberated. Hitler's Europe crumbling from all directions.")
+
+print("  Thread progression logs complete")
 print("\nWorld War II campaign seeded successfully.")
 print("To deploy to Pi:  rsync -av campaigns/ww2/ simonhans@raspberrypi:/mnt/serverdrive/coding/rippleforge/campaigns/ww2/")

@@ -7,7 +7,16 @@
       "description": "House Vespar's two claimants both have documentation. One is forged \u2014 possibly both. The Grace-Sworn's founding compact requires them to recognize the legitimate ruler of Hartstone's treaty partners. Authenticate the wrong heir and the compact breaks. The records are in the city archive. So is Petra Wynn.",
       "hidden": false,
       "objectives": [],
-      "log": []
+      "log": [
+        {
+          "session": 2,
+          "note": "Session 2: Both Vespar claimants have documentation in the archive. One set is forged \u2014 possibly both. Brother Edmar working on authentication. The succession clause requires a ruling before the compact's next formal session."
+        },
+        {
+          "session": 3,
+          "note": "Session 3: Lord Eddan Vespar's documentation presented formally at the hearing \u2014 records genuine. Kelrath's neutrality resolution offered as counter. 1187 treaty pulled. Third provision located; Edmar verifying whether it supersedes both claims. Osric Fell read it separately and has said nothing."
+        }
+      ]
     },
     {
       "id": "the_guild_s_price",
@@ -16,7 +25,16 @@
       "description": "Sena Cord has indicated \u2014 obliquely \u2014 that the Guild's financial support for the Grace-Sworn has a condition attached. She hasn't named it. Whatever it is, it's either something Aldric cannot give or something he should not. Find out before the Guild decides not to wait.",
       "hidden": false,
       "objectives": [],
-      "log": []
+      "log": [
+        {
+          "session": 2,
+          "note": "Session 2: Sena Cord's private meeting confirmed the Guild's support has conditions. She did not name her price. She knows about the weapons movement and did not volunteer how."
+        },
+        {
+          "session": 4,
+          "note": "Session 4: Dax Fell complied immediately with the guard reduction and offered his guards for tunnel patrol \u2014 Guild-favorable. Sena Cord's preference for Kelrath's resolution over Vespar's claim is becoming visible. Her price may be structural, not personal."
+        }
+      ]
     },
     {
       "id": "root_out_the_underbrick",
@@ -25,7 +43,16 @@
       "description": "Someone is arming the Underbrick at scale. The quantities are military. Find The Loom, trace the supply line, and determine whether this is a third faction moving against both delegations \u2014 or one of the delegations moving against the compact itself.",
       "hidden": false,
       "objectives": [],
-      "log": []
+      "log": [
+        {
+          "session": 2,
+          "note": "Session 2: Three military-scale weapon shipments through east quarter tunnels in two weeks. Source unidentified. Quantities inconsistent with street crime."
+        },
+        {
+          "session": 4,
+          "note": "Session 4: Grace-Sworn patrol ambushed \u2014 armed, organized, 'Stop looking.' Cutout captured: The Loom sold the same shipment to both Vespar and Kelrath simultaneously. Two clients. One cache. Neither knows yet. Cache location still unknown."
+        }
+      ]
     }
   ]
 }

@@ -481,6 +481,41 @@ def _create_onboarding_campaign(username, onboarding_mode):
 
 
 # ── Async Campaign Mode ────────────────────────────────────────────────────────
+def wikilinks_filter(text, slug, npcs, factions, locations=None, party=None):
+    if not text:
+        return Markup('')
+    lookup = {}
+    for n in (npcs or []):
+        lookup[n['name'].lower()] = ('npc', n['id'])
+    for f in (factions or []):
+        lookup[f['name'].lower()] = ('faction', f['id'])
+    for loc in (locations or []):
+        lookup[loc['name'].lower()] = ('location', loc['id'])
+    for c in (party or []):
+        lookup[c['name'].lower()] = ('party', db.slugify(c['name']))
+    escaped = str(Markup.escape(text))
+
+    def replace(m):
+        inner = m.group(1)
+        if '|' in inner:
+            entity, display = inner.split('|', 1)
+            entity = entity.strip()
+            display = display.strip()
+        else:
+            entity = display = inner.strip()
+        key = entity.lower()
+        if key in lookup:
+            etype, eid = lookup[key]
+            if etype == 'location':
+                return f'<a href="/{slug}/world/location/{eid}" class="wikilink">{Markup.escape(display)}</a>'
+            if etype == 'party':
+                return f'<a href="/{slug}/party/char/{eid}" class="wikilink">{Markup.escape(display)}</a>'
+            return f'<a href="/{slug}/world/{etype}/{eid}" class="wikilink">{Markup.escape(display)}</a>'
+        return str(Markup.escape(display))
+
+    return Markup(re.sub(r'\[\[([^\]\[]+)\]\]', replace, escaped))
+
+
 def _build_diffs(slug, before_snaps, entries):
     """Compare before snapshots to current state and return diff list."""
     diffs = []

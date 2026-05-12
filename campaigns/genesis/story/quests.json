@@ -7,7 +7,16 @@
       "description": "Creation, the garden, the fall, Cain's murder of Abel, the flood, and the tower of Babel. In eleven chapters Genesis runs through the whole disaster of human history \u2014 each generation worse than the last \u2014 until God chooses one man and starts over with a family.",
       "hidden": false,
       "objectives": [],
-      "log": []
+      "log": [
+        {
+          "session": 1,
+          "note": "Chapter 1: The garden closed. Cain kills Abel. First violence in the world. Cain marked and exiled \u2014 the first city built by the first murderer."
+        },
+        {
+          "session": 2,
+          "note": "Chapter 2: The flood. God unmakes the world and remakes it through Noah. The covenant of the rainbow: never again. Noah plants a vineyard. The first act after survival is embarrassing."
+        }
+      ]
     },
     {
       "id": "the_abraham_covenant",
@@ -16,7 +25,20 @@
       "description": "God calls Abram out of Ur with a promise: land, descendants, blessing to all nations. Abram follows without knowing where he is going. For twenty-five years the promise waits. Then Isaac is born. Then God asks for him back. The binding on Moriah is the hinge of the covenant: God provides.",
       "hidden": false,
       "objectives": [],
-      "log": []
+      "log": [
+        {
+          "session": 3,
+          "note": "Chapter 3: Abram called at 75. He leaves without knowing where he is going. Enters Egypt, passes Sarah off as his sister to save his own skin."
+        },
+        {
+          "session": 4,
+          "note": "Chapter 4: Melchizedek blesses Abraham after battle. Hagar flees into the desert; El-roi sees her at Beer-lahai-roi. She is the only person in the Bible to name God."
+        },
+        {
+          "session": 5,
+          "note": "Chapter 5: God promises a son at 99. Sarah laughs \u2014 God notes this. Abraham takes Isaac to Moriah. He binds his son and raises the knife. God stops him. The ram is in the thicket. The covenant confirmed."
+        }
+      ]
     },
     {
       "id": "jacob_and_the_twelve_tribes",
@@ -25,7 +47,20 @@
       "description": "Jacob steals the blessing, flees, works for Laban, wrestles God, and becomes Israel. Twelve sons from four women become twelve tribes. The family is held together by conflict, favoritism, and a God who refuses to let any of them go.",
       "hidden": false,
       "objectives": [],
-      "log": []
+      "log": [
+        {
+          "session": 5,
+          "note": "Chapter 5: Esau sells his birthright for stew. Jacob steals the blessing. Esau weeps. He vows to kill Jacob after Isaac dies. Jacob flees."
+        },
+        {
+          "session": 6,
+          "note": "Chapter 6: Jacob's ladder at Bethel \u2014 God renews the Abraham covenant to a fugitive. Laban substitutes Leah for Rachel on the wedding night. Jacob works seven more years."
+        },
+        {
+          "session": 7,
+          "note": "Chapter 7: Jacob wrestles at the Ford of Jabbok until daybreak. He refuses to release the man without a blessing. His hip is struck. He is renamed Israel. He limps into the sunrise. Esau runs to meet him and forgives him."
+        }
+      ]
     },
     {
       "id": "joseph_in_egypt",
@@ -34,7 +69,20 @@
       "description": "Sold by his brothers for twenty silver coins. Enslaved. Falsely accused. Imprisoned. Then elevated to second-in-command of Egypt by Pharaoh's dream. When famine drives his brothers to Egypt and they bow before the vizier, Joseph's first dream comes true. He weeps. He forgives them. What they meant for evil, God meant for good.",
       "hidden": false,
       "objectives": [],
-      "log": []
+      "log": [
+        {
+          "session": 8,
+          "note": "Chapter 8: Joseph sold into Egypt by his own brothers for twenty pieces of silver. His coat dipped in blood and brought to Jacob, who weeps and will not be comforted."
+        },
+        {
+          "session": 9,
+          "note": "Chapter 9: Joseph rises in Potiphar's house, falsely accused by Potiphar's wife, imprisoned. In prison he interprets dreams correctly. The cupbearer forgets him for two years."
+        },
+        {
+          "session": 10,
+          "note": "Chapter 10: Pharaoh's dreams interpreted \u2014 seven years of plenty, seven of famine. Joseph made vizier of Egypt. The famine comes. Jacob's sons bow before him. Joseph reveals himself: I am Joseph. He weeps. He forgives them. What they meant for evil, God meant for good."
+        }
+      ]
     }
   ]
 }

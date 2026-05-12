@@ -2,9 +2,9 @@
 
 Showcases: dual-axis edges (Jacob/Esau, Sarah/Hagar, Joseph/brothers),
 world conditions (East of Eden, The Flood, The Great Famine), fiction mode,
-observer_name, story arcs.
+observer_name, story arcs, set_npc_dead, source_event_id on all apply_ripple calls.
 
-Run:  python seed_genesis.py
+Run:  python seeds/seed_genesis.py
 """
 import sys, json, secrets, shutil
 from pathlib import Path
@@ -113,23 +113,17 @@ def add_rel(src_type, src_id, tgt_id, tgt_type, relation, weight=0.8, dm_only=Fa
 
 
 def log_n(npc_id, session, note, polarity=None, intensity=1,
-          event_type=None, visibility="public", ripple=False, actor_id=None, actor_type=None, location_id=None):
-    evt = db.log_npc(SLUG, npc_id, session, note, polarity=polarity,
-                     intensity=intensity, event_type=event_type, visibility=visibility,
-                     actor_id=actor_id, actor_type=actor_type, location_id=location_id)
-    if ripple and polarity in ("positive", "negative"):
-        db.apply_ripple(SLUG, npc_id, "npc", session, note, polarity, intensity, event_type, visibility)
-    return evt
+          event_type=None, visibility="public", actor_id=None, actor_type=None, location_id=None):
+    return db.log_npc(SLUG, npc_id, session, note, polarity=polarity,
+                      intensity=intensity, event_type=event_type, visibility=visibility,
+                      actor_id=actor_id, actor_type=actor_type, location_id=location_id)
 
 
 def log_f(faction_id, session, note, polarity=None, intensity=1,
-          event_type=None, visibility="public", ripple=False, actor_id=None, actor_type=None, location_id=None):
-    evt = db.log_faction(SLUG, faction_id, session, note, polarity=polarity,
-                         intensity=intensity, event_type=event_type, visibility=visibility,
-                         actor_id=actor_id, actor_type=actor_type, location_id=location_id)
-    if ripple and polarity in ("positive", "negative"):
-        db.apply_ripple(SLUG, faction_id, "faction", session, note, polarity, intensity, event_type, visibility)
-    return evt
+          event_type=None, visibility="public", actor_id=None, actor_type=None, location_id=None):
+    return db.log_faction(SLUG, faction_id, session, note, polarity=polarity,
+                          intensity=intensity, event_type=event_type, visibility=visibility,
+                          actor_id=actor_id, actor_type=actor_type, location_id=location_id)
 
 
 def log_l(loc_id, session, note, polarity=None, intensity=1,
@@ -468,16 +462,16 @@ print(f"  Locations: {list(L.keys())}")
 
 # Dual-axis: formal bond vs personal rupture
 add_dual_rel("npc", N["Cain"],    N["Abel"],   "npc", formal_relation="ally",  personal_relation="rival",   weight=0.9)
-add_dual_rel("npc", N["Jacob"],   N["Esau"],   "npc", formal_relation="ally", personal_relation="rival",   weight=0.9)
-add_dual_rel("npc", N["Esau"],    N["Jacob"],  "npc", formal_relation="ally", personal_relation="rival",   weight=0.9)
-add_dual_rel("npc", N["Sarah"],   N["Hagar"],  "npc", formal_relation="ally",  personal_relation="rival",  weight=0.8)
-add_dual_rel("npc", N["Hagar"],   N["Sarah"],  "npc", formal_relation="ally",  personal_relation="rival",  weight=0.8)
-add_dual_rel("npc", N["Joseph"],  N["Judah"],  "npc", formal_relation="ally", personal_relation="rival",    weight=0.85)
-add_dual_rel("npc", N["Judah"],   N["Joseph"], "npc", formal_relation="ally", personal_relation="rival",    weight=0.85)
-add_dual_rel("npc", N["Jacob"],   N["Laban"],  "npc", formal_relation="ally",  personal_relation="rival",    weight=0.75)
-add_dual_rel("npc", N["Laban"],   N["Jacob"],  "npc", formal_relation="ally",  personal_relation="rival",    weight=0.75)
-add_dual_rel("npc", N["Jacob"],   N["Rachel"], "npc", formal_relation="ally",  personal_relation="ally",  weight=1.0)
-add_dual_rel("npc", N["Jacob"],   N["Leah"],   "npc", formal_relation="ally",  personal_relation="rival",  weight=0.7)
+add_dual_rel("npc", N["Jacob"],   N["Esau"],   "npc", formal_relation="ally",  personal_relation="rival",   weight=0.9)
+add_dual_rel("npc", N["Esau"],    N["Jacob"],  "npc", formal_relation="ally",  personal_relation="rival",   weight=0.9)
+add_dual_rel("npc", N["Sarah"],   N["Hagar"],  "npc", formal_relation="ally",  personal_relation="rival",   weight=0.8)
+add_dual_rel("npc", N["Hagar"],   N["Sarah"],  "npc", formal_relation="ally",  personal_relation="rival",   weight=0.8)
+add_dual_rel("npc", N["Joseph"],  N["Judah"],  "npc", formal_relation="ally",  personal_relation="rival",   weight=0.85)
+add_dual_rel("npc", N["Judah"],   N["Joseph"], "npc", formal_relation="ally",  personal_relation="rival",   weight=0.85)
+add_dual_rel("npc", N["Jacob"],   N["Laban"],  "npc", formal_relation="ally",  personal_relation="rival",   weight=0.75)
+add_dual_rel("npc", N["Laban"],   N["Jacob"],  "npc", formal_relation="ally",  personal_relation="rival",   weight=0.75)
+add_dual_rel("npc", N["Jacob"],   N["Rachel"], "npc", formal_relation="ally",  personal_relation="ally",    weight=1.0)
+add_dual_rel("npc", N["Jacob"],   N["Leah"],   "npc", formal_relation="ally",  personal_relation="rival",   weight=0.7)
 
 # Clean bonds
 add_rel("npc", N["The LORD"],   N["Abraham"],  "npc", "ally", 1.0, dm_only=True)
@@ -499,7 +493,7 @@ add_rel("npc", N["Hagar"],      N["Ishmael"],  "npc", "ally", 1.0)
 add_rel("npc", N["Abraham"],    N["Melchizedek"], "npc", "ally", 0.7)
 
 # Faction edges
-add_rel("faction", F["House of Israel"], F["The Heavenly Court"], "faction", "ally", 0.9)
+add_rel("faction", F["House of Israel"], F["The Heavenly Court"], "faction", "ally",    0.9)
 add_rel("faction", F["House of Israel"], F["The Nations"],        "faction", "neutral", 0.5)
 
 print("  Relations set")
@@ -507,21 +501,25 @@ print("  Relations set")
 # ── Event Log ──────────────────────────────────────────────────────────────────
 
 # Chapters 1-3: The Primordial History
-log_n(N["Adam"], 1,
+
+evt = log_n(N["Adam"], 1,
       "[[Adam]] and [[Eve]] eat the fruit of the tree of knowledge of good and evil; "
       "they hide from God among the trees of the garden.",
-      polarity="negative", intensity=2, event_type="other", ripple=True,
+      polarity="negative", intensity=2, event_type="other",
       location_id=L["The Garden of Eden"])
+db.apply_ripple(SLUG, N["Adam"], "npc", 1,
+                "The fall — Adam and Eve eat the forbidden fruit; the garden is lost.",
+                "negative", 2, "other", "public", source_event_id=evt)
 
-log_n(N["Cain"], 1,
+evt = log_n(N["Cain"], 1,
       "[[Cain]] kills his brother [[Abel]] in the field; when God asks where [[Abel]] is, "
       "[[Cain]] says: am I my brother's keeper?",
       polarity="negative", intensity=3, event_type="combat",
       location_id=L["The Land of Nod"])
-
+db.set_npc_dead(SLUG, N["Abel"], True, dead_session=1)
 db.apply_ripple(SLUG, N["Cain"], "npc", 1,
-                "[[Cain]] kills [[Abel]] — the first violence in the world.",
-                "negative", 3, "combat", "public")
+                "Cain kills Abel — the first violence in the world.",
+                "negative", 3, "combat", "public", source_event_id=evt)
 
 log_n(N["Noah"], 2,
       "God tells [[Noah]] to build an ark; [[Noah]] does exactly what God commands "
@@ -540,6 +538,7 @@ log_n(N["Noah"], 2,
       polarity="negative", intensity=1, event_type="other")
 
 # Chapter 4: Abraham
+
 log_n(N["Abraham"], 3,
       "God tells [[Abraham|Abram]] to leave his country, his kindred, and his father's house "
       "for a land he will be shown. [[Abraham|Abram]] leaves. He is seventy-five years old.",
@@ -574,14 +573,18 @@ log_n(N["Sarah"], 5,
       "a son in a year. She laughs to herself. God asks: is anything too hard for the LORD?",
       polarity="positive", intensity=2, event_type="dialogue")
 
-log_n(N["Abraham"], 5,
+evt = log_n(N["Abraham"], 5,
       "[[Abraham]] rises early in the morning and takes [[Isaac]] to [[Mount Moriah]]. "
       "He builds the altar, binds his son, and raises the knife. "
       "God stops him: now I know you fear God, for you have not withheld your son.",
-      polarity="positive", intensity=3, event_type="other", ripple=True,
+      polarity="positive", intensity=3, event_type="other",
       location_id=L["Mount Moriah"])
+db.apply_ripple(SLUG, N["Abraham"], "npc", 5,
+                "The binding of Isaac on Moriah — God provides; the covenant confirmed.",
+                "positive", 3, "other", "public", source_event_id=evt)
 
 # Chapter 5: Jacob and Esau
+
 log_n(N["Esau"], 5,
       "[[Esau]] comes in from the field famished and sells his birthright to [[Jacob]] "
       "for bread and a bowl of red lentil stew. He eats, rises, and goes away, "
@@ -594,11 +597,14 @@ log_n(N["Rebekah"], 5,
       "and sends [[Jacob]] to steal the blessing.",
       polarity="neutral", intensity=2, event_type="other")
 
-log_n(N["Jacob"], 5,
+evt = log_n(N["Jacob"], 5,
       "[[Jacob]] deceives his blind father and receives the blessing of the firstborn; "
       "[[Esau]] arrives minutes later and weeps: is he not rightly named [[Jacob]]? "
       "He has supplanted me twice. He plans to kill [[Jacob]] after [[Isaac]]'s death.",
-      polarity="negative", intensity=3, event_type="dialogue", ripple=True)
+      polarity="negative", intensity=3, event_type="dialogue")
+db.apply_ripple(SLUG, N["Jacob"], "npc", 5,
+                "Jacob steals Esau's blessing — Esau weeps, vows to kill him; Jacob must flee.",
+                "negative", 3, "dialogue", "public", source_event_id=evt)
 
 log_n(N["Jacob"], 6,
       "[[Jacob]] flees to [[Laban]]'s house and dreams of a ladder reaching to heaven "
@@ -607,11 +613,14 @@ log_n(N["Jacob"], 6,
       polarity="positive", intensity=3, event_type="other",
       location_id=L["Bethel"])
 
-log_n(N["Laban"], 6,
+evt = log_n(N["Laban"], 6,
       "On the wedding night [[Laban]] substitutes [[Leah]] for [[Rachel]]; [[Jacob]] wakes "
       "to find the wrong wife. [[Laban]] explains: it is not done to give the younger "
       "before the firstborn. [[Jacob]] must work seven more years for [[Rachel]].",
-      polarity="negative", intensity=3, event_type="other", ripple=True)
+      polarity="negative", intensity=3, event_type="other")
+db.apply_ripple(SLUG, N["Laban"], "npc", 6,
+                "Laban substitutes Leah for Rachel — Jacob deceived as he deceived Isaac.",
+                "negative", 3, "other", "public", source_event_id=evt)
 
 log_n(N["Jacob"], 7,
       "At [[The Ford of Jabbok]], [[Jacob]] wrestles with a man until daybreak; "
@@ -627,6 +636,7 @@ log_n(N["Esau"], 7,
       polarity="positive", intensity=3, event_type="dialogue")
 
 # Chapter 6: Joseph
+
 log_n(N["Joseph"], 8,
       "[[Joseph]] tells his dreams — sheaves bowing, stars bowing — to his father "
       "and brothers. His brothers hate him and cannot speak peaceably to him.",
@@ -637,12 +647,17 @@ log_n(N["Judah"], 8,
       "traders for twenty pieces of silver. They dip his coat in goat's blood "
       "and bring it to [[Jacob]]: we found this. Is it your son's robe?",
       polarity="negative", intensity=3, event_type="other",
-      actor_id=N["Joseph"], actor_type="npc",
       location_id=L["The Pit at Dothan"])
 
+evt = log_n(N["Joseph"], 8,
+      "[[Joseph]] is stripped of his coat of many colors, thrown in a dry pit, "
+      "and sold to Ishmaelite traders for twenty pieces of silver. He is carried down to Egypt.",
+      polarity="negative", intensity=3, event_type="other",
+      actor_id=N["Judah"], actor_type="npc",
+      location_id=L["The Pit at Dothan"])
 db.apply_ripple(SLUG, N["Joseph"], "npc", 8,
-                "[[Joseph]] is sold into Egypt by his own brothers.",
-                "negative", 3, "other", "public")
+                "Joseph sold into Egypt by his own brothers.",
+                "negative", 3, "other", "public", source_event_id=evt)
 
 log_n(N["Joseph"], 9,
       "In Egypt [[Joseph]] rises to oversee Potiphar's household; "
@@ -680,12 +695,15 @@ log_n(N["Judah"], 10,
       "How can I go back to my father if the boy is not with me?",
       polarity="positive", intensity=3, event_type="dialogue")
 
-log_n(N["Joseph"], 10,
+evt = log_n(N["Joseph"], 10,
       "[[Joseph]] can control himself no longer; he clears the room and weeps aloud. "
       "He says: I am [[Joseph]]. Is my father still alive? He cannot stop weeping. "
       "He kisses all his brothers and they talk together.",
-      polarity="positive", intensity=3, event_type="dialogue", ripple=True,
+      polarity="positive", intensity=3, event_type="dialogue",
       location_id=L["Pharaoh's Court"])
+db.apply_ripple(SLUG, N["Joseph"], "npc", 10,
+                "Joseph reveals himself — forgiveness, reunion, the dream fulfilled.",
+                "positive", 3, "dialogue", "public", source_event_id=evt)
 
 db.log_condition(SLUG, C["The Great Famine"], 10,
                  "Joseph's grain stores sustain Egypt and Canaan through the seven lean years; "
@@ -702,12 +720,13 @@ log_l(L["The Garden of Eden"], 1,
 
 log_l(L["Beer-lahai-roi"], 4,
       "[[Hagar]] meets the angel of the LORD at this spring, fleeing [[Sarah]]'s cruelty. She is seen. She names God El-roi — the one who sees me. This is the only place in the Bible where a human gives God a name.",
-      polarity="positive", intensity=3, event_type="dialogue")
+      polarity="positive", intensity=3, event_type="dialogue",
+      actor_id=N["Hagar"], actor_type="npc")
 
 log_l(L["Mount Moriah"], 5,
       "[[Abraham]] brings [[Isaac]] here. He builds the altar. He binds his son. He raises the knife. God stops him. A ram is caught in the thicket. [[Abraham]] names the place: the LORD will provide.",
       polarity="positive", intensity=3, event_type="other",
-      actor_id="The Reader", actor_type="party")
+      actor_id=N["Abraham"], actor_type="npc")
 
 log_l(L["Bethel"], 6,
       "[[Jacob]] sleeps on a stone with angels ascending and descending above him. God renews the covenant: your descendants will be as the dust of the earth. [[Jacob]] wakes and anoints the stone.",
@@ -729,9 +748,57 @@ log_l(L["Pharaoh's Court"], 10,
 
 log_l(L["Pharaoh's Court"], 10,
       "[[Joseph]] reveals himself to his brothers. 'I am Joseph. Is my father still alive?' He cannot stop weeping. His brothers cannot answer him — they are dismayed before him.",
-      polarity="positive", intensity=3, event_type="dialogue")
+      polarity="positive", intensity=3, event_type="dialogue",
+      actor_id=N["Joseph"], actor_type="npc")
 
 print("  Location logs complete")
+
+# ── Arc progression log ────────────────────────────────────────────────────────
+
+db.log_quest(SLUG, "the_primordial_history", 1,
+    "Chapter 1: The garden closed. Cain kills Abel. First violence in the world. "
+    "Cain marked and exiled — the first city built by the first murderer.")
+db.log_quest(SLUG, "the_primordial_history", 2,
+    "Chapter 2: The flood. God unmakes the world and remakes it through Noah. "
+    "The covenant of the rainbow: never again. Noah plants a vineyard. "
+    "The first act after survival is embarrassing.")
+
+db.log_quest(SLUG, "the_abraham_covenant", 3,
+    "Chapter 3: Abram called at 75. He leaves without knowing where he is going. "
+    "Enters Egypt, passes Sarah off as his sister to save his own skin.")
+db.log_quest(SLUG, "the_abraham_covenant", 4,
+    "Chapter 4: Melchizedek blesses Abraham after battle. "
+    "Hagar flees into the desert; El-roi sees her at Beer-lahai-roi. "
+    "She is the only person in the Bible to name God.")
+db.log_quest(SLUG, "the_abraham_covenant", 5,
+    "Chapter 5: God promises a son at 99. Sarah laughs — God notes this. "
+    "Abraham takes Isaac to Moriah. He binds his son and raises the knife. "
+    "God stops him. The ram is in the thicket. The covenant confirmed.")
+
+db.log_quest(SLUG, "jacob_and_the_twelve_tribes", 5,
+    "Chapter 5: Esau sells his birthright for stew. Jacob steals the blessing. "
+    "Esau weeps. He vows to kill Jacob after Isaac dies. Jacob flees.")
+db.log_quest(SLUG, "jacob_and_the_twelve_tribes", 6,
+    "Chapter 6: Jacob's ladder at Bethel — God renews the Abraham covenant to a fugitive. "
+    "Laban substitutes Leah for Rachel on the wedding night. Jacob works seven more years.")
+db.log_quest(SLUG, "jacob_and_the_twelve_tribes", 7,
+    "Chapter 7: Jacob wrestles at the Ford of Jabbok until daybreak. "
+    "He refuses to release the man without a blessing. His hip is struck. "
+    "He is renamed Israel. He limps into the sunrise. Esau runs to meet him and forgives him.")
+
+db.log_quest(SLUG, "joseph_in_egypt", 8,
+    "Chapter 8: Joseph sold into Egypt by his own brothers for twenty pieces of silver. "
+    "His coat dipped in blood and brought to Jacob, who weeps and will not be comforted.")
+db.log_quest(SLUG, "joseph_in_egypt", 9,
+    "Chapter 9: Joseph rises in Potiphar's house, falsely accused by Potiphar's wife, imprisoned. "
+    "In prison he interprets dreams correctly. The cupbearer forgets him for two years.")
+db.log_quest(SLUG, "joseph_in_egypt", 10,
+    "Chapter 10: Pharaoh's dreams interpreted — seven years of plenty, seven of famine. "
+    "Joseph made vizier of Egypt. The famine comes. Jacob's sons bow before him. "
+    "Joseph reveals himself: I am Joseph. He weeps. He forgives them. "
+    "What they meant for evil, God meant for good.")
+
+print("  Arc progression logs complete")
 
 # ── Journal entries ─────────────────────────────────────────────────────────────
 db.post_journal(SLUG, 1, "The Garden",

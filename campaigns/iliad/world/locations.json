@@ -7,13 +7,15 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_db6cc2",
+          "id": "evt_d93689",
           "session": 1,
           "note": "[[Apollo]]'s plague burns through the camp for nine days after [[Agamemnon]] dishonors his priest. Men and mules die. The fires of cremation never go out. [[Achilles]] forces the assembly. [[Agamemnon]] returns Chryseis and takes [[Achilles]]' prize instead.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
-          "event_type": "other"
+          "event_type": "other",
+          "actor_id": "agamemnon",
+          "actor_type": "npc"
         }
       ],
       "role": "Greek military encampment on the Trojan shore",
@@ -26,16 +28,18 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_b84617",
+          "id": "evt_572dd8",
           "session": 1,
           "note": "[[Achilles]] withdraws here after [[Agamemnon]] seizes Briseis. He sits at his ships, plays his lyre, and sings of the deeds of men. [[Patroclus]] sits beside him. The Achaean army bleeds against the walls of Troy.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
-          "event_type": "other"
+          "event_type": "other",
+          "actor_id": "agamemnon",
+          "actor_type": "npc"
         },
         {
-          "id": "evt_ff94c6",
+          "id": "evt_6697b5",
           "session": 4,
           "note": "[[Odysseus]], [[Ajax]], and Phoenix come with [[Agamemnon]]'s offer: treasure, Briseis returned, a daughter in marriage. [[Achilles]] sees the pride beneath the gifts. He refuses. Two fates await him \u2014 long life or short glory. He is choosing neither yet.",
           "visibility": "public",
@@ -54,7 +58,7 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_6e7398",
+          "id": "evt_3d0aea",
           "session": 3,
           "note": "[[Hector]] bids [[Andromache]] farewell at the gate. He lifts [[Astyanax]], who recoils from the horsehair crest. [[Hector]] removes the helmet and holds his son. He prays: let him be greater than his father. He goes back through the gate. [[Andromache]] watches him until he is out of sight.",
           "visibility": "public",
@@ -64,7 +68,7 @@
         }
       ],
       "role": "Troy's western gate \u2014 the farewell place",
-      "dm_notes": "The Scaean Gate farewell is the poem's moral center. Hector knows Troy will fall. He goes anyway. The scene is constructed to break the reader: the baby who fears the helmet, the prayer for the son to surpass the father, Andromache watching him walk away knowing she will never see him again. Homer gives the Trojans this scene so we cannot simply root for the Greeks."
+      "dm_notes": "The Scaean Gate farewell is the poem's moral center. Hector knows Troy will fall. He goes anyway. The scene is constructed to break the reader: the baby who fears the helmet, the prayer for the son to surpass the father, Andromache watching him walk away knowing she will never see him again."
     },
     {
       "id": "the_walls_of_troy",
@@ -73,17 +77,19 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_24dece",
+          "id": "evt_64843b",
           "session": 7,
           "note": "[[Priam]] watches [[Hector]] die from the walls. He tears his white hair and weeps in the dust. He begged [[Hector]] not to face [[Achilles]]. [[Hector]] waited anyway. Troy's walls still stand. Everything behind them is changed.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
-          "event_type": "other"
+          "event_type": "other",
+          "actor_id": "achilles",
+          "actor_type": "npc"
         }
       ],
       "role": "Troy's ramparts \u2014 where the Trojans watch and fall",
-      "dm_notes": "The wall scenes give the Trojans their domestic humanity \u2014 we see them watching the war rather than fighting it. Andromache's collapse on the wall when Hector's body is dragged by Achilles is among the most devastating moments in the poem. Priam sees everything from here."
+      "dm_notes": "The wall scenes give the Trojans their domestic humanity \u2014 we see them watching the war rather than fighting it. Andromache's collapse on the wall when Hector's body is dragged by Achilles is among the most devastating moments in the poem."
     },
     {
       "id": "priam_s_palace",
@@ -92,7 +98,7 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_204443",
+          "id": "evt_29046a",
           "session": 8,
           "note": "[[Hector]] is brought home. [[Andromache]] leads the lament. [[Hecuba]] mourns her son. [[Helen]] mourns the only man in Troy who was kind to her. The poem ends at a funeral, not a victory. That is Homer's point.",
           "visibility": "public",
@@ -111,7 +117,7 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_99e4d1",
+          "id": "evt_42a16d",
           "session": 8,
           "note": "[[Priam]] comes at midnight, guided by Hermes, and kneels before [[Achilles]]. He asks him to remember his own father. He kisses the hands that killed his son. [[Achilles]] weeps. He lifts the old king. He promises twelve days of truce and returns [[Hector]]'s body.",
           "visibility": "public",
@@ -132,17 +138,19 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_9031e0",
+          "id": "evt_ef2d56",
           "session": 6,
           "note": "[[Patroclus]] fights brilliantly in [[Achilles]]' armor and drives the [[The City of Troy|Trojans]] from the ships. Then he presses on toward [[The Walls of Troy|the walls]]. [[Apollo]] stuns him from behind. [[Hector]] drives in the killing blow. The armor is stripped.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
-          "event_type": "combat"
+          "event_type": "combat",
+          "actor_id": "hector",
+          "actor_type": "npc"
         }
       ],
       "role": "The battlefield \u2014 where the war is fought and decided",
-      "dm_notes": "The plain is the theater of the war's action. The Trojan women can see it from the walls. Hector runs three circuits of Troy on this plain pursued by Achilles. Patroclus's overreach happens here \u2014 he drives the Trojans from the ships and then cannot stop. Apollo stuns him at the walls of Troy on the plain's far edge."
+      "dm_notes": "The plain is the theater of the war's action. Hector runs three circuits of Troy on this plain pursued by Achilles. Patroclus's overreach happens here \u2014 he drives the Trojans from the ships and then cannot stop. Apollo stuns him at the walls of Troy on the plain's far edge."
     }
   ]
 }

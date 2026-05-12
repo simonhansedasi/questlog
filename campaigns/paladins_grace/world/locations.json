@@ -7,13 +7,15 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_5a1d49",
+          "id": "evt_459109",
           "session": 1,
           "note": "[[House Vespar]]'s delegation arrives with forty armed guards \u2014 twenty-eight over the compact limit. [[Lady Ivra Malt]] presents papers claiming historical title. The gate watch counts every sword. [[Commander Aldric Vane]] does not invoke the clause today.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
-          "event_type": "politics"
+          "event_type": "politics",
+          "actor_id": "house_vespar",
+          "actor_type": "faction"
         }
       ],
       "role": "The city's main northern entrance \u2014 where the delegations arrived",
@@ -24,7 +26,19 @@
       "name": "The Grace-Sworn Citadel",
       "description": "The stone fortress at Hartstone's center where [[The Grace-Sworn]] have kept their watch for three generations. [[Commander Aldric Vane]] commands from here. [[Brother Edmar]] keeps the founding compact records in [[The City Archive|the archive]] below. The citadel is the physical expression of Hartstone's neutrality \u2014 it belongs to no kingdom.",
       "hidden": false,
-      "log": [],
+      "log": [
+        {
+          "id": "evt_a21808",
+          "session": 4,
+          "note": "Ambushed patrol brought here for treatment. [[Sera Eld]] identified Guild-import bolt-cloth used for the blindfolds. [[Commander Aldric Vane]] invoked the armed envoy clause from the citadel's command chamber. [[Kelrath Envoys|Kelrath]] complied within the hour.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 2,
+          "event_type": "other",
+          "actor_id": "the_underbrick",
+          "actor_type": "faction"
+        }
+      ],
       "role": "Headquarters of the paladin order and Hartstone's military command",
       "dm_notes": "Aldric's private rider \u2014 the one he sent without explaining who it was to \u2014 left from the citadel's back gate. The archive holds the original 1187 treaty. Edmar has been in the archive every evening for a week."
     },
@@ -35,9 +49,9 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_5aa34c",
+          "id": "evt_95d3cc",
           "session": 2,
-          "note": "[[Brother Edmar]] locates the succession clause in the founding compact. Both [[House Vespar|Vespar]] claimants have documentation. One set is forged \u2014 possibly both. He also finds something in the 1187 treaty that neither delegation has cited. He has not told anyone yet.",
+          "note": "[[Brother Edmar]] locates the succession clause. Both [[House Vespar|Vespar]] claimants have documentation \u2014 one set is forged, possibly both. He finds the 1187 treaty's third provision and has not told anyone. [[Osric Fell]] was here separately and found it too.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 2,
@@ -47,7 +61,7 @@
         }
       ],
       "role": "Hartstone's official records repository, keeper of the compact",
-      "dm_notes": "The 1187 treaty has a third provision that supersedes both the Vespar dynastic claim and the Kelrath neutrality resolution. Brother Edmar has found it. He has not told anyone yet. Petra Wynn already knows about it \u2014 she traded the information to someone six months ago."
+      "dm_notes": "The 1187 treaty has a third provision that supersedes both the Vespar dynastic claim and the Kelrath neutrality resolution. Brother Edmar has found it. He has not told anyone yet. Petra Wynn already knows about it \u2014 she traded the information to Dax Fell six months ago."
     },
     {
       "id": "the_compact_hall",
@@ -56,9 +70,9 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_82b8f9",
+          "id": "evt_7f48de",
           "session": 3,
-          "note": "[[Lady Ivra Malt]] presents Lord Eddan Vespar's documentation. [[Emissary Dax Fell]] produces the Kelrath resolution dated six months ago. [[Commander Aldric Vane]] adjourns without ruling. He sends a private rider from the citadel's back gate. He does not explain to whom.",
+          "note": "[[Lady Ivra Malt]] presents Lord Eddan Vespar's documentation. [[Emissary Dax Fell]] produces the Kelrath neutrality resolution dated six months ago. [[Commander Aldric Vane]] adjourns without ruling. He pulls the 1187 treaty and sends a private rider from the citadel's back gate.",
           "visibility": "public",
           "polarity": "neutral",
           "intensity": 2,
@@ -66,7 +80,7 @@
         }
       ],
       "role": "Hartstone's formal hearing chamber \u2014 where claims are argued",
-      "dm_notes": "The next hearing will determine whether the compact must recognize a Vespar heir. If Aldric rules wrongly, the compact breaks. The third provision of the 1187 treaty \u2014 if it is what Edmar thinks it is \u2014 could make both delegations' arguments irrelevant."
+      "dm_notes": "The next hearing will determine whether the compact must recognize a Vespar heir. If Aldric rules wrongly, the compact breaks. The third provision of the 1187 treaty \u2014 if invoked \u2014 makes both delegations' arguments irrelevant but requires the Grace-Sworn to be financially self-sufficient. They are not."
     },
     {
       "id": "the_east_quarter_tunnels",
@@ -75,9 +89,9 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_54a75b",
+          "id": "evt_fbed55",
           "session": 4,
-          "note": "A [[The Grace-Sworn|Grace-Sworn]] patrol is ambushed here \u2014 non-lethal, disarmed, blindfolded for two hours. A message is left: 'Stop looking.' The weapons cache is somewhere further in. [[The Loom]] knows the patrol found the outer staging area.",
+          "note": "A [[The Grace-Sworn|Grace-Sworn]] patrol ambushed here \u2014 non-lethal, disarmed, blindfolded two hours. 'Stop looking.' The weapons cache is further in. [[The Loom]] used their own arms. A second exit exists that does not appear on Grace-Sworn tunnel maps.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
@@ -96,9 +110,9 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_673793",
+          "id": "evt_e10c23",
           "session": 2,
-          "note": "[[Guildmaster Sena Cord]] meets the party privately. She confirms the Guild knows about the weapon shipments. She says: 'The compact pays my tariffs. I would prefer it to continue.' She does not name her price. She does not say what she knows about the source.",
+          "note": "[[Guildmaster Sena Cord]] meets the party privately. She confirms the Guild knows about the weapon shipments through the east tunnels. She says: 'The compact pays my tariffs \u2014 I would prefer it to continue.' She does not name her price.",
           "visibility": "public",
           "polarity": "neutral",
           "intensity": 1,
