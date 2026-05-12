@@ -7,7 +7,24 @@
       "description": "Who has the right to rule England? The Yorkist claim through Philippa of Clarence \u2014 Edward III's third son \u2014 is genealogically stronger than the Lancastrian claim through John of Gaunt's illegitimate line. But the Lancastrians have ruled for fifty years. Legitimacy is not just genealogy: it is also possession, precedent, and force. Each side argues law; each side wins with armies. Henry VII settles the question by winning and then marrying the other side.",
       "hidden": false,
       "objectives": [],
-      "log": []
+      "log": [
+        {
+          "session": 1,
+          "note": "Period 1: Henry VI's mental collapse gives York the opening. St. Albans draws first blood \u2014 both sides call it a misunderstanding."
+        },
+        {
+          "session": 2,
+          "note": "Period 2: Act of Accord passes parliament \u2014 York made heir to Henry VI. Margaret refuses. York killed at Wakefield. His son inherits the claim."
+        },
+        {
+          "session": 3,
+          "note": "Period 3: Towton \u2014 28,000 dead, Lancastrian army destroyed. Edward IV is king at 19. The question answered by force for the first time."
+        },
+        {
+          "session": 9,
+          "note": "Period 9: Henry VII settles the question by winning and marrying Elizabeth of York. He holds the crown by conquest, not by right of his wife. He says so clearly."
+        }
+      ]
     },
     {
       "id": "warwick_s_gamble",
@@ -16,7 +33,20 @@
       "description": "Richard Neville made Edward IV king. He expected to run the kingdom. Edward's secret marriage to a Woodville widow in 1464 ends this arrangement. Warwick's response \u2014 rebellion, capture of the king, restoration of Lancaster, alliance with the queen he spent years fighting \u2014 is the most dramatic political reversal of the entire conflict. Whether he could have succeeded is unanswerable: he is killed at Barnet before the alliance with Margaret can be tested at full strength.",
       "hidden": false,
       "objectives": [],
-      "log": []
+      "log": [
+        {
+          "session": 2,
+          "note": "Period 2: Warwick holds London for York \u2014 the Kingmaker at the peak of his influence. Their partnership is the foundation of Yorkist victory."
+        },
+        {
+          "session": 4,
+          "note": "Period 4: Edward's Woodville marriage announced while Warwick is in France negotiating. He returns humiliated. The wound does not heal. He rebels, captures Edward, flees to France. He approaches Margaret of Anjou \u2014 his former enemy \u2014 and they ally."
+        },
+        {
+          "session": 5,
+          "note": "Period 5: Warwick invades, restores Henry VI. Killed at Barnet in Easter morning fog \u2014 his own allies misidentify a banner and attack him. He is on foot, trying to reach his horse."
+        }
+      ]
     },
     {
       "id": "the_princes_in_the_tower",
@@ -25,7 +55,20 @@
       "description": "Edward IV dies in April 1483. His heir is twelve years old. Within two months his brother Richard has declared the boy illegitimate, imprisoned him and his brother in the Tower, and crowned himself. The two boys are never seen in public again. Richard's reign lasts twenty-six months. Every defection that ultimately kills him at Bosworth is driven at least partly by the question of what he did to his nephews.",
       "hidden": false,
       "objectives": [],
-      "log": []
+      "log": [
+        {
+          "session": 7,
+          "note": "Period 7: Edward IV dies unexpectedly in April 1483 at 40. His heir is 12. Richard of Gloucester \u2014 his most loyal brother \u2014 is about to make his decision."
+        },
+        {
+          "session": 8,
+          "note": "Period 8: Richard takes custody of Edward V, declares him illegitimate, crowned Richard III. Both princes imprisoned in the Tower. Never seen publicly again. Every Yorkist defection that follows is driven by this absence."
+        },
+        {
+          "session": 9,
+          "note": "Period 9: Richard III's reign lasts 26 months. He is killed at Bosworth. The princes' fate remains unknown. Richard never explains their absence."
+        }
+      ]
     },
     {
       "id": "the_tudor_settlement",
@@ -34,7 +77,20 @@
       "description": "Henry Tudor has no real claim to the throne beyond survival and opportunity. He wins it by killing Richard III and immediately marries Elizabeth of York \u2014 uniting the two roses and ending the dynastic argument. His victory is not inevitable: it requires French money, Welsh loyalty, and the Stanley family's last-minute betrayal of Richard mid-battle. The Wars of the Roses end not because someone wins decisively but because Henry VII proves impossible to dislodge.",
       "hidden": false,
       "objectives": [],
-      "log": []
+      "log": [
+        {
+          "session": 6,
+          "note": "Period 6: Lancaster's main line extinguished at Tewkesbury. Henry Tudor \u2014 a 14-year-old exile in Brittany with a questionable claim \u2014 is the only remaining Lancastrian bloodline. No one takes him seriously yet."
+        },
+        {
+          "session": 8,
+          "note": "Period 8: Richard III's usurpation drives Yorkist defections. Former Edward IV loyalists begin corresponding with Tudor in exile."
+        },
+        {
+          "session": 9,
+          "note": "Period 9: Tudor lands at Milford Haven with French troops. Stanleys switch mid-battle. Richard III killed. Crown found in a hawthorn bush. Henry VII marries Elizabeth of York. Thirty years of war over."
+        }
+      ]
     }
   ]
 }

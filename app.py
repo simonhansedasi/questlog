@@ -58,39 +58,8 @@ def slugify_filter(text):
 
 
 @app.template_filter("wikilinks")
-def wikilinks_filter(text, slug, npcs, factions, locations=None, party=None):
-    if not text:
-        return Markup('')
-    lookup = {}
-    for n in (npcs or []):
-        lookup[n['name'].lower()] = ('npc', n['id'])
-    for f in (factions or []):
-        lookup[f['name'].lower()] = ('faction', f['id'])
-    for loc in (locations or []):
-        lookup[loc['name'].lower()] = ('location', loc['id'])
-    for c in (party or []):
-        lookup[c['name'].lower()] = ('party', db.slugify(c['name']))
-    escaped = str(Markup.escape(text))
-
-    def replace(m):
-        inner = m.group(1)
-        if '|' in inner:
-            entity, display = inner.split('|', 1)
-            entity = entity.strip()
-            display = display.strip()
-        else:
-            entity = display = inner.strip()
-        key = entity.lower()
-        if key in lookup:
-            etype, eid = lookup[key]
-            if etype == 'location':
-                return f'<a href="/{slug}/world/location/{eid}" class="wikilink">{Markup.escape(display)}</a>'
-            if etype == 'party':
-                return f'<a href="/{slug}/party/char/{eid}" class="wikilink">{Markup.escape(display)}</a>'
-            return f'<a href="/{slug}/world/{etype}/{eid}" class="wikilink">{Markup.escape(display)}</a>'
-        return str(Markup.escape(display))
-
-    return Markup(re.sub(r'\[\[([^\]\[]+)\]\]', replace, escaped))
+def _wikilinks_template_filter(text, slug, npcs, factions, locations=None, party=None):
+    return wikilinks_filter(text, slug, npcs, factions, locations, party)
 
 
 # ── After-request hooks ───────────────────────────────────────────────────────
@@ -105,7 +74,7 @@ def stamp_demo_visitor(response):
 # ── Context processor ─────────────────────────────────────────────────────────
 
 from routes.utils import (
-    load, load_users, _user_world_count, _DEFAULT_TERMS,
+    load, load_users, _user_world_count, _DEFAULT_TERMS, wikilinks_filter,
 )
 
 @app.context_processor

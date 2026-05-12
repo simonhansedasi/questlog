@@ -1,9 +1,10 @@
 {
+  "slug": "ww2",
   "name": "World War II",
   "system": "History \u2014 1933\u20131945",
   "owner": "demo",
   "dm_pin": "1234",
-  "share_token": "3iDxNpudqfSURBmEXpNIMQ",
+  "share_token": "M4Klcfh5zlEhjJV9t5XU6Q",
   "demo": true,
   "public": true,
   "mode": "historical",

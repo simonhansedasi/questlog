@@ -7,7 +7,24 @@
       "description": "Agamemnon seizes Briseis. Achilles withdraws. The Achaeans, robbed of their champion, begin to lose. Thetis persuades Zeus to let them suffer. Everything that follows flows from one king's pride and one hero's rage.",
       "hidden": false,
       "objectives": [],
-      "log": []
+      "log": [
+        {
+          "session": 1,
+          "note": "Book 1: Agamemnon seizes Briseis. Achilles withdraws. Thetis persuades Zeus to let the Achaeans suffer. Apollo's plague ends but the rupture does not."
+        },
+        {
+          "session": 4,
+          "note": "Book 4: Embassy fails. Achilles refuses treasure, honor, a king's daughter. Two fates await him. He is choosing neither yet. The army keeps dying."
+        },
+        {
+          "session": 5,
+          "note": "Book 5: Trojans breach the camp wall and fight on the Achaean beach. Ajax holds alone. Achilles watches from the shore."
+        },
+        {
+          "session": 7,
+          "note": "Book 7: Achilles returns. The rage has its target. Hector is dead. The wrath consumed everything it needed to \u2014 and more than that."
+        }
+      ]
     },
     {
       "id": "the_death_of_patroclus",
@@ -16,7 +33,12 @@
       "description": "Patroclus cannot watch his friends die. He borrows Achilles' armor and leads the Myrmidons back to battle. He drives the Trojans from the ships \u2014 and then, ignoring his friend's command, presses too far. Apollo stuns him. Hector kills him. The armor is stripped. Achilles' rage turns inside out.",
       "hidden": false,
       "objectives": [],
-      "log": []
+      "log": [
+        {
+          "session": 6,
+          "note": "Book 6: Patroclus borrows the armor. Drives the Trojans from the ships. Cannot stop. Apollo stuns him at the walls. Hector kills him. The armor stripped. Achilles' world ends on the plain of Troy."
+        }
+      ]
     },
     {
       "id": "the_ransom_of_hector",
@@ -25,7 +47,16 @@
       "description": "Achilles kills Hector. He drags the body behind his chariot for twelve days. Priam, guided by Hermes, walks alone into the enemy camp at night to beg for his son. Achilles weeps with the old man. He returns the body. The poem ends with Hector's funeral \u2014 not Troy's fall. That is the point.",
       "hidden": false,
       "objectives": [],
-      "log": []
+      "log": [
+        {
+          "session": 7,
+          "note": "Book 7: Achilles kills Hector. Drags the body for twelve days. The gods watch in distress. Priam watches from the walls."
+        },
+        {
+          "session": 8,
+          "note": "Book 8: Priam walks alone into the enemy camp at night. Kneels before Achilles. Achilles weeps. Returns the body. Twelve days of truce. The poem ends at a funeral. That is the point."
+        }
+      ]
     }
   ]
 }

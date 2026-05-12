@@ -22,7 +22,7 @@ from routes.utils import (
     STRIPE_PRICE_PRO, STRIPE_PRICE_PRO_ANNUAL, STRIPE_PRICE_WORLD, STRIPE_PRICE_PARTY,
     DEMO_SOURCE, DEMO_DIR, DEMO_STAMP, DEMO_COUNTS_FILE,
     _load_demo_counts, _save_demo_counts, reset_demo,
-    _build_diffs, _create_onboarding_campaign,
+    _build_diffs, _create_onboarding_campaign, wikilinks_filter,
 )
 from extensions import limiter, oauth
 

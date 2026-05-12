@@ -7,7 +7,24 @@
       "description": "France falls in six weeks in May-June 1940. De Gaulle escapes to London and declares Free France on the BBC. The collaborationist Vichy government controls the south. Three years later, French forces fight at Cassino, in North Africa, and land at Normandy. The question of what France was during the occupation will haunt it for generations.",
       "hidden": false,
       "objectives": [],
-      "log": []
+      "log": [
+        {
+          "session": 3,
+          "note": "Period 3: France falls in six weeks. De Gaulle escapes to London and broadcasts from the BBC on June 18: 'The flame of French resistance must not and shall not die.' Vichy controls the south. Free France has a microphone and nothing else."
+        },
+        {
+          "session": 8,
+          "note": "Period 8: Allied forces invade Sicily. Free French units fight in North Africa and Italy. Mussolini is deposed. The path to France from the south is opening."
+        },
+        {
+          "session": 9,
+          "note": "Period 9: Paris liberated August 25, 1944. De Gaulle insists French forces enter first, then walks the Champs-\u00c9lys\u00e9es under sniper fire. France did not wait to be liberated \u2014 that is the story de Gaulle needs the world to believe."
+        },
+        {
+          "session": 10,
+          "note": "Period 10: Germany surrenders May 8, 1945. France is a victor power. What France was during the occupation \u2014 the collaboration, Vichy, the deportations \u2014 will be buried under the resistance narrative for a generation."
+        }
+      ]
     },
     {
       "id": "the_eastern_front",
@@ -16,7 +33,20 @@
       "description": "Operation Barbarossa is the largest military operation in history: three million German troops invade the Soviet Union on June 22, 1941, Hitler's most consequential decision. The Eastern Front kills twenty-seven million Soviet citizens. It is where the war is won \u2014 and at a cost that dwarfs everything else. Zhukov holds Moscow, Stalingrad, and finally Berlin.",
       "hidden": false,
       "objectives": [],
-      "log": []
+      "log": [
+        {
+          "session": 4,
+          "note": "Period 4: Barbarossa \u2014 3 million German troops invade on June 22, 1941. The largest military operation in history. The Red Army loses 800,000 men in two months. Stalin stays in Moscow. Zhukov stops the Germans forty miles from the Kremlin."
+        },
+        {
+          "session": 7,
+          "note": "Period 7: Stalingrad turns the tide. Operation Uranus encircles 300,000 Germans. Paulus surrenders. For the first time, the German public is told something has gone wrong. After Kursk in July 1943, Germany never attacks in the East again."
+        },
+        {
+          "session": 10,
+          "note": "Period 10: Operation Bagration destroys Army Group Centre \u2014 larger than D-Day, happening the same week. Zhukov reaches Berlin. Hitler dies in the bunker April 30. Germany surrenders May 8. The Eastern Front has cost 27 million Soviet lives."
+        }
+      ]
     },
     {
       "id": "the_pacific_war",
@@ -25,7 +55,20 @@
       "description": "Pearl Harbor on December 7, 1941 brings the United States into the war. Japan dominates the Pacific for six months. Midway in June 1942 destroys the IJN's carrier fleet and turns the tide. Island-hopping to Iwo Jima and Okinawa; then Hiroshima and Nagasaki. The Pacific war ends on the deck of the Missouri.",
       "hidden": false,
       "objectives": [],
-      "log": []
+      "log": [
+        {
+          "session": 5,
+          "note": "Period 5: Pearl Harbor, December 7, 1941. Yamamoto's carriers attack at dawn. The US aircraft carriers are at sea and survive. Hitler declares war on the US four days later \u2014 he was not required to. The Grand Alliance is complete."
+        },
+        {
+          "session": 6,
+          "note": "Period 6: Midway, June 1942. US code-breakers read the Japanese plan. In five minutes of divebombing, four Japanese fleet carriers are sunk. Japan loses its offensive capability in the Pacific. The war's direction changes."
+        },
+        {
+          "session": 12,
+          "note": "Period 12: Hiroshima, August 6, 1945. Nagasaki, August 9. Soviet Union declares war August 8. Japan faces simultaneous atomic and conventional destruction. Hirohito broadcasts August 15. Japan surrenders on the Missouri September 2."
+        }
+      ]
     },
     {
       "id": "the_road_to_d_day",
@@ -34,7 +77,20 @@
       "description": "Churchill and Roosevelt debate a second front throughout 1942-43. North Africa first. Then Sicily and Italy \u2014 'the soft underbelly of Europe.' On June 6, 1944, 156,000 Allied troops land on five beaches in Normandy. Eisenhower holds the coalition together; the Allies liberate Paris by August. Hitler's Europe is crumbling from all directions.",
       "hidden": false,
       "objectives": [],
-      "log": []
+      "log": [
+        {
+          "session": 7,
+          "note": "Period 7: El Alamein, October 1942. Montgomery defeats Rommel \u2014 Britain's first major land victory. North Africa cleared by May 1943. The debate continues: cross the Channel now, or go through the Mediterranean first?"
+        },
+        {
+          "session": 8,
+          "note": "Period 8: Sicily and Italy. Churchill's 'soft underbelly' \u2014 the Italian campaign ties down German divisions but grinds Allied forces at Monte Cassino for five months. The Americans are right that the Channel crossing cannot wait indefinitely."
+        },
+        {
+          "session": 9,
+          "note": "Period 9: D-Day, June 6, 1944. 156,000 troops on five beaches. Omaha costs 2,000 casualties in a morning. By August, Patton's Third Army has crossed France at 600 miles in two weeks. Paris liberated. Hitler's Europe crumbling from all directions."
+        }
+      ]
     }
   ]
 }

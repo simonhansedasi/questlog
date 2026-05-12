@@ -7,7 +7,7 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_bab8f6",
+          "id": "evt_3a71c6",
           "session": 1,
           "note": "[[Adam]] and [[Eve]] eat the forbidden fruit. God walks in the garden in the cool of the day and calls: where are you? [[Adam]] blames [[Eve]]. [[Eve]] blames the serpent. The garden is lost.",
           "visibility": "public",
@@ -35,13 +35,15 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_bd0751",
+          "id": "evt_d39ab5",
           "session": 4,
           "note": "[[Hagar]] meets the angel of the LORD at this spring, fleeing [[Sarah]]'s cruelty. She is seen. She names God El-roi \u2014 the one who sees me. This is the only place in the Bible where a human gives God a name.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 3,
-          "event_type": "dialogue"
+          "event_type": "dialogue",
+          "actor_id": "hagar",
+          "actor_type": "npc"
         }
       ],
       "role": "The well where Hagar named God",
@@ -54,15 +56,15 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_ce0746",
+          "id": "evt_174f82",
           "session": 5,
           "note": "[[Abraham]] brings [[Isaac]] here. He builds the altar. He binds his son. He raises the knife. God stops him. A ram is caught in the thicket. [[Abraham]] names the place: the LORD will provide.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 3,
           "event_type": "other",
-          "actor_id": "The Reader",
-          "actor_type": "party"
+          "actor_id": "abraham",
+          "actor_type": "npc"
         }
       ],
       "role": "The place of the binding of Isaac",
@@ -75,7 +77,7 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_3c114e",
+          "id": "evt_ceadbe",
           "session": 6,
           "note": "[[Jacob]] sleeps on a stone with angels ascending and descending above him. God renews the covenant: your descendants will be as the dust of the earth. [[Jacob]] wakes and anoints the stone.",
           "visibility": "public",
@@ -94,7 +96,7 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_da2be4",
+          "id": "evt_8cfa7e",
           "session": 7,
           "note": "[[Jacob]] wrestles alone until daybreak. He refuses to release the man without a blessing. His hip is struck. He is renamed Israel. He limps into the sunrise carrying a new name and a permanent wound.",
           "visibility": "public",
@@ -113,7 +115,7 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_6f1ef1",
+          "id": "evt_fdcbaf",
           "session": 8,
           "note": "[[Joseph]]'s brothers strip his coat and throw him in a dry pit. [[Judah]] proposes selling him. Twenty pieces of silver. The coat is dipped in goat's blood. [[Jacob]] weeps and will not be comforted.",
           "visibility": "public",
@@ -134,7 +136,7 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_390c92",
+          "id": "evt_ff7261",
           "session": 10,
           "note": "[[Pharaoh]] dreams of fat cows and lean cows. [[Joseph]] interprets it. [[Pharaoh]] gives him his ring, his linen, his chain. Second in command of all Egypt. [[Joseph]] is thirty years old. He was in a pit ten years ago.",
           "visibility": "public",
@@ -145,13 +147,15 @@
           "actor_type": "npc"
         },
         {
-          "id": "evt_3ce61e",
+          "id": "evt_2cc298",
           "session": 10,
           "note": "[[Joseph]] reveals himself to his brothers. 'I am Joseph. Is my father still alive?' He cannot stop weeping. His brothers cannot answer him \u2014 they are dismayed before him.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 3,
-          "event_type": "dialogue"
+          "event_type": "dialogue",
+          "actor_id": "joseph",
+          "actor_type": "npc"
         }
       ],
       "role": "The seat of Egyptian power \u2014 Joseph's throne",

@@ -13,9 +13,9 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_e5ffa9",
+          "id": "evt_16eed3",
           "session": 1,
-          "note": "Consequence of Lady Ivra Malt (rival): [[House Vespar]]'s delegation arrives at Hartstone's north gate with forty armed guards. [[Lady Ivra Malt]] presents papers claiming historical title. Impeccably polite, completely immovable.",
+          "note": "Consequence of Lady Ivra Malt (rival): Lady Ivra's arrival \u2014 claim presented, forty guards, compact limit exceeded.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 2,
@@ -23,15 +23,15 @@
           "ripple_source": {
             "entity_id": "lady_ivra_malt",
             "entity_type": "npc",
-            "event_id": null
+            "event_id": "evt_290ae5"
           },
           "actor_id": "lady_ivra_malt",
           "actor_type": "npc"
         },
         {
-          "id": "evt_cf48bb",
+          "id": "evt_f2cc68",
           "session": 1,
-          "note": "[[Commander Aldric Vane]] reads [[Lady Ivra Malt]]'s papers carefully, thanks her, and invites the delegation to guest quarters without confirming the claim. He sends a rider to [[Brother Edmar]] before dinner.",
+          "note": "[[Commander Aldric Vane]] reads [[Lady Ivra Malt]]'s papers, thanks her, and invites the delegation to guest quarters without confirming the claim. He sends a private rider to [[Brother Edmar]] before dinner.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 1,
@@ -39,9 +39,9 @@
           "location_id": "the_grace_sworn_citadel"
         },
         {
-          "id": "evt_19035d",
+          "id": "evt_9eae2a",
           "session": 3,
-          "note": "Consequence of Lady Ivra Malt (rival): [[Lady Ivra Malt]] presents her second claimant's documentation at a formal hearing: Lord Eddan Vespar, third cousin, with a direct treaty right to Hartstone under the Compact of 1187. The records are genuine. [[Emissary Dax Fell]] has a counter.",
+          "note": "Consequence of Lady Ivra Malt (rival): Lady Ivra's formal claim \u2014 Lord Eddan's documentation presented at the hearing.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 2,
@@ -49,15 +49,15 @@
           "ripple_source": {
             "entity_id": "lady_ivra_malt",
             "entity_type": "npc",
-            "event_id": null
+            "event_id": "evt_5c9f41"
           },
           "actor_id": "lady_ivra_malt",
           "actor_type": "npc"
         },
         {
-          "id": "evt_8124e6",
+          "id": "evt_0b45ea",
           "session": 3,
-          "note": "[[Commander Aldric Vane]] adjourns the hearing. Asks [[Brother Edmar]] to retrieve the 1187 treaty from the archive. Sends a second rider, privately, to someone outside the city. Does not explain who.",
+          "note": "[[Commander Aldric Vane]] adjourns the hearing. Asks [[Brother Edmar]] to retrieve the 1187 treaty from the archive. Sends a second rider privately. Does not explain who. His expression does not change at any point during the session.",
           "visibility": "dm_only",
           "polarity": "positive",
           "intensity": 1,
@@ -65,9 +65,9 @@
           "location_id": "the_compact_hall"
         },
         {
-          "id": "evt_fbd49b",
+          "id": "evt_49573f",
           "session": 4,
-          "note": "[[Commander Aldric Vane]] invokes the armed envoy clause: both delegations must reduce guards to twelve within forty-eight hours. [[Lady Ivra Malt]] protests. [[Emissary Dax Fell]] immediately complies and offers his excess guards to help patrol the tunnels.",
+          "note": "[[Commander Aldric Vane]] invokes the armed envoy clause: both delegations must reduce guards to twelve within forty-eight hours. [[Lady Ivra Malt]] protests formally. [[Emissary Dax Fell]] immediately complies and offers his excess guards to help patrol the tunnels. [[Commander Aldric Vane|Aldric]] thanks him and does not accept.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 2,
@@ -75,6 +75,7 @@
           "location_id": "the_compact_hall"
         }
       ],
+      "dm_notes": "Aldric sent a private rider before dinner on Session 1 \u2014 the recipient is a retired Grace-Sworn who knows where the 1187 treaty's original signatories were buried. He's been in contact with this source for three weeks, since before Vespar arrived. He knew this was coming.",
       "relations": [
         {
           "target": "lady_ivra_malt",
@@ -112,9 +113,9 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_d30665",
+          "id": "evt_290ae5",
           "session": 1,
-          "note": "[[House Vespar]]'s delegation arrives at Hartstone's north gate with forty armed guards. [[Lady Ivra Malt]] presents papers claiming historical title. Impeccably polite, completely immovable.",
+          "note": "[[Lady Ivra Malt]] presents papers claiming historical title at [[Hartstone North Gate|the north gate]]. Impeccably polite, completely immovable. She thanks [[Commander Aldric Vane]] for the guest quarters before he has finished reading.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
@@ -122,9 +123,9 @@
           "location_id": "hartstone_north_gate"
         },
         {
-          "id": "evt_8009ca",
+          "id": "evt_5c9f41",
           "session": 3,
-          "note": "[[Lady Ivra Malt]] presents her second claimant's documentation at a formal hearing: Lord Eddan Vespar, third cousin, with a direct treaty right to Hartstone under the Compact of 1187. The records are genuine. [[Emissary Dax Fell]] has a counter.",
+          "note": "[[Lady Ivra Malt]] presents her second claimant's documentation at a formal hearing: Lord Eddan Vespar, third cousin, with a direct treaty right to Hartstone under the Compact of 1187. The records are genuine. [[Emissary Dax Fell]] has a counter. She expected him to.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
@@ -132,9 +133,9 @@
           "location_id": "the_compact_hall"
         },
         {
-          "id": "evt_0935fa",
+          "id": "evt_762b51",
           "session": 3,
-          "note": "Consequence of Emissary Dax Fell (rival): [[Emissary Dax Fell]] produces a ratified [[The Kelrath Envoys|Kelrath]] Council resolution: Hartstone's neutrality supersedes any historical treaty claim. It is dated six months ago. He has been planning this longer than that.",
+          "note": "Consequence of Emissary Dax Fell (rival): Dax Fell's neutrality resolution \u2014 dated six months ago, drafted before he arrived in Hartstone.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 2,
@@ -142,15 +143,15 @@
           "ripple_source": {
             "entity_id": "emissary_dax_fell",
             "entity_type": "npc",
-            "event_id": null
+            "event_id": "evt_cd5200"
           },
           "actor_id": "emissary_dax_fell",
           "actor_type": "npc"
         },
         {
-          "id": "evt_139ea7",
+          "id": "evt_fb7dbc",
           "session": 4,
-          "note": "Consequence of Commander Aldric Vane (rival): [[Commander Aldric Vane]] invokes the armed envoy clause: both delegations must reduce guards to twelve within forty-eight hours. [[Lady Ivra Malt]] protests. [[Emissary Dax Fell]] immediately complies and offers his excess guards to help patrol the tunnels.",
+          "note": "Consequence of Commander Aldric Vane (rival): Aldric invokes the compact's armed envoy clause \u2014 direct enforcement action.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
@@ -158,12 +159,13 @@
           "ripple_source": {
             "entity_id": "commander_aldric_vane",
             "entity_type": "npc",
-            "event_id": null
+            "event_id": "evt_49573f"
           },
           "actor_id": "commander_aldric_vane",
           "actor_type": "npc"
         }
       ],
+      "dm_notes": "Ivra and Aldric have met twice before \u2014 once at a trade summit seven years ago, once at a border arbitration three years back. She knows he won't bend on the compact. Her fallback: if the claim fails, she will offer Aldric a personal arrangement \u2014 Grace-Sworn funding from House Vespar, permanently, in exchange for a 'favorable interpretation.'",
       "relations": [
         {
           "target": "commander_aldric_vane",
@@ -177,8 +179,9 @@
           "target": "emissary_dax_fell",
           "target_type": "npc",
           "formal_relation": "rival",
-          "personal_relation": "neutral",
-          "weight": 0.8
+          "personal_relation": "ally",
+          "weight": 0.8,
+          "dm_only": true
         }
       ]
     },
@@ -195,9 +198,9 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_f49fe9",
+          "id": "evt_65aa89",
           "session": 2,
-          "note": "[[Guildmaster Sena Cord]] requests a private meeting. She confirms [[The Compact Guild]] is aware of the weapons movement. She says: 'The compact pays my tariffs. I would prefer it to continue.' She does not say what she knows about the source.",
+          "note": "[[Guildmaster Sena Cord]] requests a private meeting at [[The Guildhall]]. She confirms [[The Compact Guild]] is aware of the weapons movement \u2014 not because the watch told her. She says: 'The compact pays my tariffs. I would prefer it to continue.' She does not name her price. She pours the good wine.",
           "visibility": "public",
           "polarity": "neutral",
           "intensity": 1,
@@ -205,9 +208,9 @@
           "location_id": "the_guildhall"
         },
         {
-          "id": "evt_f8ff81",
+          "id": "evt_ef5996",
           "session": 3,
-          "note": "Consequence of Emissary Dax Fell (ally): [[Emissary Dax Fell]] produces a ratified [[The Kelrath Envoys|Kelrath]] Council resolution: Hartstone's neutrality supersedes any historical treaty claim. It is dated six months ago. He has been planning this longer than that.",
+          "note": "Consequence of Emissary Dax Fell (ally): Dax Fell's neutrality resolution \u2014 dated six months ago, drafted before he arrived in Hartstone.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 1,
@@ -215,15 +218,15 @@
           "ripple_source": {
             "entity_id": "emissary_dax_fell",
             "entity_type": "npc",
-            "event_id": null
+            "event_id": "evt_cd5200"
           },
           "actor_id": "emissary_dax_fell",
           "actor_type": "npc"
         },
         {
-          "id": "evt_bc02a4",
+          "id": "evt_09bd1d",
           "session": 4,
-          "note": "Consequence of Commander Aldric Vane (ally): [[Commander Aldric Vane]] invokes the armed envoy clause: both delegations must reduce guards to twelve within forty-eight hours. [[Lady Ivra Malt]] protests. [[Emissary Dax Fell]] immediately complies and offers his excess guards to help patrol the tunnels.",
+          "note": "Consequence of Commander Aldric Vane (ally): Aldric invokes the compact's armed envoy clause \u2014 direct enforcement action.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 2,
@@ -231,12 +234,13 @@
           "ripple_source": {
             "entity_id": "commander_aldric_vane",
             "entity_type": "npc",
-            "event_id": null
+            "event_id": "evt_49573f"
           },
           "actor_id": "commander_aldric_vane",
           "actor_type": "npc"
         }
       ],
+      "dm_notes": "Her price: the Guild wants a permanent seat on the compact's trade arbitration panel \u2014 a structural veto over any tariff disputes routed through Hartstone. She has been meeting with Dax Fell for three months. The Kelrath resolution, if it holds, gives the Guild more leverage than either Vespar outcome.",
       "relations": [
         {
           "target": "commander_aldric_vane",
@@ -249,7 +253,8 @@
           "target": "emissary_dax_fell",
           "target_type": "npc",
           "relation": "ally",
-          "weight": 0.7
+          "weight": 0.7,
+          "dm_only": true
         }
       ]
     },
@@ -266,9 +271,9 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_436eb4",
+          "id": "evt_6e7285",
           "session": 1,
-          "note": "Consequence of Lady Ivra Malt (rival): [[House Vespar]]'s delegation arrives at Hartstone's north gate with forty armed guards. [[Lady Ivra Malt]] presents papers claiming historical title. Impeccably polite, completely immovable.",
+          "note": "Consequence of Lady Ivra Malt (rival): Lady Ivra's arrival \u2014 claim presented, forty guards, compact limit exceeded.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 2,
@@ -276,15 +281,15 @@
           "ripple_source": {
             "entity_id": "lady_ivra_malt",
             "entity_type": "npc",
-            "event_id": null
+            "event_id": "evt_290ae5"
           },
           "actor_id": "lady_ivra_malt",
           "actor_type": "npc"
         },
         {
-          "id": "evt_79ab2a",
+          "id": "evt_d3c22b",
           "session": 1,
-          "note": "[[Emissary Dax Fell]] dines with [[The Compact Guild]]'s senior merchants the same evening the [[House Vespar]] delegation arrives. He is already here. He has been here six months.",
+          "note": "[[Emissary Dax Fell]] dines with [[The Compact Guild]]'s senior merchants the same evening the [[House Vespar]] delegation arrives. He has been here six months. He is not surprised.",
           "visibility": "dm_only",
           "polarity": "neutral",
           "intensity": 1,
@@ -292,9 +297,9 @@
           "location_id": "the_guildhall"
         },
         {
-          "id": "evt_d9f04f",
+          "id": "evt_5a9def",
           "session": 3,
-          "note": "Consequence of Lady Ivra Malt (rival): [[Lady Ivra Malt]] presents her second claimant's documentation at a formal hearing: Lord Eddan Vespar, third cousin, with a direct treaty right to Hartstone under the Compact of 1187. The records are genuine. [[Emissary Dax Fell]] has a counter.",
+          "note": "Consequence of Lady Ivra Malt (rival): Lady Ivra's formal claim \u2014 Lord Eddan's documentation presented at the hearing.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 2,
@@ -302,15 +307,15 @@
           "ripple_source": {
             "entity_id": "lady_ivra_malt",
             "entity_type": "npc",
-            "event_id": null
+            "event_id": "evt_5c9f41"
           },
           "actor_id": "lady_ivra_malt",
           "actor_type": "npc"
         },
         {
-          "id": "evt_fb0e46",
+          "id": "evt_cd5200",
           "session": 3,
-          "note": "[[Emissary Dax Fell]] produces a ratified [[The Kelrath Envoys|Kelrath]] Council resolution: Hartstone's neutrality supersedes any historical treaty claim. It is dated six months ago. He has been planning this longer than that.",
+          "note": "[[Emissary Dax Fell]] produces a ratified [[The Kelrath Envoys|Kelrath]] Council resolution: Hartstone's neutrality supersedes any historical treaty claim. It is dated six months ago. He drafted it before he arrived.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
@@ -318,19 +323,22 @@
           "location_id": "the_compact_hall"
         }
       ],
+      "dm_notes": "Dax drafted the Kelrath neutrality resolution while still at the Confederation capital \u2014 six months before he arrived. He knew Vespar's play in advance, possibly from an informant inside House Vespar's legal office. [[Osric Fell|Osric]] was at the Academy when the resolution was being drafted. He never saw Dax's name on it until now.",
       "relations": [
         {
           "target": "lady_ivra_malt",
           "target_type": "npc",
           "formal_relation": "rival",
-          "personal_relation": "neutral",
-          "weight": 0.8
+          "personal_relation": "ally",
+          "weight": 0.8,
+          "dm_only": true
         },
         {
           "target": "guildmaster_sena_cord",
           "target_type": "npc",
           "relation": "ally",
-          "weight": 0.7
+          "weight": 0.7,
+          "dm_only": true
         }
       ]
     },
@@ -347,9 +355,9 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_a1ee3d",
+          "id": "evt_ae4b06",
           "session": 2,
-          "note": "[[Brother Edmar]] locates the succession clause in the founding compact: [[The Grace-Sworn]] must recognize the legitimate ruler of any treaty partner. Both [[House Vespar]] claimants have documentation. One set is forged. He does not yet know which.",
+          "note": "[[Brother Edmar]] locates the succession clause in the founding compact: [[The Grace-Sworn]] must recognize the legitimate ruler of any treaty partner. Both [[House Vespar]] claimants have documentation. One set is forged \u2014 possibly both. He does not yet know which. He finds something else in the 1187 treaty he is not ready to share.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 1,
@@ -357,9 +365,9 @@
           "location_id": "the_city_archive"
         },
         {
-          "id": "evt_021e02",
+          "id": "evt_6b1a45",
           "session": 4,
-          "note": "Consequence of Commander Aldric Vane (ally): [[Commander Aldric Vane]] invokes the armed envoy clause: both delegations must reduce guards to twelve within forty-eight hours. [[Lady Ivra Malt]] protests. [[Emissary Dax Fell]] immediately complies and offers his excess guards to help patrol the tunnels.",
+          "note": "Consequence of Commander Aldric Vane (ally): Aldric invokes the compact's armed envoy clause \u2014 direct enforcement action.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 2,
@@ -367,12 +375,13 @@
           "ripple_source": {
             "entity_id": "commander_aldric_vane",
             "entity_type": "npc",
-            "event_id": null
+            "event_id": "evt_49573f"
           },
           "actor_id": "commander_aldric_vane",
           "actor_type": "npc"
         }
       ],
+      "dm_notes": "Brother Edmar has found the 1187 treaty's third provision: a supersession clause that voids both the Vespar dynastic claim and the Kelrath neutrality resolution in the event of 'armed factional presence.' Both delegations are in technical violation. The clause would require the Grace-Sworn to expel both delegations and hold Hartstone independently for one year. He hasn't told Aldric yet because the clause also requires the compact to be financially self-sufficient \u2014 which it currently is not.",
       "relations": [
         {
           "target": "commander_aldric_vane",
@@ -392,11 +401,31 @@
       "factions": [
         "the_compact_guild"
       ],
-      "hidden_factions": [],
-      "log": [],
+      "hidden_factions": [
+        "the_kelrath_envoys"
+      ],
+      "log": [
+        {
+          "id": "evt_aa8215",
+          "session": 3,
+          "note": "Consequence of Emissary Dax Fell (ally): Dax Fell's neutrality resolution \u2014 dated six months ago, drafted before he arrived in Hartstone.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 1,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "emissary_dax_fell",
+            "entity_type": "npc",
+            "event_id": "evt_cd5200"
+          },
+          "actor_id": "emissary_dax_fell",
+          "actor_type": "npc"
+        }
+      ],
+      "dm_notes": "Petra sold the 1187 treaty's third provision to Dax Fell six months ago \u2014 before he arrived in Hartstone. That is why his neutrality resolution is so precisely drafted. She didn't know what he'd use it for. She knows now. She also has the tunnel map for the east quarter. She has not offered it to anyone yet.",
       "relations": [
         {
-          "target": "guildmaster_sena_cord",
+          "target": "emissary_dax_fell",
           "target_type": "npc",
           "relation": "ally",
           "weight": 0.65,
@@ -411,15 +440,15 @@
       "relationship": "hostile",
       "description": "[[The Underbrick]]'s controller. Nobody inside the network has seen their face. They communicate through cutouts and coded drops. They have been buying weapons from both [[House Vespar|Vespar]] and [[The Kelrath Envoys|Kelrath]] suppliers simultaneously. Either they are playing both sides or they are the third side. (DM-only)",
       "hidden": true,
-      "factions": [
+      "factions": [],
+      "hidden_factions": [
         "the_underbrick"
       ],
-      "hidden_factions": [],
       "log": [
         {
-          "id": "evt_7efa02",
+          "id": "evt_35d293",
           "session": 1,
-          "note": "Consequence of Lady Ivra Malt (ally): [[House Vespar]]'s delegation arrives at Hartstone's north gate with forty armed guards. [[Lady Ivra Malt]] presents papers claiming historical title. Impeccably polite, completely immovable.",
+          "note": "Consequence of Lady Ivra Malt (ally): Lady Ivra's arrival \u2014 claim presented, forty guards, compact limit exceeded.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 1,
@@ -427,15 +456,15 @@
           "ripple_source": {
             "entity_id": "lady_ivra_malt",
             "entity_type": "npc",
-            "event_id": null
+            "event_id": "evt_290ae5"
           },
           "actor_id": "lady_ivra_malt",
           "actor_type": "npc"
         },
         {
-          "id": "evt_088eab",
+          "id": "evt_e5f44d",
           "session": 3,
-          "note": "Consequence of Lady Ivra Malt (ally): [[Lady Ivra Malt]] presents her second claimant's documentation at a formal hearing: Lord Eddan Vespar, third cousin, with a direct treaty right to Hartstone under the Compact of 1187. The records are genuine. [[Emissary Dax Fell]] has a counter.",
+          "note": "Consequence of Lady Ivra Malt (ally): Lady Ivra's formal claim \u2014 Lord Eddan's documentation presented at the hearing.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 1,
@@ -443,15 +472,31 @@
           "ripple_source": {
             "entity_id": "lady_ivra_malt",
             "entity_type": "npc",
-            "event_id": null
+            "event_id": "evt_5c9f41"
           },
           "actor_id": "lady_ivra_malt",
           "actor_type": "npc"
         },
         {
-          "id": "evt_5db2f5",
+          "id": "evt_f3a060",
+          "session": 3,
+          "note": "Consequence of Emissary Dax Fell (ally): Dax Fell's neutrality resolution \u2014 dated six months ago, drafted before he arrived in Hartstone.",
+          "visibility": "public",
+          "polarity": "negative",
+          "intensity": 1,
+          "event_type": "politics",
+          "ripple_source": {
+            "entity_id": "emissary_dax_fell",
+            "entity_type": "npc",
+            "event_id": "evt_cd5200"
+          },
+          "actor_id": "emissary_dax_fell",
+          "actor_type": "npc"
+        },
+        {
+          "id": "evt_65f143",
           "session": 4,
-          "note": "A cutout is captured in the market. Under questioning: [[The Underbrick]] is being paid by two clients simultaneously for the same weapon delivery. [[The Loom]] has sold the same shipment twice. Someone is about to be very angry.",
+          "note": "A cutout is captured in the market. Under questioning: [[The Underbrick]] is being paid by two clients simultaneously for the same weapon delivery \u2014 both [[House Vespar|Vespar]] and [[The Kelrath Envoys|Kelrath]] suppliers. [[The Loom]] sold the same shipment twice. One of them is about to realize they did not receive what they paid for.",
           "visibility": "dm_only",
           "polarity": "negative",
           "intensity": 2,
@@ -459,9 +504,17 @@
           "location_id": "the_east_quarter_tunnels"
         }
       ],
+      "dm_notes": "The Loom sold the same weapon shipment to both Vespar and Kelrath \u2014 not by accident. They are trying to provoke a confrontation between the delegations in Hartstone while the compact's enforcement powers are degraded. In the chaos, the Underbrick becomes the only functioning authority in the east quarter. The Loom is playing a third game, not second fiddle to either delegation.",
       "relations": [
         {
           "target": "lady_ivra_malt",
+          "target_type": "npc",
+          "relation": "ally",
+          "weight": 0.6,
+          "dm_only": true
+        },
+        {
+          "target": "emissary_dax_fell",
           "target_type": "npc",
           "relation": "ally",
           "weight": 0.6,

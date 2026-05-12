@@ -3,7 +3,7 @@
 A frontier mining town extorted by a gang with deeper backing than anyone admits.
 Sessions 1-5, party at level 4. Used as DEMO_SOURCE in app.py.
 
-Run:  python seed_ashford.py
+Run:  python seeds/seed_ashford.py
 """
 import sys, json, secrets, shutil
 from pathlib import Path
@@ -94,23 +94,17 @@ def add_rel(src_type, src_id, tgt_id, tgt_type, relation, weight=0.8, dm_only=Fa
 
 
 def log_n(npc_id, session, note, polarity=None, intensity=1,
-          event_type=None, visibility="public", ripple=False, actor_id=None, actor_type=None, location_id=None):
-    evt = db.log_npc(SLUG, npc_id, session, note, polarity=polarity,
-                     intensity=intensity, event_type=event_type, visibility=visibility,
-                     actor_id=actor_id, actor_type=actor_type, location_id=location_id)
-    if ripple and polarity in ("positive", "negative"):
-        db.apply_ripple(SLUG, npc_id, "npc", session, note, polarity, intensity, event_type, visibility)
-    return evt
+          event_type=None, visibility="public", actor_id=None, actor_type=None, location_id=None):
+    return db.log_npc(SLUG, npc_id, session, note, polarity=polarity,
+                      intensity=intensity, event_type=event_type, visibility=visibility,
+                      actor_id=actor_id, actor_type=actor_type, location_id=location_id)
 
 
 def log_f(faction_id, session, note, polarity=None, intensity=1,
-          event_type=None, visibility="public", ripple=False, actor_id=None, actor_type=None, location_id=None):
-    evt = db.log_faction(SLUG, faction_id, session, note, polarity=polarity,
-                         intensity=intensity, event_type=event_type, visibility=visibility,
-                         actor_id=actor_id, actor_type=actor_type, location_id=location_id)
-    if ripple and polarity in ("positive", "negative"):
-        db.apply_ripple(SLUG, faction_id, "faction", session, note, polarity, intensity, event_type, visibility)
-    return evt
+          event_type=None, visibility="public", actor_id=None, actor_type=None, location_id=None):
+    return db.log_faction(SLUG, faction_id, session, note, polarity=polarity,
+                          intensity=intensity, event_type=event_type, visibility=visibility,
+                          actor_id=actor_id, actor_type=actor_type, location_id=location_id)
 
 
 def log_l(loc_id, session, note, polarity=None, intensity=1,
@@ -458,7 +452,6 @@ print(f"  Locations: {list(L.keys())}")
 
 # ── Relations ──────────────────────────────────────────────────────────────────
 
-# Dual-axis: formal vs personal
 add_dual_rel("npc", N["Governor Harwick Denn"], N["Edda Sorn"],  "npc",
              formal_relation="ally",  personal_relation="rival",  weight=0.75)
 add_dual_rel("npc", N["Edda Sorn"],             N["Governor Harwick Denn"], "npc",
@@ -472,7 +465,6 @@ add_dual_rel("npc", N["Farlan Dusk"],           N["Sister Veyne"], "npc",
 add_dual_rel("npc", N["Sister Veyne"],          N["Farlan Dusk"],  "npc",
              formal_relation="ally",  personal_relation="rival",  weight=0.7)
 
-# Clean alliances / rivalries
 add_rel("npc", N["Edda Sorn"],          N["Bram Ketterly"],      "npc", "ally",   0.85)
 add_rel("npc", N["Bram Ketterly"],      N["Edda Sorn"],          "npc", "ally",   0.85)
 add_rel("npc", N["Maren Vosk"],         N["Corvin Ashale"],      "npc", "ally",   0.9,  dm_only=True)
@@ -486,7 +478,6 @@ add_rel("npc", N["Maren Vosk"],         N["Governor Harwick Denn"], "npc", "ally
 add_rel("npc", N["Governor Harwick Denn"], N["Maren Vosk"],     "npc", "ally",   0.85)
 add_rel("npc", N["Warchief Durnak"],    N["Maren Vosk"],         "npc", "rival",  0.7)
 
-# Faction relations
 add_rel("faction", F["The Ironmasks"],    F["The Trade Compact"],  "faction", "ally",   0.7)
 add_rel("faction", F["The Trade Compact"],F["The Ironmasks"],      "faction", "ally",   0.5)
 add_rel("faction", F["The Ironmasks"],    F["Greywood Rangers"],   "faction", "rival",  0.9)
@@ -501,7 +492,7 @@ print("  Relations set")
 
 # ── Event Log ──────────────────────────────────────────────────────────────────
 
-# Session 1: Arrival in Ashford
+# ── Session 1: Arrival in Ashford ─────────────────────────────────────────────
 log_n(N["Orvyn Thatch"], 1,
       "The party arrives in Ashford and stops at [[Thatch's General Store]]. "
       "[[Orvyn Thatch]] gives them a full picture without being asked: the toll, "
@@ -516,11 +507,14 @@ log_n(N["Maren Vosk"], 1,
       "They back down when challenged but take notes.",
       polarity="negative", intensity=1, event_type="other")
 
-log_f(F["The Ironmasks"], 1,
+evt = log_f(F["The Ironmasks"], 1,
       "[[The Ironmasks]] have expanded their toll to cover the northern road "
       "as well as the eastern approach. [[Farlan Dusk]] counted thirty-two collectors "
       "working the roads this week — up from eighteen a month ago.",
-      polarity="negative", intensity=2, event_type="other", ripple=True)
+      polarity="negative", intensity=2, event_type="other")
+db.apply_ripple(SLUG, F["The Ironmasks"], "faction", 1,
+                "Ironmask toll expansion — northern road now covered.",
+                "negative", 2, "other", "public", source_event_id=evt)
 
 log_n(N["Edda Sorn"], 1,
       "[[Edda Sorn]] contacts the party privately at [[The Broken Crown]]. "
@@ -530,7 +524,30 @@ log_n(N["Edda Sorn"], 1,
       polarity="positive", intensity=2, event_type="dialogue",
       location_id=L["The Broken Crown"])
 
-# Session 2: The Registry and the Keep
+# Session 1 — individual character moments
+db.log_character(SLUG, "Wren Ashvale", 1,
+    "Wren walks past the east road checkpoint where her father's cart was stopped three years ago. "
+    "The [[The Ironmasks|Ironmask]] collector doesn't recognize her. She pays the toll without a word. "
+    "She is very calm about it.",
+    polarity="negative", intensity=2, event_type="other",
+    location_id=L["Thatch's General Store"])
+
+db.log_character(SLUG, "Calder Voss", 1,
+    "Calder counts thirty-two [[The Ironmasks|Ironmask]] collectors working the roads — double what any "
+    "legitimate toll operation needs. His old [[Greywood Rangers|Ranger]] instincts log their patrol routes, "
+    "shift changes, and the two gaps in coverage near the Greywood edge.",
+    polarity="negative", intensity=1, event_type="other")
+
+# Session 1 — party group
+db.log_party_group(SLUG, 1,
+    "The party arrives in [[Ashford]] and is assessed by [[The Ironmasks|Ironmask]] collectors within two hours. "
+    "By evening [[Edda Sorn]] has found them at [[The Broken Crown]] with eight months of shipping records. "
+    "The situation is worse than the road looked.",
+    polarity="negative", intensity=1, event_type="other",
+    actor_id=F["The Ironmasks"], actor_type="faction",
+    location_id=L["The Broken Crown"])
+
+# ── Session 2: The Registry and the Keep ──────────────────────────────────────
 log_n(N["Petra Holt"], 2,
       "[[Petra Holt]] shows the party the [[Ashford Miners' Registry|Registry]] payroll records. "
       "The 'safety equipment' deductions are real deductions against real miner wages. "
@@ -553,13 +570,39 @@ log_n(N["Warchief Durnak"], 2,
       polarity="neutral", intensity=1, event_type="dialogue",
       location_id=L["Greystone Keep"])
 
-# Session 3: Taking the Courtyard
-log_f(F["The Ironmasks"], 3,
+# Session 2 — individual character moments
+db.log_character(SLUG, "Osric Fynt", 2,
+    "[[Osric Fynt|Osric]] recognizes the [[Ashford Miners' Registry|Registry]] payroll structure immediately — "
+    "he's written [[The Trade Compact|Compact]] expense audits with exactly this kind of fictitious line. "
+    "Someone in the Compact approved this. He doesn't say that out loud yet.",
+    polarity="negative", intensity=2, event_type="discovery",
+    location_id=L["Ashford Miners' Registry"])
+
+db.log_character(SLUG, "Lira of the Dawn", 2,
+    "[[Lira of the Dawn|Lira]] treats three miners at the inn who were beaten for refusing the lower shaft shifts. "
+    "She asks each of them what the [[Vein Instability|unsafe sections]] look like. "
+    "She has been in places like that before. She doesn't explain where.",
+    polarity="negative", intensity=1, event_type="dialogue")
+
+# Session 2 — party group
+db.log_party_group(SLUG, 2,
+    "The party confronts [[Governor Harwick Denn]] together. "
+    "He confirms the payments. He asks what they expected. "
+    "The terms with [[Warchief Durnak]] are set: clear the courtyard, [[Bram Ketterly|Bram]] goes free. Three days.",
+    polarity="negative", intensity=1, event_type="dialogue",
+    actor_id=N["Governor Harwick Denn"], actor_type="npc")
+
+# ── Session 3: Taking the Courtyard ───────────────────────────────────────────
+evt = log_f(F["The Ironmasks"], 3,
       "The party drives the [[The Ironmasks|Ironmask]] holding operation out of [[Greystone Keep|the Keep's]] "
       "outer courtyard. Six Ironmasks subdued. Two escaped toward Ashford. "
       "[[Warchief Durnak]] watches from the wall without interfering.",
       polarity="negative", intensity=3, event_type="combat",
-      ripple=True, location_id=L["Greystone Keep"])
+      actor_id=N["Warchief Durnak"], actor_type="npc",
+      location_id=L["Greystone Keep"])
+db.apply_ripple(SLUG, F["The Ironmasks"], "faction", 3,
+                "Ironmask courtyard operation dismantled — first major defeat.",
+                "negative", 3, "combat", "public", source_event_id=evt)
 
 log_n(N["Bram Ketterly"], 3,
       "[[Bram Ketterly]] is released from [[Greystone Keep|the Keep's]] storage cellar, "
@@ -569,17 +612,40 @@ log_n(N["Bram Ketterly"], 3,
       polarity="positive", intensity=2, event_type="other",
       location_id=L["Greystone Keep"])
 
-log_n(N["Maren Vosk"], 3,
+evt_maren_3 = log_n(N["Maren Vosk"], 3,
       "[[The Ironmasks|The Ledger]] responds to the [[Greystone Keep|Keep]] incident by doubling "
       "[[The Ironmasks|Ironmask]] patrols in town and imposing a 'security surcharge' on all merchants. "
       "She is escalating, not retreating.",
-      polarity="negative", intensity=2, event_type="politics", ripple=True)
-
+      polarity="negative", intensity=2, event_type="politics",
+      location_id=L["Thatch's General Store"])
 db.apply_ripple(SLUG, N["Maren Vosk"], "npc", 3,
                 "Ironmask escalation — doubled patrols, new surcharge on merchants.",
-                "negative", 2, "politics", "public")
+                "negative", 2, "politics", "public", source_event_id=evt_maren_3)
 
-# Session 4: The Mine and the Pale Widow
+# Session 3 — individual character moments
+db.log_character(SLUG, "Wren Ashvale", 3,
+    "Wren leads the push into [[Greystone Keep|the Keep's]] outer courtyard. "
+    "She has been planning a fight exactly like this for three years. It takes four minutes.",
+    polarity="positive", intensity=3, event_type="combat",
+    actor_id=F["The Ironmasks"], actor_type="faction",
+    location_id=L["Greystone Keep"])
+
+db.log_character(SLUG, "Calder Voss", 3,
+    "Calder holds the breach at the Keep's outer gate. Two [[The Ironmasks|Ironmasks]] slip out toward Ashford. "
+    "He marks their direction and route before they clear sight — [[Sister Veyne]]'s network will have them.",
+    polarity="positive", intensity=2, event_type="combat",
+    location_id=L["Greystone Keep"])
+
+# Session 3 — party group
+db.log_party_group(SLUG, 3,
+    "The outer courtyard taken. Six [[The Ironmasks|Ironmasks]] subdued, two escaped. "
+    "[[Warchief Durnak]] opens the cellar without ceremony. "
+    "[[Bram Ketterly]] walks out underfed but remembering every face he saw.",
+    polarity="positive", intensity=3, event_type="combat",
+    actor_id=F["The Ironmasks"], actor_type="faction",
+    location_id=L["Greystone Keep"])
+
+# ── Session 4: The Mine and the Pale Widow ────────────────────────────────────
 log_n(N["Thane Bergrak"], 4,
       "[[Thane Bergrak]] approaches the party on the road to [[Coldwater Ruins|Coldwater]]. "
       "He knows about the unsafe shaft situation. The [[Emerald Circle]] has been "
@@ -604,27 +670,54 @@ log_n(N["Corvin Ashale"], 4,
       polarity="negative", intensity=3, event_type="discovery",
       visibility="dm_only", location_id=L["Corvin Ashale's Warehouse"])
 
-log_f(F["The Shadow Wing"], 4,
+evt = log_f(F["The Shadow Wing"], 4,
       "[[The Shadow Wing]] moves refined ore samples through the tunnel system twice a week. "
       "The operation has been running for eight months — exactly as long as "
       "the shipping discrepancy in [[Edda Sorn|Edda's]] records.",
       polarity="negative", intensity=2, event_type="other",
-      visibility="dm_only", ripple=True,
+      visibility="dm_only",
       location_id=L["Corvin Ashale's Warehouse"])
+db.apply_ripple(SLUG, F["The Shadow Wing"], "faction", 4,
+                "Shadow Wing ore skim operation confirmed — eight months running.",
+                "negative", 2, "other", "dm_only", source_event_id=evt)
 
 db.log_condition(SLUG, C["Vein Instability"], 4,
-                 "Three shafts confirmed as critical per Emerald Circle survey. "
+                 "Three shafts confirmed as critical per [[Emerald Circle]] survey. "
                  "60-day window before structural failure in lower sections.",
                  polarity="negative", intensity=2)
 
-# Session 5: The Ironmasks Break
+# Session 4 — individual character moments
+db.log_character(SLUG, "Sable", 4,
+    "Sable does not explain how she knew to use old garrison protocols at the [[Coldwater Ruins|Coldwater]] entrance. "
+    "She uses them and [[The Pale Widow]] doesn't attack. "
+    "She says only: 'I've dealt with archivists before.'",
+    polarity="positive", intensity=2, event_type="other",
+    location_id=L["Coldwater Ruins"])
+
+db.log_character(SLUG, "Lira of the Dawn", 4,
+    "[[Lira of the Dawn|Lira]] reads the garrison archive's supply manifests. There's a [[The Factor's Net|Factor's connection]] "
+    "older than the mine — someone was running a channel through these tunnels before [[The Ashcroft Vein]] existed. "
+    "She has known what 'the Factor' means for longer than she has admitted.",
+    polarity="positive", intensity=2, event_type="discovery",
+    visibility="dm_only",
+    location_id=L["Coldwater Ruins"])
+
+# Session 4 — party group
+db.log_party_group(SLUG, 4,
+    "[[The Pale Widow]] shows the garrison maps. The tunnel exits beneath [[Corvin Ashale|Ashale's]] warehouse. "
+    "Eight months of shipping discrepancies make sense in a single diagram. "
+    "The [[The Ironmasks|Ironmasks]] were always just the noise.",
+    polarity="positive", intensity=3, event_type="discovery",
+    location_id=L["Coldwater Ruins"])
+
+# ── Session 5: The Ironmasks Break ────────────────────────────────────────────
 log_n(N["Sister Veyne"], 5,
       "[[Sister Veyne]] coordinates a simultaneous ranger action on three [[The Ironmasks|Ironmask]] "
       "collection points. With the party holding the road north, the operation lands cleanly. "
       "Seventeen Ironmasks captured. [[Maren Vosk|Maren Vosk's]] records seized.",
       polarity="positive", intensity=3, event_type="combat")
 
-log_n(N["Maren Vosk"], 5,
+evt_maren_5 = log_n(N["Maren Vosk"], 5,
       "[[Maren Vosk]] is captured in the [[Ashford Miners' Registry|Registry]] during the raid. "
       "Her ledgers are complete. They name [[Corvin Ashale]] by initials — 'CA' — "
       "in seventeen separate entries as the recipient of skim payments. "
@@ -632,16 +725,18 @@ log_n(N["Maren Vosk"], 5,
       polarity="negative", intensity=3, event_type="combat",
       actor_id=N["Sister Veyne"], actor_type="npc",
       location_id=L["Ashford Miners' Registry"])
-
 db.apply_ripple(SLUG, N["Maren Vosk"], "npc", 5,
                 "The Ledger captured — Ironmask operation collapses.",
-                "negative", 3, "combat", "public")
+                "negative", 3, "combat", "public", source_event_id=evt_maren_5)
 
-log_f(F["The Ironmasks"], 5,
+evt = log_f(F["The Ironmasks"], 5,
       "The [[The Ironmasks|Ironmask]] street operation in Ashford is broken. The toll is ended. "
       "Remaining Ironmasks have scattered into [[The Greywood]]. "
       "[[Corvin Ashale]]'s warehouse is locked from the inside.",
-      polarity="positive", intensity=3, event_type="other", ripple=True)
+      polarity="positive", intensity=3, event_type="other")
+db.apply_ripple(SLUG, F["The Ironmasks"], "faction", 5,
+                "Ironmask operation broken — toll ended, boss captured.",
+                "negative", 3, "other", "public", source_event_id=evt)
 
 log_n(N["Corvin Ashale"], 5,
       "[[Corvin Ashale]] barricades himself in his [[Corvin Ashale's Warehouse|warehouse]] "
@@ -662,6 +757,32 @@ db.log_condition(SLUG, C["The Ironmask Toll"], 5,
                  "Roads are open. Supply margins will recover in 2-3 weeks.",
                  polarity="positive", intensity=3)
 
+# Session 5 — individual character moments
+db.log_character(SLUG, "Wren Ashvale", 5,
+    "Wren is first through the [[Ashford Miners' Registry|Registry]] door when [[Maren Vosk]] is taken. "
+    "She doesn't say anything. She watches the ledgers go into evidence. "
+    "Her father's payroll deductions are in there.",
+    polarity="positive", intensity=3, event_type="combat",
+    actor_id=N["Maren Vosk"], actor_type="npc",
+    location_id=L["Ashford Miners' Registry"])
+
+db.log_character(SLUG, "Osric Fynt", 5,
+    "[[Osric Fynt|Osric]] reads 'CA' in the seized ledgers before anyone else says it aloud. "
+    "He has known [[Corvin Ashale|Corvin Ashale's]] name for weeks. "
+    "He came to [[Ashford]] specifically to find this paper trail.",
+    polarity="positive", intensity=2, event_type="discovery",
+    visibility="dm_only",
+    location_id=L["Ashford Miners' Registry"])
+
+# Session 5 — party group
+db.log_party_group(SLUG, 5,
+    "The simultaneous raid lands cleanly. Seventeen [[The Ironmasks|Ironmasks]] captured. "
+    "[[Maren Vosk|The Ledger]] taken with her own books. The toll is over. "
+    "[[Corvin Ashale|The Factor's]] warehouse door is locked from the inside — the real problem is still breathing.",
+    polarity="positive", intensity=3, event_type="combat",
+    actor_id=F["The Ironmasks"], actor_type="faction",
+    location_id=L["Ashford Miners' Registry"])
+
 print("  Event log complete")
 
 # ── Location log entries ───────────────────────────────────────────────────────
@@ -670,43 +791,45 @@ log_l(L["Thatch's General Store"], 1,
       "[[Orvyn Thatch]] speaks freely for the first time in months. Names every collector, "
       "describes patrol timing, produces his private log of Ironmask activity. "
       "The party has their first real picture of what they're dealing with.",
-      polarity="positive", intensity=1, event_type="dialogue")
+      polarity="positive", intensity=1, event_type="dialogue",
+      actor_id=N["Orvyn Thatch"], actor_type="npc")
 
 log_l(L["The Broken Crown"], 1,
       "[[Edda Sorn]] makes contact in the back room. Her shipping discrepancy records "
       "cover eight months. The gap between declared output and actual weight shipped "
       "is not a rounding error.",
-      polarity="positive", intensity=2, event_type="dialogue")
+      polarity="positive", intensity=2, event_type="dialogue",
+      actor_id=N["Edda Sorn"], actor_type="npc")
 
 log_l(L["Ashford Miners' Registry"], 2,
       "[[Petra Holt]] recovers the hidden ledger copy from beneath the floorboards. "
       "Twelve percent of miner wages have been skimmed through a fictitious 'safety equipment' line "
       "for at least six months.",
       polarity="positive", intensity=2, event_type="discovery",
-      actor_id="The Party", actor_type="party")
+      actor_id=N["Petra Holt"], actor_type="npc")
 
 log_l(L["Greystone Keep"], 2,
       "[[Warchief Durnak]] parleys at the gate. Terms set: clear the outer courtyard, "
       "[[Bram Ketterly|Bram]] goes free. Three days.",
-      polarity="neutral", intensity=1, event_type="dialogue")
+      polarity="neutral", intensity=1, event_type="dialogue",
+      actor_id=N["Warchief Durnak"], actor_type="npc")
 
 log_l(L["Greystone Keep"], 3,
       "The outer courtyard is taken. Six [[The Ironmasks|Ironmasks]] subdued, two escaped. "
       "[[Bram Ketterly]] released from the storage cellar — underfed, uninjured, and remembering everything.",
-      polarity="positive", intensity=3, event_type="combat",
-      actor_id="The Party", actor_type="party")
+      polarity="positive", intensity=3, event_type="combat")
 
 log_l(L["The Ashcroft Vein"], 4,
       "[[Emerald Circle]] survey confirmed: three critical failure points in the lower shafts. "
       "Structural collapse projected within sixty days. Miners are already refusing the lower shaft shifts.",
-      polarity="negative", intensity=2, event_type="discovery")
+      polarity="negative", intensity=2, event_type="discovery",
+      actor_id=N["Thane Bergrak"], actor_type="npc")
 
 log_l(L["Coldwater Ruins"], 4,
       "[[The Pale Widow]] shows the party the garrison archive. The tunnel maps are intact. "
       "One exit runs directly beneath [[Corvin Ashale]]'s warehouse — "
       "eight months of shipping discrepancies explained in a single diagram.",
-      polarity="positive", intensity=3, event_type="discovery",
-      actor_id="The Party", actor_type="party")
+      polarity="positive", intensity=3, event_type="discovery")
 
 log_l(L["Ashford Miners' Registry"], 5,
       "[[Maren Vosk]] captured here during the raid. Complete ledgers seized. "
@@ -722,6 +845,35 @@ log_l(L["Corvin Ashale's Warehouse"], 5,
       visibility="dm_only")
 
 print("  Location logs complete")
+
+# ── Quest progression ──────────────────────────────────────────────────────────
+
+db.log_quest(SLUG, "rescue_bram_ketterly", 2,
+    "Session 2: Terms set with Warchief Durnak — clear the outer courtyard, Bram goes free. Three days.")
+db.log_quest(SLUG, "rescue_bram_ketterly", 3,
+    "Session 3: Courtyard cleared. Bram released — underfed, uninjured, and remembering Shadow Wing courier routes.")
+
+db.log_quest(SLUG, "secure_the_old_vein", 2,
+    "Session 2: Petra Holt reveals the payroll skim ledger hidden under the Registry floor. Evidence in hand.")
+db.log_quest(SLUG, "secure_the_old_vein", 4,
+    "Session 4: Emerald Circle survey — three critical shafts, sixty days to failure. Not might. Will.")
+db.log_quest(SLUG, "secure_the_old_vein", 5,
+    "Session 5: Maren Vosk captured; the skim operation ends with the Ironmasks.")
+
+db.log_quest(SLUG, "drive_out_the_ironmasks", 3,
+    "Session 3: First major blow — Ironmask hold on Greystone Keep outer courtyard broken. Six taken, two fled.")
+db.log_quest(SLUG, "drive_out_the_ironmasks", 5,
+    "Session 5: Complete. Seventeen captured, Maren Vosk in custody, toll ended. Factor still at large.")
+
+db.log_quest(SLUG, "the_warden_s_archive", 4,
+    "Session 4: Pale Widow grants access. Garrison archive intact. Tunnel maps show exit beneath Corvin Ashale's warehouse.")
+
+db.log_quest(SLUG, "the_factor", 4,
+    "Session 4: Tunnel confirmed — Shadow Wing ore skim through Ashale's warehouse, eight months running.")
+db.log_quest(SLUG, "the_factor", 5,
+    "Session 5: Ashale barricaded inside. Serev got a message out. The Factor is waiting for extraction.")
+
+print("  Quest log complete")
 
 # ── Journal ────────────────────────────────────────────────────────────────────
 db.post_journal(SLUG, 1, "Session 1 — Ashford",

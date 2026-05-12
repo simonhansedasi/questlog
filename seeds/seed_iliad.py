@@ -1,9 +1,10 @@
 """Seed script: The Iliad — Homer's fifty-one days in year ten of the Trojan War.
 
 Showcases: dual-axis conflict edges, world conditions, story arcs, observer_name,
-fiction mode terminology, ripple chains across a full event log.
+fiction mode terminology, ripple chains across a full event log, set_npc_dead,
+source_event_id on all apply_ripple calls.
 
-Run:  python seed_iliad.py
+Run:  python seeds/seed_iliad.py
 """
 import sys, json, secrets, shutil
 from pathlib import Path
@@ -112,23 +113,17 @@ def add_rel(src_type, src_id, tgt_id, tgt_type, relation, weight=0.8, dm_only=Fa
 
 
 def log_n(npc_id, session, note, polarity=None, intensity=1,
-          event_type=None, visibility="public", ripple=False, actor_id=None, actor_type=None, location_id=None):
-    evt = db.log_npc(SLUG, npc_id, session, note, polarity=polarity,
-                     intensity=intensity, event_type=event_type, visibility=visibility,
-                     actor_id=actor_id, actor_type=actor_type, location_id=location_id)
-    if ripple and polarity in ("positive", "negative"):
-        db.apply_ripple(SLUG, npc_id, "npc", session, note, polarity, intensity, event_type, visibility)
-    return evt
+          event_type=None, visibility="public", actor_id=None, actor_type=None, location_id=None):
+    return db.log_npc(SLUG, npc_id, session, note, polarity=polarity,
+                      intensity=intensity, event_type=event_type, visibility=visibility,
+                      actor_id=actor_id, actor_type=actor_type, location_id=location_id)
 
 
 def log_f(faction_id, session, note, polarity=None, intensity=1,
-          event_type=None, visibility="public", ripple=False, actor_id=None, actor_type=None, location_id=None):
-    evt = db.log_faction(SLUG, faction_id, session, note, polarity=polarity,
-                         intensity=intensity, event_type=event_type, visibility=visibility,
-                         actor_id=actor_id, actor_type=actor_type, location_id=location_id)
-    if ripple and polarity in ("positive", "negative"):
-        db.apply_ripple(SLUG, faction_id, "faction", session, note, polarity, intensity, event_type, visibility)
-    return evt
+          event_type=None, visibility="public", actor_id=None, actor_type=None, location_id=None):
+    return db.log_faction(SLUG, faction_id, session, note, polarity=polarity,
+                          intensity=intensity, event_type=event_type, visibility=visibility,
+                          actor_id=actor_id, actor_type=actor_type, location_id=location_id)
 
 
 def log_l(loc_id, session, note, polarity=None, intensity=1,
@@ -373,13 +368,13 @@ db.add_location(SLUG, "The Scaean Gate",
     role="Troy's western gate — the farewell place",
     description="The great gate on Troy's western wall, the entrance most used in battle. [[Hector]] passes through it every morning to fight. [[Andromache]] waits for him here. It is at this gate that [[Hector]] bids her farewell — lifting his son Astyanax, who recoils from the horsehair crest of his helmet. [[Hector]] removes it. He holds the boy. He goes back through the gate.",
     hidden=False,
-    dm_notes="The Scaean Gate farewell is the poem's moral center. Hector knows Troy will fall. He goes anyway. The scene is constructed to break the reader: the baby who fears the helmet, the prayer for the son to surpass the father, Andromache watching him walk away knowing she will never see him again. Homer gives the Trojans this scene so we cannot simply root for the Greeks.")
+    dm_notes="The Scaean Gate farewell is the poem's moral center. Hector knows Troy will fall. He goes anyway. The scene is constructed to break the reader: the baby who fears the helmet, the prayer for the son to surpass the father, Andromache watching him walk away knowing she will never see him again.")
 
 db.add_location(SLUG, "The Walls of Troy",
     role="Troy's ramparts — where the Trojans watch and fall",
     description="The walls of Troy are the boundary between survival and destruction. The Trojan elders sit here and watch [[Helen]] name the Greek heroes on [[The Plain of Troy|the plain]] below. [[Andromache]] runs to these walls when she hears [[Hector]] is dead. [[Priam]] tears his white hair here watching his son die. The walls have held for ten years. They will not hold forever.",
     hidden=False,
-    dm_notes="The wall scenes give the Trojans their domestic humanity — we see them watching the war rather than fighting it. Andromache's collapse on the wall when Hector's body is dragged by Achilles is among the most devastating moments in the poem. Priam sees everything from here.")
+    dm_notes="The wall scenes give the Trojans their domestic humanity — we see them watching the war rather than fighting it. Andromache's collapse on the wall when Hector's body is dragged by Achilles is among the most devastating moments in the poem.")
 
 db.add_location(SLUG, "Priam's Palace",
     role="Troy's royal halls — grief and counsel",
@@ -397,7 +392,7 @@ db.add_location(SLUG, "The Plain of Troy",
     role="The battlefield — where the war is fought and decided",
     description="The broad plain before [[The Walls of Troy|Troy's walls]], between [[The Scaean Gate]] and [[The Achaean Camp]]. Ten years of war have been fought here. The River Scamander crosses it. This is where [[Diomedes]] wounds Aphrodite and Ares. Where the Trojans breach the wall. Where [[Patroclus]] drives the Trojans back and then presses too far. Where [[Hector]] and [[Achilles]] fight their last fight.",
     hidden=False,
-    dm_notes="The plain is the theater of the war's action. The Trojan women can see it from the walls. Hector runs three circuits of Troy on this plain pursued by Achilles. Patroclus's overreach happens here — he drives the Trojans from the ships and then cannot stop. Apollo stuns him at the walls of Troy on the plain's far edge.")
+    dm_notes="The plain is the theater of the war's action. Hector runs three circuits of Troy on this plain pursued by Achilles. Patroclus's overreach happens here — he drives the Trojans from the ships and then cannot stop. Apollo stuns him at the walls of Troy on the plain's far edge.")
 
 locations_data = db._load(SLUG, "world/locations.json")
 L = {loc["name"]: loc["id"] for loc in locations_data["locations"]}
@@ -408,11 +403,11 @@ print(f"  Locations: {list(L.keys())}")
 # Dual-axis: formal alliance vs personal enmity
 add_dual_rel("npc", N["Achilles"],   N["Agamemnon"],  "npc", formal_relation="ally",   personal_relation="rival", weight=0.9)
 add_dual_rel("npc", N["Agamemnon"],  N["Achilles"],   "npc", formal_relation="ally",   personal_relation="rival", weight=0.9)
-add_dual_rel("npc", N["Hector"],     N["Paris"],      "npc", formal_relation="ally",   personal_relation="rival",   weight=0.85)
-add_dual_rel("npc", N["Paris"],      N["Hector"],     "npc", formal_relation="ally",   personal_relation="rival",   weight=0.8)
+add_dual_rel("npc", N["Hector"],     N["Paris"],      "npc", formal_relation="ally",   personal_relation="rival", weight=0.85)
+add_dual_rel("npc", N["Paris"],      N["Hector"],     "npc", formal_relation="ally",   personal_relation="rival", weight=0.8)
 add_dual_rel("npc", N["Menelaus"],   N["Helen"],      "npc", formal_relation="ally",   personal_relation="rival", weight=0.7)
-add_dual_rel("npc", N["Achilles"],   N["Hector"],     "npc", formal_relation="rival",  personal_relation="ally", weight=0.95)
-add_dual_rel("npc", N["Hector"],     N["Achilles"],   "npc", formal_relation="rival",  personal_relation="ally", weight=0.9)
+add_dual_rel("npc", N["Achilles"],   N["Hector"],     "npc", formal_relation="rival",  personal_relation="ally",  weight=0.95)
+add_dual_rel("npc", N["Hector"],     N["Achilles"],   "npc", formal_relation="rival",  personal_relation="ally",  weight=0.9)
 
 # Clean alliances
 add_rel("npc", N["Achilles"],    N["Patroclus"],  "npc", "ally", 1.0)
@@ -451,11 +446,14 @@ print("  Relations set")
 # ── Event Log ──────────────────────────────────────────────────────────────────
 # Book 1 — The Plague and the Quarrel
 
-log_n(N["Agamemnon"], 1,
+evt = log_n(N["Agamemnon"], 1,
       "Chryses, priest of [[Apollo]], comes to ransom his daughter Chryseis; "
       "[[Agamemnon]] dismisses him with contempt and threats, dishonoring [[Apollo]]'s servant.",
-      polarity="negative", intensity=2, event_type="dialogue", ripple=True,
+      polarity="negative", intensity=2, event_type="dialogue",
       location_id=L["The Achaean Camp"])
+db.apply_ripple(SLUG, N["Agamemnon"], "npc", 1,
+                "Agamemnon dishonors Apollo's priest — the god's anger follows.",
+                "negative", 2, "dialogue", "public", source_event_id=evt)
 
 log_n(N["Apollo"], 1,
       "[[Apollo]] descends from Olympus and looses plague arrows into the Achaean camp; "
@@ -476,11 +474,14 @@ log_n(N["Achilles"], 1,
       polarity="positive", intensity=1, event_type="dialogue",
       location_id=L["The Achaean Camp"])
 
-log_n(N["Agamemnon"], 1,
+evt = log_n(N["Agamemnon"], 1,
       "[[Agamemnon]] returns Chryseis but seizes Briseis from [[Achilles]] as compensation; "
       "a calculated humiliation of the man he most needs and most resents.",
-      polarity="negative", intensity=3, event_type="other", ripple=True,
+      polarity="negative", intensity=3, event_type="other",
       location_id=L["The Achaean Camp"])
+db.apply_ripple(SLUG, N["Agamemnon"], "npc", 1,
+                "Agamemnon seizes Briseis from Achilles — the rupture that turns the war.",
+                "negative", 3, "other", "public", source_event_id=evt)
 
 log_n(N["Achilles"], 1,
       "[[Achilles]] nearly kills [[Agamemnon]]; [[Athena]] stops him. He withdraws from battle, "
@@ -533,7 +534,7 @@ log_n(N["Hector"], 3,
       location_id=L["Priam's Palace"])
 
 log_n(N["Hector"], 3,
-      "At the Scaean Gate [[Hector]] bids [[Andromache]] farewell; she begs him to stay. "
+      "At [[The Scaean Gate]] [[Hector]] bids [[Andromache]] farewell; she begs him to stay. "
       "He lifts their son Astyanax, who recoils from the great shining helmet. "
       "He prays the boy will be greater than his father. He goes back to war.",
       polarity="positive", intensity=3, event_type="dialogue",
@@ -568,11 +569,15 @@ log_n(N["Agamemnon"], 4,
 
 # Book 5 — Trojans Break Through
 
-log_f(F["The Achaean Host"], 5,
+evt = log_f(F["The Achaean Host"], 5,
       "[[The City of Troy|The Trojans]] breach the great wall of the Greek camp; [[Hector]] hurls a boulder "
       "through the gate and leads the charge toward the ships.",
-      polarity="negative", intensity=3, event_type="combat", ripple=True,
+      polarity="negative", intensity=3, event_type="combat",
+      actor_id=N["Hector"], actor_type="npc",
       location_id=L["The Achaean Camp"])
+db.apply_ripple(SLUG, F["The Achaean Host"], "faction", 5,
+                "Trojans breach the camp wall — Hector leads the charge to the ships.",
+                "negative", 3, "combat", "public", source_event_id=evt)
 
 log_n(N["Ajax"], 5,
       "[[Ajax]] stands alone at the ships and drives off [[Hector]]'s assault; "
@@ -580,10 +585,13 @@ log_n(N["Ajax"], 5,
       polarity="positive", intensity=3, event_type="combat",
       location_id=L["The Ships of Achilles"])
 
-log_f(F["The City of Troy"], 5,
+evt = log_f(F["The City of Troy"], 5,
       "For the first time in ten years [[The City of Troy|Trojans]] fight on the beach beside Achaean ships; "
       "the tide of the war shifts.",
-      polarity="positive", intensity=2, event_type="combat", ripple=True)
+      polarity="positive", intensity=2, event_type="combat")
+db.apply_ripple(SLUG, F["The City of Troy"], "faction", 5,
+                "Trojans fight on the Achaean beach for the first time in ten years.",
+                "positive", 2, "combat", "public", source_event_id=evt)
 
 # Book 6 — The Death of Patroclus
 
@@ -607,18 +615,16 @@ log_n(N["Apollo"], 6,
       polarity="negative", intensity=3, event_type="combat",
       actor_id=N["Hector"], actor_type="npc", visibility="dm_only")
 
-log_n(N["Patroclus"], 6,
+evt = log_n(N["Patroclus"], 6,
       "[[Patroclus]] dies. His last words to [[Hector]]: death is coming for you too, "
       "and it is not far off. [[Hector]] strips [[Achilles]]' divine armor from the body.",
       polarity="negative", intensity=3, event_type="combat",
       actor_id=N["Hector"], actor_type="npc",
       location_id=L["The Plain of Troy"])
 db.set_npc_dead(SLUG, N["Patroclus"], True, dead_session=6)
-
-# Ripple Patroclus's death through the web
 db.apply_ripple(SLUG, N["Patroclus"], "npc", 6,
                 "Patroclus is killed by Hector — Achilles' armor stripped, the bond severed.",
-                "negative", 3, "combat", "public")
+                "negative", 3, "combat", "public", source_event_id=evt)
 
 log_n(N["Hector"], 6,
       "[[Hector]] kills [[Patroclus]] in single combat and strips [[Achilles]]' divine armor; "
@@ -645,11 +651,14 @@ log_n(N["Thetis"], 7,
       "she knows she is equipping him for his death.",
       polarity="negative", intensity=2, event_type="other", visibility="dm_only")
 
-log_n(N["Achilles"], 7,
+evt = log_n(N["Achilles"], 7,
       "[[Achilles]] returns to battle in new divine armor; [[The City of Troy|the Trojans]] rout at the sight of him. "
       "He kills everything in his path. The river Scamander runs red.",
-      polarity="positive", intensity=3, event_type="combat", ripple=True,
+      polarity="positive", intensity=3, event_type="combat",
       location_id=L["The Plain of Troy"])
+db.apply_ripple(SLUG, N["Achilles"], "npc", 7,
+                "Achilles returns to battle — divine armor, Patroclus unavenged, the Trojans route.",
+                "positive", 3, "combat", "public", source_event_id=evt)
 
 log_n(N["Hector"], 7,
       "[[Hector]] stands outside the gates as all of Troy flees inside. "
@@ -665,18 +674,16 @@ log_n(N["Hector"], 7,
       polarity="positive", intensity=3, event_type="combat",
       location_id=L["The Plain of Troy"])
 
-log_n(N["Achilles"], 7,
+evt = log_n(N["Achilles"], 7,
       "[[Achilles]] kills [[Hector]]. He drags the body behind his chariot around Troy's walls "
       "for twelve days, visiting [[Patroclus]]'s tomb. The gods watch in pain. "
       "[[Priam]] watches from the walls.",
       polarity="negative", intensity=3, event_type="combat",
       location_id=L["The Plain of Troy"])
-
 db.set_npc_dead(SLUG, N["Hector"], True, dead_session=7)
-# Ripple Hector's death
 db.apply_ripple(SLUG, N["Hector"], "npc", 7,
                 "Hector is killed by Achilles — his body desecrated, Troy's future severed.",
-                "negative", 3, "combat", "public")
+                "negative", 3, "combat", "public", source_event_id=evt)
 
 log_n(N["Priam"], 7,
       "[[Priam]] watches his greatest son [[Hector]] die from the walls. "
@@ -713,7 +720,7 @@ log_f(F["The City of Troy"], 8,
       polarity="neutral", intensity=1, event_type="other",
       location_id=L["Priam's Palace"])
 
-# Resolve the Achilles Withdraws condition
+# Resolve conditions
 db.log_condition(SLUG, C["Achilles Withdraws"], 7,
                  "Achilles returns to battle after Patroclus's death. The condition ends.",
                  polarity="positive", intensity=3)
@@ -727,11 +734,13 @@ print("  Event log complete")
 
 log_l(L["The Achaean Camp"], 1,
       "[[Apollo]]'s plague burns through the camp for nine days after [[Agamemnon]] dishonors his priest. Men and mules die. The fires of cremation never go out. [[Achilles]] forces the assembly. [[Agamemnon]] returns Chryseis and takes [[Achilles]]' prize instead.",
-      polarity="negative", intensity=3, event_type="other")
+      polarity="negative", intensity=3, event_type="other",
+      actor_id=N["Agamemnon"], actor_type="npc")
 
 log_l(L["The Ships of Achilles"], 1,
       "[[Achilles]] withdraws here after [[Agamemnon]] seizes Briseis. He sits at his ships, plays his lyre, and sings of the deeds of men. [[Patroclus]] sits beside him. The Achaean army bleeds against the walls of Troy.",
-      polarity="negative", intensity=2, event_type="other")
+      polarity="negative", intensity=2, event_type="other",
+      actor_id=N["Agamemnon"], actor_type="npc")
 
 log_l(L["The Scaean Gate"], 3,
       "[[Hector]] bids [[Andromache]] farewell at the gate. He lifts [[Astyanax]], who recoils from the horsehair crest. [[Hector]] removes the helmet and holds his son. He prays: let him be greater than his father. He goes back through the gate. [[Andromache]] watches him until he is out of sight.",
@@ -743,11 +752,13 @@ log_l(L["The Ships of Achilles"], 4,
 
 log_l(L["The Plain of Troy"], 6,
       "[[Patroclus]] fights brilliantly in [[Achilles]]' armor and drives the [[The City of Troy|Trojans]] from the ships. Then he presses on toward [[The Walls of Troy|the walls]]. [[Apollo]] stuns him from behind. [[Hector]] drives in the killing blow. The armor is stripped.",
-      polarity="negative", intensity=3, event_type="combat")
+      polarity="negative", intensity=3, event_type="combat",
+      actor_id=N["Hector"], actor_type="npc")
 
 log_l(L["The Walls of Troy"], 7,
       "[[Priam]] watches [[Hector]] die from the walls. He tears his white hair and weeps in the dust. He begged [[Hector]] not to face [[Achilles]]. [[Hector]] waited anyway. Troy's walls still stand. Everything behind them is changed.",
-      polarity="negative", intensity=3, event_type="other")
+      polarity="negative", intensity=3, event_type="other",
+      actor_id=N["Achilles"], actor_type="npc")
 
 log_l(L["Achilles' Hut"], 8,
       "[[Priam]] comes at midnight, guided by Hermes, and kneels before [[Achilles]]. He asks him to remember his own father. He kisses the hands that killed his son. [[Achilles]] weeps. He lifts the old king. He promises twelve days of truce and returns [[Hector]]'s body.",
@@ -759,6 +770,36 @@ log_l(L["Priam's Palace"], 8,
       polarity="neutral", intensity=1, event_type="other")
 
 print("  Location logs complete")
+
+# ── Arc progression log ────────────────────────────────────────────────────────
+
+db.log_quest(SLUG, "the_wrath_of_achilles", 1,
+    "Book 1: Agamemnon seizes Briseis. Achilles withdraws. Thetis persuades Zeus "
+    "to let the Achaeans suffer. Apollo's plague ends but the rupture does not.")
+db.log_quest(SLUG, "the_wrath_of_achilles", 4,
+    "Book 4: Embassy fails. Achilles refuses treasure, honor, a king's daughter. "
+    "Two fates await him. He is choosing neither yet. The army keeps dying.")
+db.log_quest(SLUG, "the_wrath_of_achilles", 5,
+    "Book 5: Trojans breach the camp wall and fight on the Achaean beach. "
+    "Ajax holds alone. Achilles watches from the shore.")
+db.log_quest(SLUG, "the_wrath_of_achilles", 7,
+    "Book 7: Achilles returns. The rage has its target. Hector is dead. "
+    "The wrath consumed everything it needed to — and more than that.")
+
+db.log_quest(SLUG, "the_death_of_patroclus", 6,
+    "Book 6: Patroclus borrows the armor. Drives the Trojans from the ships. "
+    "Cannot stop. Apollo stuns him at the walls. Hector kills him. The armor stripped. "
+    "Achilles' world ends on the plain of Troy.")
+
+db.log_quest(SLUG, "the_ransom_of_hector", 7,
+    "Book 7: Achilles kills Hector. Drags the body for twelve days. "
+    "The gods watch in distress. Priam watches from the walls.")
+db.log_quest(SLUG, "the_ransom_of_hector", 8,
+    "Book 8: Priam walks alone into the enemy camp at night. Kneels before Achilles. "
+    "Achilles weeps. Returns the body. Twelve days of truce. "
+    "The poem ends at a funeral. That is the point.")
+
+print("  Arc progression logs complete")
 
 # ── Journal entries ─────────────────────────────────────────────────────────────
 db.post_journal(SLUG, 1, "Book 1: The Plague and the Quarrel",

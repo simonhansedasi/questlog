@@ -1,44 +1,216 @@
 {
-  "characters": [
+  "parties": [
     {
-      "name": "Carran Voss",
-      "race": "Human",
-      "class": "Paladin",
-      "level": 1,
-      "status": "active",
-      "hidden": false,
-      "notes": "Grace-Sworn initiate. Earnest. Believes in the compact harder than anyone born to it.",
-      "known_events": []
-    },
-    {
-      "name": "Mira Dune",
-      "race": "Half-Elf",
-      "class": "Rogue",
-      "level": 1,
-      "status": "active",
-      "hidden": false,
-      "notes": "Compact Guild courier. Knows every back street in Hartstone. Loyalties unclear.",
-      "known_events": []
-    },
-    {
-      "name": "Sera Eld",
-      "race": "Dwarf",
-      "class": "Cleric",
-      "level": 1,
-      "status": "active",
-      "hidden": false,
-      "notes": "Temple healer from outside Hartstone. Came to study the Grace-Sworn. Stayed.",
-      "known_events": []
-    },
-    {
-      "name": "Osric Fell",
-      "race": "Human",
-      "class": "Wizard",
-      "level": 1,
-      "status": "active",
-      "hidden": false,
-      "notes": "Kelrath Academy scholar. Officially studying civic law. Unofficially watching everything.",
-      "known_events": []
+      "id": "default",
+      "name": "The Party",
+      "characters": [
+        {
+          "name": "Carran Voss",
+          "race": "Human",
+          "class": "Paladin",
+          "level": 1,
+          "status": "active",
+          "hidden": false,
+          "notes": "Grace-Sworn initiate. Earnest. Believes in the compact harder than anyone born to it.",
+          "known_events": [],
+          "log": [
+            {
+              "id": "evt_786739",
+              "session": 1,
+              "note": "Carran stands at the gate when [[House Vespar]]'s column arrives \u2014 forty guards, two lawyers reading aloud from folded papers. He counts swords. He keeps counting. [[Commander Aldric Vane|Aldric]] told him the compact has held three succession crises. Carran is not sure Aldric has seen forty swords arrive at the gate before.",
+              "visibility": "public",
+              "polarity": "negative",
+              "intensity": 2,
+              "event_type": "politics",
+              "location_id": "hartstone_north_gate"
+            },
+            {
+              "id": "evt_e1f8e6",
+              "session": 2,
+              "note": "Carran spends the afternoon in [[The City Archive|the archive]] with [[Brother Edmar]], working through succession records. The founding compact's clause is clear: [[The Grace-Sworn]] must recognize the legitimate ruler. The word 'legitimate' is not defined in the text. Edmar says that was deliberate.",
+              "visibility": "public",
+              "polarity": "negative",
+              "intensity": 1,
+              "event_type": "discovery",
+              "location_id": "the_city_archive"
+            },
+            {
+              "id": "evt_765b49",
+              "session": 3,
+              "note": "The compact requires [[The Grace-Sworn]] to recognize the legitimate ruler of [[House Vespar|Vespar]]'s treaty territory. [[Lady Ivra Malt|Ivra]]'s documentation is genuine. [[Emissary Dax Fell|Dax]]'s resolution is ratified. Both are legally sound. Both cannot be honored simultaneously. [[Carran Voss|Carran]] keeps looking at [[Commander Aldric Vane|Aldric]], who is not looking back.",
+              "visibility": "public",
+              "polarity": "negative",
+              "intensity": 2,
+              "event_type": "politics",
+              "location_id": "the_compact_hall"
+            },
+            {
+              "id": "evt_ed7f2b",
+              "session": 4,
+              "note": "Two of the [[The Grace-Sworn|Grace-Sworn]] guards in that patrol are initiates [[Carran Voss|Carran]] trained with. They were found in the tunnel junction, hands bound, blindfolded. One of them had a word written on his forearm in [[The Underbrick|Underbrick]] ink. Carran cleaned it off himself. He did not tell [[Commander Aldric Vane|Aldric]] about the second message in the guard's boot.",
+              "visibility": "public",
+              "polarity": "negative",
+              "intensity": 3,
+              "event_type": "combat",
+              "location_id": "the_east_quarter_tunnels"
+            }
+          ]
+        },
+        {
+          "name": "Mira Dune",
+          "race": "Half-Elf",
+          "class": "Rogue",
+          "level": 1,
+          "status": "active",
+          "hidden": false,
+          "notes": "Compact Guild courier. Knows every back street in Hartstone. Loyalties unclear.",
+          "known_events": [],
+          "log": [
+            {
+              "id": "evt_3e9e88",
+              "session": 1,
+              "note": "[[Emissary Dax Fell|Dax Fell]] takes the same corner table at the Guildhall's private dining room he has used every third evening for six months. Mira has delivered messages to that table. Tonight he has [[Guildmaster Sena Cord|Sena Cord]]'s senior merchants with him and a new bottle of Kelrath red. The [[House Vespar]] delegation is still unpacking.",
+              "visibility": "public",
+              "polarity": "neutral",
+              "intensity": 1,
+              "event_type": "politics",
+              "location_id": "the_guildhall"
+            },
+            {
+              "id": "evt_639da8",
+              "session": 2,
+              "note": "Three shipments in two weeks through the east quarter drainage tunnels \u2014 [[Mira Dune|Mira]] knows those routes. She has run courier packages through two of them. Whatever is being moved is heavy: the gravel impressions are four inches deep. That is not packages. That is crates.",
+              "visibility": "public",
+              "polarity": "negative",
+              "intensity": 2,
+              "event_type": "discovery",
+              "location_id": "the_east_quarter_tunnels"
+            },
+            {
+              "id": "evt_3dec9b",
+              "session": 3,
+              "note": "[[Mira Dune|Mira]] sat in the back row and watched which documents [[Lady Ivra Malt|Lady Ivra]] kept folded. Three of them never left her lawyer's inside pocket. [[Emissary Dax Fell|Dax Fell]] watched the same pocket. He knew which documents she would present before she presented them. That is not preparation. That is advance notice.",
+              "visibility": "public",
+              "polarity": "negative",
+              "intensity": 1,
+              "event_type": "discovery",
+              "location_id": "the_compact_hall"
+            },
+            {
+              "id": "evt_570a74",
+              "session": 4,
+              "note": "[[Mira Dune|Mira]] went into the tunnels two hours before the patrol was supposed to. She found the ambush site, the staging area, and a second exit [[The Grace-Sworn|Grace-Sworn]] tunnel maps don't show. She marked it and came back out. She did not tell anyone she went in. She is deciding who to tell about the exit.",
+              "visibility": "dm_only",
+              "polarity": "negative",
+              "intensity": 2,
+              "event_type": "discovery",
+              "location_id": "the_east_quarter_tunnels"
+            }
+          ]
+        },
+        {
+          "name": "Sera Eld",
+          "race": "Dwarf",
+          "class": "Cleric",
+          "level": 1,
+          "status": "active",
+          "hidden": false,
+          "notes": "Temple healer from outside Hartstone. Came to study the Grace-Sworn. Stayed.",
+          "known_events": [],
+          "log": [
+            {
+              "id": "evt_fcd787",
+              "session": 1,
+              "note": "Sera arrived in Hartstone two weeks ago to study [[The Grace-Sworn|Grace-Sworn]] field medicine. She did not expect to arrive in the middle of a succession crisis. [[Brother Edmar]] gave her a bed in the archive annex and apologized for the timing. She is beginning to suspect the timing is not going to improve.",
+              "visibility": "public",
+              "polarity": "neutral",
+              "intensity": 1,
+              "event_type": "other",
+              "location_id": "the_grace_sworn_citadel"
+            },
+            {
+              "id": "evt_6b9033",
+              "session": 2,
+              "note": "[[Guildmaster Sena Cord]] spent the first ten minutes of the meeting deciding whether to trust [[Sera Eld|Sera]]. Sera has seen that look before \u2014 in patients weighing whether to tell a healer where it actually hurts. Sena decided yes, provisionally. She mentioned the weapons before anyone asked. That was not accidental.",
+              "visibility": "public",
+              "polarity": "neutral",
+              "intensity": 1,
+              "event_type": "dialogue",
+              "location_id": "the_guildhall"
+            },
+            {
+              "id": "evt_a3b69b",
+              "session": 3,
+              "note": "[[Brother Edmar]] was quiet through the hearing. Not attentive-quiet \u2014 the silence of someone who already knows how the argument ends. [[Sera Eld|Sera]] caught him during the adjournment: 'You found something in the treaty.' He looked at her for a long moment. 'I found something I need to verify,' he said. 'Before anyone else does.'",
+              "visibility": "public",
+              "polarity": "positive",
+              "intensity": 1,
+              "event_type": "dialogue",
+              "location_id": "the_compact_hall"
+            },
+            {
+              "id": "evt_17943c",
+              "session": 4,
+              "note": "[[Sera Eld|Sera]] healed the patrol in the citadel's lower ward. None of them could say how many people ambushed them \u2014 it was dark, it was fast, nobody spoke. The blindfolds were cut from bolt-cloth. The same bolt-cloth [[The Compact Guild|the Guild]] imports from the southern river towns. She recognized the weave.",
+              "visibility": "public",
+              "polarity": "negative",
+              "intensity": 2,
+              "event_type": "other",
+              "location_id": "the_grace_sworn_citadel"
+            }
+          ]
+        },
+        {
+          "name": "Osric Fell",
+          "race": "Human",
+          "class": "Wizard",
+          "level": 1,
+          "status": "active",
+          "hidden": false,
+          "notes": "Kelrath Academy scholar. Officially studying civic law. Unofficially watching everything.",
+          "known_events": [],
+          "log": [
+            {
+              "id": "evt_278dc4",
+              "session": 1,
+              "note": "The name on the sealed correspondence delivered to [[Emissary Dax Fell]] this evening is written in a hand [[Osric Fell|Osric]] recognizes from the Kelrath Academy's administrative staff. The letter is dated three months ago. That is before the Kelrath Council would have voted on anything. He does not mention this to anyone tonight.",
+              "visibility": "dm_only",
+              "polarity": "negative",
+              "intensity": 1,
+              "event_type": "discovery"
+            },
+            {
+              "id": "evt_2ff419",
+              "session": 2,
+              "note": "The 1187 treaty has three provisions. Both delegations have cited the first two. [[Osric Fell|Osric]] finds the third while [[Brother Edmar]] is pulling succession records. He reads it twice. He does not mention it to Edmar. He needs to know who else has seen this before he decides what to do with it.",
+              "visibility": "dm_only",
+              "polarity": "positive",
+              "intensity": 2,
+              "event_type": "discovery",
+              "location_id": "the_city_archive"
+            },
+            {
+              "id": "evt_6404d4",
+              "session": 3,
+              "note": "[[Osric Fell|Osric]] was at the Kelrath Academy when the neutrality resolution was being drafted \u2014 not the ratification, the drafting. He remembers the policy clerks running the citations. [[Emissary Dax Fell|Dax]]'s document is word-for-word what was on that desk. The resolution was ready before the Vespar succession crisis was public knowledge. Someone told Kelrath what Vespar was planning before they announced it.",
+              "visibility": "dm_only",
+              "polarity": "negative",
+              "intensity": 2,
+              "event_type": "discovery",
+              "location_id": "the_compact_hall"
+            },
+            {
+              "id": "evt_c46e75",
+              "session": 4,
+              "note": "The cutout's account \u2014 same weapons sold to [[House Vespar|Vespar]] and [[The Kelrath Envoys|Kelrath]] simultaneously \u2014 means [[The Loom]] is not working for either delegation. [[Osric Fell|Osric]] draws the conclusion quietly: [[The Underbrick|the Underbrick]] is trying to provoke a confrontation between two well-armed delegations inside Hartstone's walls. In the chaos, the compact's enforcement authority collapses and the east quarter becomes ungoverned territory. Someone planned this before Vespar arrived.",
+              "visibility": "dm_only",
+              "polarity": "negative",
+              "intensity": 3,
+              "event_type": "discovery"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
