@@ -777,6 +777,13 @@ def world_graph_data(slug):
 
     effective_as_of = as_of or fork_point
 
+    # Precompute all declared (source_id, target_id) pairs so one-way edges can be flagged
+    _all_declared = set()
+    for _e in list(npcs) + list(factions):
+        for _r in _e.get("relations", []):
+            if _r.get("target"):
+                _all_declared.add((_e["id"], _r["target"]))
+
     def _graph_effective_dead(entity, cutoff):
         if not entity.get("dead"):
             return False
@@ -860,6 +867,7 @@ def world_graph_data(slug):
                 continue
             seen_edges.add(key)
             edge_id = f"{npc['id']}__{tid}{'__dm' if is_dm_edge else ''}"
+            one_way = (tid, npc["id"]) not in _all_declared
             formal_rel = edge.get("formal_relation")
             personal_rel = edge.get("personal_relation")
             if formal_rel and personal_rel and formal_rel != personal_rel:
@@ -873,6 +881,7 @@ def world_graph_data(slug):
                     "rel_color": _rel_hex.get(_fr, "#888888"),
                     "weight": float(edge.get("weight", 0.5)),
                     "dm_only": is_dm_edge,
+                    "one_way": one_way,
                 }})
                 edges.append({"data": {
                     "id": edge_id + "__personal",
@@ -882,6 +891,7 @@ def world_graph_data(slug):
                     "rel_color": _rel_hex.get(_pr, "#888888"),
                     "weight": float(edge.get("weight", 0.5)),
                     "dm_only": is_dm_edge,
+                    "one_way": one_way,
                 }})
             else:
                 edges.append({"data": {
@@ -891,6 +901,7 @@ def world_graph_data(slug):
                     "relation": edge.get("relation", "ally"),
                     "weight": float(edge.get("weight", 0.5)),
                     "dm_only": is_dm_edge,
+                    "one_way": one_way,
                 }})
         # Faction membership edges (one per faction the NPC belongs to)
         for fid in npc.get("factions", []):
@@ -959,6 +970,7 @@ def world_graph_data(slug):
                 continue
             seen_edges.add(key)
             edge_id = f"{faction['id']}__{tid}{'__dm' if is_dm_edge else ''}"
+            one_way = (tid, faction["id"]) not in _all_declared
             formal_rel = edge.get("formal_relation")
             personal_rel = edge.get("personal_relation")
             if formal_rel and personal_rel and formal_rel != personal_rel:
@@ -972,6 +984,7 @@ def world_graph_data(slug):
                     "rel_color": _rel_hex.get(_fr, "#888888"),
                     "weight": float(edge.get("weight", 0.5)),
                     "dm_only": is_dm_edge,
+                    "one_way": one_way,
                 }})
                 edges.append({"data": {
                     "id": edge_id + "__personal",
@@ -981,6 +994,7 @@ def world_graph_data(slug):
                     "rel_color": _rel_hex.get(_pr, "#888888"),
                     "weight": float(edge.get("weight", 0.5)),
                     "dm_only": is_dm_edge,
+                    "one_way": one_way,
                 }})
             else:
                 edges.append({"data": {
@@ -990,6 +1004,7 @@ def world_graph_data(slug):
                     "relation": edge.get("relation", "ally"),
                     "weight": float(edge.get("weight", 0.5)),
                     "dm_only": is_dm_edge,
+                    "one_way": one_way,
                 }})
 
     # ── Dynamic inter-entity edges from ripple actor history ─────────────────
@@ -1144,24 +1159,8 @@ def world_graph_data(slug):
                         "interaction": True,
                         "weight": 0.6,
                     }})
-            # Connect character to entities they specifically know about
-            char_connected = set()
-            for event_id in char.get("known_events", []):
-                entity_id = event_to_entity.get(event_id)
-                if entity_id and entity_id not in char_connected:
-                    char_connected.add(entity_id)
-                    key = frozenset([cid, entity_id])
-                    if key not in seen_edges:
-                        seen_edges.add(key)
-                        edges.append({"data": {
-                            "id": f"{cid}__{entity_id}",
-                            "source": cid,
-                            "target": entity_id,
-                            "relation": "knows",
-                            "interaction": True,
-                            "weight": 0.25,
-                        }})
             # Direct personal relations with full dual-axis conflict support
+            # Must run before known_events so formal relations take the seen_edges slot
             for rel in char.get("relations", []):
                 tid = rel.get("target")
                 if not tid or tid not in known_ids:
@@ -1205,6 +1204,24 @@ def world_graph_data(slug):
                         "weight": float(rel.get("weight", 0.5)),
                         "dm_only": is_dm_edge,
                     }})
+            # Connect character to entities they specifically know about
+            # Runs after relations so formal edges take priority over knows edges
+            char_connected = set()
+            for event_id in char.get("known_events", []):
+                entity_id = event_to_entity.get(event_id)
+                if entity_id and entity_id not in char_connected:
+                    char_connected.add(entity_id)
+                    key = frozenset([cid, entity_id])
+                    if key not in seen_edges:
+                        seen_edges.add(key)
+                        edges.append({"data": {
+                            "id": f"{cid}__{entity_id}",
+                            "source": cid,
+                            "target": entity_id,
+                            "relation": "knows",
+                            "interaction": True,
+                            "weight": 0.25,
+                        }})
 
     # ── Party-affiliate NPCs → party hub ─────────────────────────────────────
     for npc in npcs:

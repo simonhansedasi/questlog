@@ -163,6 +163,7 @@ fetch(`/${slug}/world/graph-data{% if as_of %}?as_of={{ as_of }}{% endif %}`)
         { selector: 'edge[relation="conflict_formal"], edge[relation="conflict_personal"]', style: { 'line-style':'dashed', 'line-dash-pattern':[6,4], 'line-color':'data(rel_color)', width:2, opacity:0.9, 'target-arrow-shape':'none' }},
         { selector: 'edge[relation="conflict_formal"]',  style: { 'curve-style':'unbundled-bezier', 'control-point-distances': 30 }},
         { selector: 'edge[relation="conflict_personal"]', style: { 'curve-style':'unbundled-bezier', 'control-point-distances':-30 }},
+        { selector: 'edge[?one_way]',                  style: { 'target-arrow-shape':'vee', 'arrow-scale':0.8 }},
         { selector: 'edge[?dm_only]',                 style: { 'line-style':'dotted', 'line-color':'rgba(180,120,220,0.55)', width:1.2, opacity:0.7 }},
         { selector: 'edge[relation="inter_faction"]', style: { 'line-style':'dashed', width:'mapData(weight,0,1,0.8,2.5)', opacity:0.75, 'line-color':'#888888' }},
         { selector: 'edge[relation="inter_faction"][dynamic_relationship="hostile"]', style: { 'line-color':'rgba(224,92,92,0.75)' }},
@@ -182,6 +183,7 @@ fetch(`/${slug}/world/graph-data{% if as_of %}?as_of={{ as_of }}{% endif %}`)
     cy.edges('[relation="conflict_formal"],[relation="conflict_personal"]').forEach(e => {
       e.style('line-color', e.data('rel_color') || '#888888');
     });
+    fixArrowColors();
 
     cy.on('tap', 'node', e => selectNode(e.target));
     cy.on('tap', e => { if (e.target === cy) clearSelection(); });
@@ -215,6 +217,7 @@ function startPolling() {
             if (fresh) n.data(fresh.data);
           });
           cy.layout({ name:'cose', animate:true, animationDuration:600, fit:false, padding:40, nodeRepulsion:18000, nodeOverlap:6, idealEdgeLength:80, edgeElasticity:70, gravity:45, numIter:600, randomize:false }).run();
+          fixArrowColors();
           applyFilters();
         }
         const nodeCount = data.nodes.length;
@@ -225,6 +228,10 @@ function startPolling() {
       })
       .catch(() => {});
   }, 3000);
+}
+
+function fixArrowColors() {
+  cy.edges('[?one_way]').forEach(e => e.style('target-arrow-color', e.style('line-color')));
 }
 
 function refreshEntityCards() {

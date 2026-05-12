@@ -715,7 +715,7 @@ def dm_commit_proposals(slug):
                                      effect_type=meta_c.get("effect_type", "custom"),
                                      effect_scope=meta_c.get("effect_scope", ""),
                                      magnitude=meta_c.get("magnitude", ""),
-                                     hidden=True)
+                                     hidden=False)
                     condition_by_name[name.lower()] = entity_id
                     created.append({"name": name, "type": "condition", "id": entity_id})
             polarity = entry.get("polarity") or None
@@ -970,7 +970,7 @@ def dm_import_session_commit(slug):
                     db.add_condition(slug, name, region=meta_c.get("region", ""),
                                      effect_type=meta_c.get("effect_type", "custom"),
                                      effect_scope=meta_c.get("effect_scope", ""),
-                                     magnitude=meta_c.get("magnitude", ""), hidden=True)
+                                     magnitude=meta_c.get("magnitude", ""), hidden=False)
                     condition_by_name[name.lower()] = entity_id
                     created.append({"name": name, "type": "condition", "id": entity_id})
             polarity = entry.get("polarity") or None
@@ -1204,7 +1204,7 @@ def dm_import_session(slug):
                     db.add_condition(slug, name, region=meta_c.get("region", ""),
                                      effect_type=meta_c.get("effect_type", "custom"),
                                      effect_scope=meta_c.get("effect_scope", ""),
-                                     magnitude=meta_c.get("magnitude", ""), hidden=True)
+                                     magnitude=meta_c.get("magnitude", ""), hidden=False)
                     condition_by_name[name.lower()] = entity_id
                     created.append({"name": name, "type": "condition"})
             polarity = entry.get("polarity") or None

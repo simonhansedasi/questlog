@@ -231,6 +231,10 @@ fetch(`/${slug}/world/graph-data`)
         { selector: 'edge[relation="char_relation"][relationship="hostile"]',
           style: { 'line-color': 'rgba(224, 92, 92, 0.7)' } },
         {
+          selector: 'edge[?one_way]',
+          style: { 'target-arrow-shape': 'vee', 'arrow-scale': 0.8 }
+        },
+        {
           selector: 'edge[?dm_only]',
           style: {
             'line-style': 'dotted',
@@ -358,6 +362,7 @@ fetch(`/${slug}/world/graph-data`)
     cy.edges('[relation="conflict_formal"],[relation="conflict_personal"]').forEach(e => {
       e.style('line-color', e.data('rel_color') || '#888888');
     });
+    fixArrowColors();
 
     // Store original relationship values before any perspective override
     cy.nodes().forEach(n => { origRels[n.id()] = n.data('relationship'); });
@@ -613,10 +618,15 @@ function startPolling() {
           cy.layout({ name:'cose', animate:true, animationDuration:600, fit:false, padding:50, nodeRepulsion:18000, nodeOverlap:6, idealEdgeLength:80, edgeElasticity:70, gravity:45, numIter:600, randomize:false }).run();
           applyFilters();
           applyPerspective(sel?.value || 'neutral_observer');
+          fixArrowColors();
         }
       })
       .catch(() => {});
   }, 3000);
+}
+
+function fixArrowColors() {
+  cy.edges('[?one_way]').forEach(e => e.style('target-arrow-color', e.style('line-color')));
 }
 
 function rebuildPerspectiveSelect(currentVal) {
