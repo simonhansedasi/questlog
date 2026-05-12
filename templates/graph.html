@@ -395,6 +395,7 @@ fetch(`/${slug}/world/graph-data`)
     cy.on('tap', function(e) { if (e.target === cy) clearSelection(); });
     applyFilters();
     applyPerspective('neutral_observer');
+    startPolling();
   })
   .catch(err => {
     const el = document.getElementById('cy-loading');
@@ -583,6 +584,75 @@ function applyPerspective(entityId) {
     n.data('relationship', rel);
     n.style('background-color', REL_COLOR[rel]);
   });
+}
+
+function startPolling() {
+  setInterval(() => {
+    fetch(`/${slug}/world/graph-data?t=${Date.now()}`)
+      .then(r => r.json())
+      .then(data => {
+        if (!cy) return;
+        const existingNodeIds = new Set(cy.nodes().map(n => n.id()));
+        const existingEdgeIds = new Set(cy.edges().map(e => e.id()));
+        const newNodes = data.nodes.filter(n => !existingNodeIds.has(n.data.id));
+        const newEdges = data.edges.filter(e => !existingEdgeIds.has(e.data.id));
+        const liveNodeIds = new Set(data.nodes.map(n => n.data.id));
+        const removedCount = cy.nodes().filter(n => !liveNodeIds.has(n.id())).length;
+        cy.nodes().forEach(n => {
+          if (!liveNodeIds.has(n.id())) { delete origRels[n.id()]; n.remove(); }
+        });
+        if (newNodes.length || newEdges.length || removedCount) {
+          if (newNodes.length || newEdges.length) cy.add([...newNodes, ...newEdges]);
+          cy.nodes().forEach(n => {
+            const fresh = data.nodes.find(d => d.data.id === n.id());
+            if (fresh) { n.data(fresh.data); origRels[n.id()] = fresh.data.relationship; }
+          });
+          const sel = document.getElementById('perspective-select');
+          const currentPerspective = sel?.value || 'neutral_observer';
+          if (newNodes.length || removedCount) rebuildPerspectiveSelect(currentPerspective);
+          cy.layout({ name:'cose', animate:true, animationDuration:600, fit:false, padding:50, nodeRepulsion:18000, nodeOverlap:6, idealEdgeLength:80, edgeElasticity:70, gravity:45, numIter:600, randomize:false }).run();
+          applyFilters();
+          applyPerspective(sel?.value || 'neutral_observer');
+        }
+      })
+      .catch(() => {});
+  }, 3000);
+}
+
+function rebuildPerspectiveSelect(currentVal) {
+  const select = document.getElementById('perspective-select');
+  if (!select) return;
+  Array.from(select.querySelectorAll('optgroup')).forEach(g => g.remove());
+  const charNodes = cy.nodes().filter(n => n.data('type') === 'character')
+    .sort((a, b) => a.data('label').localeCompare(b.data('label')));
+  const entityNodes = cy.nodes().filter(n => ['npc', 'faction'].includes(n.data('type')))
+    .sort((a, b) => a.data('label').localeCompare(b.data('label')));
+  if (charNodes.length) {
+    const grp = document.createElement('optgroup');
+    grp.label = 'Party Members';
+    charNodes.forEach(n => {
+      const opt = document.createElement('option');
+      opt.value = n.id(); opt.textContent = n.data('label');
+      grp.appendChild(opt);
+    });
+    select.appendChild(grp);
+  }
+  if (entityNodes.length) {
+    const grp = document.createElement('optgroup');
+    grp.label = 'Entities';
+    entityNodes.forEach(n => {
+      const opt = document.createElement('option');
+      opt.value = n.id();
+      opt.textContent = n.data('label') + (n.data('type') === 'faction' ? ' ◻' : '');
+      grp.appendChild(opt);
+    });
+    select.appendChild(grp);
+  }
+  if (Array.from(select.options).some(o => o.value === currentVal)) {
+    select.value = currentVal;
+  } else {
+    select.value = 'neutral_observer';
+  }
 }
 
 function applyFilters() {

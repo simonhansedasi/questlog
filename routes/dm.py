@@ -3111,7 +3111,7 @@ def dm_collapse_npc(slug, npc_id):
     target = next((n for n in target_npcs if n["id"] == target_id), None)
     tname = target["name"] if target else target_id
     flash(f"Collapsed into {tname}. All history merged.", "success")
-    return redirect(f"/{slug}/world/npc/{target_id}")
+    return redirect(url_for("player.world", slug=slug))
 
 
 # ── Admin routes ──────────────────────────────────────────────────────────────

@@ -206,9 +206,10 @@ function startPolling() {
         const newNodes = data.nodes.filter(n => !existingNodeIds.has(n.data.id));
         const newEdges = data.edges.filter(e => !existingEdgeIds.has(e.data.id));
         const liveNodeIds = new Set(data.nodes.map(n => n.data.id));
+        const removedCount = cy.nodes().filter(n => !liveNodeIds.has(n.id())).length;
         cy.nodes().forEach(n => { if (!liveNodeIds.has(n.id())) n.remove(); });
-        if (newNodes.length || newEdges.length) {
-          cy.add([...newNodes, ...newEdges]);
+        if (newNodes.length || newEdges.length || removedCount) {
+          if (newNodes.length || newEdges.length) cy.add([...newNodes, ...newEdges]);
           cy.nodes().forEach(n => {
             const fresh = data.nodes.find(d => d.data.id === n.id());
             if (fresh) n.data(fresh.data);

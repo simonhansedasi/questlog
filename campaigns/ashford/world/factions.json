@@ -8,7 +8,7 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_21a596",
+          "id": "evt_b159d2",
           "session": 1,
           "note": "[[The Ironmasks]] have expanded their toll to cover the northern road as well as the eastern approach. [[Farlan Dusk]] counted thirty-two collectors working the roads this week \u2014 up from eighteen a month ago.",
           "visibility": "public",
@@ -17,19 +17,21 @@
           "event_type": "other"
         },
         {
-          "id": "evt_63253e",
+          "id": "evt_f15156",
           "session": 3,
           "note": "The party drives the [[The Ironmasks|Ironmask]] holding operation out of [[Greystone Keep|the Keep's]] outer courtyard. Six Ironmasks subdued. Two escaped toward Ashford. [[Warchief Durnak]] watches from the wall without interfering.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
           "event_type": "combat",
+          "actor_id": "warchief_durnak",
+          "actor_type": "npc",
           "location_id": "greystone_keep"
         },
         {
-          "id": "evt_27060c",
+          "id": "evt_066311",
           "session": 4,
-          "note": "Consequence of The Shadow Wing (ally): [[The Shadow Wing]] moves refined ore samples through the tunnel system twice a week. The operation has been running for eight months \u2014 exactly as long as the shipping discrepancy in [[Edda Sorn|Edda's]] records.",
+          "note": "Consequence of The Shadow Wing (ally): Shadow Wing ore skim operation confirmed \u2014 eight months running.",
           "visibility": "dm_only",
           "polarity": "negative",
           "intensity": 2,
@@ -37,13 +39,13 @@
           "ripple_source": {
             "entity_id": "the_shadow_wing",
             "entity_type": "faction",
-            "event_id": null
+            "event_id": "evt_675e24"
           },
           "actor_id": "the_shadow_wing",
           "actor_type": "faction"
         },
         {
-          "id": "evt_ba268c",
+          "id": "evt_4a5169",
           "session": 5,
           "note": "The [[The Ironmasks|Ironmask]] street operation in Ashford is broken. The toll is ended. Remaining Ironmasks have scattered into [[The Greywood]]. [[Corvin Ashale]]'s warehouse is locked from the inside.",
           "visibility": "public",
@@ -81,9 +83,9 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_f67aee",
+          "id": "evt_443e2e",
           "session": 1,
-          "note": "Consequence of The Ironmasks (ally): [[The Ironmasks]] have expanded their toll to cover the northern road as well as the eastern approach. [[Farlan Dusk]] counted thirty-two collectors working the roads this week \u2014 up from eighteen a month ago.",
+          "note": "Consequence of The Ironmasks (ally): Ironmask toll expansion \u2014 northern road now covered.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 1,
@@ -91,15 +93,15 @@
           "ripple_source": {
             "entity_id": "the_ironmasks",
             "entity_type": "faction",
-            "event_id": null
+            "event_id": "evt_b159d2"
           },
           "actor_id": "the_ironmasks",
           "actor_type": "faction"
         },
         {
-          "id": "evt_64880d",
+          "id": "evt_bb311e",
           "session": 3,
-          "note": "Consequence of The Ironmasks (ally): The party drives the [[The Ironmasks|Ironmask]] holding operation out of [[Greystone Keep|the Keep's]] outer courtyard. Six Ironmasks subdued. Two escaped toward Ashford. [[Warchief Durnak]] watches from the wall without interfering.",
+          "note": "Consequence of The Ironmasks (ally): Ironmask courtyard operation dismantled \u2014 first major defeat.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
@@ -107,15 +109,15 @@
           "ripple_source": {
             "entity_id": "the_ironmasks",
             "entity_type": "faction",
-            "event_id": null
+            "event_id": "evt_f15156"
           },
           "actor_id": "the_ironmasks",
           "actor_type": "faction"
         },
         {
-          "id": "evt_e41e6c",
+          "id": "evt_269dbc",
           "session": 4,
-          "note": "Consequence of The Shadow Wing (ally): [[The Shadow Wing]] moves refined ore samples through the tunnel system twice a week. The operation has been running for eight months \u2014 exactly as long as the shipping discrepancy in [[Edda Sorn|Edda's]] records.",
+          "note": "Consequence of The Shadow Wing (ally): Shadow Wing ore skim operation confirmed \u2014 eight months running.",
           "visibility": "dm_only",
           "polarity": "negative",
           "intensity": 1,
@@ -123,23 +125,23 @@
           "ripple_source": {
             "entity_id": "the_shadow_wing",
             "entity_type": "faction",
-            "event_id": null
+            "event_id": "evt_675e24"
           },
           "actor_id": "the_shadow_wing",
           "actor_type": "faction"
         },
         {
-          "id": "evt_109892",
+          "id": "evt_4d2002",
           "session": 5,
-          "note": "Consequence of The Ironmasks (ally): The [[The Ironmasks|Ironmask]] street operation in Ashford is broken. The toll is ended. Remaining Ironmasks have scattered into [[The Greywood]]. [[Corvin Ashale]]'s warehouse is locked from the inside.",
+          "note": "Consequence of The Ironmasks (ally): Ironmask operation broken \u2014 toll ended, boss captured.",
           "visibility": "public",
-          "polarity": "positive",
+          "polarity": "negative",
           "intensity": 2,
           "event_type": "other",
           "ripple_source": {
             "entity_id": "the_ironmasks",
             "entity_type": "faction",
-            "event_id": null
+            "event_id": "evt_4a5169"
           },
           "actor_id": "the_ironmasks",
           "actor_type": "faction"
@@ -162,9 +164,9 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_73e5c1",
+          "id": "evt_b8519b",
           "session": 1,
-          "note": "Consequence of The Ironmasks (rival): [[The Ironmasks]] have expanded their toll to cover the northern road as well as the eastern approach. [[Farlan Dusk]] counted thirty-two collectors working the roads this week \u2014 up from eighteen a month ago.",
+          "note": "Consequence of The Ironmasks (rival): Ironmask toll expansion \u2014 northern road now covered.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 2,
@@ -172,15 +174,15 @@
           "ripple_source": {
             "entity_id": "the_ironmasks",
             "entity_type": "faction",
-            "event_id": null
+            "event_id": "evt_b159d2"
           },
           "actor_id": "the_ironmasks",
           "actor_type": "faction"
         },
         {
-          "id": "evt_92cdb4",
+          "id": "evt_c5bf7b",
           "session": 3,
-          "note": "Consequence of The Ironmasks (rival): The party drives the [[The Ironmasks|Ironmask]] holding operation out of [[Greystone Keep|the Keep's]] outer courtyard. Six Ironmasks subdued. Two escaped toward Ashford. [[Warchief Durnak]] watches from the wall without interfering.",
+          "note": "Consequence of The Ironmasks (rival): Ironmask courtyard operation dismantled \u2014 first major defeat.",
           "visibility": "public",
           "polarity": "positive",
           "intensity": 3,
@@ -188,23 +190,23 @@
           "ripple_source": {
             "entity_id": "the_ironmasks",
             "entity_type": "faction",
-            "event_id": null
+            "event_id": "evt_f15156"
           },
           "actor_id": "the_ironmasks",
           "actor_type": "faction"
         },
         {
-          "id": "evt_1e460c",
+          "id": "evt_5c65b8",
           "session": 5,
-          "note": "Consequence of The Ironmasks (rival): The [[The Ironmasks|Ironmask]] street operation in Ashford is broken. The toll is ended. Remaining Ironmasks have scattered into [[The Greywood]]. [[Corvin Ashale]]'s warehouse is locked from the inside.",
+          "note": "Consequence of The Ironmasks (rival): Ironmask operation broken \u2014 toll ended, boss captured.",
           "visibility": "public",
-          "polarity": "negative",
+          "polarity": "positive",
           "intensity": 3,
           "event_type": "other",
           "ripple_source": {
             "entity_id": "the_ironmasks",
             "entity_type": "faction",
-            "event_id": null
+            "event_id": "evt_4a5169"
           },
           "actor_id": "the_ironmasks",
           "actor_type": "faction"
@@ -233,9 +235,9 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_ecfe8e",
+          "id": "evt_02bb5b",
           "session": 1,
-          "note": "Consequence of The Ironmasks (rival): [[The Ironmasks]] have expanded their toll to cover the northern road as well as the eastern approach. [[Farlan Dusk]] counted thirty-two collectors working the roads this week \u2014 up from eighteen a month ago.",
+          "note": "Consequence of The Ironmasks (rival): Ironmask toll expansion \u2014 northern road now covered.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 1,
@@ -243,15 +245,15 @@
           "ripple_source": {
             "entity_id": "the_ironmasks",
             "entity_type": "faction",
-            "event_id": null
+            "event_id": "evt_b159d2"
           },
           "actor_id": "the_ironmasks",
           "actor_type": "faction"
         },
         {
-          "id": "evt_a01990",
+          "id": "evt_ec0195",
           "session": 3,
-          "note": "Consequence of The Ironmasks (rival): The party drives the [[The Ironmasks|Ironmask]] holding operation out of [[Greystone Keep|the Keep's]] outer courtyard. Six Ironmasks subdued. Two escaped toward Ashford. [[Warchief Durnak]] watches from the wall without interfering.",
+          "note": "Consequence of The Ironmasks (rival): Ironmask courtyard operation dismantled \u2014 first major defeat.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
@@ -259,23 +261,23 @@
           "ripple_source": {
             "entity_id": "the_ironmasks",
             "entity_type": "faction",
-            "event_id": null
+            "event_id": "evt_f15156"
           },
           "actor_id": "the_ironmasks",
           "actor_type": "faction"
         },
         {
-          "id": "evt_194c6e",
+          "id": "evt_c324e1",
           "session": 5,
-          "note": "Consequence of The Ironmasks (rival): The [[The Ironmasks|Ironmask]] street operation in Ashford is broken. The toll is ended. Remaining Ironmasks have scattered into [[The Greywood]]. [[Corvin Ashale]]'s warehouse is locked from the inside.",
+          "note": "Consequence of The Ironmasks (rival): Ironmask operation broken \u2014 toll ended, boss captured.",
           "visibility": "public",
-          "polarity": "positive",
+          "polarity": "negative",
           "intensity": 2,
           "event_type": "other",
           "ripple_source": {
             "entity_id": "the_ironmasks",
             "entity_type": "faction",
-            "event_id": null
+            "event_id": "evt_4a5169"
           },
           "actor_id": "the_ironmasks",
           "actor_type": "faction"
@@ -306,9 +308,9 @@
       "hidden": true,
       "log": [
         {
-          "id": "evt_95c716",
+          "id": "evt_c84bcc",
           "session": 1,
-          "note": "Consequence of The Ironmasks (ally): [[The Ironmasks]] have expanded their toll to cover the northern road as well as the eastern approach. [[Farlan Dusk]] counted thirty-two collectors working the roads this week \u2014 up from eighteen a month ago.",
+          "note": "Consequence of The Ironmasks (ally): Ironmask toll expansion \u2014 northern road now covered.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 2,
@@ -316,15 +318,15 @@
           "ripple_source": {
             "entity_id": "the_ironmasks",
             "entity_type": "faction",
-            "event_id": null
+            "event_id": "evt_b159d2"
           },
           "actor_id": "the_ironmasks",
           "actor_type": "faction"
         },
         {
-          "id": "evt_fade0d",
+          "id": "evt_b9eb22",
           "session": 3,
-          "note": "Consequence of The Ironmasks (ally): The party drives the [[The Ironmasks|Ironmask]] holding operation out of [[Greystone Keep|the Keep's]] outer courtyard. Six Ironmasks subdued. Two escaped toward Ashford. [[Warchief Durnak]] watches from the wall without interfering.",
+          "note": "Consequence of The Ironmasks (ally): Ironmask courtyard operation dismantled \u2014 first major defeat.",
           "visibility": "public",
           "polarity": "negative",
           "intensity": 3,
@@ -332,13 +334,13 @@
           "ripple_source": {
             "entity_id": "the_ironmasks",
             "entity_type": "faction",
-            "event_id": null
+            "event_id": "evt_f15156"
           },
           "actor_id": "the_ironmasks",
           "actor_type": "faction"
         },
         {
-          "id": "evt_f20ee1",
+          "id": "evt_675e24",
           "session": 4,
           "note": "[[The Shadow Wing]] moves refined ore samples through the tunnel system twice a week. The operation has been running for eight months \u2014 exactly as long as the shipping discrepancy in [[Edda Sorn|Edda's]] records.",
           "visibility": "dm_only",
@@ -348,17 +350,17 @@
           "location_id": "corvin_ashale_s_warehouse"
         },
         {
-          "id": "evt_9569fb",
+          "id": "evt_d1f7a4",
           "session": 5,
-          "note": "Consequence of The Ironmasks (ally): The [[The Ironmasks|Ironmask]] street operation in Ashford is broken. The toll is ended. Remaining Ironmasks have scattered into [[The Greywood]]. [[Corvin Ashale]]'s warehouse is locked from the inside.",
+          "note": "Consequence of The Ironmasks (ally): Ironmask operation broken \u2014 toll ended, boss captured.",
           "visibility": "public",
-          "polarity": "positive",
+          "polarity": "negative",
           "intensity": 3,
           "event_type": "other",
           "ripple_source": {
             "entity_id": "the_ironmasks",
             "entity_type": "faction",
-            "event_id": null
+            "event_id": "evt_4a5169"
           },
           "actor_id": "the_ironmasks",
           "actor_type": "faction"

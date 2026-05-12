@@ -490,10 +490,43 @@ add_rel("faction", F["The Shadow Wing"],  F["The Trade Compact"],  "faction", "a
 
 print("  Relations set")
 
+# ── Character relations (party ↔ world) ────────────────────────────────────────
+
+# Calder Voss — ex-Ranger, personal Ironmask grudge
+db.add_character_relation(SLUG, "Calder Voss", N["Farlan Dusk"], "npc", "ally", 0.9)
+db.add_character_relation(SLUG, "Calder Voss", F["Greywood Rangers"], "faction", "ally", 0.85)
+db.add_character_relation(SLUG, "Calder Voss", F["The Ironmasks"], "faction", "rival", 0.9)
+db.add_character_relation(SLUG, "Calder Voss", N["Warchief Durnak"], "npc", "ally", 0.6)
+
+# Wren Ashvale — grew up in Ashford, father victimized by the toll
+db.add_character_relation(SLUG, "Wren Ashvale", N["Edda Sorn"], "npc", "ally", 0.85)
+db.add_character_relation(SLUG, "Wren Ashvale", F["The Ironmasks"], "faction", "rival", 1.0)
+db.add_character_relation(SLUG, "Wren Ashvale", N["Maren Vosk"], "npc", "rival", 0.9)
+db.add_character_relation(SLUG, "Wren Ashvale", N["Orvyn Thatch"], "npc", "ally", 0.75)
+
+# Sable — mysterious warlock, used garrison protocols at Coldwater
+db.add_character_relation(SLUG, "Sable", N["The Pale Widow"], "npc", "ally", 0.8)
+db.add_character_relation(SLUG, "Sable", N["Thane Bergrak"], "npc", "ally", 0.6)
+db.add_character_relation(SLUG, "Sable", N["Corvin Ashale"], "npc", "rival", 0.7,
+                           formal_relation="ally", personal_relation="rival")
+
+# Lira of the Dawn — healer with old knowledge of the Factor
+db.add_character_relation(SLUG, "Lira of the Dawn", N["Sister Veyne"], "npc", "ally", 0.85)
+db.add_character_relation(SLUG, "Lira of the Dawn", N["Orvyn Thatch"], "npc", "ally", 0.7)
+db.add_character_relation(SLUG, "Lira of the Dawn", F["Stonebreaker Clan"], "faction", "ally", 0.55)
+
+# Osric Fynt — Trade Compact auditor who went rogue
+db.add_character_relation(SLUG, "Osric Fynt", N["Edda Sorn"], "npc", "ally", 0.9)
+db.add_character_relation(SLUG, "Osric Fynt", N["Petra Holt"], "npc", "ally", 0.8)
+db.add_character_relation(SLUG, "Osric Fynt", F["The Trade Compact"], "faction", "rival", 0.8)
+db.add_character_relation(SLUG, "Osric Fynt", N["Corvin Ashale"], "npc", "rival", 0.95)
+
+print("  Character relations set")
+
 # ── Event Log ──────────────────────────────────────────────────────────────────
 
 # ── Session 1: Arrival in Ashford ─────────────────────────────────────────────
-log_n(N["Orvyn Thatch"], 1,
+evt_orvyn_1 = log_n(N["Orvyn Thatch"], 1,
       "The party arrives in Ashford and stops at [[Thatch's General Store]]. "
       "[[Orvyn Thatch]] gives them a full picture without being asked: the toll, "
       "[[Bram Ketterly|Bram's capture]], the [[Ashford Miners' Registry|Registry]] situation. "
@@ -516,7 +549,7 @@ db.apply_ripple(SLUG, F["The Ironmasks"], "faction", 1,
                 "Ironmask toll expansion — northern road now covered.",
                 "negative", 2, "other", "public", source_event_id=evt)
 
-log_n(N["Edda Sorn"], 1,
+evt_edda_1 = log_n(N["Edda Sorn"], 1,
       "[[Edda Sorn]] contacts the party privately at [[The Broken Crown]]. "
       "She lays out her shipping discrepancy records: declared output versus actual weight shipped, "
       "month by month. The gap has been growing for eight months. "
@@ -548,7 +581,7 @@ db.log_party_group(SLUG, 1,
     location_id=L["The Broken Crown"])
 
 # ── Session 2: The Registry and the Keep ──────────────────────────────────────
-log_n(N["Petra Holt"], 2,
+evt_petra_2 = log_n(N["Petra Holt"], 2,
       "[[Petra Holt]] shows the party the [[Ashford Miners' Registry|Registry]] payroll records. "
       "The 'safety equipment' deductions are real deductions against real miner wages. "
       "Twelve percent of the payroll is being skimmed through a fictitious expense. "
@@ -562,7 +595,7 @@ log_n(N["Governor Harwick Denn"], 2,
       "He agrees to stop the civic fund payments going forward. He does nothing else.",
       polarity="negative", intensity=1, event_type="dialogue")
 
-log_n(N["Warchief Durnak"], 2,
+evt_durnak_2 = log_n(N["Warchief Durnak"], 2,
       "The party approaches [[Greystone Keep]] and requests parley. "
       "[[Warchief Durnak]] meets them at the gate — not hostile, not friendly. "
       "He will release [[Bram Ketterly|Bram]] if the party removes the [[The Ironmasks|Ironmask]] "
@@ -654,7 +687,7 @@ log_n(N["Thane Bergrak"], 4,
       "Not might. Will.",
       polarity="positive", intensity=2, event_type="dialogue")
 
-log_n(N["The Pale Widow"], 4,
+evt_widow_4 = log_n(N["The Pale Widow"], 4,
       "The party approaches [[Coldwater Ruins]] respectfully. [[The Pale Widow]] does not attack. "
       "She shows them the garrison archive: maps of a tunnel system predating the mine, "
       "running beneath [[The Ashcroft Vein|the Vein]]. "
@@ -845,6 +878,29 @@ log_l(L["Corvin Ashale's Warehouse"], 5,
       visibility="dm_only")
 
 print("  Location logs complete")
+
+# ── Known events (fog of war — who witnessed what) ─────────────────────────────
+
+for char in ["Calder Voss", "Wren Ashvale", "Sable", "Lira of the Dawn", "Osric Fynt"]:
+    db.reveal_event(SLUG, evt_orvyn_1, char)
+    db.reveal_event(SLUG, evt_edda_1, char)
+
+db.reveal_event(SLUG, evt_petra_2, "Osric Fynt")
+db.reveal_event(SLUG, evt_petra_2, "Wren Ashvale")
+
+db.reveal_event(SLUG, evt_durnak_2, "Calder Voss")
+db.reveal_event(SLUG, evt_durnak_2, "Wren Ashvale")
+
+for char in ["Calder Voss", "Wren Ashvale", "Sable", "Lira of the Dawn", "Osric Fynt"]:
+    db.reveal_event(SLUG, evt_maren_3, char)
+
+db.reveal_event(SLUG, evt_widow_4, "Sable")
+db.reveal_event(SLUG, evt_widow_4, "Lira of the Dawn")
+
+for char in ["Calder Voss", "Wren Ashvale", "Sable", "Lira of the Dawn", "Osric Fynt"]:
+    db.reveal_event(SLUG, evt_maren_5, char)
+
+print("  Known events wired")
 
 # ── Quest progression ──────────────────────────────────────────────────────────
 
