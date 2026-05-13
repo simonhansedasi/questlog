@@ -1480,6 +1480,8 @@ def apply_ripple(slug, source_id, source_type, session_n, note, polarity, intens
             return
         if actor_id and target_id == actor_id:
             return  # target caused the original event — they already have it, don't fire back
+        if rel_type == "rival":
+            return  # rival ripples inflate the general score in wrong direction — skip
         rpolarity = FLIP.get(polarity, polarity) if rel_type == "rival" else polarity
         rintensity = max(1, round(intensity * weight))
         relation_label = "ally" if rel_type == "ally" else "rival"
@@ -1699,8 +1701,9 @@ def backfill_relation_ripples(slug, source_id, source_type, target_id, target_ty
             rs = e.get("ripple_source", {})
             if rs.get("entity_id") == source_id and rs.get("event_id"):
                 already_rippled.add(rs["event_id"])
-    FLIP = {"positive": "negative", "negative": "positive", "neutral": "neutral"}
-    relation_label = "ally" if relation == "ally" else "rival"
+    if relation == "rival":
+        return 0  # rival backfill inflates general score in wrong direction — skip
+    relation_label = "ally"
     count = 0
     for entry in source.get("log", []):
         if not entry.get("polarity"):
@@ -1713,7 +1716,7 @@ def backfill_relation_ripples(slug, source_id, source_type, target_id, target_ty
         orig_actor_type = entry.get("actor_type")
         if orig_actor_id and orig_actor_id == target_id:
             continue  # target caused this entry — skip, they already have it
-        rpolarity = FLIP.get(entry["polarity"], entry["polarity"]) if relation == "rival" else entry["polarity"]
+        rpolarity = entry["polarity"]
         rintensity = max(1, round(int(entry.get("intensity", 1)) * float(weight)))
         rnote = f"Retroactive ripple from {source['name']} ({relation_label}): {entry['note']}"
         ripple_source = {"entity_id": source_id, "entity_type": source_type, "event_id": entry.get("id")}
