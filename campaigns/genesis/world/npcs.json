@@ -13,7 +13,7 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_cf5536",
+          "id": "evt_6ba448",
           "session": 5,
           "note": "Consequence of Abraham (ally): The binding of Isaac on Moriah \u2014 God provides; the covenant confirmed.",
           "visibility": "public",
@@ -23,13 +23,11 @@
           "ripple_source": {
             "entity_id": "abraham",
             "entity_type": "npc",
-            "event_id": "evt_40eb9b"
-          },
-          "actor_id": "abraham",
-          "actor_type": "npc"
+            "event_id": "evt_8a53ac"
+          }
         },
         {
-          "id": "evt_6bcdac",
+          "id": "evt_ec4a6f",
           "session": 5,
           "note": "Consequence of Jacob (ally): Jacob steals Esau's blessing \u2014 Esau weeps, vows to kill him; Jacob must flee.",
           "visibility": "public",
@@ -39,13 +37,11 @@
           "ripple_source": {
             "entity_id": "jacob",
             "entity_type": "npc",
-            "event_id": "evt_0eea71"
-          },
-          "actor_id": "jacob",
-          "actor_type": "npc"
+            "event_id": "evt_64d332"
+          }
         },
         {
-          "id": "evt_fe77da",
+          "id": "evt_581a93",
           "session": 8,
           "note": "Consequence of Joseph (ally): Joseph sold into Egypt by his own brothers.",
           "visibility": "public",
@@ -55,13 +51,11 @@
           "ripple_source": {
             "entity_id": "joseph",
             "entity_type": "npc",
-            "event_id": "evt_b76c42"
-          },
-          "actor_id": "joseph",
-          "actor_type": "npc"
+            "event_id": "evt_722a03"
+          }
         },
         {
-          "id": "evt_daeb3c",
+          "id": "evt_d768f3",
           "session": 10,
           "note": "Consequence of Joseph (ally): Joseph reveals himself \u2014 forgiveness, reunion, the dream fulfilled.",
           "visibility": "public",
@@ -71,10 +65,8 @@
           "ripple_source": {
             "entity_id": "joseph",
             "entity_type": "npc",
-            "event_id": "evt_5283dd"
-          },
-          "actor_id": "joseph",
-          "actor_type": "npc"
+            "event_id": "evt_ec0a0c"
+          }
         }
       ],
       "relations": [
@@ -114,7 +106,7 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_70cf2c",
+          "id": "evt_abe1ca",
           "session": 1,
           "note": "[[Adam]] and [[Eve]] eat the fruit of the tree of knowledge of good and evil; they hide from God among the trees of the garden.",
           "visibility": "public",
@@ -151,7 +143,7 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_159b61",
+          "id": "evt_e8f56c",
           "session": 1,
           "note": "[[Cain]] kills his brother [[Abel]] in the field; when God asks where [[Abel]] is, [[Cain]] says: am I my brother's keeper?",
           "visibility": "public",
@@ -199,7 +191,7 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_2f3b96",
+          "id": "evt_cb1d8f",
           "session": 2,
           "note": "God tells [[Noah]] to build an ark; [[Noah]] does exactly what God commands without a word of protest or a question.",
           "visibility": "public",
@@ -208,7 +200,7 @@
           "event_type": "other"
         },
         {
-          "id": "evt_77381e",
+          "id": "evt_3b8117",
           "session": 2,
           "note": "[[Noah]] plants a vineyard, drinks too much, and lies uncovered in his tent; Ham sees him and tells his brothers. Shem and Japheth walk in backward with a garment and cover him.",
           "visibility": "public",
@@ -231,7 +223,7 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_5b1392",
+          "id": "evt_f43b4e",
           "session": 3,
           "note": "God tells [[Abraham|Abram]] to leave his country, his kindred, and his father's house for a land he will be shown. [[Abraham|Abram]] leaves. He is seventy-five years old.",
           "visibility": "public",
@@ -240,7 +232,7 @@
           "event_type": "other"
         },
         {
-          "id": "evt_ac7da0",
+          "id": "evt_5e4c02",
           "session": 3,
           "note": "Entering Egypt during famine, [[Abraham|Abram]] tells [[Sarah|Sarai]] to say she is his sister to protect himself from men who would kill him for her. She is taken into [[Pharaoh]]'s house. God strikes the household with plagues.",
           "visibility": "public",
@@ -249,7 +241,7 @@
           "event_type": "politics"
         },
         {
-          "id": "evt_600ba1",
+          "id": "evt_01a4f8",
           "session": 5,
           "note": "God appears to [[Abraham]] at age ninety-nine and promises a son from [[Sarah]]; [[Abraham]] falls on his face and laughs. He says: shall [[Sarah]], at ninety, bear a child?",
           "visibility": "public",
@@ -258,7 +250,7 @@
           "event_type": "dialogue"
         },
         {
-          "id": "evt_40eb9b",
+          "id": "evt_8a53ac",
           "session": 5,
           "note": "[[Abraham]] rises early in the morning and takes [[Isaac]] to [[Mount Moriah]]. He builds the altar, binds his son, and raises the knife. God stops him: now I know you fear God, for you have not withheld your son.",
           "visibility": "public",
@@ -314,7 +306,7 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_faf0e3",
+          "id": "evt_9fd9ab",
           "session": 5,
           "note": "[[Sarah]] listens from the tent entrance when the angels announce she will bear a son in a year. She laughs to herself. God asks: is anything too hard for the LORD?",
           "visibility": "public",
@@ -323,7 +315,7 @@
           "event_type": "dialogue"
         },
         {
-          "id": "evt_9ff925",
+          "id": "evt_e36653",
           "session": 5,
           "note": "Consequence of Abraham (ally): The binding of Isaac on Moriah \u2014 God provides; the covenant confirmed.",
           "visibility": "public",
@@ -333,10 +325,8 @@
           "ripple_source": {
             "entity_id": "abraham",
             "entity_type": "npc",
-            "event_id": "evt_40eb9b"
-          },
-          "actor_id": "abraham",
-          "actor_type": "npc"
+            "event_id": "evt_8a53ac"
+          }
         }
       ],
       "relations": [
@@ -368,7 +358,7 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_814d33",
+          "id": "evt_95f32e",
           "session": 4,
           "note": "[[Hagar]] flees into the desert after [[Sarah]] mistreats her; the angel of the LORD finds her at a spring on the way to Shur and tells her to return. She names God El-roi: the one who sees me.",
           "visibility": "public",
@@ -407,7 +397,7 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_50e505",
+          "id": "evt_54dcbd",
           "session": 5,
           "note": "Consequence of Abraham (ally): The binding of Isaac on Moriah \u2014 God provides; the covenant confirmed.",
           "visibility": "public",
@@ -417,10 +407,8 @@
           "ripple_source": {
             "entity_id": "abraham",
             "entity_type": "npc",
-            "event_id": "evt_40eb9b"
-          },
-          "actor_id": "abraham",
-          "actor_type": "npc"
+            "event_id": "evt_8a53ac"
+          }
         }
       ]
     },
@@ -437,7 +425,7 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_a4bfe8",
+          "id": "evt_da1887",
           "session": 4,
           "note": "After [[Abraham]]'s victory over the kings, [[Melchizedek]] king of Salem brings bread and wine and blesses him: blessed be [[Abraham|Abram]] by God Most High, creator of heaven and earth.",
           "visibility": "public",
@@ -446,7 +434,7 @@
           "event_type": "dialogue"
         },
         {
-          "id": "evt_e70fa5",
+          "id": "evt_4f882a",
           "session": 5,
           "note": "Consequence of Abraham (ally): The binding of Isaac on Moriah \u2014 God provides; the covenant confirmed.",
           "visibility": "public",
@@ -456,10 +444,8 @@
           "ripple_source": {
             "entity_id": "abraham",
             "entity_type": "npc",
-            "event_id": "evt_40eb9b"
-          },
-          "actor_id": "abraham",
-          "actor_type": "npc"
+            "event_id": "evt_8a53ac"
+          }
         }
       ]
     },
@@ -476,7 +462,7 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_20c558",
+          "id": "evt_ac4e47",
           "session": 5,
           "note": "Consequence of Abraham (ally): The binding of Isaac on Moriah \u2014 God provides; the covenant confirmed.",
           "visibility": "public",
@@ -486,10 +472,8 @@
           "ripple_source": {
             "entity_id": "abraham",
             "entity_type": "npc",
-            "event_id": "evt_40eb9b"
-          },
-          "actor_id": "abraham",
-          "actor_type": "npc"
+            "event_id": "evt_8a53ac"
+          }
         }
       ]
     },
@@ -506,7 +490,7 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_a04633",
+          "id": "evt_b1da5a",
           "session": 5,
           "note": "Consequence of Abraham (ally): The binding of Isaac on Moriah \u2014 God provides; the covenant confirmed.",
           "visibility": "public",
@@ -516,10 +500,8 @@
           "ripple_source": {
             "entity_id": "abraham",
             "entity_type": "npc",
-            "event_id": "evt_40eb9b"
-          },
-          "actor_id": "abraham",
-          "actor_type": "npc"
+            "event_id": "evt_8a53ac"
+          }
         }
       ],
       "relations": [
@@ -550,7 +532,7 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_c7cd18",
+          "id": "evt_4f656d",
           "session": 5,
           "note": "[[Rebekah]] hears that [[Isaac]] intends to bless [[Esau]]; she dresses [[Jacob]] in goat skins so blind [[Isaac]] will mistake him for his hairy brother, and sends [[Jacob]] to steal the blessing.",
           "visibility": "public",
@@ -581,7 +563,7 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_0eea71",
+          "id": "evt_64d332",
           "session": 5,
           "note": "[[Jacob]] deceives his blind father and receives the blessing of the firstborn; [[Esau]] arrives minutes later and weeps: is he not rightly named [[Jacob]]? He has supplanted me twice. He plans to kill [[Jacob]] after [[Isaac]]'s death.",
           "visibility": "public",
@@ -590,7 +572,7 @@
           "event_type": "dialogue"
         },
         {
-          "id": "evt_34df24",
+          "id": "evt_9fabbe",
           "session": 6,
           "note": "[[Jacob]] flees to [[Laban]]'s house and dreams of a ladder reaching to heaven with angels ascending and descending; God speaks from above and renews the covenant of [[Abraham]]. [[Jacob]] wakes: surely the LORD is in this place.",
           "visibility": "public",
@@ -600,7 +582,7 @@
           "location_id": "bethel"
         },
         {
-          "id": "evt_d6a4f3",
+          "id": "evt_189cee",
           "session": 6,
           "note": "Consequence of Laban (ally): Laban substitutes Leah for Rachel \u2014 Jacob deceived as he deceived Isaac.",
           "visibility": "public",
@@ -610,13 +592,11 @@
           "ripple_source": {
             "entity_id": "laban",
             "entity_type": "npc",
-            "event_id": "evt_8eadc0"
-          },
-          "actor_id": "laban",
-          "actor_type": "npc"
+            "event_id": "evt_35309b"
+          }
         },
         {
-          "id": "evt_1f393c",
+          "id": "evt_5e814f",
           "session": 7,
           "note": "At [[The Ford of Jabbok]], [[Jacob]] wrestles with a man until daybreak; the man strikes [[Jacob]]'s hip but cannot pin him. [[Jacob]] refuses to release him without a blessing. The man asks his name. Then renames him: Israel.",
           "visibility": "public",
@@ -626,7 +606,7 @@
           "location_id": "the_ford_of_jabbok"
         },
         {
-          "id": "evt_2df322",
+          "id": "evt_2bc09d",
           "session": 8,
           "note": "Consequence of Joseph (ally): Joseph sold into Egypt by his own brothers.",
           "visibility": "public",
@@ -636,13 +616,11 @@
           "ripple_source": {
             "entity_id": "joseph",
             "entity_type": "npc",
-            "event_id": "evt_b76c42"
-          },
-          "actor_id": "joseph",
-          "actor_type": "npc"
+            "event_id": "evt_722a03"
+          }
         },
         {
-          "id": "evt_7d235d",
+          "id": "evt_f3b0da",
           "session": 10,
           "note": "Consequence of Joseph (ally): Joseph reveals himself \u2014 forgiveness, reunion, the dream fulfilled.",
           "visibility": "public",
@@ -652,10 +630,8 @@
           "ripple_source": {
             "entity_id": "joseph",
             "entity_type": "npc",
-            "event_id": "evt_5283dd"
-          },
-          "actor_id": "joseph",
-          "actor_type": "npc"
+            "event_id": "evt_ec0a0c"
+          }
         }
       ],
       "relations": [
@@ -708,7 +684,7 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_f37834",
+          "id": "evt_2d2e49",
           "session": 5,
           "note": "[[Esau]] comes in from the field famished and sells his birthright to [[Jacob]] for bread and a bowl of red lentil stew. He eats, rises, and goes away, having despised his birthright.",
           "visibility": "public",
@@ -717,7 +693,7 @@
           "event_type": "dialogue"
         },
         {
-          "id": "evt_d37b67",
+          "id": "evt_e0359a",
           "session": 5,
           "note": "Consequence of Jacob (ally): Jacob steals Esau's blessing \u2014 Esau weeps, vows to kill him; Jacob must flee.",
           "visibility": "public",
@@ -727,13 +703,11 @@
           "ripple_source": {
             "entity_id": "jacob",
             "entity_type": "npc",
-            "event_id": "evt_0eea71"
-          },
-          "actor_id": "jacob",
-          "actor_type": "npc"
+            "event_id": "evt_64d332"
+          }
         },
         {
-          "id": "evt_1b7b51",
+          "id": "evt_377fe9",
           "session": 7,
           "note": "[[Esau]] runs to meet [[Jacob]] returning with his family and embraces him; [[Jacob]] had sent gifts ahead expecting violence and found forgiveness instead. [[Esau]] says: I have enough, my brother. Keep what you have.",
           "visibility": "public",
@@ -765,7 +739,7 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_86027b",
+          "id": "evt_66c10f",
           "session": 5,
           "note": "Consequence of Jacob (ally): Jacob steals Esau's blessing \u2014 Esau weeps, vows to kill him; Jacob must flee.",
           "visibility": "public",
@@ -775,13 +749,11 @@
           "ripple_source": {
             "entity_id": "jacob",
             "entity_type": "npc",
-            "event_id": "evt_0eea71"
-          },
-          "actor_id": "jacob",
-          "actor_type": "npc"
+            "event_id": "evt_64d332"
+          }
         },
         {
-          "id": "evt_8eadc0",
+          "id": "evt_35309b",
           "session": 6,
           "note": "On the wedding night [[Laban]] substitutes [[Leah]] for [[Rachel]]; [[Jacob]] wakes to find the wrong wife. [[Laban]] explains: it is not done to give the younger before the firstborn. [[Jacob]] must work seven more years for [[Rachel]].",
           "visibility": "public",
@@ -813,7 +785,7 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_1e0d46",
+          "id": "evt_975392",
           "session": 5,
           "note": "Consequence of Jacob (ally): Jacob steals Esau's blessing \u2014 Esau weeps, vows to kill him; Jacob must flee.",
           "visibility": "public",
@@ -823,13 +795,11 @@
           "ripple_source": {
             "entity_id": "jacob",
             "entity_type": "npc",
-            "event_id": "evt_0eea71"
-          },
-          "actor_id": "jacob",
-          "actor_type": "npc"
+            "event_id": "evt_64d332"
+          }
         },
         {
-          "id": "evt_b49f28",
+          "id": "evt_3e5b20",
           "session": 8,
           "note": "Consequence of Joseph (ally): Joseph sold into Egypt by his own brothers.",
           "visibility": "public",
@@ -839,13 +809,11 @@
           "ripple_source": {
             "entity_id": "joseph",
             "entity_type": "npc",
-            "event_id": "evt_b76c42"
-          },
-          "actor_id": "joseph",
-          "actor_type": "npc"
+            "event_id": "evt_722a03"
+          }
         },
         {
-          "id": "evt_bcf68c",
+          "id": "evt_54d018",
           "session": 10,
           "note": "Consequence of Joseph (ally): Joseph reveals himself \u2014 forgiveness, reunion, the dream fulfilled.",
           "visibility": "public",
@@ -855,10 +823,8 @@
           "ripple_source": {
             "entity_id": "joseph",
             "entity_type": "npc",
-            "event_id": "evt_5283dd"
-          },
-          "actor_id": "joseph",
-          "actor_type": "npc"
+            "event_id": "evt_ec0a0c"
+          }
         }
       ],
       "relations": [
@@ -883,7 +849,7 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_a92d0d",
+          "id": "evt_2dd708",
           "session": 5,
           "note": "Consequence of Jacob (ally): Jacob steals Esau's blessing \u2014 Esau weeps, vows to kill him; Jacob must flee.",
           "visibility": "public",
@@ -893,10 +859,8 @@
           "ripple_source": {
             "entity_id": "jacob",
             "entity_type": "npc",
-            "event_id": "evt_0eea71"
-          },
-          "actor_id": "jacob",
-          "actor_type": "npc"
+            "event_id": "evt_64d332"
+          }
         }
       ]
     },
@@ -913,7 +877,7 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_d78dd6",
+          "id": "evt_dd52e5",
           "session": 5,
           "note": "Consequence of Jacob (ally): Jacob steals Esau's blessing \u2014 Esau weeps, vows to kill him; Jacob must flee.",
           "visibility": "public",
@@ -923,13 +887,11 @@
           "ripple_source": {
             "entity_id": "jacob",
             "entity_type": "npc",
-            "event_id": "evt_0eea71"
-          },
-          "actor_id": "jacob",
-          "actor_type": "npc"
+            "event_id": "evt_64d332"
+          }
         },
         {
-          "id": "evt_ea801e",
+          "id": "evt_4869b6",
           "session": 8,
           "note": "[[Joseph]] tells his dreams \u2014 sheaves bowing, stars bowing \u2014 to his father and brothers. His brothers hate him and cannot speak peaceably to him.",
           "visibility": "public",
@@ -938,7 +900,7 @@
           "event_type": "dialogue"
         },
         {
-          "id": "evt_b76c42",
+          "id": "evt_722a03",
           "session": 8,
           "note": "[[Joseph]] is stripped of his coat of many colors, thrown in a dry pit, and sold to Ishmaelite traders for twenty pieces of silver. He is carried down to Egypt.",
           "visibility": "public",
@@ -950,7 +912,7 @@
           "location_id": "the_pit_at_dothan"
         },
         {
-          "id": "evt_c26afd",
+          "id": "evt_f27ebc",
           "session": 9,
           "note": "In Egypt [[Joseph]] rises to oversee Potiphar's household; Potiphar's wife falsely accuses him of assault when he rejects her; he is thrown into prison.",
           "visibility": "public",
@@ -959,7 +921,7 @@
           "event_type": "other"
         },
         {
-          "id": "evt_08c741",
+          "id": "evt_b17352",
           "session": 9,
           "note": "In prison [[Joseph]] correctly interprets the dreams of [[Pharaoh]]'s cupbearer and baker; the cupbearer forgets him for two years.",
           "visibility": "public",
@@ -968,7 +930,7 @@
           "event_type": "other"
         },
         {
-          "id": "evt_54e040",
+          "id": "evt_8ef6da",
           "session": 10,
           "note": "[[Joseph]] recognizes his brothers but does not reveal himself; he tests them, accuses them of spying, keeps Simeon, and demands [[Benjamin]] be brought. He turns away and weeps.",
           "visibility": "public",
@@ -978,7 +940,7 @@
           "location_id": "pharaoh_s_court"
         },
         {
-          "id": "evt_5283dd",
+          "id": "evt_ec0a0c",
           "session": 10,
           "note": "[[Joseph]] can control himself no longer; he clears the room and weeps aloud. He says: I am [[Joseph]]. Is my father still alive? He cannot stop weeping. He kisses all his brothers and they talk together.",
           "visibility": "public",
@@ -1023,7 +985,7 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_07caf2",
+          "id": "evt_132ddc",
           "session": 8,
           "note": "[[Judah]] persuades his brothers not to kill [[Joseph]] but to sell him to Ishmaelite traders for twenty pieces of silver. They dip his coat in goat's blood and bring it to [[Jacob]]: we found this. Is it your son's robe?",
           "visibility": "public",
@@ -1033,7 +995,7 @@
           "location_id": "the_pit_at_dothan"
         },
         {
-          "id": "evt_16b4e0",
+          "id": "evt_93c784",
           "session": 8,
           "note": "Consequence of Joseph (ally): Joseph sold into Egypt by his own brothers.",
           "visibility": "public",
@@ -1043,13 +1005,11 @@
           "ripple_source": {
             "entity_id": "joseph",
             "entity_type": "npc",
-            "event_id": "evt_b76c42"
-          },
-          "actor_id": "joseph",
-          "actor_type": "npc"
+            "event_id": "evt_722a03"
+          }
         },
         {
-          "id": "evt_253b59",
+          "id": "evt_d71de2",
           "session": 10,
           "note": "When [[Joseph]] threatens to keep [[Benjamin]], [[Judah]] steps forward and offers himself as a substitute: let me remain as your servant in place of the boy. How can I go back to my father if the boy is not with me?",
           "visibility": "public",
@@ -1058,7 +1018,7 @@
           "event_type": "dialogue"
         },
         {
-          "id": "evt_d7a4d6",
+          "id": "evt_8dca16",
           "session": 10,
           "note": "Consequence of Joseph (ally): Joseph reveals himself \u2014 forgiveness, reunion, the dream fulfilled.",
           "visibility": "public",
@@ -1068,10 +1028,8 @@
           "ripple_source": {
             "entity_id": "joseph",
             "entity_type": "npc",
-            "event_id": "evt_5283dd"
-          },
-          "actor_id": "joseph",
-          "actor_type": "npc"
+            "event_id": "evt_ec0a0c"
+          }
         }
       ],
       "relations": [
@@ -1097,7 +1055,7 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_b50224",
+          "id": "evt_f179be",
           "session": 8,
           "note": "Consequence of Joseph (ally): Joseph sold into Egypt by his own brothers.",
           "visibility": "public",
@@ -1107,13 +1065,11 @@
           "ripple_source": {
             "entity_id": "joseph",
             "entity_type": "npc",
-            "event_id": "evt_b76c42"
-          },
-          "actor_id": "joseph",
-          "actor_type": "npc"
+            "event_id": "evt_722a03"
+          }
         },
         {
-          "id": "evt_632db2",
+          "id": "evt_2bdfe4",
           "session": 10,
           "note": "[[Pharaoh]] dreams of seven fat cows and seven lean cows; [[Joseph]] interprets the dream: seven years of plenty, then seven years of famine. [[Pharaoh]] makes [[Joseph]] second in command of all Egypt.",
           "visibility": "public",
@@ -1123,7 +1079,7 @@
           "location_id": "pharaoh_s_court"
         },
         {
-          "id": "evt_0ff21a",
+          "id": "evt_1f1322",
           "session": 10,
           "note": "Consequence of Joseph (ally): Joseph reveals himself \u2014 forgiveness, reunion, the dream fulfilled.",
           "visibility": "public",
@@ -1133,10 +1089,8 @@
           "ripple_source": {
             "entity_id": "joseph",
             "entity_type": "npc",
-            "event_id": "evt_5283dd"
-          },
-          "actor_id": "joseph",
-          "actor_type": "npc"
+            "event_id": "evt_ec0a0c"
+          }
         }
       ]
     }

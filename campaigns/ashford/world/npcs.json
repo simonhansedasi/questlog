@@ -13,7 +13,7 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_d3edce",
+          "id": "evt_32b955",
           "session": 1,
           "note": "[[Edda Sorn]] contacts the party privately at [[The Broken Crown]]. She lays out her shipping discrepancy records: declared output versus actual weight shipped, month by month. The gap has been growing for eight months. She needs someone to take this further.",
           "visibility": "public",
@@ -23,7 +23,7 @@
           "location_id": "the_broken_crown"
         },
         {
-          "id": "evt_ecb582",
+          "id": "evt_e4f409",
           "session": 3,
           "note": "Consequence of Maren Vosk (rival): Ironmask escalation \u2014 doubled patrols, new surcharge on merchants.",
           "visibility": "public",
@@ -33,13 +33,11 @@
           "ripple_source": {
             "entity_id": "maren_vosk",
             "entity_type": "npc",
-            "event_id": "evt_a4c425"
-          },
-          "actor_id": "maren_vosk",
-          "actor_type": "npc"
+            "event_id": "evt_ae6f14"
+          }
         },
         {
-          "id": "evt_e08605",
+          "id": "evt_0d3a17",
           "session": 5,
           "note": "Consequence of Maren Vosk (rival): The Ledger captured \u2014 Ironmask operation collapses.",
           "visibility": "public",
@@ -49,13 +47,11 @@
           "ripple_source": {
             "entity_id": "maren_vosk",
             "entity_type": "npc",
-            "event_id": "evt_456f24"
-          },
-          "actor_id": "maren_vosk",
-          "actor_type": "npc"
+            "event_id": "evt_64909c"
+          }
         },
         {
-          "id": "evt_1db551",
+          "id": "evt_be5824",
           "session": 5,
           "note": "[[Edda Sorn]] presents the shipping discrepancy records to the [[The Trade Compact|Trade Compact]] regional office, backed by [[Maren Vosk|Maren Vosk's]] seized ledgers. The Compact has opened a formal investigation. [[Governor Harwick Denn|The Governor]] has gone quiet. The Factor hasn't been found yet.",
           "visibility": "public",
@@ -101,7 +97,7 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_8dc20d",
+          "id": "evt_3c9dfa",
           "session": 3,
           "note": "[[Bram Ketterly]] is released from [[Greystone Keep|the Keep's]] storage cellar, underfed but uninjured. He remembers faces. He remembers routes. He saw a [[The Shadow Wing|Shadow Wing]] courier twice without knowing what they were. He will tell the party everything.",
           "visibility": "public",
@@ -133,7 +129,7 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_eec1e6",
+          "id": "evt_481af1",
           "session": 2,
           "note": "The party confronts [[Governor Harwick Denn]] with [[Petra Holt|Petra's]] evidence. He does not deny it. He says: 'What exactly did you expect me to do?' He agrees to stop the civic fund payments going forward. He does nothing else.",
           "visibility": "public",
@@ -142,7 +138,7 @@
           "event_type": "dialogue"
         },
         {
-          "id": "evt_50167c",
+          "id": "evt_dc45ab",
           "session": 3,
           "note": "Consequence of Maren Vosk (ally): Ironmask escalation \u2014 doubled patrols, new surcharge on merchants.",
           "visibility": "public",
@@ -152,13 +148,11 @@
           "ripple_source": {
             "entity_id": "maren_vosk",
             "entity_type": "npc",
-            "event_id": "evt_a4c425"
-          },
-          "actor_id": "maren_vosk",
-          "actor_type": "npc"
+            "event_id": "evt_ae6f14"
+          }
         },
         {
-          "id": "evt_0e0b86",
+          "id": "evt_2b62f8",
           "session": 5,
           "note": "Consequence of Maren Vosk (ally): The Ledger captured \u2014 Ironmask operation collapses.",
           "visibility": "public",
@@ -168,10 +162,8 @@
           "ripple_source": {
             "entity_id": "maren_vosk",
             "entity_type": "npc",
-            "event_id": "evt_456f24"
-          },
-          "actor_id": "maren_vosk",
-          "actor_type": "npc"
+            "event_id": "evt_64909c"
+          }
         }
       ],
       "relations": [
@@ -214,7 +206,7 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_0a354f",
+          "id": "evt_012528",
           "session": 1,
           "note": "The party arrives in Ashford and stops at [[Thatch's General Store]]. [[Orvyn Thatch]] gives them a full picture without being asked: the toll, [[Bram Ketterly|Bram's capture]], the [[Ashford Miners' Registry|Registry]] situation. He's been waiting for someone to tell.",
           "visibility": "public",
@@ -236,7 +228,7 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_451615",
+          "id": "evt_0405ff",
           "session": 2,
           "note": "[[Petra Holt]] shows the party the [[Ashford Miners' Registry|Registry]] payroll records. The 'safety equipment' deductions are real deductions against real miner wages. Twelve percent of the payroll is being skimmed through a fictitious expense. She has a complete ledger copy hidden under the Registry floor.",
           "visibility": "public",
@@ -296,7 +288,7 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_b4c384",
+          "id": "evt_ef60cb",
           "session": 5,
           "note": "[[Sister Veyne]] coordinates a simultaneous ranger action on three [[The Ironmasks|Ironmask]] collection points. With the party holding the road north, the operation lands cleanly. Seventeen Ironmasks captured. [[Maren Vosk|Maren Vosk's]] records seized.",
           "visibility": "public",
@@ -334,7 +326,7 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_d13be7",
+          "id": "evt_ddfe5f",
           "session": 1,
           "note": "[[The Ironmasks|The Ledger's]] collectors approach the party within two hours of arrival to assess whether they are merchants subject to the toll. They back down when challenged but take notes.",
           "visibility": "public",
@@ -343,7 +335,7 @@
           "event_type": "other"
         },
         {
-          "id": "evt_a4c425",
+          "id": "evt_ae6f14",
           "session": 3,
           "note": "[[The Ironmasks|The Ledger]] responds to the [[Greystone Keep|Keep]] incident by doubling [[The Ironmasks|Ironmask]] patrols in town and imposing a 'security surcharge' on all merchants. She is escalating, not retreating.",
           "visibility": "public",
@@ -353,7 +345,7 @@
           "location_id": "thatch_s_general_store"
         },
         {
-          "id": "evt_456f24",
+          "id": "evt_64909c",
           "session": 5,
           "note": "[[Maren Vosk]] is captured in the [[Ashford Miners' Registry|Registry]] during the raid. Her ledgers are complete. They name [[Corvin Ashale]] by initials \u2014 'CA' \u2014 in seventeen separate entries as the recipient of skim payments. She will not confirm the name but she won't deny it.",
           "visibility": "public",
@@ -402,7 +394,7 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_d009fe",
+          "id": "evt_a3c94e",
           "session": 3,
           "note": "Consequence of Maren Vosk (ally): Ironmask escalation \u2014 doubled patrols, new surcharge on merchants.",
           "visibility": "public",
@@ -412,13 +404,11 @@
           "ripple_source": {
             "entity_id": "maren_vosk",
             "entity_type": "npc",
-            "event_id": "evt_a4c425"
-          },
-          "actor_id": "maren_vosk",
-          "actor_type": "npc"
+            "event_id": "evt_ae6f14"
+          }
         },
         {
-          "id": "evt_204dd7",
+          "id": "evt_f9483d",
           "session": 4,
           "note": "Watching the [[Coldwater Ruins|Coldwater]] tunnel maps, the party realizes [[Corvin Ashale]]'s warehouse sits directly above the old tunnel exit. The shipping weight discrepancy finally makes sense. He's not moving cargo out. He's moving it down.",
           "visibility": "dm_only",
@@ -428,7 +418,7 @@
           "location_id": "corvin_ashale_s_warehouse"
         },
         {
-          "id": "evt_d2d4c6",
+          "id": "evt_db0520",
           "session": 5,
           "note": "Consequence of Maren Vosk (ally): The Ledger captured \u2014 Ironmask operation collapses.",
           "visibility": "public",
@@ -438,13 +428,11 @@
           "ripple_source": {
             "entity_id": "maren_vosk",
             "entity_type": "npc",
-            "event_id": "evt_456f24"
-          },
-          "actor_id": "maren_vosk",
-          "actor_type": "npc"
+            "event_id": "evt_64909c"
+          }
         },
         {
-          "id": "evt_6cd5f4",
+          "id": "evt_2a7bd0",
           "session": 5,
           "note": "[[Corvin Ashale]] barricades himself in his [[Corvin Ashale's Warehouse|warehouse]] when the [[The Ironmasks|Ironmasks]] fall. He has already sent a coded message via [[Serev]]. The [[The Shadow Wing|Shadow Wing]] knows the operation is burned. He is waiting for extraction.",
           "visibility": "dm_only",
@@ -484,7 +472,7 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_fc90e9",
+          "id": "evt_eb083f",
           "session": 4,
           "note": "[[Thane Bergrak]] approaches the party on the road to [[Coldwater Ruins|Coldwater]]. He knows about the unsafe shaft situation. The [[Emerald Circle]] has been monitoring [[The Ashcroft Vein|the mine's]] structural deterioration. He shows them the Circle's own survey: three shafts will fail within sixty days. Not might. Will.",
           "visibility": "public",
@@ -515,7 +503,7 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_ad5e81",
+          "id": "evt_9c600a",
           "session": 2,
           "note": "The party approaches [[Greystone Keep]] and requests parley. [[Warchief Durnak]] meets them at the gate \u2014 not hostile, not friendly. He will release [[Bram Ketterly|Bram]] if the party removes the [[The Ironmasks|Ironmask]] presence from his outer courtyard. He gives them three days.",
           "visibility": "public",
@@ -525,7 +513,7 @@
           "location_id": "greystone_keep"
         },
         {
-          "id": "evt_4826c7",
+          "id": "evt_d0d189",
           "session": 3,
           "note": "Consequence of Maren Vosk (rival): Ironmask escalation \u2014 doubled patrols, new surcharge on merchants.",
           "visibility": "public",
@@ -535,13 +523,11 @@
           "ripple_source": {
             "entity_id": "maren_vosk",
             "entity_type": "npc",
-            "event_id": "evt_a4c425"
-          },
-          "actor_id": "maren_vosk",
-          "actor_type": "npc"
+            "event_id": "evt_ae6f14"
+          }
         },
         {
-          "id": "evt_c869f1",
+          "id": "evt_1fe441",
           "session": 5,
           "note": "Consequence of Maren Vosk (rival): The Ledger captured \u2014 Ironmask operation collapses.",
           "visibility": "public",
@@ -551,10 +537,8 @@
           "ripple_source": {
             "entity_id": "maren_vosk",
             "entity_type": "npc",
-            "event_id": "evt_456f24"
-          },
-          "actor_id": "maren_vosk",
-          "actor_type": "npc"
+            "event_id": "evt_64909c"
+          }
         }
       ],
       "relations": [
@@ -577,7 +561,7 @@
       "hidden_factions": [],
       "log": [
         {
-          "id": "evt_ebc88b",
+          "id": "evt_8b34d3",
           "session": 4,
           "note": "The party approaches [[Coldwater Ruins]] respectfully. [[The Pale Widow]] does not attack. She shows them the garrison archive: maps of a tunnel system predating the mine, running beneath [[The Ashcroft Vein|the Vein]]. One tunnel connects to an exit point near [[Corvin Ashale]]'s warehouse.",
           "visibility": "public",

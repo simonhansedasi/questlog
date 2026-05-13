@@ -327,7 +327,8 @@ def dm_quick_log(slug):
             if polarity:
                 db.apply_ripple(slug, entity_id, "npc", session_n, note, polarity, intensity,
                                 event_type, visibility=visibility, source_event_id=src_evt,
-                                branch=active_branch_id)
+                                branch=active_branch_id,
+                                actor_id=actor_id, actor_type=actor_type)
             if src_evt:
                 for w in witnesses:
                     db.reveal_event(slug, src_evt, w)
@@ -344,7 +345,8 @@ def dm_quick_log(slug):
             if polarity:
                 db.apply_ripple(slug, entity_id, "faction", session_n, note, polarity, intensity,
                                 event_type, visibility=visibility, source_event_id=src_evt,
-                                branch=active_branch_id)
+                                branch=active_branch_id,
+                                actor_id=actor_id, actor_type=actor_type)
             if src_evt:
                 for w in witnesses:
                     db.reveal_event(slug, src_evt, w)
@@ -486,8 +488,9 @@ def dm_entity_panel(slug, entity_type, entity_id):
 def dm_set_session_notes(slug):
     new_notes = request.form.get("notes", "")
     db.set_session_notes(slug, new_notes)
-    if len(new_notes) < db.get_notes_parse_cursor(slug):
-        db.reset_notes_parse_cursor(slug)
+    cursor = db.get_notes_parse_cursor(slug)
+    if len(new_notes) < cursor:
+        db.set_notes_parse_cursor(slug, len(new_notes))
     flash("Notes saved", "success")
     return redirect(url_for("dm_bp.dm", slug=slug))
 
@@ -569,6 +572,20 @@ def dm_propose_entries(slug):
                 p["entity_name"] = _party_display
             if p.get("actor_id"):
                 p["actor_name"] = entity_names.get(p["actor_id"], p["actor_id"])
+        # Strip AI suggestions for edges that already exist in the graph (LLMs sometimes ignore the existing list)
+        _already = set()
+        for n in npcs:
+            for r in n.get("relations", []):
+                _already.add((n["id"], r.get("target", "")))
+                _already.add((r.get("target", ""), n["id"]))
+        for f in factions:
+            for r in f.get("relations", []):
+                _already.add((f["id"], r.get("target", "")))
+                _already.add((r.get("target", ""), f["id"]))
+        rel_suggestions = [
+            s for s in rel_suggestions
+            if (s.get("source_id"), s.get("target_id")) not in _already
+        ]
         new_cursor = cursor + len(full_notes[cursor:])
         db.save_proposals(slug, proposals, current_session, parse_cursor=new_cursor)
         db.save_relation_suggestions(slug, rel_suggestions)
@@ -842,7 +859,8 @@ def dm_commit_proposals(slug):
             else:
                 db.apply_ripple(slug, entity_id, entity_type, session_n, note, polarity, intensity,
                                 event_type, visibility=visibility, source_event_id=src_evt,
-                                branch=active_branch_id)
+                                branch=active_branch_id,
+                                actor_id=actor_id, actor_type=actor_type)
         if src_evt:
             for w in (entry.get("witnesses") or []):
                 db.reveal_event(slug, src_evt, w)
@@ -2225,7 +2243,8 @@ def dm_log_npc(slug, npc_id):
                                event_type=event_type, visibility=visibility)
         if polarity:
             db.apply_ripple(slug, npc_id, "npc", session_n, note, polarity, intensity,
-                            event_type, visibility=visibility, source_event_id=src_evt)
+                            event_type, visibility=visibility, source_event_id=src_evt,
+                            actor_id=actor_id, actor_type=actor_type)
         if src_evt:
             for w in witnesses:
                 db.reveal_event(slug, src_evt, w)
@@ -2335,7 +2354,8 @@ def dm_log_faction(slug, faction_id):
                                  actor_id=actor_id, actor_type=actor_type, actor_dm_only=actor_dm_only)
         if polarity:
             db.apply_ripple(slug, faction_id, "faction", session_n, note, polarity, intensity,
-                            event_type, visibility=visibility, source_event_id=src_evt)
+                            event_type, visibility=visibility, source_event_id=src_evt,
+                            actor_id=actor_id, actor_type=actor_type)
         if src_evt:
             for w in witnesses:
                 db.reveal_event(slug, src_evt, w)

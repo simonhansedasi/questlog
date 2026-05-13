@@ -8,7 +8,7 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_feca69",
+          "id": "evt_6f1737",
           "session": 1,
           "note": "The [[House of Lancaster|Lancastrian]] court loses its chief military commander at St. Albans. [[Margaret of Anjou]], excluded from formal power because she is a woman, begins building her own political network \u2014 writing to nobles, controlling access to the king, accumulating influence outside the structures that exclude her. She will not be excluded for long.",
           "visibility": "public",
@@ -18,7 +18,7 @@
           "location_id": "st_albans"
         },
         {
-          "id": "evt_ab2e7c",
+          "id": "evt_93a6fe",
           "session": 3,
           "note": "The [[House of Lancaster|Lancastrian]] cause after Towton is a rump: a fugitive king, an exile queen, and a handful of northern castles that hold out until 1464. [[Margaret of Anjou]] leads fruitless campaigns from France and Scotland, burning through political capital and receiving less each time. The red rose is not extinguished \u2014 but it is very nearly so.",
           "visibility": "public",
@@ -28,7 +28,7 @@
           "location_id": "towton_field"
         },
         {
-          "id": "evt_fdb853",
+          "id": "evt_d7349b",
           "session": 6,
           "note": "The red rose is finished. Henry VI murdered in the Tower, the Prince of Wales killed at Tewkesbury, Margaret in exile. There is no Lancastrian heir. The cause has no rallying point. The only remaining Lancastrian bloodline passes through Henry Tudor \u2014 a fourteen-year-old exile in Brittany with a questionable claim who no one takes seriously yet.",
           "visibility": "public",
@@ -37,7 +37,7 @@
           "event_type": "other"
         },
         {
-          "id": "evt_db161e",
+          "id": "evt_2ca937",
           "session": 8,
           "note": "Consequence of House of York (rival): Richard III's usurpation splits the Yorkist coalition \u2014 defectors begin writing to Tudor.",
           "visibility": "public",
@@ -47,13 +47,11 @@
           "ripple_source": {
             "entity_id": "house_of_york",
             "entity_type": "faction",
-            "event_id": "evt_3b9569"
-          },
-          "actor_id": "house_of_york",
-          "actor_type": "faction"
+            "event_id": "evt_ff1ff6"
+          }
         },
         {
-          "id": "evt_741246",
+          "id": "evt_e359b3",
           "session": 9,
           "note": "Consequence of House of Tudor (ally): Tudor dynasty secured \u2014 marriage unites the roses; the wars are over.",
           "visibility": "public",
@@ -63,10 +61,8 @@
           "ripple_source": {
             "entity_id": "house_of_tudor",
             "entity_type": "faction",
-            "event_id": "evt_c6a025"
-          },
-          "actor_id": "house_of_tudor",
-          "actor_type": "faction"
+            "event_id": "evt_85e949"
+          }
         }
       ],
       "relations": [
@@ -92,7 +88,7 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_49c0c9",
+          "id": "evt_edb58b",
           "session": 1,
           "note": "Consequence of House of Lancaster (rival): Lancaster loses Somerset at St. Albans; Margaret begins building her own network.",
           "visibility": "public",
@@ -102,13 +98,11 @@
           "ripple_source": {
             "entity_id": "house_of_lancaster",
             "entity_type": "faction",
-            "event_id": "evt_feca69"
-          },
-          "actor_id": "house_of_lancaster",
-          "actor_type": "faction"
+            "event_id": "evt_6f1737"
+          }
         },
         {
-          "id": "evt_35b276",
+          "id": "evt_591117",
           "session": 3,
           "note": "Consequence of House of Lancaster (rival): Lancaster reduced to a rump after Towton \u2014 fugitive king, exile queen, northern holdouts.",
           "visibility": "public",
@@ -118,13 +112,11 @@
           "ripple_source": {
             "entity_id": "house_of_lancaster",
             "entity_type": "faction",
-            "event_id": "evt_ab2e7c"
-          },
-          "actor_id": "house_of_lancaster",
-          "actor_type": "faction"
+            "event_id": "evt_93a6fe"
+          }
         },
         {
-          "id": "evt_3807aa",
+          "id": "evt_dc394c",
           "session": 6,
           "note": "Consequence of House of Lancaster (rival): House of Lancaster extinguished \u2014 only Henry Tudor in Brittany remains.",
           "visibility": "public",
@@ -134,13 +126,11 @@
           "ripple_source": {
             "entity_id": "house_of_lancaster",
             "entity_type": "faction",
-            "event_id": "evt_fdb853"
-          },
-          "actor_id": "house_of_lancaster",
-          "actor_type": "faction"
+            "event_id": "evt_d7349b"
+          }
         },
         {
-          "id": "evt_3b9569",
+          "id": "evt_ff1ff6",
           "session": 8,
           "note": "Richard III's usurpation fractures the Yorkist coalition. Lord Hastings \u2014 Edward IV's closest friend \u2014 is arrested and executed on Richard's orders within minutes, on a council table in the Tower, without trial. The message is clear: loyalty to Edward's memory is a threat. Many former Yorkists begin corresponding with Henry Tudor.",
           "visibility": "public",
@@ -149,7 +139,7 @@
           "event_type": "betrayal"
         },
         {
-          "id": "evt_014301",
+          "id": "evt_fae213",
           "session": 9,
           "note": "Consequence of House of Tudor (rival): Tudor dynasty secured \u2014 marriage unites the roses; the wars are over.",
           "visibility": "public",
@@ -159,10 +149,8 @@
           "ripple_source": {
             "entity_id": "house_of_tudor",
             "entity_type": "faction",
-            "event_id": "evt_c6a025"
-          },
-          "actor_id": "house_of_tudor",
-          "actor_type": "faction"
+            "event_id": "evt_85e949"
+          }
         }
       ],
       "relations": [
@@ -194,7 +182,7 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_c293ef",
+          "id": "evt_ada992",
           "session": 8,
           "note": "Consequence of House of York (ally): Richard III's usurpation splits the Yorkist coalition \u2014 defectors begin writing to Tudor.",
           "visibility": "public",
@@ -204,10 +192,8 @@
           "ripple_source": {
             "entity_id": "house_of_york",
             "entity_type": "faction",
-            "event_id": "evt_3b9569"
-          },
-          "actor_id": "house_of_york",
-          "actor_type": "faction"
+            "event_id": "evt_ff1ff6"
+          }
         }
       ],
       "relations": [
@@ -227,7 +213,7 @@
       "hidden": true,
       "log": [
         {
-          "id": "evt_2f068d",
+          "id": "evt_b265ba",
           "session": 1,
           "note": "Consequence of House of Lancaster (ally): Lancaster loses Somerset at St. Albans; Margaret begins building her own network.",
           "visibility": "public",
@@ -237,13 +223,11 @@
           "ripple_source": {
             "entity_id": "house_of_lancaster",
             "entity_type": "faction",
-            "event_id": "evt_feca69"
-          },
-          "actor_id": "house_of_lancaster",
-          "actor_type": "faction"
+            "event_id": "evt_6f1737"
+          }
         },
         {
-          "id": "evt_584a4b",
+          "id": "evt_569215",
           "session": 3,
           "note": "Consequence of House of Lancaster (ally): Lancaster reduced to a rump after Towton \u2014 fugitive king, exile queen, northern holdouts.",
           "visibility": "public",
@@ -253,13 +237,11 @@
           "ripple_source": {
             "entity_id": "house_of_lancaster",
             "entity_type": "faction",
-            "event_id": "evt_ab2e7c"
-          },
-          "actor_id": "house_of_lancaster",
-          "actor_type": "faction"
+            "event_id": "evt_93a6fe"
+          }
         },
         {
-          "id": "evt_571c23",
+          "id": "evt_d63af0",
           "session": 6,
           "note": "Consequence of House of Lancaster (ally): House of Lancaster extinguished \u2014 only Henry Tudor in Brittany remains.",
           "visibility": "public",
@@ -269,13 +251,11 @@
           "ripple_source": {
             "entity_id": "house_of_lancaster",
             "entity_type": "faction",
-            "event_id": "evt_fdb853"
-          },
-          "actor_id": "house_of_lancaster",
-          "actor_type": "faction"
+            "event_id": "evt_d7349b"
+          }
         },
         {
-          "id": "evt_b6d57b",
+          "id": "evt_02deda",
           "session": 8,
           "note": "Consequence of House of York (rival): Richard III's usurpation splits the Yorkist coalition \u2014 defectors begin writing to Tudor.",
           "visibility": "public",
@@ -285,13 +265,11 @@
           "ripple_source": {
             "entity_id": "house_of_york",
             "entity_type": "faction",
-            "event_id": "evt_3b9569"
-          },
-          "actor_id": "house_of_york",
-          "actor_type": "faction"
+            "event_id": "evt_ff1ff6"
+          }
         },
         {
-          "id": "evt_c6a025",
+          "id": "evt_85e949",
           "session": 9,
           "note": "Henry VII marries Elizabeth of York on January 18, 1486 \u2014 the union of the red and white roses. He does not adopt the combined Tudor rose as his symbol until the marriage is done: he is careful to make clear he holds the crown by conquest, not by right of his wife. The Tudor dynasty rules England for 118 years. The Wars of the Roses are over.",
           "visibility": "public",
@@ -323,7 +301,7 @@
       "hidden": true,
       "log": [
         {
-          "id": "evt_cc4607",
+          "id": "evt_52e2b8",
           "session": 1,
           "note": "Consequence of House of Lancaster (ally): Lancaster loses Somerset at St. Albans; Margaret begins building her own network.",
           "visibility": "public",
@@ -333,13 +311,11 @@
           "ripple_source": {
             "entity_id": "house_of_lancaster",
             "entity_type": "faction",
-            "event_id": "evt_feca69"
-          },
-          "actor_id": "house_of_lancaster",
-          "actor_type": "faction"
+            "event_id": "evt_6f1737"
+          }
         },
         {
-          "id": "evt_65a40b",
+          "id": "evt_9e0bde",
           "session": 3,
           "note": "Consequence of House of Lancaster (ally): Lancaster reduced to a rump after Towton \u2014 fugitive king, exile queen, northern holdouts.",
           "visibility": "public",
@@ -349,13 +325,11 @@
           "ripple_source": {
             "entity_id": "house_of_lancaster",
             "entity_type": "faction",
-            "event_id": "evt_ab2e7c"
-          },
-          "actor_id": "house_of_lancaster",
-          "actor_type": "faction"
+            "event_id": "evt_93a6fe"
+          }
         },
         {
-          "id": "evt_11a256",
+          "id": "evt_55dc81",
           "session": 6,
           "note": "Consequence of House of Lancaster (ally): House of Lancaster extinguished \u2014 only Henry Tudor in Brittany remains.",
           "visibility": "public",
@@ -365,13 +339,11 @@
           "ripple_source": {
             "entity_id": "house_of_lancaster",
             "entity_type": "faction",
-            "event_id": "evt_fdb853"
-          },
-          "actor_id": "house_of_lancaster",
-          "actor_type": "faction"
+            "event_id": "evt_d7349b"
+          }
         },
         {
-          "id": "evt_e77463",
+          "id": "evt_220ffd",
           "session": 8,
           "note": "Consequence of House of York (rival): Richard III's usurpation splits the Yorkist coalition \u2014 defectors begin writing to Tudor.",
           "visibility": "public",
@@ -381,13 +353,11 @@
           "ripple_source": {
             "entity_id": "house_of_york",
             "entity_type": "faction",
-            "event_id": "evt_3b9569"
-          },
-          "actor_id": "house_of_york",
-          "actor_type": "faction"
+            "event_id": "evt_ff1ff6"
+          }
         },
         {
-          "id": "evt_921f25",
+          "id": "evt_ea14db",
           "session": 9,
           "note": "Consequence of House of Tudor (ally): Tudor dynasty secured \u2014 marriage unites the roses; the wars are over.",
           "visibility": "public",
@@ -397,10 +367,8 @@
           "ripple_source": {
             "entity_id": "house_of_tudor",
             "entity_type": "faction",
-            "event_id": "evt_c6a025"
-          },
-          "actor_id": "house_of_tudor",
-          "actor_type": "faction"
+            "event_id": "evt_85e949"
+          }
         }
       ],
       "relations": [

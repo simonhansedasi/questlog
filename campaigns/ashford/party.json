@@ -13,11 +13,11 @@
           "hidden": false,
           "notes": "Former Greywood Ranger scout. Knows the Greywood better than anyone. Carries a grudge against the Ironmasks that predates the party.",
           "known_events": [
-            "evt_0a354f",
-            "evt_d3edce",
-            "evt_ad5e81",
-            "evt_a4c425",
-            "evt_456f24"
+            "evt_012528",
+            "evt_32b955",
+            "evt_9c600a",
+            "evt_ae6f14",
+            "evt_64909c"
           ],
           "relations": [
             {
@@ -47,7 +47,7 @@
           ],
           "log": [
             {
-              "id": "evt_4cc48d",
+              "id": "evt_185e84",
               "session": 1,
               "note": "Calder counts thirty-two [[The Ironmasks|Ironmask]] collectors working the roads \u2014 double what any legitimate toll operation needs. His old [[Greywood Rangers|Ranger]] instincts log their patrol routes, shift changes, and the two gaps in coverage near the Greywood edge.",
               "visibility": "public",
@@ -56,7 +56,7 @@
               "event_type": "other"
             },
             {
-              "id": "evt_fe89d0",
+              "id": "evt_3137d3",
               "session": 3,
               "note": "Calder holds the breach at the Keep's outer gate. Two [[The Ironmasks|Ironmasks]] slip out toward Ashford. He marks their direction and route before they clear sight \u2014 [[Sister Veyne]]'s network will have them.",
               "visibility": "public",
@@ -76,12 +76,12 @@
           "hidden": false,
           "notes": "Grew up in Ashford. Her father worked the Vein. The Ironmask toll drove him out. She came back to finish it.",
           "known_events": [
-            "evt_0a354f",
-            "evt_d3edce",
-            "evt_451615",
-            "evt_ad5e81",
-            "evt_a4c425",
-            "evt_456f24"
+            "evt_012528",
+            "evt_32b955",
+            "evt_0405ff",
+            "evt_9c600a",
+            "evt_ae6f14",
+            "evt_64909c"
           ],
           "relations": [
             {
@@ -111,7 +111,7 @@
           ],
           "log": [
             {
-              "id": "evt_2c658f",
+              "id": "evt_c6a477",
               "session": 1,
               "note": "Wren walks past the east road checkpoint where her father's cart was stopped three years ago. The [[The Ironmasks|Ironmask]] collector doesn't recognize her. She pays the toll without a word. She is very calm about it.",
               "visibility": "public",
@@ -121,7 +121,7 @@
               "location_id": "thatch_s_general_store"
             },
             {
-              "id": "evt_cb0aa1",
+              "id": "evt_716714",
               "session": 3,
               "note": "Wren leads the push into [[Greystone Keep|the Keep's]] outer courtyard. She has been planning a fight exactly like this for three years. It takes four minutes.",
               "visibility": "public",
@@ -133,7 +133,7 @@
               "location_id": "greystone_keep"
             },
             {
-              "id": "evt_a8e4bd",
+              "id": "evt_c6b880",
               "session": 5,
               "note": "Wren is first through the [[Ashford Miners' Registry|Registry]] door when [[Maren Vosk]] is taken. She doesn't say anything. She watches the ledgers go into evidence. Her father's payroll deductions are in there.",
               "visibility": "public",
@@ -155,11 +155,11 @@
           "hidden": false,
           "notes": "Wandering contractor. Does not explain who her patron is. Deeply effective in a crisis.",
           "known_events": [
-            "evt_0a354f",
-            "evt_d3edce",
-            "evt_a4c425",
-            "evt_ebc88b",
-            "evt_456f24"
+            "evt_012528",
+            "evt_32b955",
+            "evt_ae6f14",
+            "evt_8b34d3",
+            "evt_64909c"
           ],
           "relations": [
             {
@@ -184,7 +184,7 @@
           ],
           "log": [
             {
-              "id": "evt_e9dafb",
+              "id": "evt_665802",
               "session": 4,
               "note": "Sable does not explain how she knew to use old garrison protocols at the [[Coldwater Ruins|Coldwater]] entrance. She uses them and [[The Pale Widow]] doesn't attack. She says only: 'I've dealt with archivists before.'",
               "visibility": "public",
@@ -204,11 +204,11 @@
           "hidden": false,
           "notes": "Travelling healer who stopped in Ashford for one night and hasn't left. She knows what 'the Factor' means but hasn't said how.",
           "known_events": [
-            "evt_0a354f",
-            "evt_d3edce",
-            "evt_a4c425",
-            "evt_ebc88b",
-            "evt_456f24"
+            "evt_012528",
+            "evt_32b955",
+            "evt_ae6f14",
+            "evt_8b34d3",
+            "evt_64909c"
           ],
           "relations": [
             {
@@ -232,7 +232,7 @@
           ],
           "log": [
             {
-              "id": "evt_3be143",
+              "id": "evt_a3d223",
               "session": 2,
               "note": "[[Lira of the Dawn|Lira]] treats three miners at the inn who were beaten for refusing the lower shaft shifts. She asks each of them what the [[Vein Instability|unsafe sections]] look like. She has been in places like that before. She doesn't explain where.",
               "visibility": "public",
@@ -241,7 +241,7 @@
               "event_type": "dialogue"
             },
             {
-              "id": "evt_ffbd5b",
+              "id": "evt_54cb09",
               "session": 4,
               "note": "[[Lira of the Dawn|Lira]] reads the garrison archive's supply manifests. There's a [[The Factor's Net|Factor's connection]] older than the mine \u2014 someone was running a channel through these tunnels before [[The Ashcroft Vein]] existed. She has known what 'the Factor' means for longer than she has admitted.",
               "visibility": "dm_only",
@@ -261,11 +261,11 @@
           "hidden": false,
           "notes": "Trade Compact assessor who went rogue after discovering what the Compact actually knew about the Ironmasks.",
           "known_events": [
-            "evt_0a354f",
-            "evt_d3edce",
-            "evt_451615",
-            "evt_a4c425",
-            "evt_456f24"
+            "evt_012528",
+            "evt_32b955",
+            "evt_0405ff",
+            "evt_ae6f14",
+            "evt_64909c"
           ],
           "relations": [
             {
@@ -295,7 +295,7 @@
           ],
           "log": [
             {
-              "id": "evt_879988",
+              "id": "evt_a17b18",
               "session": 2,
               "note": "[[Osric Fynt|Osric]] recognizes the [[Ashford Miners' Registry|Registry]] payroll structure immediately \u2014 he's written [[The Trade Compact|Compact]] expense audits with exactly this kind of fictitious line. Someone in the Compact approved this. He doesn't say that out loud yet.",
               "visibility": "public",
@@ -305,7 +305,7 @@
               "location_id": "ashford_miners_registry"
             },
             {
-              "id": "evt_bea542",
+              "id": "evt_c5b380",
               "session": 5,
               "note": "[[Osric Fynt|Osric]] reads 'CA' in the seized ledgers before anyone else says it aloud. He has known [[Corvin Ashale|Corvin Ashale's]] name for weeks. He came to [[Ashford]] specifically to find this paper trail.",
               "visibility": "dm_only",

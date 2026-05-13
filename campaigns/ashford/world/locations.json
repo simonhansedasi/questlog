@@ -7,7 +7,7 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_52f789",
+          "id": "evt_3c19bc",
           "session": 1,
           "note": "[[Orvyn Thatch]] speaks freely for the first time in months. Names every collector, describes patrol timing, produces his private log of Ironmask activity. The party has their first real picture of what they're dealing with.",
           "visibility": "public",
@@ -28,7 +28,7 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_85b8ed",
+          "id": "evt_9f1321",
           "session": 2,
           "note": "[[Petra Holt]] recovers the hidden ledger copy from beneath the floorboards. Twelve percent of miner wages have been skimmed through a fictitious 'safety equipment' line for at least six months.",
           "visibility": "public",
@@ -39,7 +39,7 @@
           "actor_type": "npc"
         },
         {
-          "id": "evt_7c22fa",
+          "id": "evt_6fd1bd",
           "session": 5,
           "note": "[[Maren Vosk]] captured here during the raid. Complete ledgers seized. 'CA' appears in seventeen entries. [[Sister Veyne]] secures the building.",
           "visibility": "public",
@@ -60,7 +60,7 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_7ba562",
+          "id": "evt_891c1e",
           "session": 1,
           "note": "[[Edda Sorn]] makes contact in the back room. Her shipping discrepancy records cover eight months. The gap between declared output and actual weight shipped is not a rounding error.",
           "visibility": "public",
@@ -81,7 +81,7 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_60a8d4",
+          "id": "evt_daf2d7",
           "session": 4,
           "note": "[[Emerald Circle]] survey confirmed: three critical failure points in the lower shafts. Structural collapse projected within sixty days. Miners are already refusing the lower shaft shifts.",
           "visibility": "public",
@@ -102,7 +102,7 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_230d67",
+          "id": "evt_394b98",
           "session": 2,
           "note": "[[Warchief Durnak]] parleys at the gate. Terms set: clear the outer courtyard, [[Bram Ketterly|Bram]] goes free. Three days.",
           "visibility": "public",
@@ -113,7 +113,7 @@
           "actor_type": "npc"
         },
         {
-          "id": "evt_8e5cf5",
+          "id": "evt_e3d2fd",
           "session": 3,
           "note": "The outer courtyard is taken. Six [[The Ironmasks|Ironmasks]] subdued, two escaped. [[Bram Ketterly]] released from the storage cellar \u2014 underfed, uninjured, and remembering everything.",
           "visibility": "public",
@@ -132,7 +132,7 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_cf6f78",
+          "id": "evt_57b311",
           "session": 4,
           "note": "[[The Pale Widow]] shows the party the garrison archive. The tunnel maps are intact. One exit runs directly beneath [[Corvin Ashale]]'s warehouse \u2014 eight months of shipping discrepancies explained in a single diagram.",
           "visibility": "public",
@@ -160,7 +160,7 @@
       "hidden": true,
       "log": [
         {
-          "id": "evt_59ef69",
+          "id": "evt_91307f",
           "session": 5,
           "note": "[[Corvin Ashale]] barricades the doors when [[The Ironmasks|Ironmasks]] break. [[Serev]] has already left with a message. The warehouse is locked from the inside. The tunnel entrance is somewhere below.",
           "visibility": "dm_only",

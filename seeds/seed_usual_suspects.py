@@ -36,11 +36,9 @@ _w("campaign.json", {
     "name": "The Usual Suspects",
     "slug": SLUG,
     "system": "Film — Bryan Singer / Christopher McQuarrie, 1995",
-    "owner": "demo",
+    "owner": "SH",
     "dm_pin": "1995",
     "share_token": secrets.token_urlsafe(16),
-    "demo": True,
-    "public": True,
     "mode": "fiction",
     "observer_name": "The Investigation",
     "terminology": {

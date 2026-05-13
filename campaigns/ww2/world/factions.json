@@ -8,7 +8,7 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_62ad71",
+          "id": "evt_f4fd24",
           "session": 1,
           "note": "Germany remilitarizes the Rhineland in 1936, violating the Treaty of Versailles. France and Britain protest and do nothing. Germany annexes Austria in the Anschluss of March 1938. The Munich Agreement of September 1938 gives Hitler the Sudetenland in exchange for his promise that he has no further territorial ambitions. 'Peace for our time,' Chamberlain announces. Hitler has contempt for men who can be bought with appeasement.",
           "visibility": "public",
@@ -17,7 +17,7 @@
           "event_type": "politics"
         },
         {
-          "id": "evt_a10b61",
+          "id": "evt_7b8233",
           "session": 1,
           "note": "Consequence of Occupied Europe (rival): Nuremberg Laws and Kristallnacht \u2014 the machinery of persecution is openly running.",
           "visibility": "dm_only",
@@ -27,13 +27,11 @@
           "ripple_source": {
             "entity_id": "occupied_europe",
             "entity_type": "faction",
-            "event_id": "evt_38a68a"
-          },
-          "actor_id": "occupied_europe",
-          "actor_type": "faction"
+            "event_id": "evt_257584"
+          }
         },
         {
-          "id": "evt_fac125",
+          "id": "evt_a7b8ca",
           "session": 2,
           "note": "Consequence of Poland (rival): Poland destroyed in five weeks \u2014 invaded from both sides, abandoned by its guarantors.",
           "visibility": "public",
@@ -43,13 +41,11 @@
           "ripple_source": {
             "entity_id": "poland",
             "entity_type": "faction",
-            "event_id": "evt_45187d"
-          },
-          "actor_id": "poland",
-          "actor_type": "faction"
+            "event_id": "evt_fbc0e8"
+          }
         },
         {
-          "id": "evt_d7ae93",
+          "id": "evt_3dda1a",
           "session": 3,
           "note": "Germany invades France through the Ardennes on May 10, 1940 \u2014 the one direction the French do not expect. The Allied line breaks. Three hundred and thirty thousand British and French troops are evacuated from Dunkirk's beaches by an armada of warships and civilian boats in nine days. France signs an armistice on June 22. The Wehrmacht has conquered Western Europe in six weeks.",
           "visibility": "public",
@@ -58,7 +54,7 @@
           "event_type": "combat"
         },
         {
-          "id": "evt_dc226d",
+          "id": "evt_3216fd",
           "session": 3,
           "note": "Consequence of Great Britain (rival): Battle of Britain won \u2014 invasion postponed, the RAF holds by a narrow margin.",
           "visibility": "public",
@@ -68,13 +64,11 @@
           "ripple_source": {
             "entity_id": "great_britain",
             "entity_type": "faction",
-            "event_id": "evt_ec18d0"
-          },
-          "actor_id": "great_britain",
-          "actor_type": "faction"
+            "event_id": "evt_d7ec9b"
+          }
         },
         {
-          "id": "evt_fc00d3",
+          "id": "evt_d5808e",
           "session": 5,
           "note": "Consequence of United States (rival): US industrial conversion \u2014 outproduces all Axis nations combined within one year.",
           "visibility": "public",
@@ -84,13 +78,11 @@
           "ripple_source": {
             "entity_id": "united_states",
             "entity_type": "faction",
-            "event_id": "evt_9cb88c"
-          },
-          "actor_id": "united_states",
-          "actor_type": "faction"
+            "event_id": "evt_be4cae"
+          }
         },
         {
-          "id": "evt_435975",
+          "id": "evt_809e21",
           "session": 6,
           "note": "Consequence of Imperial Japan (ally): After Midway, Japan's Pacific empire begins contracting under the island-hopping campaign.",
           "visibility": "public",
@@ -100,13 +92,11 @@
           "ripple_source": {
             "entity_id": "imperial_japan",
             "entity_type": "faction",
-            "event_id": "evt_370d13"
-          },
-          "actor_id": "imperial_japan",
-          "actor_type": "faction"
+            "event_id": "evt_e33ca5"
+          }
         },
         {
-          "id": "evt_ebcc02",
+          "id": "evt_236db8",
           "session": 7,
           "note": "[[Stalingrad]] kills the myth of [[Nazi Germany|German]] invincibility. The German public is told for the first time that something has gone wrong. Goebbels declares 'total war' in February 1943. Germany's manpower and material reserves, already strained, begin an irreversible decline. The Kursk offensive in July 1943 \u2014 the last major German offensive on the Eastern Front \u2014 fails. After Kursk, Germany never attacks in the East again.",
           "visibility": "public",
@@ -116,7 +106,7 @@
           "location_id": "stalingrad"
         },
         {
-          "id": "evt_28ff13",
+          "id": "evt_b77d5d",
           "session": 8,
           "note": "Consequence of Fascist Italy (ally): Sicily invaded, Mussolini deposed \u2014 Italy surrenders, Germany occupies the north.",
           "visibility": "public",
@@ -126,13 +116,11 @@
           "ripple_source": {
             "entity_id": "fascist_italy",
             "entity_type": "faction",
-            "event_id": "evt_03db75"
-          },
-          "actor_id": "fascist_italy",
-          "actor_type": "faction"
+            "event_id": "evt_a8a245"
+          }
         },
         {
-          "id": "evt_e01298",
+          "id": "evt_f0fa45",
           "session": 9,
           "note": "July 20, 1944: German officers plant a bomb in Hitler's conference room. It explodes. Hitler survives \u2014 the briefcase was moved, deflecting the blast behind a table leg. The conspirators are arrested, tortured, and executed. Rommel, implicated, is given the choice of a people's court or private suicide. He takes the poison on October 14. Germany buries him with full military honors.",
           "visibility": "public",
@@ -141,7 +129,7 @@
           "event_type": "betrayal"
         },
         {
-          "id": "evt_20d8e7",
+          "id": "evt_2ec1da",
           "session": 11,
           "note": "Consequence of Occupied Europe (rival): Camps liberated \u2014 Eisenhower orders witnesses, cables Washington that it defies comprehension.",
           "visibility": "public",
@@ -151,13 +139,11 @@
           "ripple_source": {
             "entity_id": "occupied_europe",
             "entity_type": "faction",
-            "event_id": "evt_5eca84"
-          },
-          "actor_id": "occupied_europe",
-          "actor_type": "faction"
+            "event_id": "evt_d95dea"
+          }
         },
         {
-          "id": "evt_f76483",
+          "id": "evt_7ac628",
           "session": 12,
           "note": "Consequence of Imperial Japan (ally): Imperial Japan dissolves \u2014 MacArthur oversees reconstruction, democratic constitution written.",
           "visibility": "public",
@@ -167,10 +153,8 @@
           "ripple_source": {
             "entity_id": "imperial_japan",
             "entity_type": "faction",
-            "event_id": "evt_edadd1"
-          },
-          "actor_id": "imperial_japan",
-          "actor_type": "faction"
+            "event_id": "evt_ce5250"
+          }
         }
       ],
       "relations": [
@@ -226,7 +210,7 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_7302c7",
+          "id": "evt_bc7d0b",
           "session": 1,
           "note": "Consequence of Nazi Germany (ally): Nazi Germany remilitarizes, annexes Austria and the Sudetenland \u2014 appeasement holds the door open.",
           "visibility": "public",
@@ -236,13 +220,11 @@
           "ripple_source": {
             "entity_id": "nazi_germany",
             "entity_type": "faction",
-            "event_id": "evt_62ad71"
-          },
-          "actor_id": "nazi_germany",
-          "actor_type": "faction"
+            "event_id": "evt_f4fd24"
+          }
         },
         {
-          "id": "evt_eae656",
+          "id": "evt_06dc54",
           "session": 3,
           "note": "Consequence of Nazi Germany (ally): France falls in six weeks \u2014 Western Europe under German occupation.",
           "visibility": "public",
@@ -252,13 +234,11 @@
           "ripple_source": {
             "entity_id": "nazi_germany",
             "entity_type": "faction",
-            "event_id": "evt_d7ae93"
-          },
-          "actor_id": "nazi_germany",
-          "actor_type": "faction"
+            "event_id": "evt_3dda1a"
+          }
         },
         {
-          "id": "evt_03670b",
+          "id": "evt_6dd8a2",
           "session": 5,
           "note": "Consequence of United States (rival): US industrial conversion \u2014 outproduces all Axis nations combined within one year.",
           "visibility": "public",
@@ -268,13 +248,11 @@
           "ripple_source": {
             "entity_id": "united_states",
             "entity_type": "faction",
-            "event_id": "evt_9cb88c"
-          },
-          "actor_id": "united_states",
-          "actor_type": "faction"
+            "event_id": "evt_be4cae"
+          }
         },
         {
-          "id": "evt_370d13",
+          "id": "evt_e33ca5",
           "session": 6,
           "note": "Japan's early 1942 conquests stretch from Burma to Guadalcanal, from Manchuria to the Dutch East Indies. The 'Greater East Asia Co-Prosperity Sphere' is a colonial empire built in six months. After Midway, the defensive perimeter begins to contract. The US island-hopping campaign \u2014 taking key islands, bypassing others to 'wither on the vine' \u2014 begins to compress Japan's supply lines and air cover.",
           "visibility": "public",
@@ -283,7 +261,7 @@
           "event_type": "other"
         },
         {
-          "id": "evt_898600",
+          "id": "evt_d92125",
           "session": 7,
           "note": "Consequence of Nazi Germany (ally): Stalingrad shatters the myth of German invincibility \u2014 after Kursk, no more eastern offensives.",
           "visibility": "public",
@@ -293,13 +271,11 @@
           "ripple_source": {
             "entity_id": "nazi_germany",
             "entity_type": "faction",
-            "event_id": "evt_ebcc02"
-          },
-          "actor_id": "nazi_germany",
-          "actor_type": "faction"
+            "event_id": "evt_236db8"
+          }
         },
         {
-          "id": "evt_6eff63",
+          "id": "evt_a98ee8",
           "session": 9,
           "note": "Consequence of Nazi Germany (ally): July 20 plot fails \u2014 conspirators executed, Rommel given suicide or trial, chooses poison.",
           "visibility": "public",
@@ -309,13 +285,11 @@
           "ripple_source": {
             "entity_id": "nazi_germany",
             "entity_type": "faction",
-            "event_id": "evt_e01298"
-          },
-          "actor_id": "nazi_germany",
-          "actor_type": "faction"
+            "event_id": "evt_f0fa45"
+          }
         },
         {
-          "id": "evt_edadd1",
+          "id": "evt_ce5250",
           "session": 12,
           "note": "Japan surrenders unconditionally. The Empire of Japan is dissolved. MacArthur oversees the occupation and reconstruction of Japan with pragmatic brilliance: Hirohito is retained as symbolic figurehead, the military is abolished, a democratic constitution is written. Japan becomes a US ally within a decade.",
           "visibility": "public",
@@ -353,7 +327,7 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_1adf57",
+          "id": "evt_e3a198",
           "session": 1,
           "note": "Consequence of Nazi Germany (ally): Nazi Germany remilitarizes, annexes Austria and the Sudetenland \u2014 appeasement holds the door open.",
           "visibility": "public",
@@ -363,13 +337,11 @@
           "ripple_source": {
             "entity_id": "nazi_germany",
             "entity_type": "faction",
-            "event_id": "evt_62ad71"
-          },
-          "actor_id": "nazi_germany",
-          "actor_type": "faction"
+            "event_id": "evt_f4fd24"
+          }
         },
         {
-          "id": "evt_574c8d",
+          "id": "evt_9c7b93",
           "session": 3,
           "note": "Consequence of Nazi Germany (ally): France falls in six weeks \u2014 Western Europe under German occupation.",
           "visibility": "public",
@@ -379,13 +351,11 @@
           "ripple_source": {
             "entity_id": "nazi_germany",
             "entity_type": "faction",
-            "event_id": "evt_d7ae93"
-          },
-          "actor_id": "nazi_germany",
-          "actor_type": "faction"
+            "event_id": "evt_3dda1a"
+          }
         },
         {
-          "id": "evt_2c3c48",
+          "id": "evt_178ce1",
           "session": 7,
           "note": "Consequence of Nazi Germany (ally): Stalingrad shatters the myth of German invincibility \u2014 after Kursk, no more eastern offensives.",
           "visibility": "public",
@@ -395,13 +365,11 @@
           "ripple_source": {
             "entity_id": "nazi_germany",
             "entity_type": "faction",
-            "event_id": "evt_ebcc02"
-          },
-          "actor_id": "nazi_germany",
-          "actor_type": "faction"
+            "event_id": "evt_236db8"
+          }
         },
         {
-          "id": "evt_03db75",
+          "id": "evt_a8a245",
           "session": 8,
           "note": "Operation Husky (July 1943): Allied forces invade Sicily. On July 25, Mussolini is voted out by his own Grand Council, arrested by King Victor Emmanuel III, and imprisoned. Italy's new government opens secret armistice negotiations. Italy surrenders on September 8, 1943. Germany occupies northern Italy and installs Mussolini as puppet ruler of the Italian Social Republic after a German commando raid rescues him from mountain imprisonment.",
           "visibility": "public",
@@ -410,7 +378,7 @@
           "event_type": "combat"
         },
         {
-          "id": "evt_ca628b",
+          "id": "evt_16b995",
           "session": 9,
           "note": "Consequence of Nazi Germany (ally): July 20 plot fails \u2014 conspirators executed, Rommel given suicide or trial, chooses poison.",
           "visibility": "public",
@@ -420,10 +388,8 @@
           "ripple_source": {
             "entity_id": "nazi_germany",
             "entity_type": "faction",
-            "event_id": "evt_e01298"
-          },
-          "actor_id": "nazi_germany",
-          "actor_type": "faction"
+            "event_id": "evt_f0fa45"
+          }
         }
       ],
       "relations": [
@@ -443,7 +409,7 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_3f0368",
+          "id": "evt_c6b010",
           "session": 1,
           "note": "Consequence of Nazi Germany (rival): Nazi Germany remilitarizes, annexes Austria and the Sudetenland \u2014 appeasement holds the door open.",
           "visibility": "public",
@@ -453,13 +419,11 @@
           "ripple_source": {
             "entity_id": "nazi_germany",
             "entity_type": "faction",
-            "event_id": "evt_62ad71"
-          },
-          "actor_id": "nazi_germany",
-          "actor_type": "faction"
+            "event_id": "evt_f4fd24"
+          }
         },
         {
-          "id": "evt_3a2539",
+          "id": "evt_89fd9f",
           "session": 3,
           "note": "Consequence of Nazi Germany (rival): France falls in six weeks \u2014 Western Europe under German occupation.",
           "visibility": "public",
@@ -469,13 +433,11 @@
           "ripple_source": {
             "entity_id": "nazi_germany",
             "entity_type": "faction",
-            "event_id": "evt_d7ae93"
-          },
-          "actor_id": "nazi_germany",
-          "actor_type": "faction"
+            "event_id": "evt_3dda1a"
+          }
         },
         {
-          "id": "evt_f3bf0a",
+          "id": "evt_2938b8",
           "session": 3,
           "note": "Consequence of Great Britain (ally): Battle of Britain won \u2014 invasion postponed, the RAF holds by a narrow margin.",
           "visibility": "public",
@@ -485,13 +447,11 @@
           "ripple_source": {
             "entity_id": "great_britain",
             "entity_type": "faction",
-            "event_id": "evt_ec18d0"
-          },
-          "actor_id": "great_britain",
-          "actor_type": "faction"
+            "event_id": "evt_d7ec9b"
+          }
         },
         {
-          "id": "evt_9ba120",
+          "id": "evt_3d7043",
           "session": 5,
           "note": "Consequence of United States (ally): US industrial conversion \u2014 outproduces all Axis nations combined within one year.",
           "visibility": "public",
@@ -501,13 +461,11 @@
           "ripple_source": {
             "entity_id": "united_states",
             "entity_type": "faction",
-            "event_id": "evt_9cb88c"
-          },
-          "actor_id": "united_states",
-          "actor_type": "faction"
+            "event_id": "evt_be4cae"
+          }
         },
         {
-          "id": "evt_4a9548",
+          "id": "evt_fb51e6",
           "session": 7,
           "note": "Consequence of Nazi Germany (rival): Stalingrad shatters the myth of German invincibility \u2014 after Kursk, no more eastern offensives.",
           "visibility": "public",
@@ -517,13 +475,11 @@
           "ripple_source": {
             "entity_id": "nazi_germany",
             "entity_type": "faction",
-            "event_id": "evt_ebcc02"
-          },
-          "actor_id": "nazi_germany",
-          "actor_type": "faction"
+            "event_id": "evt_236db8"
+          }
         },
         {
-          "id": "evt_7321bb",
+          "id": "evt_d980fa",
           "session": 9,
           "note": "Consequence of Nazi Germany (rival): July 20 plot fails \u2014 conspirators executed, Rommel given suicide or trial, chooses poison.",
           "visibility": "public",
@@ -533,10 +489,8 @@
           "ripple_source": {
             "entity_id": "nazi_germany",
             "entity_type": "faction",
-            "event_id": "evt_e01298"
-          },
-          "actor_id": "nazi_germany",
-          "actor_type": "faction"
+            "event_id": "evt_f0fa45"
+          }
         }
       ],
       "relations": [
@@ -568,7 +522,7 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_c25403",
+          "id": "evt_954fa7",
           "session": 1,
           "note": "Consequence of Nazi Germany (rival): Nazi Germany remilitarizes, annexes Austria and the Sudetenland \u2014 appeasement holds the door open.",
           "visibility": "public",
@@ -578,13 +532,11 @@
           "ripple_source": {
             "entity_id": "nazi_germany",
             "entity_type": "faction",
-            "event_id": "evt_62ad71"
-          },
-          "actor_id": "nazi_germany",
-          "actor_type": "faction"
+            "event_id": "evt_f4fd24"
+          }
         },
         {
-          "id": "evt_9c6ee5",
+          "id": "evt_8fa940",
           "session": 3,
           "note": "Consequence of Nazi Germany (rival): France falls in six weeks \u2014 Western Europe under German occupation.",
           "visibility": "public",
@@ -594,13 +546,11 @@
           "ripple_source": {
             "entity_id": "nazi_germany",
             "entity_type": "faction",
-            "event_id": "evt_d7ae93"
-          },
-          "actor_id": "nazi_germany",
-          "actor_type": "faction"
+            "event_id": "evt_3dda1a"
+          }
         },
         {
-          "id": "evt_737524",
+          "id": "evt_d912de",
           "session": 3,
           "note": "Consequence of Great Britain (ally): Battle of Britain won \u2014 invasion postponed, the RAF holds by a narrow margin.",
           "visibility": "public",
@@ -610,13 +560,11 @@
           "ripple_source": {
             "entity_id": "great_britain",
             "entity_type": "faction",
-            "event_id": "evt_ec18d0"
-          },
-          "actor_id": "great_britain",
-          "actor_type": "faction"
+            "event_id": "evt_d7ec9b"
+          }
         },
         {
-          "id": "evt_9cb88c",
+          "id": "evt_be4cae",
           "session": 5,
           "note": "America's industrial conversion is immediate and total. Car factories become tank factories. Shipyards work around the clock. The US produces more weapons in 1942 than Germany, Japan, and Italy combined. Lend-Lease ships supplies to Britain and the Soviet Union on a scale that neither could sustain their war effort without.",
           "visibility": "public",
@@ -625,7 +573,7 @@
           "event_type": "other"
         },
         {
-          "id": "evt_19b654",
+          "id": "evt_ba8364",
           "session": 6,
           "note": "Consequence of Imperial Japan (rival): After Midway, Japan's Pacific empire begins contracting under the island-hopping campaign.",
           "visibility": "public",
@@ -635,13 +583,11 @@
           "ripple_source": {
             "entity_id": "imperial_japan",
             "entity_type": "faction",
-            "event_id": "evt_370d13"
-          },
-          "actor_id": "imperial_japan",
-          "actor_type": "faction"
+            "event_id": "evt_e33ca5"
+          }
         },
         {
-          "id": "evt_f3a996",
+          "id": "evt_d4f12d",
           "session": 7,
           "note": "Consequence of Nazi Germany (rival): Stalingrad shatters the myth of German invincibility \u2014 after Kursk, no more eastern offensives.",
           "visibility": "public",
@@ -651,13 +597,11 @@
           "ripple_source": {
             "entity_id": "nazi_germany",
             "entity_type": "faction",
-            "event_id": "evt_ebcc02"
-          },
-          "actor_id": "nazi_germany",
-          "actor_type": "faction"
+            "event_id": "evt_236db8"
+          }
         },
         {
-          "id": "evt_be1a9b",
+          "id": "evt_908400",
           "session": 9,
           "note": "Consequence of Nazi Germany (rival): July 20 plot fails \u2014 conspirators executed, Rommel given suicide or trial, chooses poison.",
           "visibility": "public",
@@ -667,13 +611,11 @@
           "ripple_source": {
             "entity_id": "nazi_germany",
             "entity_type": "faction",
-            "event_id": "evt_e01298"
-          },
-          "actor_id": "nazi_germany",
-          "actor_type": "faction"
+            "event_id": "evt_f0fa45"
+          }
         },
         {
-          "id": "evt_6fc213",
+          "id": "evt_63c85b",
           "session": 12,
           "note": "Consequence of Imperial Japan (rival): Imperial Japan dissolves \u2014 MacArthur oversees reconstruction, democratic constitution written.",
           "visibility": "public",
@@ -683,10 +625,8 @@
           "ripple_source": {
             "entity_id": "imperial_japan",
             "entity_type": "faction",
-            "event_id": "evt_edadd1"
-          },
-          "actor_id": "imperial_japan",
-          "actor_type": "faction"
+            "event_id": "evt_ce5250"
+          }
         }
       ],
       "relations": [
@@ -730,7 +670,7 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_0d8b81",
+          "id": "evt_d3840d",
           "session": 1,
           "note": "Consequence of Nazi Germany (rival): Nazi Germany remilitarizes, annexes Austria and the Sudetenland \u2014 appeasement holds the door open.",
           "visibility": "public",
@@ -740,13 +680,11 @@
           "ripple_source": {
             "entity_id": "nazi_germany",
             "entity_type": "faction",
-            "event_id": "evt_62ad71"
-          },
-          "actor_id": "nazi_germany",
-          "actor_type": "faction"
+            "event_id": "evt_f4fd24"
+          }
         },
         {
-          "id": "evt_da4764",
+          "id": "evt_82f4db",
           "session": 2,
           "note": "Consequence of Poland (ally): Poland destroyed in five weeks \u2014 invaded from both sides, abandoned by its guarantors.",
           "visibility": "public",
@@ -756,13 +694,11 @@
           "ripple_source": {
             "entity_id": "poland",
             "entity_type": "faction",
-            "event_id": "evt_45187d"
-          },
-          "actor_id": "poland",
-          "actor_type": "faction"
+            "event_id": "evt_fbc0e8"
+          }
         },
         {
-          "id": "evt_203812",
+          "id": "evt_537250",
           "session": 3,
           "note": "Consequence of Nazi Germany (rival): France falls in six weeks \u2014 Western Europe under German occupation.",
           "visibility": "public",
@@ -772,13 +708,11 @@
           "ripple_source": {
             "entity_id": "nazi_germany",
             "entity_type": "faction",
-            "event_id": "evt_d7ae93"
-          },
-          "actor_id": "nazi_germany",
-          "actor_type": "faction"
+            "event_id": "evt_3dda1a"
+          }
         },
         {
-          "id": "evt_ec18d0",
+          "id": "evt_d7ec9b",
           "session": 3,
           "note": "The Battle of Britain (July\u2013September 1940): the Luftwaffe attempts to destroy the RAF and establish air superiority for invasion. The RAF holds \u2014 by a narrow margin, exhausting its pilots, but holding. [[Adolf Hitler]] postpones Operation Sea Lion indefinitely. [[Great Britain]] will not be invaded. [[Winston Churchill]]: 'Never in the field of human conflict was so much owed by so many to so few.'",
           "visibility": "public",
@@ -788,7 +722,7 @@
           "location_id": "london_and_whitehall"
         },
         {
-          "id": "evt_bc097a",
+          "id": "evt_f19d42",
           "session": 5,
           "note": "Consequence of United States (ally): US industrial conversion \u2014 outproduces all Axis nations combined within one year.",
           "visibility": "public",
@@ -798,13 +732,11 @@
           "ripple_source": {
             "entity_id": "united_states",
             "entity_type": "faction",
-            "event_id": "evt_9cb88c"
-          },
-          "actor_id": "united_states",
-          "actor_type": "faction"
+            "event_id": "evt_be4cae"
+          }
         },
         {
-          "id": "evt_4c09b2",
+          "id": "evt_250963",
           "session": 7,
           "note": "Consequence of Nazi Germany (rival): Stalingrad shatters the myth of German invincibility \u2014 after Kursk, no more eastern offensives.",
           "visibility": "public",
@@ -814,13 +746,11 @@
           "ripple_source": {
             "entity_id": "nazi_germany",
             "entity_type": "faction",
-            "event_id": "evt_ebcc02"
-          },
-          "actor_id": "nazi_germany",
-          "actor_type": "faction"
+            "event_id": "evt_236db8"
+          }
         },
         {
-          "id": "evt_cb9669",
+          "id": "evt_09673f",
           "session": 9,
           "note": "Consequence of Nazi Germany (rival): July 20 plot fails \u2014 conspirators executed, Rommel given suicide or trial, chooses poison.",
           "visibility": "public",
@@ -830,10 +760,8 @@
           "ripple_source": {
             "entity_id": "nazi_germany",
             "entity_type": "faction",
-            "event_id": "evt_e01298"
-          },
-          "actor_id": "nazi_germany",
-          "actor_type": "faction"
+            "event_id": "evt_f0fa45"
+          }
         }
       ],
       "relations": [
@@ -877,7 +805,7 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_b280e5",
+          "id": "evt_e85502",
           "session": 3,
           "note": "Consequence of Great Britain (ally): Battle of Britain won \u2014 invasion postponed, the RAF holds by a narrow margin.",
           "visibility": "public",
@@ -887,13 +815,11 @@
           "ripple_source": {
             "entity_id": "great_britain",
             "entity_type": "faction",
-            "event_id": "evt_ec18d0"
-          },
-          "actor_id": "great_britain",
-          "actor_type": "faction"
+            "event_id": "evt_d7ec9b"
+          }
         },
         {
-          "id": "evt_006eea",
+          "id": "evt_605029",
           "session": 5,
           "note": "Consequence of United States (ally): US industrial conversion \u2014 outproduces all Axis nations combined within one year.",
           "visibility": "public",
@@ -903,10 +829,8 @@
           "ripple_source": {
             "entity_id": "united_states",
             "entity_type": "faction",
-            "event_id": "evt_9cb88c"
-          },
-          "actor_id": "united_states",
-          "actor_type": "faction"
+            "event_id": "evt_be4cae"
+          }
         }
       ],
       "relations": [
@@ -926,7 +850,7 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_5ace69",
+          "id": "evt_678c34",
           "session": 6,
           "note": "Consequence of Imperial Japan (rival): After Midway, Japan's Pacific empire begins contracting under the island-hopping campaign.",
           "visibility": "public",
@@ -936,13 +860,11 @@
           "ripple_source": {
             "entity_id": "imperial_japan",
             "entity_type": "faction",
-            "event_id": "evt_370d13"
-          },
-          "actor_id": "imperial_japan",
-          "actor_type": "faction"
+            "event_id": "evt_e33ca5"
+          }
         },
         {
-          "id": "evt_7b775a",
+          "id": "evt_7d81db",
           "session": 12,
           "note": "Consequence of Imperial Japan (rival): Imperial Japan dissolves \u2014 MacArthur oversees reconstruction, democratic constitution written.",
           "visibility": "public",
@@ -952,10 +874,8 @@
           "ripple_source": {
             "entity_id": "imperial_japan",
             "entity_type": "faction",
-            "event_id": "evt_edadd1"
-          },
-          "actor_id": "imperial_japan",
-          "actor_type": "faction"
+            "event_id": "evt_ce5250"
+          }
         }
       ],
       "relations": [
@@ -975,7 +895,7 @@
       "hidden": true,
       "log": [
         {
-          "id": "evt_748101",
+          "id": "evt_73fd00",
           "session": 1,
           "note": "Consequence of Nazi Germany (rival): Nazi Germany remilitarizes, annexes Austria and the Sudetenland \u2014 appeasement holds the door open.",
           "visibility": "public",
@@ -985,13 +905,11 @@
           "ripple_source": {
             "entity_id": "nazi_germany",
             "entity_type": "faction",
-            "event_id": "evt_62ad71"
-          },
-          "actor_id": "nazi_germany",
-          "actor_type": "faction"
+            "event_id": "evt_f4fd24"
+          }
         },
         {
-          "id": "evt_38a68a",
+          "id": "evt_257584",
           "session": 1,
           "note": "The Nuremberg Laws of 1935 strip German Jews of citizenship and forbid marriage between Jews and Germans. Kristallnacht (November 9, 1938) \u2014 the Night of Broken Glass \u2014 sees Jewish synagogues, businesses, and homes destroyed across Germany and Austria. Ninety-one Jews are killed; thirty thousand are arrested and sent to concentration camps. This is the visible surface of what is being built beneath.",
           "visibility": "dm_only",
@@ -1000,7 +918,7 @@
           "event_type": "other"
         },
         {
-          "id": "evt_008e49",
+          "id": "evt_3baba3",
           "session": 3,
           "note": "Consequence of Nazi Germany (rival): France falls in six weeks \u2014 Western Europe under German occupation.",
           "visibility": "public",
@@ -1010,13 +928,11 @@
           "ripple_source": {
             "entity_id": "nazi_germany",
             "entity_type": "faction",
-            "event_id": "evt_d7ae93"
-          },
-          "actor_id": "nazi_germany",
-          "actor_type": "faction"
+            "event_id": "evt_3dda1a"
+          }
         },
         {
-          "id": "evt_619b15",
+          "id": "evt_7c2a7f",
           "session": 7,
           "note": "Consequence of Nazi Germany (rival): Stalingrad shatters the myth of German invincibility \u2014 after Kursk, no more eastern offensives.",
           "visibility": "public",
@@ -1026,13 +942,11 @@
           "ripple_source": {
             "entity_id": "nazi_germany",
             "entity_type": "faction",
-            "event_id": "evt_ebcc02"
-          },
-          "actor_id": "nazi_germany",
-          "actor_type": "faction"
+            "event_id": "evt_236db8"
+          }
         },
         {
-          "id": "evt_396f53",
+          "id": "evt_685738",
           "session": 9,
           "note": "Consequence of Nazi Germany (rival): July 20 plot fails \u2014 conspirators executed, Rommel given suicide or trial, chooses poison.",
           "visibility": "public",
@@ -1042,13 +956,11 @@
           "ripple_source": {
             "entity_id": "nazi_germany",
             "entity_type": "faction",
-            "event_id": "evt_e01298"
-          },
-          "actor_id": "nazi_germany",
-          "actor_type": "faction"
+            "event_id": "evt_f0fa45"
+          }
         },
         {
-          "id": "evt_5eca84",
+          "id": "evt_d95dea",
           "session": 11,
           "note": "Allied forces liberate the concentration camps in spring 1945: Buchenwald (April 11), Bergen-Belsen (April 15), Dachau (April 29). [[Dwight D. Eisenhower]] orders every available soldier and nearby German civilian to tour the camps. He cables Washington: the evidence is 'beyond the American mind to comprehend.' He wants witnesses. He is afraid that someday someone will say this did not happen.",
           "visibility": "public",
@@ -1067,7 +979,7 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_cc643d",
+          "id": "evt_ab1646",
           "session": 1,
           "note": "Consequence of Nazi Germany (rival): Nazi Germany remilitarizes, annexes Austria and the Sudetenland \u2014 appeasement holds the door open.",
           "visibility": "public",
@@ -1077,13 +989,11 @@
           "ripple_source": {
             "entity_id": "nazi_germany",
             "entity_type": "faction",
-            "event_id": "evt_62ad71"
-          },
-          "actor_id": "nazi_germany",
-          "actor_type": "faction"
+            "event_id": "evt_f4fd24"
+          }
         },
         {
-          "id": "evt_45187d",
+          "id": "evt_fbc0e8",
           "session": 2,
           "note": "Germany invades Poland from the west on September 1, 1939. The Soviet Union invades from the east on September 17. Britain and France declare war on Germany on September 3 \u2014 and then do almost nothing. Poland falls in five weeks. The Polish government escapes to London. A hundred thousand Polish soldiers eventually fight in British uniform.",
           "visibility": "public",
@@ -1092,7 +1002,7 @@
           "event_type": "combat"
         },
         {
-          "id": "evt_0be966",
+          "id": "evt_76096a",
           "session": 3,
           "note": "Consequence of Nazi Germany (rival): France falls in six weeks \u2014 Western Europe under German occupation.",
           "visibility": "public",
@@ -1102,13 +1012,11 @@
           "ripple_source": {
             "entity_id": "nazi_germany",
             "entity_type": "faction",
-            "event_id": "evt_d7ae93"
-          },
-          "actor_id": "nazi_germany",
-          "actor_type": "faction"
+            "event_id": "evt_3dda1a"
+          }
         },
         {
-          "id": "evt_884035",
+          "id": "evt_c08b59",
           "session": 3,
           "note": "Consequence of Great Britain (ally): Battle of Britain won \u2014 invasion postponed, the RAF holds by a narrow margin.",
           "visibility": "public",
@@ -1118,13 +1026,11 @@
           "ripple_source": {
             "entity_id": "great_britain",
             "entity_type": "faction",
-            "event_id": "evt_ec18d0"
-          },
-          "actor_id": "great_britain",
-          "actor_type": "faction"
+            "event_id": "evt_d7ec9b"
+          }
         },
         {
-          "id": "evt_39817e",
+          "id": "evt_147e0d",
           "session": 7,
           "note": "Consequence of Nazi Germany (rival): Stalingrad shatters the myth of German invincibility \u2014 after Kursk, no more eastern offensives.",
           "visibility": "public",
@@ -1134,13 +1040,11 @@
           "ripple_source": {
             "entity_id": "nazi_germany",
             "entity_type": "faction",
-            "event_id": "evt_ebcc02"
-          },
-          "actor_id": "nazi_germany",
-          "actor_type": "faction"
+            "event_id": "evt_236db8"
+          }
         },
         {
-          "id": "evt_723243",
+          "id": "evt_6a0e3e",
           "session": 9,
           "note": "Consequence of Nazi Germany (rival): July 20 plot fails \u2014 conspirators executed, Rommel given suicide or trial, chooses poison.",
           "visibility": "public",
@@ -1150,10 +1054,8 @@
           "ripple_source": {
             "entity_id": "nazi_germany",
             "entity_type": "faction",
-            "event_id": "evt_e01298"
-          },
-          "actor_id": "nazi_germany",
-          "actor_type": "faction"
+            "event_id": "evt_f0fa45"
+          }
         }
       ]
     }

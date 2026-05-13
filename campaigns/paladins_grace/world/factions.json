@@ -8,7 +8,7 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_a070fd",
+          "id": "evt_536a0e",
           "session": 1,
           "note": "Consequence of House Vespar (rival): Vespar delegation's forty-guard arrival puts the compact's enforcement clause in play.",
           "visibility": "public",
@@ -18,10 +18,8 @@
           "ripple_source": {
             "entity_id": "house_vespar",
             "entity_type": "faction",
-            "event_id": "evt_b20046"
-          },
-          "actor_id": "house_vespar",
-          "actor_type": "faction"
+            "event_id": "evt_7ab30d"
+          }
         }
       ],
       "relations": [
@@ -53,7 +51,7 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_b20046",
+          "id": "evt_7ab30d",
           "session": 1,
           "note": "[[House Vespar]]'s delegation arrives at Hartstone's north gate with forty armed guards \u2014 twenty-eight over the compact's twelve-guard limit. [[Commander Aldric Vane]] reads [[Lady Ivra Malt|her]] papers and does not invoke the clause. He is counting.",
           "visibility": "public",
@@ -63,7 +61,7 @@
           "location_id": "hartstone_north_gate"
         },
         {
-          "id": "evt_718536",
+          "id": "evt_5f14cb",
           "session": 2,
           "note": "Consequence of The Underbrick (ally): Military-scale weapons moving through east tunnels \u2014 Underbrick operating at new capacity.",
           "visibility": "dm_only",
@@ -73,13 +71,11 @@
           "ripple_source": {
             "entity_id": "the_underbrick",
             "entity_type": "faction",
-            "event_id": "evt_509f39"
-          },
-          "actor_id": "the_underbrick",
-          "actor_type": "faction"
+            "event_id": "evt_4882ca"
+          }
         },
         {
-          "id": "evt_f2409f",
+          "id": "evt_496b0d",
           "session": 4,
           "note": "Consequence of The Underbrick (ally): Underbrick attacks Grace-Sworn patrol \u2014 open confrontation, armed, organized.",
           "visibility": "public",
@@ -89,10 +85,8 @@
           "ripple_source": {
             "entity_id": "the_underbrick",
             "entity_type": "faction",
-            "event_id": "evt_affaae"
-          },
-          "actor_id": "the_underbrick",
-          "actor_type": "faction"
+            "event_id": "evt_84c0f7"
+          }
         }
       ],
       "relations": [
@@ -134,7 +128,7 @@
       "hidden": false,
       "log": [
         {
-          "id": "evt_a3f154",
+          "id": "evt_56064b",
           "session": 1,
           "note": "Consequence of House Vespar (rival): Vespar delegation's forty-guard arrival puts the compact's enforcement clause in play.",
           "visibility": "public",
@@ -144,13 +138,11 @@
           "ripple_source": {
             "entity_id": "house_vespar",
             "entity_type": "faction",
-            "event_id": "evt_b20046"
-          },
-          "actor_id": "house_vespar",
-          "actor_type": "faction"
+            "event_id": "evt_7ab30d"
+          }
         },
         {
-          "id": "evt_9ac9b9",
+          "id": "evt_b238dc",
           "session": 2,
           "note": "Consequence of The Underbrick (ally): Military-scale weapons moving through east tunnels \u2014 Underbrick operating at new capacity.",
           "visibility": "dm_only",
@@ -160,13 +152,11 @@
           "ripple_source": {
             "entity_id": "the_underbrick",
             "entity_type": "faction",
-            "event_id": "evt_509f39"
-          },
-          "actor_id": "the_underbrick",
-          "actor_type": "faction"
+            "event_id": "evt_4882ca"
+          }
         },
         {
-          "id": "evt_283cef",
+          "id": "evt_04f149",
           "session": 4,
           "note": "Consequence of The Underbrick (ally): Underbrick attacks Grace-Sworn patrol \u2014 open confrontation, armed, organized.",
           "visibility": "public",
@@ -176,10 +166,8 @@
           "ripple_source": {
             "entity_id": "the_underbrick",
             "entity_type": "faction",
-            "event_id": "evt_affaae"
-          },
-          "actor_id": "the_underbrick",
-          "actor_type": "faction"
+            "event_id": "evt_84c0f7"
+          }
         }
       ],
       "relations": [
@@ -205,7 +193,7 @@
       "hidden": true,
       "log": [
         {
-          "id": "evt_72aa3c",
+          "id": "evt_37df8d",
           "session": 1,
           "note": "Consequence of House Vespar (ally): Vespar delegation's forty-guard arrival puts the compact's enforcement clause in play.",
           "visibility": "public",
@@ -215,13 +203,11 @@
           "ripple_source": {
             "entity_id": "house_vespar",
             "entity_type": "faction",
-            "event_id": "evt_b20046"
-          },
-          "actor_id": "house_vespar",
-          "actor_type": "faction"
+            "event_id": "evt_7ab30d"
+          }
         },
         {
-          "id": "evt_509f39",
+          "id": "evt_4882ca",
           "session": 2,
           "note": "Three weapon shipments move through [[The East Quarter Tunnels|the east tunnels]] in two weeks \u2014 too many for street crime. Consistent with equipping a small private force. A [[The Grace-Sworn|Grace-Sworn]] border patrol filed the report. [[Commander Aldric Vane]] has not yet briefed the delegations.",
           "visibility": "dm_only",
@@ -230,7 +216,7 @@
           "event_type": "other"
         },
         {
-          "id": "evt_affaae",
+          "id": "evt_84c0f7",
           "session": 4,
           "note": "A [[The Grace-Sworn|Grace-Sworn]] patrol is ambushed in [[The East Quarter Tunnels|the east tunnels]] \u2014 non-lethal, disarmed, and blindfolded for two hours. A message is written on one guard's forearm: 'Stop looking.' [[The Loom]] did not use the patrol's own weapons. They had their own.",
           "visibility": "public",

@@ -970,7 +970,8 @@ def delete_condition_log_entry(slug, condition_id, entry_idx):
 
 
 def log_condition(slug, condition_id, session, note, polarity=None, intensity=None,
-                  event_type=None, visibility="public", ripple_source=None, location_id=None):
+                  event_type=None, visibility="public", ripple_source=None, location_id=None,
+                  actor_id=None, actor_type=None):
     data = _load(slug, "world/conditions.json")
     event_id = "evt_" + secrets.token_hex(3)
     for c in data.get("conditions", []):
@@ -990,6 +991,9 @@ def log_condition(slug, condition_id, session, note, polarity=None, intensity=No
                 entry["ripple_source"] = ripple_source
             if location_id:
                 entry["location_id"] = location_id
+            if actor_id:
+                entry["actor_id"] = actor_id
+                entry["actor_type"] = actor_type or "npc"
             c.setdefault("log", []).append(entry)
     _save(slug, data, "world/conditions.json")
     return event_id
@@ -1439,7 +1443,8 @@ def remove_party_relation(slug, rel_idx):
 
 
 def apply_ripple(slug, source_id, source_type, session_n, note, polarity, intensity,
-                 event_type=None, visibility="public", source_event_id=None, branch=None):
+                 event_type=None, visibility="public", source_event_id=None, branch=None,
+                 actor_id=None, actor_type=None):
     """Log derived events to entities related to the source. Ripples inherit source visibility.
 
     Fires in two passes:
@@ -1473,6 +1478,8 @@ def apply_ripple(slug, source_id, source_type, session_n, note, polarity, intens
     def _fire(target_id, target_type, rel_type, weight):
         if target_type == "npc" and target_id in _dead_npc_ids:
             return
+        if actor_id and target_id == actor_id:
+            return  # target caused the original event — they already have it, don't fire back
         rpolarity = FLIP.get(polarity, polarity) if rel_type == "rival" else polarity
         rintensity = max(1, round(intensity * weight))
         relation_label = "ally" if rel_type == "ally" else "rival"
@@ -1482,7 +1489,7 @@ def apply_ripple(slug, source_id, source_type, session_n, note, polarity, intens
                     polarity=rpolarity, intensity=rintensity,
                     event_type=event_type, visibility=visibility,
                     ripple_source=ripple_source,
-                    actor_id=source_id, actor_type=source_type,
+                    actor_id=actor_id, actor_type=actor_type,
                     branch=branch)
         elif target_type == "condition":
             log_condition(slug, target_id, session_n, rnote,
@@ -1499,7 +1506,7 @@ def apply_ripple(slug, source_id, source_type, session_n, note, polarity, intens
                         polarity=rpolarity, intensity=rintensity,
                         event_type=event_type, visibility=visibility,
                         ripple_source=ripple_source,
-                        actor_id=source_id, actor_type=source_type,
+                        actor_id=actor_id, actor_type=actor_type,
                         branch=branch)
         rippled.append({"target": target_id, "target_type": target_type, "relation": rel_type})
 
@@ -1681,12 +1688,31 @@ def backfill_relation_ripples(slug, source_id, source_type, target_id, target_ty
         source = next((f for f in _load(slug, "world/factions.json").get("factions", []) if f["id"] == source_id), None)
     if not source:
         return 0
+    # Build set of source event IDs already rippled to target (prevents duplicate backfill)
+    if target_type == "npc":
+        target_ent = next((n for n in _load(slug, "world/npcs.json").get("npcs", []) if n["id"] == target_id), None)
+    else:
+        target_ent = next((f for f in _load(slug, "world/factions.json").get("factions", []) if f["id"] == target_id), None)
+    already_rippled = set()
+    if target_ent:
+        for e in target_ent.get("log", []):
+            rs = e.get("ripple_source", {})
+            if rs.get("entity_id") == source_id and rs.get("event_id"):
+                already_rippled.add(rs["event_id"])
     FLIP = {"positive": "negative", "negative": "positive", "neutral": "neutral"}
     relation_label = "ally" if relation == "ally" else "rival"
     count = 0
     for entry in source.get("log", []):
         if not entry.get("polarity"):
             continue
+        if entry.get("ripple_source"):
+            continue  # never cascade ripples — only backfill directly-logged events
+        if entry.get("id") in already_rippled:
+            continue  # already backfilled this event to this target
+        orig_actor_id = entry.get("actor_id")
+        orig_actor_type = entry.get("actor_type")
+        if orig_actor_id and orig_actor_id == target_id:
+            continue  # target caused this entry — skip, they already have it
         rpolarity = FLIP.get(entry["polarity"], entry["polarity"]) if relation == "rival" else entry["polarity"]
         rintensity = max(1, round(int(entry.get("intensity", 1)) * float(weight)))
         rnote = f"Retroactive ripple from {source['name']} ({relation_label}): {entry['note']}"
@@ -1696,13 +1722,13 @@ def backfill_relation_ripples(slug, source_id, source_type, target_id, target_ty
                     polarity=rpolarity, intensity=rintensity,
                     event_type=entry.get("event_type"), visibility=entry.get("visibility", "public"),
                     ripple_source=ripple_source,
-                    actor_id=source_id, actor_type=source_type)
+                    actor_id=orig_actor_id, actor_type=orig_actor_type)
         else:
             log_faction(slug, target_id, entry.get("session", 1), rnote,
                         polarity=rpolarity, intensity=rintensity,
                         event_type=entry.get("event_type"), visibility=entry.get("visibility", "public"),
                         ripple_source=ripple_source,
-                        actor_id=source_id, actor_type=source_type)
+                        actor_id=orig_actor_id, actor_type=orig_actor_type)
         count += 1
     return count
 
@@ -2160,7 +2186,8 @@ def confirm_projection(slug, entity_id, entity_type, event_id, new_event_type, c
         apply_ripple(slug, entity_id, entity_type, current_session,
                      entry["note"], entry.get("polarity"), entry.get("intensity", 1),
                      event_type=entry["event_type"], visibility=entry.get("visibility", "public"),
-                     source_event_id=event_id)
+                     source_event_id=event_id,
+                     actor_id=entry.get("actor_id"), actor_type=entry.get("actor_type"))
     return entry
 
 
