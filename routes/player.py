@@ -19,7 +19,7 @@ from routes.utils import (
     CAMPAIGNS, USERS_FILE, INVITES_FILE,
     _DEFAULT_TERMS, _BLANK_TEMPLATES,
     STRIPE_PUBLISHABLE_KEY, STRIPE_WEBHOOK_SECRET,
-    STRIPE_PRICE_PRO, STRIPE_PRICE_PRO_ANNUAL, STRIPE_PRICE_WORLD, STRIPE_PRICE_PARTY,
+    STRIPE_PRICE_PRO, STRIPE_PRICE_PRO_ANNUAL, STRIPE_PRICE_WORLD,
     DEMO_SOURCE, DEMO_DIR, DEMO_STAMP, DEMO_COUNTS_FILE,
     _load_demo_counts, _save_demo_counts, reset_demo,
     _build_diffs, _create_onboarding_campaign, wikilinks_filter,
@@ -38,9 +38,6 @@ def index():
     member_campaigns = [c for c in all_campaigns if username in c.get("members", []) and c.get("owner") != username and not c.get("demo")]
     demo_campaigns = [c for c in all_campaigns if c.get("demo")]
     for c in my_campaigns + member_campaigns:
-        if c.get("onboarding_mode") == "party":
-            _g = db.get_party_game(c["slug"])
-            c["party_phase"] = _g.get("phase")
         _ag = db.get_async_campaign(c["slug"])
         if _ag and _ag.get("phase") in ("recruiting", "active"):
             c["async_phase"] = _ag.get("phase")
@@ -240,10 +237,6 @@ def campaign(slug):
     meta = load(slug, "campaign.json")
     if not meta:
         abort(404)
-    if meta.get("onboarding_mode") == "party":
-        _g = db.get_party_game(slug)
-        if _g.get("phase") != "done":
-            return redirect(url_for("party_game.party_play", slug=slug))
     # Redirect to campaign while async campaign is active or recruiting
     _async_game = db.get_async_campaign(slug)
     if _async_game and _async_game.get("phase") in ("recruiting", "active"):
@@ -463,10 +456,6 @@ def world(slug):
     r = campaign_access(slug)
     if r: return r
     meta = load(slug, "campaign.json")
-    if meta and meta.get("onboarding_mode") == "party":
-        _g = db.get_party_game(slug)
-        if _g.get("phase") != "done":
-            return redirect(url_for("party_game.party_play", slug=slug))
     is_dm = bool(session.get(f"dm_{slug}")) or (session.get("user") == meta.get("owner"))
     npcs = db.get_npcs(slug, include_hidden=is_dm)
     factions = db.get_factions(slug, include_hidden=is_dm)

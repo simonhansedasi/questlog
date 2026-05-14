@@ -19,7 +19,7 @@ from routes.utils import (
     CAMPAIGNS, USERS_FILE, INVITES_FILE,
     _DEFAULT_TERMS, _BLANK_TEMPLATES,
     STRIPE_PUBLISHABLE_KEY, STRIPE_WEBHOOK_SECRET,
-    STRIPE_PRICE_PRO, STRIPE_PRICE_PRO_ANNUAL, STRIPE_PRICE_WORLD, STRIPE_PRICE_PARTY,
+    STRIPE_PRICE_PRO, STRIPE_PRICE_PRO_ANNUAL, STRIPE_PRICE_WORLD,
     DEMO_SOURCE, DEMO_DIR, DEMO_STAMP, DEMO_COUNTS_FILE,
     _load_demo_counts, _save_demo_counts, reset_demo,
     _build_diffs, _create_onboarding_campaign,
@@ -138,56 +138,8 @@ def welcome_post():
             return redirect(url_for("player.setup_wizard", slug=result))
         return result or redirect(url_for("player.index"))
 
-    if choice == "party":
-        user_data = users.get(username, {})
-        is_pro = user_data.get("subscription_status") in ("active", "trialing") or bool(user_data.get("ks_tier"))
-
-        # Non-pro with free game already played → $2 one-time party game
-        if not is_pro and user_data.get("party_plays", 0) >= 3:
-            try:
-                checkout = stripe.checkout.Session.create(
-                    payment_method_types=["card"],
-                    mode="payment",
-                    line_items=[{"price": STRIPE_PRICE_PARTY, "quantity": 1}],
-                    metadata={"username": username},
-                    success_url=request.host_url.rstrip("/") + "/billing/party/success?session_id={CHECKOUT_SESSION_ID}",
-                    cancel_url=request.host_url.rstrip("/") + url_for("player.index"),
-                )
-                return redirect(checkout.url)
-            except stripe.StripeError:
-                flash("Could not start checkout. Try again.", "error")
-                return redirect(url_for("player.index"))
-
-        # World limit reached → Pro users: prompt to delete a world first
-        limit = user_data.get("world_limit", 3) + user_data.get("extra_worlds", 0)
-        if _user_world_count(username) >= limit:
-            flash("You've reached your world limit. Delete a world from your home screen to make room for a new party game.", "error")
-            return redirect(url_for("player.index"))
-
-        result = _create_onboarding_campaign(username, "party")
-        if isinstance(result, str):
-            return redirect(url_for("party_game.party_play", slug=result))
-        return result or redirect(url_for("player.index"))
-
     if choice == "campaign":
         user_data = users.get(username, {})
-        is_pro = user_data.get("subscription_status") in ("active", "trialing") or bool(user_data.get("ks_tier"))
-
-        if not is_pro and user_data.get("party_plays", 0) >= 3:
-            try:
-                checkout = stripe.checkout.Session.create(
-                    payment_method_types=["card"],
-                    mode="payment",
-                    line_items=[{"price": STRIPE_PRICE_PARTY, "quantity": 1}],
-                    metadata={"username": username},
-                    success_url=request.host_url.rstrip("/") + "/billing/party/success?session_id={CHECKOUT_SESSION_ID}",
-                    cancel_url=request.host_url.rstrip("/") + url_for("player.index"),
-                )
-                return redirect(checkout.url)
-            except stripe.StripeError:
-                flash("Could not start checkout. Try again.", "error")
-                return redirect(url_for("player.index"))
-
         limit = user_data.get("world_limit", 3) + user_data.get("extra_worlds", 0)
         if _user_world_count(username) >= limit:
             flash("You've reached your world limit. Delete a world to make room.", "error")

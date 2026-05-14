@@ -19,7 +19,7 @@ from routes.utils import (
     CAMPAIGNS, USERS_FILE, INVITES_FILE,
     _DEFAULT_TERMS, _BLANK_TEMPLATES,
     STRIPE_PUBLISHABLE_KEY, STRIPE_WEBHOOK_SECRET,
-    STRIPE_PRICE_PRO, STRIPE_PRICE_PRO_ANNUAL, STRIPE_PRICE_WORLD, STRIPE_PRICE_PARTY,
+    STRIPE_PRICE_PRO, STRIPE_PRICE_PRO_ANNUAL, STRIPE_PRICE_WORLD,
     DEMO_SOURCE, DEMO_DIR, DEMO_STAMP, DEMO_COUNTS_FILE,
     _load_demo_counts, _save_demo_counts, reset_demo,
     _build_diffs, _create_onboarding_campaign,
@@ -117,10 +117,6 @@ def dm(slug):
     meta = load(slug, "campaign.json")
     if not meta:
         abort(404)
-    if meta.get("onboarding_mode") == "party":
-        _g = db.get_party_game(slug)
-        if _g.get("phase") != "done":
-            return redirect(url_for("party_game.party_play", slug=slug))
     branches = db.get_branches(slug)
     active_branch_id = session.get(f"branch_{slug}")
     active_branch = next((b for b in branches if b["id"] == active_branch_id), None)
