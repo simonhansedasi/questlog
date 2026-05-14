@@ -29,16 +29,6 @@
     </form>
   </div>
 
-  <!-- Card 3: Party Mode -->
-  <div class="card" style="border-color:#4caf5044;">
-    <div style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#4caf50; margin-bottom:8px;">3 Free Games</div>
-    <h3 style="color:#4caf50; margin-bottom:6px;">Party Mode</h3>
-    <p style="font-size:0.88rem; color:var(--muted); line-height:1.5; margin-bottom:16px;">1–6 players. AI referee. No prep. Pass the phone and everyone gets a secret mission.</p>
-    <form method="POST" action="/welcome">
-      <input type="hidden" name="choice" value="party">
-      <button type="submit" style="background:none; border:none; padding:0; color:#4caf50; font-size:0.85rem; font-weight:700; cursor:pointer;">Start a game &#8594;</button>
-    </form>
-  </div>
 
 </div>
 
@@ -82,14 +72,6 @@
     <div class="campaign-card" style="border-color:var(--gold)33;">
       <div style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--gold); margin-bottom:6px;">Campaign — Recruiting</div>
       <h2>{{ c.name }}</h2>
-      <div class="system">{{ c.system }}</div>
-    </div>
-  </a>
-  {% elif c.get('party_phase') and c.get('party_phase') != 'done' %}
-  <a href="/{{ c.slug }}/play" style="text-decoration:none;">
-    <div class="campaign-card" style="border-color:#4caf5044;">
-      <div style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:#4caf50; margin-bottom:6px;">In Progress</div>
-      <h2>{{ c.name or 'Party Game' }}</h2>
       <div class="system">{{ c.system }}</div>
     </div>
   </a>

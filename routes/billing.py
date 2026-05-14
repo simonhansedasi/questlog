@@ -19,7 +19,7 @@ from routes.utils import (
     CAMPAIGNS, USERS_FILE, INVITES_FILE,
     _DEFAULT_TERMS, _BLANK_TEMPLATES,
     STRIPE_PUBLISHABLE_KEY, STRIPE_WEBHOOK_SECRET,
-    STRIPE_PRICE_PRO, STRIPE_PRICE_PRO_ANNUAL, STRIPE_PRICE_WORLD, STRIPE_PRICE_PARTY,
+    STRIPE_PRICE_PRO, STRIPE_PRICE_PRO_ANNUAL, STRIPE_PRICE_WORLD,
     DEMO_SOURCE, DEMO_DIR, DEMO_STAMP, DEMO_COUNTS_FILE,
     _load_demo_counts, _save_demo_counts, reset_demo,
     _build_diffs, _create_onboarding_campaign,
@@ -211,29 +211,6 @@ def billing_transfer_success():
     session[f"dm_{slug}"] = True
     flash(f"World transferred! Welcome to {meta.get('name', 'your new world')}.", "success")
     return redirect(url_for("dm_bp.dm", slug=slug))
-
-
-@billing_bp.route("/billing/party/success")
-@login_required
-def billing_party_success():
-    session_id = request.args.get("session_id")
-    if not session_id:
-        abort(400)
-    try:
-        cs = stripe.checkout.Session.retrieve(session_id)
-    except stripe.StripeError:
-        abort(400)
-    if cs.payment_status != "paid":
-        flash("Payment not completed.", "error")
-        return redirect(url_for("player.index"))
-    username = getattr(cs.metadata, "username", None)
-    if username != session.get("user"):
-        abort(403)
-    result = _create_onboarding_campaign(username, "party")
-    if isinstance(result, str):
-        return redirect(url_for("party_game.party_play", slug=result))
-    flash("Payment received! You can now start your party game.", "success")
-    return redirect(url_for("player.index"))
 
 
 @billing_bp.route("/billing/portal", methods=["POST"])

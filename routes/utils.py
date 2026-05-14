@@ -15,7 +15,6 @@ STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_SIGNING_SECRET", "")
 STRIPE_PRICE_PRO = "price_1TS6sQHVw7SLO5uo3e0vIZZ3"
 STRIPE_PRICE_PRO_ANNUAL = "price_1TTWCKHVw7SLO5uofngMWjVK"
 STRIPE_PRICE_WORLD = "price_1TS6qIHVw7SLO5uoIpwNWs0n"
-STRIPE_PRICE_PARTY = "price_1TTW4AHVw7SLO5uowdfuAKHR"
 
 CAMPAIGNS = Path(__file__).parent.parent / "campaigns"
 USERS_FILE = Path(__file__).parent.parent / "users.json"
@@ -449,13 +448,7 @@ def _create_onboarding_campaign(username, onboarding_mode):
     new_meta.pop("public", None)
     new_meta["dm_pin"] = str(secrets.randbelow(9000) + 1000)
     new_meta["created"] = datetime.date.today().isoformat()
-    if onboarding_mode == "party":
-        new_meta["name"] = ""
-        new_meta["mode"] = "fiction"
-        tmpl = _BLANK_TEMPLATES["fiction"]
-        new_meta["terminology"] = {k: v for k, v in tmpl.items() if k != "observer_default"}
-        new_meta["observer_name"] = tmpl["observer_default"]
-    elif onboarding_mode == "campaign":
+    if onboarding_mode == "campaign":
         new_meta["name"] = ""
         new_meta["mode"] = "fiction"
         tmpl = _BLANK_TEMPLATES["fiction"]
@@ -467,9 +460,7 @@ def _create_onboarding_campaign(username, onboarding_mode):
         new_meta["observer_name"] = "The Party"
         new_meta.pop("terminology", None)
     new_meta["description"] = ""
-    if onboarding_mode == "party":
-        new_meta["system"] = "Party Mode"
-    elif onboarding_mode == "campaign":
+    if onboarding_mode == "campaign":
         new_meta["system"] = "Campaign Mode"
     else:
         new_meta["system"] = ""

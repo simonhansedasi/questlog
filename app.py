@@ -117,7 +117,6 @@ def inject_viewer_character():
 from routes.auth          import auth_bp
 from routes.admin         import admin_bp
 from routes.billing       import billing_bp
-from routes.party_game    import party_game_bp
 from routes.async_campaign import async_camp_bp
 from routes.demo          import demo_bp
 from routes.player        import player_bp
@@ -127,7 +126,6 @@ from routes.transfer      import transfer_bp
 app.register_blueprint(auth_bp)
 app.register_blueprint(admin_bp)
 app.register_blueprint(billing_bp)
-app.register_blueprint(party_game_bp)
 app.register_blueprint(async_camp_bp)
 app.register_blueprint(demo_bp)
 app.register_blueprint(player_bp)
