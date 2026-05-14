@@ -6,7 +6,13 @@ from dotenv import load_dotenv
 from src.data import format_magnitude
 
 load_dotenv()
-_client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+_client = anthropic.Anthropic(
+    api_key=os.environ["ANTHROPIC_API_KEY"],
+    default_headers={
+        "X-Aiglue-Project": "rippleforge",
+        "X-Aiglue-Session": "production",
+    },
+)
 
 
 _GENRE_GUIDES = {
