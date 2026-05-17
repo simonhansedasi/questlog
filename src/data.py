@@ -2185,20 +2185,28 @@ def unreveal_event(slug, event_id, char_name):
     _save(slug, data, "party.json")
 
 
-def assign_character_user(slug, char_name, username):
+def assign_character_user(slug, char_name, email):
     data = _load_party(slug)
     for c in _all_chars(data):
         if c["name"] == char_name:
-            if username:
-                c["assigned_user"] = username
+            if email:
+                c["assigned_email"] = email.lower().strip()
+                c.pop("assigned_user", None)
             else:
+                c.pop("assigned_email", None)
                 c.pop("assigned_user", None)
     _save(slug, data, "party.json")
 
 
-def get_player_character(slug, username):
-    """Return the character assigned to this username in this campaign, or None."""
+def get_player_character(slug, username, user_email=None):
+    """Return the character assigned to this user in this campaign, or None.
+
+    Matches on assigned_email (new) or legacy assigned_user (username).
+    """
+    email_lower = user_email.lower() if user_email else None
     for c in _all_chars(_load_party(slug)):
+        if email_lower and c.get("assigned_email") == email_lower:
+            return c
         if c.get("assigned_user") == username:
             return c
     return None
@@ -2762,7 +2770,27 @@ def clear_proposals(slug):
     data.pop("proposals", None)
     data.pop("proposals_session", None)
     data.pop("proposals_parse_cursor", None)
+    data.pop("proposals_status", None)
+    data.pop("proposals_error", None)
     _save(slug, data, "dm/session.json")
+
+
+def set_proposals_status(slug, status, error=None):
+    data = _load(slug, "dm/session.json")
+    data["proposals_status"] = status
+    if error:
+        data["proposals_error"] = error
+    else:
+        data.pop("proposals_error", None)
+    _save(slug, data, "dm/session.json")
+
+
+def get_proposals_status(slug):
+    data = _load(slug, "dm/session.json")
+    return {
+        "status": data.get("proposals_status"),
+        "error": data.get("proposals_error"),
+    }
 
 
 def save_relation_suggestions(slug, suggestions):
