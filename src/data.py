@@ -153,6 +153,208 @@ def delete_npc(slug, npc_id):
     _save(slug, data, "world/npcs.json")
 
 
+def npc_to_party_member(slug, npc_id):
+    """Convert an NPC directly into a new party character, transferring all history.
+
+    Creates a party character from the NPC's data, rewrites every actor_id /
+    ripple_source / relation target that referenced npc_id to _char_{slug},
+    then removes the NPC entry.
+    """
+    npc_data = _load(slug, "world/npcs.json")
+    npcs = npc_data.get("npcs", [])
+    source = next((n for n in npcs if n["id"] == npc_id), None)
+    if not source:
+        return False
+
+    char_name = source["name"]
+    char_slug = f"_char_{slugify(char_name)}"
+
+    char = {
+        "name": char_name,
+        "race": "",
+        "class": source.get("role", ""),
+        "level": 1,
+        "status": "active",
+        "hidden": source.get("hidden", False),
+        "notes": source.get("description", "") or "",
+        "log": source.get("log", []),
+        "relations": source.get("relations", []),
+        "factions": source.get("factions") or [],
+        "hidden_factions": source.get("hidden_factions") or [],
+        "dead": source.get("dead", False),
+    }
+    for field in ("dead_session", "conditions", "known_events", "score_offset"):
+        if source.get(field):
+            char[field] = source[field]
+
+    party_data = _load_party(slug)
+    party_data["parties"][0]["characters"].append(char)
+
+    npc_data["npcs"] = [n for n in npcs if n["id"] != npc_id]
+    _save(slug, npc_data, "world/npcs.json")
+    _save(slug, party_data, "party.json")
+
+    def _rewrite_log(log):
+        for e in log:
+            if e.get("actor_id") == npc_id and e.get("actor_type") == "npc":
+                e["actor_id"] = char_name
+                e["actor_type"] = "char"
+            rs = e.get("ripple_source")
+            if rs and rs.get("entity_id") == npc_id and rs.get("entity_type") == "npc":
+                rs["entity_id"] = char_name
+                rs["entity_type"] = "char"
+
+    def _rewrite_relations(entity):
+        existing = {r.get("target") for r in entity.get("relations", []) if r.get("target") != npc_id}
+        new_rels = []
+        for r in entity.get("relations", []):
+            if r.get("target") == npc_id:
+                if char_slug not in existing:
+                    r = dict(r)
+                    r["target"] = char_slug
+                    new_rels.append(r)
+                    existing.add(char_slug)
+            else:
+                new_rels.append(r)
+        entity["relations"] = new_rels
+
+    npc_data2 = _load(slug, "world/npcs.json")
+    for n in npc_data2.get("npcs", []):
+        _rewrite_log(n.get("log", []))
+        _rewrite_relations(n)
+    _save(slug, npc_data2, "world/npcs.json")
+
+    fac_data = _load(slug, "world/factions.json")
+    for f in fac_data.get("factions", []):
+        _rewrite_log(f.get("log", []))
+        _rewrite_relations(f)
+    _save(slug, fac_data, "world/factions.json")
+
+    loc_data = _load(slug, "world/locations.json")
+    for loc in loc_data.get("locations", []):
+        _rewrite_log(loc.get("log", []))
+    _save(slug, loc_data, "world/locations.json")
+
+    party_data2 = _load_party(slug)
+    for p in party_data2.get("parties", []):
+        for c in p.get("characters", []):
+            _rewrite_log(c.get("log", []))
+            _rewrite_relations(c)
+    _save(slug, party_data2, "party.json")
+
+    meta = _load(slug, "campaign.json")
+    _rewrite_log(meta.get("party_group_log", []))
+    _save(slug, meta, "campaign.json")
+
+    return True
+
+
+def npc_join_party(slug, npc_id, char_name):
+    """Merge an NPC into a party character, transferring all log/relation history.
+
+    All log entries, relations, and factions from the NPC are absorbed into
+    the party character. Every actor_id/ripple_source reference to the NPC is
+    rewritten to (char_name, "char"). Relations pointing to the NPC's id are
+    repointed to _char_{slug}. The NPC is then removed.
+    """
+    npc_data = _load(slug, "world/npcs.json")
+    npcs = npc_data.get("npcs", [])
+    source = next((n for n in npcs if n["id"] == npc_id), None)
+    if not source:
+        return False
+
+    party_data = _load_party(slug)
+    char = next(
+        (c for p in party_data.get("parties", []) for c in p.get("characters", [])
+         if c["name"] == char_name),
+        None
+    )
+    if not char:
+        return False
+
+    char_slug = f"_char_{slugify(char_name)}"
+
+    # ── 1. Merge logs ──────────────────────────────────────────────────────
+    combined = char.get("log", []) + source.get("log", [])
+    combined.sort(key=lambda e: e.get("session", 0))
+    char["log"] = combined
+
+    # ── 2. Merge relations (skip dupes) ────────────────────────────────────
+    existing_rel_targets = {r.get("target") for r in char.get("relations", [])}
+    for rel in source.get("relations", []):
+        if rel.get("target") not in existing_rel_targets and rel.get("target") != char_slug:
+            char.setdefault("relations", []).append(rel)
+            existing_rel_targets.add(rel.get("target"))
+
+    # ── 3. Merge factions ──────────────────────────────────────────────────
+    merged = list({*char.get("factions", []), *source.get("factions", [])})
+    if merged:
+        char["factions"] = merged
+    merged_h = list({*char.get("hidden_factions", []), *source.get("hidden_factions", [])})
+    if merged_h:
+        char["hidden_factions"] = merged_h
+
+    # ── 4. Remove source NPC and save both files ───────────────────────────
+    npc_data["npcs"] = [n for n in npcs if n["id"] != npc_id]
+    _save(slug, npc_data, "world/npcs.json")
+    _save(slug, party_data, "party.json")
+
+    # ── 5. Rewrite cross-references ────────────────────────────────────────
+    def _rewrite_log(log):
+        for e in log:
+            if e.get("actor_id") == npc_id and e.get("actor_type") == "npc":
+                e["actor_id"] = char_name
+                e["actor_type"] = "char"
+            rs = e.get("ripple_source")
+            if rs and rs.get("entity_id") == npc_id and rs.get("entity_type") == "npc":
+                rs["entity_id"] = char_name
+                rs["entity_type"] = "char"
+
+    def _rewrite_relations(entity):
+        existing = {r.get("target") for r in entity.get("relations", []) if r.get("target") != npc_id}
+        new_rels = []
+        for r in entity.get("relations", []):
+            if r.get("target") == npc_id:
+                if char_slug not in existing:
+                    r = dict(r)
+                    r["target"] = char_slug
+                    new_rels.append(r)
+                    existing.add(char_slug)
+            else:
+                new_rels.append(r)
+        entity["relations"] = new_rels
+
+    npc_data2 = _load(slug, "world/npcs.json")
+    for n in npc_data2.get("npcs", []):
+        _rewrite_log(n.get("log", []))
+        _rewrite_relations(n)
+    _save(slug, npc_data2, "world/npcs.json")
+
+    fac_data = _load(slug, "world/factions.json")
+    for f in fac_data.get("factions", []):
+        _rewrite_log(f.get("log", []))
+        _rewrite_relations(f)
+    _save(slug, fac_data, "world/factions.json")
+
+    loc_data = _load(slug, "world/locations.json")
+    for loc in loc_data.get("locations", []):
+        _rewrite_log(loc.get("log", []))
+    _save(slug, loc_data, "world/locations.json")
+
+    party_data2 = _load_party(slug)
+    for p in party_data2.get("parties", []):
+        for c in p.get("characters", []):
+            _rewrite_log(c.get("log", []))
+            _rewrite_relations(c)
+    _save(slug, party_data2, "party.json")
+
+    meta = _load(slug, "campaign.json")
+    _rewrite_log(meta.get("party_group_log", []))
+    _save(slug, meta, "campaign.json")
+
+    return True
+
+
 def collapse_npc_into(slug, source_id, target_id):
     """Merge source NPC into target NPC, then delete source.
 
@@ -1305,6 +1507,8 @@ def set_character_dead(slug, char_name, dead):
     for c in _all_chars(data):
         if c["name"] == char_name:
             c["dead"] = dead
+            if not dead and c.get("status") == "dead":
+                c["status"] = "active"
     _save(slug, data, "party.json")
 
 

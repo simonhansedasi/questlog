@@ -760,9 +760,12 @@ def world_graph_data(slug):
         return bool(_branch_filter(entity.get("log", [])))
 
     party = db.get_all_party_characters(slug, include_hidden=is_dm)
+    _parties_early = db.get_parties(slug)
+    _hub_ids = {"_party"} | {f"_party_{p['id']}" for p in _parties_early}
     known_ids = ({n["id"] for n in npcs if _entity_visible(n)} |
                  {f["id"] for f in factions if _entity_visible(f)} |
-                 {f"_char_{db.slugify(c['name'])}" for c in party})
+                 {f"_char_{db.slugify(c['name'])}" for c in party} |
+                 _hub_ids)
 
     effective_as_of = as_of or fork_point
 
@@ -1034,7 +1037,7 @@ def world_graph_data(slug):
     # ── Party hub(s) + characters ─────────────────────────────────────────────
     meta = load(slug, "campaign.json")
     party_name = meta.get("party_name") or "Party"
-    _parties_data = db.get_parties(slug)
+    _parties_data = _parties_early
     _multi_party = len(_parties_data) > 1
     # Map char name → hub node id so character edges connect to the right star
     _char_hub = {}

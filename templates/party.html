@@ -259,7 +259,66 @@
         {% endif %}
         <button type="submit" style="{{ btn_style }}; align-self:flex-start;">Save</button>
       </form>
-      <form method="POST" action="/{{ slug }}/dm/character/{{ char.name }}/delete">
+      <div style="margin-top:14px; padding-top:12px; border-top:1px solid var(--border);">
+        <p style="color:var(--muted); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin:0 0 6px 0;">{{ char.name }}'s Relations</p>
+        {% if char.relations %}
+        <div style="display:flex; flex-direction:column; gap:4px; margin-bottom:8px;">
+          {% for rel in char.relations %}
+          {% set rname = (npcs | selectattr('id','equalto',rel.target) | map(attribute='name') | first)
+                      or (factions | selectattr('id','equalto',rel.target) | map(attribute='name') | first)
+                      or (all_party_chars | selectattr('name','defined') | map(attribute='name') | select('equalto', rel.target | replace('_char_','') | replace('_',' ')) | first)
+                      or rel.target %}
+          {% set rel_display = rel.formal_relation ~ '/' ~ rel.personal_relation if rel.formal_relation and rel.personal_relation else (rel.relation or rel.formal_relation or 'ally') %}
+          <div style="display:flex; align-items:center; gap:8px; font-size:0.8rem;">
+            <span style="color:{% if 'rival' in rel_display %}#e05c5c{% else %}#7ec87e{% endif %}; font-weight:700; font-size:0.68rem; text-transform:uppercase; min-width:34px;">{{ rel_display }}</span>
+            <span style="flex:1;">{{ rname }}</span>
+            <span style="color:var(--muted); font-size:0.7rem;">{{ rel.weight }}×</span>
+            <form method="POST" action="/{{ slug }}/dm/character/{{ char.name | urlencode }}/relation/{{ rel.target }}/delete">
+              <input type="hidden" name="next" value="/{{ slug }}/party">
+              <button type="submit" style="background:none; border:none; color:var(--muted); font-size:0.8rem; cursor:pointer; padding:0 2px;">×</button>
+            </form>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <p style="color:var(--muted); font-size:0.75rem; margin:0 0 8px 0;">No personal relations yet.</p>
+        {% endif %}
+        <form method="POST" action="/{{ slug }}/dm/character/{{ char.name | urlencode }}/relation"
+              style="display:flex; gap:6px; align-items:flex-end; flex-wrap:wrap;">
+          <input type="hidden" name="next" value="/{{ slug }}/party">
+          <select name="target_id" required style="{{ input_style }} flex:1; min-width:120px;"
+                  onchange="this.form.target_type.value=this.options[this.selectedIndex].dataset.type">
+            {% set _other = all_party_chars | selectattr('name', '!=', char.name) | list %}
+            {% if _other %}<optgroup label="{{ terms.cast_label }}">{% for c in _other %}<option value="_char_{{ c.name | lower | replace(' ','_') }}" data-type="char">{{ c.name }}</option>{% endfor %}</optgroup>{% endif %}
+            {% if npcs %}<optgroup label="{{ terms.npcs }}">{% for n in npcs %}<option value="{{ n.id }}" data-type="npc">{{ n.name }}</option>{% endfor %}</optgroup>{% endif %}
+            {% if factions %}<optgroup label="{{ terms.factions }}">{% for f in factions %}<option value="{{ f.id }}" data-type="faction">{{ f.name }}</option>{% endfor %}</optgroup>{% endif %}
+          </select>
+          <input type="hidden" name="target_type" value="char">
+          <div style="display:flex; flex-direction:column; gap:1px;">
+            <label style="color:var(--muted); font-size:0.6rem; text-transform:uppercase; letter-spacing:0.04em;">Formal</label>
+            <select name="formal_relation" style="{{ input_style }} width:72px;">
+              <option value="ally" selected>ally</option>
+              <option value="rival">rival</option>
+            </select>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:1px;">
+            <label style="color:var(--muted); font-size:0.6rem; text-transform:uppercase; letter-spacing:0.04em;">Personal</label>
+            <select name="personal_relation" style="{{ input_style }} width:72px;">
+              <option value="ally" selected>ally</option>
+              <option value="rival">rival</option>
+            </select>
+          </div>
+          <select name="weight" style="{{ input_style }} width:100px;">
+            <option value="0.25">weak 0.25×</option>
+            <option value="0.5" selected>mod 0.5×</option>
+            <option value="0.75">strong 0.75×</option>
+            <option value="1.0">full 1.0×</option>
+          </select>
+          <button type="submit" style="{{ btn_style }}">Add</button>
+        </form>
+      </div>
+
+      <form method="POST" action="/{{ slug }}/dm/character/{{ char.name }}/delete" style="margin-top:10px;">
         <button type="submit" style="background:none; border:1px solid #e05c5c; color:#e05c5c; border-radius:4px; padding:3px 10px; font-size:0.75rem; cursor:pointer;">
           Delete Character
         </button>

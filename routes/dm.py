@@ -699,7 +699,7 @@ def dm_commit_proposals(slug):
     for entry in data["entries"]:
         entity_id = entry.get("entity_id")
         entity_type = entry.get("entity_type", "npc")
-        if entity_type in ("char", "party", "party_group"):
+        if entity_type in ("char", "party"):
             continue
         note = entry.get("note", "").strip()
         if not note:
@@ -2616,6 +2616,9 @@ def dm_add_char_own_relation(slug, char_name):
                                   formal_relation=formal_relation, personal_relation=personal_relation)
     if request.form.get("ajax"):
         return jsonify({"ok": True})
+    next_url = request.form.get("next")
+    if next_url:
+        return redirect(next_url)
     return redirect(url_for("dm_bp.dm", slug=slug))
 
 
@@ -2625,6 +2628,9 @@ def dm_delete_char_own_relation(slug, char_name, target_id):
     db.remove_character_relation(slug, char_name, target_id)
     if request.form.get("ajax"):
         return jsonify({"ok": True})
+    next_url = request.form.get("next")
+    if next_url:
+        return redirect(next_url)
     return redirect(url_for("dm_bp.dm", slug=slug))
 
 
@@ -3128,6 +3134,40 @@ def dm_collapse_npc(slug, npc_id):
     tname = target["name"] if target else target_id
     flash(f"Collapsed into {tname}. All history merged.", "success")
     return redirect(url_for("player.world", slug=slug))
+
+
+@dm_bp.route("/<slug>/dm/npc/<npc_id>/join_party", methods=["POST"])
+@login_required
+@dm_required
+def dm_npc_join_party(slug, npc_id):
+    char_name = request.form.get("char_name", "").strip()
+    if not char_name:
+        flash("Select a party character to merge into.", "error")
+        return redirect(url_for("player.npc", slug=slug, npc_id=npc_id))
+    ok = db.npc_join_party(slug, npc_id, char_name)
+    if not ok:
+        flash("Join party failed — NPC or character not found.", "error")
+        return redirect(url_for("player.npc", slug=slug, npc_id=npc_id))
+    flash(f"Merged into {char_name}. Full history transferred.", "success")
+    return redirect(url_for("player.party", slug=slug))
+
+
+@dm_bp.route("/<slug>/dm/npc/<npc_id>/join_party_new", methods=["POST"])
+@login_required
+@dm_required
+def dm_npc_join_party_new(slug, npc_id):
+    npcs = db.get_npcs(slug, include_hidden=True)
+    npc = next((n for n in npcs if n["id"] == npc_id), None)
+    if not npc:
+        flash("NPC not found.", "error")
+        return redirect(url_for("dm_bp.dm", slug=slug))
+    char_name = npc["name"]
+    ok = db.npc_to_party_member(slug, npc_id)
+    if not ok:
+        flash("Conversion failed.", "error")
+        return redirect(url_for("dm_bp.dm", slug=slug))
+    flash(f"{char_name} joined the party. Full history transferred.", "success")
+    return redirect(url_for("player.party", slug=slug))
 
 
 # ── Admin routes ──────────────────────────────────────────────────────────────
