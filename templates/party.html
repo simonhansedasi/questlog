@@ -78,7 +78,7 @@
 {% else %}
 <div class="card-grid mb-4">
 {% for char in characters %}
-{% set is_my_char = is_player and char.assigned_user == viewer %}
+{% set is_my_char = is_player and (char.assigned_user == viewer or (viewer_email and char.assigned_email == viewer_email)) %}
 <details class="card" style="{% if char.dead or char.status == 'dead' %}opacity:0.55;{% elif is_dm and char.hidden %}opacity:0.6;{% endif %}">
   <summary style="list-style:none; cursor:pointer;">
     <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">

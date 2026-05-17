@@ -104,6 +104,23 @@ def auth_google_callback():
         users[username].setdefault("email", email)
 
     save_users(users)
+    # Auto-resolve any pending email invites for this user's email
+    if email:
+        email_lower = email.lower()
+        for cdir in CAMPAIGNS.iterdir():
+            cjson = cdir / "campaign.json"
+            if not cjson.exists():
+                continue
+            try:
+                cmeta = json.loads(cjson.read_text())
+                pending = cmeta.get("invited_emails", [])
+                if email_lower in pending:
+                    cmeta["invited_emails"] = [e for e in pending if e != email_lower]
+                    if username not in cmeta.get("members", []) and username != cmeta.get("owner"):
+                        cmeta.setdefault("members", []).append(username)
+                    cjson.write_text(json.dumps(cmeta, indent=2))
+            except Exception:
+                pass
     next_url = session.pop("post_login_next", None)
     session["user"] = username
     session["display_name"] = users[username].get("display_name", username)
