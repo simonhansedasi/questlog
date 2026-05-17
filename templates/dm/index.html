@@ -548,7 +548,7 @@ window.RF = {
         Export .md
       </a>
     </div>
-    <form method="POST" action="/{{ slug }}/dm/session/notes" style="display:flex; flex-direction:column; flex:1;">
+    <form id="notes-form" method="POST" action="/{{ slug }}/dm/session/notes" style="display:flex; flex-direction:column; flex:1;">
       <textarea name="notes" rows="18"
                 style="flex:1; width:100%; box-sizing:border-box; background:var(--surface2); border:1px solid var(--border);
                        color:var(--text); border-radius:4px; padding:10px; font-size:0.85rem;
@@ -1095,18 +1095,16 @@ window.RF = {
           {% if char.char_class %}<span style="color:var(--muted); font-size:0.72rem;">{{ char.char_class }}{% if char.level %} {{ char.level }}{% endif %}</span>{% endif %}
           {% for fid in (char.factions or []) %}{% set _fn = (factions | selectattr('id','equalto',fid) | map(attribute='name') | first) %}{% if _fn %}<span style="color:var(--muted); font-size:0.68rem; font-style:italic;">{{ _fn }}</span>{% endif %}{% endfor %}
           {% if char.hidden %}<span class="badge" style="background:var(--surface2); color:var(--muted); font-size:0.68rem;">Hidden</span>{% endif %}
-          {% if char.assigned_user %}<span style="color:var(--purple); font-size:0.72rem;">→ {{ char.assigned_user }}</span>{% endif %}
+          {% if char.assigned_email %}<span style="color:var(--purple); font-size:0.72rem;">→ {{ char.assigned_email }}</span>{% elif char.assigned_user %}<span style="color:var(--purple); font-size:0.72rem;">→ {{ char.assigned_user }}</span>{% endif %}
         </div>
         <span id="{{ pid }}-chevron" style="color:var(--muted); font-size:0.7rem;">▸</span>
       </div>
       <div id="{{ pid }}" style="display:none; border-top:1px solid var(--border); padding:10px 12px; display:none;">
         <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:10px;">
           <form method="POST" action="/{{ slug }}/dm/party/{{ char.name }}/assign" style="display:flex; gap:4px; align-items:center;">
-            <select name="username" style="background:var(--surface); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:3px 6px; font-size:0.75rem;">
-              <option value="">— unassigned —</option>
-              {% for u in all_users %}<option value="{{ u }}" {% if char.assigned_user == u %}selected{% endif %}>{{ u }}</option>{% endfor %}
-            </select>
+            <input type="email" name="email" value="{{ char.assigned_email or '' }}" placeholder="player@gmail.com" style="background:var(--surface); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:3px 8px; font-size:0.75rem; width:180px;">
             <button type="submit" style="background:var(--surface); border:1px solid var(--border); color:var(--muted); border-radius:4px; padding:3px 8px; font-size:0.72rem; cursor:pointer;">Assign</button>
+            {% if char.assigned_email %}<button type="submit" name="email" value="" style="background:var(--surface); border:1px solid var(--border); color:var(--muted); border-radius:4px; padding:3px 8px; font-size:0.72rem; cursor:pointer;">✕</button>{% endif %}
           </form>
           <form method="POST" action="/{{ slug }}/dm/character/{{ char.name }}/toggle_hidden">
             <input type="hidden" name="next" value="dm">
@@ -1923,16 +1921,37 @@ window.RF = {
 
 <h2 class="section-title mt-8" id="players">{{ terms.players_label }}</h2>
 <div class="card mb-4">
-  <p class="text-muted text-sm" style="margin-bottom:12px;">Players added here can log in and see this campaign in their games list.</p>
-  {% if members_info %}
+  <p class="text-muted text-sm" style="margin-bottom:12px;">Enter a player's Gmail address. They'll get an invite link — when they sign in with Google, they're in.</p>
+  {% if members_info or invited_emails %}
   <div style="display:flex; flex-direction:column; gap:6px; margin-bottom:14px;">
     {% for m in members_info %}
     <div style="display:flex; justify-content:space-between; align-items:center; background:var(--surface2); border-radius:6px; padding:8px 12px;">
       <span style="font-size:0.85rem; color:var(--text);">{{ m.display_name }} <span style="color:var(--muted); font-size:0.75rem;">@{{ m.username }}</span></span>
-      <form method="POST" action="/{{ slug }}/dm/members/remove" style="margin:0;">
-        <input type="hidden" name="username" value="{{ m.username }}">
-        <button type="submit" style="background:none; border:none; color:var(--muted); font-size:0.82rem; cursor:pointer; padding:0 4px;">×</button>
-      </form>
+      <div style="display:flex; gap:6px; align-items:center;">
+        <form method="POST" action="/{{ slug }}/dm/members/resend" style="margin:0;">
+          <input type="hidden" name="username" value="{{ m.username }}">
+          <button type="submit" style="background:none; border:1px solid var(--border); color:var(--muted); font-size:0.72rem; border-radius:4px; padding:2px 8px; cursor:pointer;">Resend</button>
+        </form>
+        <form method="POST" action="/{{ slug }}/dm/members/remove" style="margin:0;">
+          <input type="hidden" name="username" value="{{ m.username }}">
+          <button type="submit" style="background:none; border:none; color:var(--muted); font-size:0.82rem; cursor:pointer; padding:0 4px;">×</button>
+        </form>
+      </div>
+    </div>
+    {% endfor %}
+    {% for email in invited_emails %}
+    <div style="display:flex; justify-content:space-between; align-items:center; background:var(--surface2); border-radius:6px; padding:8px 12px;">
+      <span style="font-size:0.85rem; color:var(--text);">{{ email }} <span style="background:var(--surface); color:var(--muted); font-size:0.68rem; border-radius:3px; padding:1px 5px; border:1px solid var(--border);">pending</span></span>
+      <div style="display:flex; gap:6px; align-items:center;">
+        <form method="POST" action="/{{ slug }}/dm/members/resend" style="margin:0;">
+          <input type="hidden" name="email" value="{{ email }}">
+          <button type="submit" style="background:none; border:1px solid var(--border); color:var(--muted); font-size:0.72rem; border-radius:4px; padding:2px 8px; cursor:pointer;">Resend</button>
+        </form>
+        <form method="POST" action="/{{ slug }}/dm/members/remove" style="margin:0;">
+          <input type="hidden" name="email" value="{{ email }}">
+          <button type="submit" style="background:none; border:none; color:var(--muted); font-size:0.82rem; cursor:pointer; padding:0 4px;">×</button>
+        </form>
+      </div>
     </div>
     {% endfor %}
   </div>
@@ -1940,11 +1959,39 @@ window.RF = {
   <p class="text-muted text-sm" style="margin-bottom:12px;">No players added yet.</p>
   {% endif %}
   <form method="POST" action="/{{ slug }}/dm/members/add" style="display:flex; gap:8px; align-items:center;">
-    <input type="text" name="username" placeholder="Username" required
+    <input type="email" name="email" placeholder="player@gmail.com" required
            style="background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:6px 10px; font-size:0.85rem; flex:1; min-width:0;">
-    <button type="submit" style="background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:6px 16px; font-size:0.85rem; font-weight:700; cursor:pointer; white-space:nowrap;">Add Player</button>
+    <button type="submit" style="background:var(--gold); color:#080a18; border:none; border-radius:4px; padding:6px 16px; font-size:0.85rem; font-weight:700; cursor:pointer; white-space:nowrap;">Invite</button>
   </form>
 </div>
+
+{% if all_party_chars and world_mode == 'ttrpg' %}
+<h2 class="section-title mt-8" id="assignment">Character Assignment</h2>
+<div class="card mb-4">
+  <p class="text-muted text-sm" style="margin-bottom:12px;">Assign each character to a player's email address. Players will see their character's events and can update conditions.</p>
+  <div style="display:flex; flex-direction:column; gap:6px;">
+    {% for char in all_party_chars %}
+    <form method="POST" action="/{{ slug }}/dm/party/{{ char.name | urlencode }}/assign"
+          style="display:flex; align-items:center; gap:8px; background:var(--surface2); border-radius:6px; padding:8px 12px;">
+      <span style="font-size:0.85rem; font-weight:600; min-width:120px; flex-shrink:0;">{{ char.name }}</span>
+      {% if char.assigned_email %}
+      <span style="font-size:0.75rem; color:var(--purple); min-width:100px; flex-shrink:0;">{{ char.assigned_email }}</span>
+      {% else %}
+      <span style="font-size:0.75rem; color:var(--muted); min-width:100px; flex-shrink:0;">unassigned</span>
+      {% endif %}
+      <input type="email" name="email" value="{{ char.assigned_email or '' }}" placeholder="player@gmail.com"
+             style="background:var(--surface); border:1px solid var(--border); color:var(--text); border-radius:4px; padding:4px 8px; font-size:0.8rem; flex:1; min-width:0;">
+      <button type="submit" style="background:var(--surface); border:1px solid var(--border); color:var(--muted); border-radius:4px; padding:4px 10px; font-size:0.75rem; cursor:pointer; white-space:nowrap;">
+        {% if char.assigned_email %}Update{% else %}Assign{% endif %}
+      </button>
+      {% if char.assigned_email %}
+      <button type="submit" name="email" value="" style="background:none; border:none; color:var(--muted); font-size:0.82rem; cursor:pointer; padding:0 4px;">×</button>
+      {% endif %}
+    </form>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
 
 <h2 class="section-title mt-8" id="settings">World Settings</h2>
 <div class="card mb-4" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">

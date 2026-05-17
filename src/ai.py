@@ -104,7 +104,7 @@ Write the recap now:"""
     message = _client.messages.create(
         model="claude-haiku-4-5-20251001",
         max_tokens=1024,
-        system=system,
+        system=[{"type": "text", "text": system, "cache_control": {"type": "ephemeral"}}],
         messages=[{"role": "user", "content": user}]
     )
     return message.content[0].text.strip()
@@ -191,7 +191,7 @@ def verify_log_entries(entries, npcs, factions):
         message = _client.messages.create(
             model="claude-haiku-4-5-20251001",
             max_tokens=512,
-            system=system,
+            system=[{"type": "text", "text": system, "cache_control": {"type": "ephemeral"}}],
             messages=[
                 {"role": "user", "content": user},
                 {"role": "assistant", "content": "["},
@@ -376,7 +376,7 @@ JSON array:"""
     message = _client.messages.create(
         model="claude-haiku-4-5-20251001",
         max_tokens=8192,
-        system=system,
+        system=[{"type": "text", "text": system, "cache_control": {"type": "ephemeral"}}],
         messages=[
             {"role": "user", "content": user},
             {"role": "assistant", "content": "["},
@@ -452,7 +452,7 @@ JSON array:"""
     message = _client.messages.create(
         model="claude-haiku-4-5-20251001",
         max_tokens=512,
-        system=system,
+        system=[{"type": "text", "text": system, "cache_control": {"type": "ephemeral"}}],
         messages=[
             {"role": "user", "content": user},
             {"role": "assistant", "content": "["},
@@ -545,7 +545,7 @@ JSON array:"""
     message = _client.messages.create(
         model="claude-haiku-4-5-20251001",
         max_tokens=1024,
-        system=system,
+        system=[{"type": "text", "text": system, "cache_control": {"type": "ephemeral"}}],
         messages=[
             {"role": "user", "content": user},
             {"role": "assistant", "content": "["},

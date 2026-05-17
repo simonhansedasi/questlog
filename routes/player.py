@@ -366,9 +366,11 @@ def party(slug):
             party_log.append({**e, "_source": char["name"], "_source_type": "character"})
     party_log.sort(key=lambda e: (e.get("session", 0), e.get("id", "")), reverse=True)
 
+    viewer_email = load_users().get(viewer, {}).get("email") if viewer else None
     return render_template("party.html", meta=meta, characters=characters, slug=slug,
                            is_dm=is_dm, is_player=is_player, npcs=npcs, factions=factions,
-                           locations=locations, viewer=viewer, current_session=current_session,
+                           locations=locations, viewer=viewer, viewer_email=viewer_email,
+                           current_session=current_session,
                            party_log=party_log, party_display_name=party_display_name,
                            parties=parties, selected_party_id=selected_party_id,
                            all_party_chars=all_chars_for_actor)
@@ -1333,7 +1335,9 @@ def npc(slug, npc_id):
     viewer_character = None
     viewer_known_events = None
     if is_player and session.get("user"):
-        viewer_character = db.get_player_character(slug, session["user"])
+        _u = session["user"]
+        _user_email = load_users().get(_u, {}).get("email")
+        viewer_character = db.get_player_character(slug, _u, user_email=_user_email)
         if viewer_character:
             viewer_known_events = set(viewer_character.get("known_events", []))
 

@@ -308,6 +308,7 @@ def login_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         if not session.get("user"):
+            session["post_login_next"] = request.path
             return redirect(url_for("auth.login"))
         return f(*args, **kwargs)
     return decorated
@@ -339,7 +340,8 @@ def campaign_access(slug):
         if request.method != "GET" and not request.path.endswith("/dm/login"):
             abort(403)
         return
-    # No access
+    # No access — store destination so login can return here
+    session["post_login_next"] = request.path
     return redirect(url_for("auth.login"))
 
 
@@ -372,7 +374,8 @@ def char_or_dm_required(f):
             return f(slug, char_name, *args, **kwargs)
         user = session.get("user")
         if user:
-            assigned = db.get_player_character(slug, user)
+            user_email = load_users().get(user, {}).get("email")
+            assigned = db.get_player_character(slug, user, user_email=user_email)
             if assigned and assigned.get("name") == char_name:
                 return f(slug, char_name, *args, **kwargs)
         return redirect(url_for("auth.login"))

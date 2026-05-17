@@ -136,18 +136,45 @@ function generateRecap(slug) {
     .catch(function() { btn.textContent = '✦ ' + RF.terms.recapCta; btn.disabled = false; alert('Something went wrong.'); });
 }
 
-function proposeEntries(slug) {
-  var btn = document.getElementById('propose-btn');
-  btn.textContent = 'Parsing…';
-  btn.disabled = true;
+function _deliverProposals(data, btn) {
+  if (btn) { btn.textContent = '✦ ' + RF.terms.parseCta; btn.disabled = false; }
+  _proposalData = data.proposals;
+  renderProposals(data.proposals, data.session);
+  document.getElementById('proposals-section').style.display = 'block';
+  document.getElementById('proposals-section').scrollIntoView({ behavior: 'smooth' });
+  if (data.rel_suggestions && data.rel_suggestions.length) {
+    renderRelSuggestions(data.rel_suggestions);
+    document.getElementById('rel-suggestions-section').style.display = 'block';
+  }
+}
+
+function _pollForProposals(slug, btn) {
+  var interval = setInterval(function() {
+    fetch('/' + slug + '/dm/session/proposals')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.status === 'ready') {
+          clearInterval(interval);
+          _deliverProposals(data, btn);
+        } else if (data.status === 'error') {
+          clearInterval(interval);
+          if (btn) { btn.textContent = '✦ ' + RF.terms.parseCta; btn.disabled = false; }
+          alert(data.error || 'Parsing failed.');
+        }
+      })
+      .catch(function() { /* keep polling */ });
+  }, 500);
+}
+
+function _triggerManualParse(slug, btn) {
+  if (btn) { btn.textContent = 'Parsing…'; btn.disabled = true; }
   var sessionInput = document.getElementById('parse-session');
   var fd = new FormData();
   if (sessionInput && sessionInput.value) fd.append('session_override', sessionInput.value);
   fetch('/' + slug + '/dm/session/propose', { method: 'POST', body: fd })
     .then(function(r) { return r.json(); })
     .then(function(data) {
-      btn.textContent = '✦ ' + RF.terms.parseCta;
-      btn.disabled = false;
+      if (btn) { btn.textContent = '✦ ' + RF.terms.parseCta; btn.disabled = false; }
       if (data.error === 'ai_locked') { if (confirm('AI features require Pro. Try Pro free for 14 days?')) { window.location.href = '/billing'; } return; }
       if (data.error) { alert(data.error); return; }
       _proposalData = data.proposals;
@@ -159,7 +186,27 @@ function proposeEntries(slug) {
         document.getElementById('rel-suggestions-section').style.display = 'block';
       }
     })
-    .catch(function(err) { btn.textContent = '✦ ' + RF.terms.parseCta; btn.disabled = false; alert('Something went wrong: ' + err); console.error(err); });
+    .catch(function(err) {
+      if (btn) { btn.textContent = '✦ ' + RF.terms.parseCta; btn.disabled = false; }
+      alert('Something went wrong: ' + err);
+    });
+}
+
+function proposeEntries(slug) {
+  var btn = document.getElementById('propose-btn');
+  fetch('/' + slug + '/dm/session/proposals')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.status === 'ready') {
+        _deliverProposals(data, btn);
+      } else if (data.status === 'computing') {
+        if (btn) { btn.textContent = 'Computing… ✦'; btn.disabled = true; }
+        _pollForProposals(slug, btn);
+      } else {
+        _triggerManualParse(slug, btn);
+      }
+    })
+    .catch(function() { _triggerManualParse(slug, btn); });
 }
 
 // ── Proposal rendering ───────────────────────────────────────────────────────
@@ -201,6 +248,7 @@ function _buildProposalCard(p, i, polarityColor, _entitySelectOptions, _actorOpt
   var col = isShip ? '#5ba4cf' : (polarityColor[p.polarity] || 'var(--border)');
   var shipBadge = isShip ? '<span style="color:#5ba4cf; font-size:0.68rem; font-weight:700; margin-left:4px;">ship log</span>' : '';
   var conflictBadge = p.conflict ? '<span style="color:#e05c5c; font-size:0.68rem; font-weight:700; margin-left:4px;" title="This may contradict the entity\'s known state — review before committing">⚠ conflict</span>' : '';
+  var agentBadge = p.agent_source ? '<span style="color:var(--purple); font-size:0.65rem; font-weight:700; margin-left:2px; opacity:0.7;" title="Agent parsed">✦</span>' : '';
   var borderCol = p.conflict ? '#e05c5c' : col;
   var locHtml = _locationOptions.length ? '<div style="display:flex; align-items:center; gap:8px;"><span style="color:var(--muted); font-size:0.68rem; white-space:nowrap;">At</span><select onchange="_proposalData[' + i + '].location_id=this.value||null" style="background:var(--surface); border:1px solid var(--border); color:var(--text); border-radius:3px; padding:1px 5px; font-size:0.72rem; cursor:pointer; flex:1; min-width:120px;"><option value="">— no location —</option>' + _locationOptions.map(function(l) { return '<option value="' + l.id + '"' + ((p.location_id || '') === l.id ? ' selected' : '') + '>' + l.name + '</option>'; }).join('') + '</select></div>' : '';
   return `<div id="prop-card-${i}" style="display:flex; gap:10px; align-items:flex-start; background:var(--surface2);
@@ -214,7 +262,7 @@ function _buildProposalCard(p, i, polarityColor, _entitySelectOptions, _actorOpt
           ${(!isPartyGroup && !p.entity_id) ? `<option value="" data-id="" data-name="${p.entity_name || ''}" data-type="${p.entity_type || 'npc'}" selected>${p.entity_name || '?'} ⚠ new</option>` : ''}
           ${_entitySelectOptions.map(function(e) { var sel = !isPartyGroup && !!p.entity_id && e.id === p.entity_id; return '<option value="' + e.id + '" data-id="' + e.id + '" data-name="' + e.name + '" data-type="' + e.type + '"' + (sel ? ' selected' : '') + '>' + e.name + ' (' + e.type + ')</option>'; }).join('')}
         </select>
-        ${shipBadge}${conflictBadge}
+        ${shipBadge}${conflictBadge}${agentBadge}
         <select class="prop-pol-sel" onchange="_setPropPol(${i}, this.value)"
                 style="background:var(--surface); border:1px solid var(--border); color:${col}; border-radius:3px; padding:1px 5px; font-size:0.72rem; cursor:pointer;">
           <option value="">— tone —</option>
@@ -817,6 +865,35 @@ document.addEventListener('DOMContentLoaded', function() {
   // Scroll restore
   var y = sessionStorage.getItem('rf_scroll');
   if (y !== null) { sessionStorage.removeItem('rf_scroll'); window.scrollTo(0, parseInt(y, 10)); }
+
+  // Intercept notes form save — AJAX so background parse starts server-side without page reload
+  var notesForm = document.getElementById('notes-form');
+  if (notesForm && document.getElementById('propose-btn')) {
+    notesForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var saveBtn = notesForm.querySelector('[type=submit]');
+      if (saveBtn) { saveBtn.textContent = 'Saving…'; saveBtn.disabled = true; }
+      var fd = new FormData(notesForm);
+      fd.append('ajax', '1');
+      fetch(notesForm.action, { method: 'POST', body: fd })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (!data.ok) {
+            if (saveBtn) { saveBtn.textContent = 'Save Notes'; saveBtn.disabled = false; }
+            return;
+          }
+          if (saveBtn) {
+            saveBtn.textContent = 'Saved ✓';
+            saveBtn.style.background = '#7ec87e';
+            setTimeout(function() { saveBtn.textContent = 'Save Notes'; saveBtn.style.background = ''; saveBtn.disabled = false; }, 1500);
+          }
+          // Background parse already started server-side — no client action needed
+        })
+        .catch(function() {
+          if (saveBtn) { saveBtn.textContent = 'Save Notes'; saveBtn.disabled = false; }
+        });
+    });
+  }
 
   // Render proposals if saved
   if (_proposalData.length) renderProposals(_proposalData, RF.proposalSession);

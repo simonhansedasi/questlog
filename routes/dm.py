@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, abort, redirect, url_for, request,
 from markupsafe import Markup
 from pathlib import Path
 from functools import wraps
-import json, os, re, secrets, datetime, uuid, shutil, time, random, zipfile, io
+import json, os, re, secrets, datetime, uuid, shutil, time, random, zipfile, io, threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import stripe
 import markdown
@@ -10,6 +10,10 @@ import markdown
 from src import data as db
 from src import ai
 from src import importer as vault_importer
+try:
+    from src import email as mail
+except ImportError:
+    mail = None
 from routes.utils import (
     login_required, dm_required, campaign_access, char_or_dm_required,
     ai_required, admin_required,
@@ -27,6 +31,76 @@ from routes.utils import (
 from extensions import limiter, oauth
 
 dm_bp = Blueprint('dm_bp', __name__)
+
+_bg_parses: dict = {}  # slug -> threading.Thread
+
+
+def _bg_parse(slug, current_session):
+    try:
+        meta = load(slug, "campaign.json")
+        full_notes = db.get_session_notes(slug)
+        cursor = db.get_notes_parse_cursor(slug)
+        notes = full_notes[cursor:].strip()
+        if not notes:
+            db.set_proposals_status(slug, None)
+            return
+        npcs = db.get_npcs(slug, include_hidden=True)
+        factions = db.get_factions(slug, include_hidden=True)
+        locations = db.get_locations(slug, include_hidden=True)
+        party = db.get_all_party_characters(slug)
+        ships = db.get_assets(slug).get("ships", [])
+        conditions = db.get_conditions(slug, include_hidden=True, include_resolved=False)
+        causal_context = db.build_causal_context(slug, current_session)
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            f_proposals = pool.submit(ai.propose_log_entries, notes, meta.get("name", ""),
+                                      current_session, npcs, factions, party,
+                                      ships=ships, conditions=conditions,
+                                      causal_context=causal_context, locations=locations)
+            f_relations = pool.submit(ai.suggest_relations, notes, npcs, factions)
+            proposals = f_proposals.result()
+            rel_suggestions = f_relations.result()
+        party_names = {c["name"].lower() for c in party}
+        proposals = [p for p in proposals if (p.get("entity_name") or "").lower() not in party_names]
+        _party_display = meta.get("party_name") or "The Party"
+        entity_names = {n["id"]: n["name"] for n in npcs}
+        entity_names.update({f["id"]: f["name"] for f in factions})
+        for p in proposals:
+            if p.get("entity_type") in ("party_group", "party"):
+                p["entity_type"] = "party_group"
+                p["entity_id"] = None
+                p["entity_name"] = _party_display
+            if p.get("actor_id"):
+                p["actor_name"] = entity_names.get(p["actor_id"], p["actor_id"])
+            p["agent_source"] = True
+        _already = set()
+        for n in npcs:
+            for r in n.get("relations", []):
+                _already.add((n["id"], r.get("target", "")))
+                _already.add((r.get("target", ""), n["id"]))
+        for f in factions:
+            for r in f.get("relations", []):
+                _already.add((f["id"], r.get("target", "")))
+                _already.add((r.get("target", ""), f["id"]))
+        rel_suggestions = [
+            s for s in rel_suggestions
+            if (s.get("source_id"), s.get("target_id")) not in _already
+        ]
+        new_cursor = cursor + len(full_notes[cursor:])
+        db.save_proposals(slug, proposals, current_session, parse_cursor=new_cursor)
+        db.save_relation_suggestions(slug, rel_suggestions)
+        db.set_proposals_status(slug, "ready")
+    except Exception as e:
+        db.set_proposals_status(slug, "error", str(e))
+
+
+def _start_bg_parse(slug, current_session):
+    if slug in _bg_parses and _bg_parses[slug].is_alive():
+        return
+    db.set_proposals_status(slug, "computing")
+    t = threading.Thread(target=_bg_parse, args=(slug, current_session), daemon=True)
+    _bg_parses[slug] = t
+    t.start()
+
 
 @dm_bp.route("/share/<token>")
 def share(token):
@@ -123,7 +197,6 @@ def dm(slug):
     raw_plan = db.get_session_plan(slug)
     plan_html = Markup(markdown.markdown(raw_plan, extensions=["nl2br"])) if raw_plan else None
     current_session = db.get_current_session(slug)
-    all_users = list(load_users().keys())
     intel = db.get_dm_intelligence(slug, current_session, active_branch=active_branch, all_branches=branches)
     saved_futures   = db.get_futures(slug)
     saved_proposals = db.get_proposals(slug)
@@ -201,6 +274,7 @@ def dm(slug):
     all_users_data = load_users()
     members = meta.get("members", [])
     members_info = [{"username": u, "display_name": all_users_data.get(u, {}).get("display_name", u)} for u in members]
+    invited_emails = meta.get("invited_emails", [])
     all_log_entries = db.get_all_log_entries(slug)
     if active_branch:
         all_log_entries = db.filter_log_for_branch(all_log_entries, active_branch, branches)
@@ -254,8 +328,8 @@ def dm(slug):
                            party_relations=meta.get("party_relations", []),
                            current_session=current_session,
                            assets=db.get_assets(slug),
-                           all_users=all_users,
                            members_info=members_info,
+                           invited_emails=invited_emails,
                            intel=intel,
                            condition_alerts=condition_alerts,
                            saved_futures=saved_futures,
@@ -487,8 +561,37 @@ def dm_set_session_notes(slug):
     cursor = db.get_notes_parse_cursor(slug)
     if len(new_notes) < cursor:
         db.set_notes_parse_cursor(slug, len(new_notes))
+    if request.form.get("ajax"):
+        users = load_users()
+        user_data = users.get(session.get("user", ""), {})
+        if user_data.get("ai_enabled") or user_data.get("admin"):
+            session_override = request.form.get("session_override")
+            current_session = int(session_override) if session_override else db.get_current_session(slug)
+            _start_bg_parse(slug, current_session)
+        return jsonify({"ok": True})
     flash("Notes saved", "success")
     return redirect(url_for("dm_bp.dm", slug=slug))
+
+
+@dm_bp.route("/<slug>/dm/session/proposals", methods=["GET"])
+@dm_required
+def dm_get_proposals(slug):
+    status_data = db.get_proposals_status(slug)
+    status = status_data["status"]
+    if status == "ready":
+        saved = db.get_proposals(slug)
+        rel_suggestions = db.get_relation_suggestions(slug) or []
+        return jsonify({"status": "ready", "proposals": saved["proposals"],
+                        "session": saved["session"], "rel_suggestions": rel_suggestions})
+    elif status == "computing":
+        # Stale "computing" after a gunicorn restart — no live thread, reset
+        if slug not in _bg_parses or not _bg_parses[slug].is_alive():
+            db.set_proposals_status(slug, None)
+            return jsonify({"status": "none"})
+        return jsonify({"status": "computing"})
+    elif status == "error":
+        return jsonify({"status": "error", "error": status_data["error"]}), 500
+    return jsonify({"status": "none"})
 
 
 @dm_bp.route("/<slug>/dm/session/reset_parse_cursor", methods=["POST"])
@@ -2675,10 +2778,13 @@ def dm_witness_faction_event(slug, faction_id, event_id):
 @dm_bp.route("/<slug>/dm/party/<char_name>/assign", methods=["POST"])
 @dm_required
 def dm_assign_character_user(slug, char_name):
-    username = request.form.get("username", "").strip()
-    db.assign_character_user(slug, char_name, username)
-    flash(f"{'Assigned ' + username if username else 'Unassigned'}", "success")
-    return redirect(url_for("dm_bp.dm", slug=slug) + "#world")
+    email = request.form.get("email", "").strip().lower()
+    if email and "@" not in email:
+        flash("Enter a valid email address.", "error")
+        return redirect(url_for("dm_bp.dm", slug=slug) + "#assignment")
+    db.assign_character_user(slug, char_name, email)
+    flash(f"{'Assigned to ' + email if email else 'Unassigned'}", "success")
+    return redirect(url_for("dm_bp.dm", slug=slug) + "#assignment")
 
 
 @dm_bp.route("/<slug>/dm/character/<char_name>/update", methods=["POST"])
@@ -2816,17 +2922,62 @@ def dm_member_add(slug):
     meta = load(slug, "campaign.json")
     if meta.get("owner") != session.get("user"):
         abort(403)
-    username = request.form.get("username", "").strip().lower()
+    email = request.form.get("email", "").strip().lower()
+    if not email or "@" not in email:
+        flash("Enter a valid email address.", "error")
+        return redirect(url_for("dm_bp.dm", slug=slug) + "#players")
+    # Check if a user with this email already has an account
     users = load_users()
-    if not username or username not in users:
-        flash(f"User '{username}' not found.", "error")
-        return redirect(url_for("dm_bp.dm", slug=slug) + "#share")
+    existing_username = next((u for u, d in users.items() if d.get("email", "").lower() == email), None)
     members = meta.get("members", [])
-    if username not in members and username != meta.get("owner"):
-        members.append(username)
-        meta["members"] = members
-        (CAMPAIGNS / slug / "campaign.json").write_text(json.dumps(meta, indent=2))
-    return redirect(url_for("dm_bp.dm", slug=slug) + "#share")
+    if existing_username:
+        if existing_username not in members and existing_username != meta.get("owner"):
+            members.append(existing_username)
+            meta["members"] = members
+            (CAMPAIGNS / slug / "campaign.json").write_text(json.dumps(meta, indent=2))
+        flash(f"Added {existing_username}.", "success")
+    else:
+        invited = meta.get("invited_emails", [])
+        if email not in invited:
+            invited.append(email)
+            meta["invited_emails"] = invited
+            (CAMPAIGNS / slug / "campaign.json").write_text(json.dumps(meta, indent=2))
+            if mail:
+                owner_display = users.get(meta.get("owner"), {}).get("display_name", "Your GM")
+                join_url = f"https://rippleforge.gg/{slug}/"
+                mail.send_invite(email, meta.get("name", "your campaign"), owner_display, join_url)
+        flash(f"Invite sent to {email}.", "success")
+    return redirect(url_for("dm_bp.dm", slug=slug) + "#players")
+
+
+@dm_bp.route("/<slug>/dm/members/resend", methods=["POST"])
+@login_required
+@dm_required
+def dm_member_resend(slug):
+    meta = load(slug, "campaign.json")
+    if meta.get("owner") != session.get("user"):
+        abort(403)
+    users = load_users()
+    owner_display = users.get(meta.get("owner"), {}).get("display_name", "Your GM")
+    join_url = f"https://rippleforge.gg/{slug}/"
+    campaign_name = meta.get("name", "your campaign")
+    # Pending invite — email posted directly
+    email = request.form.get("email", "").strip().lower()
+    if email and email in meta.get("invited_emails", []):
+        if mail:
+            mail.send_invite(email, campaign_name, owner_display, join_url)
+        flash(f"Invite resent to {email}.", "success")
+        return redirect(url_for("dm_bp.dm", slug=slug) + "#players")
+    # Confirmed member — username posted, look up their email
+    username = request.form.get("username", "").strip()
+    if username and username in meta.get("members", []):
+        member_email = users.get(username, {}).get("email", "")
+        if member_email and mail:
+            mail.send_invite(member_email, campaign_name, owner_display, join_url)
+            flash(f"Invite resent to {member_email}.", "success")
+        else:
+            flash("No email on file for that player.", "error")
+    return redirect(url_for("dm_bp.dm", slug=slug) + "#players")
 
 
 @dm_bp.route("/<slug>/dm/members/remove", methods=["POST"])
@@ -2837,10 +2988,13 @@ def dm_member_remove(slug):
     if meta.get("owner") != session.get("user"):
         abort(403)
     username = request.form.get("username", "").strip()
-    members = meta.get("members", [])
-    meta["members"] = [m for m in members if m != username]
+    email = request.form.get("email", "").strip().lower()
+    if username:
+        meta["members"] = [m for m in meta.get("members", []) if m != username]
+    if email:
+        meta["invited_emails"] = [e for e in meta.get("invited_emails", []) if e != email]
     (CAMPAIGNS / slug / "campaign.json").write_text(json.dumps(meta, indent=2))
-    return redirect(url_for("dm_bp.dm", slug=slug) + "#share")
+    return redirect(url_for("dm_bp.dm", slug=slug) + "#players")
 
 
 @dm_bp.route("/<slug>/dm/share/generate", methods=["POST"])
